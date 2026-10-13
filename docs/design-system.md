@@ -25,7 +25,7 @@ How the values were derived is in [construction.md](construction.md). All values
 ## 1. Principles
 
 1. **Two seeds, everything else derived.** Afterglow `#ee7a1f` and the neutral hue (232°, its exact complement) are the only values chosen by hand.
-2. **Every color has a role.** If something is colored, the color carries meaning. Nothing is colored for decoration.
+2. **Every color has a role.** If something is colored, the color carries meaning.
 3. **Contrast is solved against the hardest case.** Each text level, control boundary and code color is solved against the most demanding surface it can appear on, so it holds on all of them.
 4. **The accent is a detail.** It marks focus, activity and the main action. It never fills large areas and never colors content.
 5. **No pure black or white.** The darkest value is L 0.16 and the lightest is L 0.975.
@@ -230,7 +230,7 @@ Coral is reserved for danger. It never colors a frequent code category, so an er
 
 ## 7. Syntax roles
 
-The mapping was measured rather than chosen ([construction.md, section 8](construction.md#8-syntax-roles)). Categories are named generically so they map onto any grammar.
+The mapping was measured ([construction.md, section 8](construction.md#8-syntax-roles)). Categories are named generically so they map onto any grammar.
 
 | Category | Includes | Color | Style |
 |---|---|---|---|

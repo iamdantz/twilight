@@ -32,7 +32,7 @@ Twilight is a color theme specification: two flavors, ten neutrals, eight colors
 
 I used Dracula for years. In almost every port the accent was pink/purple, and it's not exactly my favorite color. Catppuccin and its peach accent came closer, and it was the one I used until now, but my workspace still did not feel like mine.
 
-I wanted my own theme but I do not trust my eye for color. So instead of choosing colors, I set out to derive them: start from two values, apply rules from color science and accessibility, and keep only what can be measured. Twilight is the result.
+I wanted my own theme but I do not trust my eye for color. So instead of choosing colors, I set out to derive them: start from two values, apply rules from color science and accessibility, and keep only what can be measured.
 
 ## Principles
 

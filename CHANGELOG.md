@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+- Tighter wording in the README, design system and construction documents. No values or rules changed.
+
 ## 1.0.0
 
 First public definition.

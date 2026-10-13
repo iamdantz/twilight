@@ -27,7 +27,7 @@ Designer decisions are listed explicitly in §12; everything else follows from t
 | Seed | Value | Rationale |
 |---|---|---|
 | Afterglow | `#ee7a1f` · `oklch(0.700 0.170 51.9)` | A saturated sunset orange. Chosen by eye; it is the identity of the system. |
-| Neutral hue | 232° = 51.9° + 180° | The exact complement of Afterglow. Warm light against cool shadow; the two hues oppose and complete each other. |
+| Neutral hue | 232° = 51.9° + 180° | The exact complement of Afterglow. Warm light against cool shadow. |
 
 The seeds are kept untouched. The original hand-picked neutral scale was not discarded either: its surface lightnesses (0.16, 0.20, 0.25, 0.31) turned out to be a geometric progression, which became the formal rule in §3.
 
@@ -287,7 +287,7 @@ All 5,040 assignments were scored. The search was repeated in **36 scenarios** (
 | Function | Sky | 11 (tied with Sea Salt; decided by the winning full assignment) |
 | Constant | Gold | 13 (Sky had 18, but Sky is taken by functions in the winning full assignment) |
 
-Function and constant are the two roles where neither convention nor perception gives a clear majority. The whole-assignment winner was used precisely so that no two roles claim the same color.
+Function and constant are the two roles where neither convention nor perception gives a clear majority. The whole-assignment winner was used so that no two roles claim the same color.
 
 ---
 
