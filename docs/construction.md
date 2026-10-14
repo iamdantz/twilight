@@ -29,7 +29,7 @@ Designer decisions are listed explicitly in §12; everything else follows from t
 | Afterglow | `#ee7a1f` · `oklch(0.700 0.170 51.9)` | A saturated sunset orange. Chosen by eye; it is the identity of the system. |
 | Neutral hue | 232° = 51.9° + 180° | The exact complement of Afterglow. Warm light against cool shadow. |
 
-The seeds are kept untouched and are the same in both flavors. The original hand-picked neutral scale was not discarded either: its surface lightnesses (0.16, 0.20, 0.25, 0.31) turned out to be a geometric progression, which became the formal rule in §3.
+The seeds are kept untouched and are the same in both flavors. A separate seed for Dawn was tested: `#f7721a` (`oklch(0.701 0.185 47.2)`), redder and more saturated, with the same lightness. Ink does not depend on the accent seed, so it stayed at 13.36:1, and the worst color-vision separation of the code colors fell from ΔE 0.040 to 0.030 (Grove against the cursor). It was rejected; the method supports a per-flavor seed, but no measured reason calls for one. The original hand-picked neutral scale was not discarded either: its surface lightnesses (0.16, 0.20, 0.25, 0.31) turned out to be a geometric progression, which became the formal rule in §3.
 
 ---
 
@@ -111,25 +111,13 @@ Dawn is not an inverted Dusk, and it is not a second, independent method. It is 
 
 **Surfaces keep Dusk's perceptual distances.** Shell, Raised and Edge are placed at the same ΔE_OK from Canvas as in Dusk (0.040, 0.050, 0.114), stepping down from Canvas. ΔE is the perceptual measure Twilight uses everywhere (§9.1). Matching contrast ratios instead, as the first Dawn did, gives smaller visible steps near white: WCAG contrast changes faster with L at the light end, so the same ratio covers less lightness. With equal ΔE, Dawn's surfaces look as far apart as Dusk's, and the extra room lets background states reach their targets (§9.2).
 
-**Every surface is darker than Canvas.** This matches the light corpus (§4.1): in all ten light themes the frame, sidebar and borders are darker than the editor or equal to it, and floating panels are darker or equal in nine of ten.
+**Every surface is darker than Canvas.** Light interfaces darken frames, side panels and borders against the content area rather than lightening them, and there is no room above Canvas: it already sits at the lightest value of the system.
 
 **No chroma correction.** The first Dawn copied the relative chroma of Dusk's surfaces to keep near-white surfaces from turning blue. On the shared curve that correction is unnecessary: chroma vanishes at both ends by construction (§3.2).
 
 Search ranges. Shell, Raised and Edge: 50-step bisection over L 0.50–0.95 on ΔE_OK to Canvas; the result is the lightest L that reaches the distance. Text levels: the highest L in 0.05–0.95 that reaches the target against Raised (50 steps). Rail: §3.4, bisected between Shell and Canvas.
 
-### 4.1 Light corpus
-
-The light flavor was checked against ten widely used light themes, measured with the same procedure as the dark corpus: Catppuccin Latte, GitHub Light Default, Tokyo Night Light, Solarized Light, One Light, Rosé Pine Dawn, Ayu Light, Night Owl Light, Material Theme Lighter and Visual Studio Code Light Modern. The first four were chosen as the light counterparts of the dark corpus; the other six are the light versions of dark-corpus themes (One Dark Pro, Rosé Pine, Ayu, Night Owl) and the two most widely installed light defaults. Dracula, Monokai and Nord have no official light flavor.
-
-| Measure (median of ten) | Dark corpus | Light corpus | Twilight Dusk | Twilight Dawn |
-|---|---|---|---|---|
-| Canvas L | 0.235 | 0.985 | 0.200 | 0.949 |
-| Lowest syntax color on Canvas | 6.18:1 | 3.00:1 | 7.30:1 | 5.04:1 |
-| `selection` visibility | 5.75 JND | 2.94 JND | 4.09 JND | 2.79 JND |
-| `selection` vs `selection-inactive` | 2.22 JND (5 themes) | 0.59 JND (3 themes) | 2.78 JND | 0.96 JND |
-| Closest pair of background states | 0.99 JND | 0.51 JND | 0.54 JND | 0.61 JND |
-
-Measured on the syntax colors each theme actually uses (§8.2 procedure), on its own editor background. Themes that define no inactive selection are left out of that row. Light themes trade contrast for brightness: half of them put a syntax color at or below 3:1. Dawn keeps every code color at 4.5:1 or more on every code surface.
+---
 
 ## 5. Accent families
 
@@ -182,7 +170,7 @@ L = L₀ + β · (L_cusp(h) − mean L_cusp)        β = 0.30 (Dusk), 0.19 (Dawn
 
 Yellow is naturally light and blue naturally dark. Forcing equal lightness makes yellow olive and blue chalky. The slope β was **measured** by regressing the lightness of a theme's six ANSI colors against the cusp lightness of their anchor hues (the true sRGB cusp, the L of the RGB-cube corner, as in the §6.1 column; not the grid `cusp()` of §12.1). For Dusk, three established themes: 0.46 (Dracula), 0.28 (Catppuccin Mocha) and 0.17 (One Dark), with correlations of 0.87, 0.85 and 0.61. β = 0.30 is their mean.
 
-Light themes place their colors differently, so Dawn's β was measured on the light corpus (§4.1) with the same regression, keeping the themes whose correlation reaches 0.6, the lowest accepted for Dusk:
+Light themes place their colors differently, so Dawn's β was measured on light themes (the ten listed in §8.2) with the same regression, keeping the themes whose correlation reaches 0.6, the lowest accepted for Dusk:
 
 | Light theme | β | r |
 |---|---|---|
@@ -211,7 +199,7 @@ C_Afterglow = 0.170   φ = 1.618…   τ = 0.15
 
 Code needs seven distinguishable colors (keyword, function, type, string, constant, parameter, plus error). Using a lighter Afterglow for parameters collided with Gold: ΔE 0.016 under deuteranopia, effectively identical. Ember was therefore added as a **seventh hue optimized together with the other six**, constrained to the accent family:
 
-- hue ∈ [45°, 70°]
+- hue ∈ [seed − 7°, seed + 18°] = [45°, 70°]
 - free lightness: [0.60, 0.90] (Dusk) or [0.35, 0.65] (Dawn)
 - the same chroma law
 
@@ -334,9 +322,9 @@ The colors that ten widely used themes give each category were measured on the s
 | Type | cyan in 3/10 (split) |
 | Constant | blue in 4/10 (split) |
 
-The same measurement on the light corpus (§4.1), with one hue classifier applied to both corpora:
+The same measurement on ten widely used light themes: Catppuccin Latte, GitHub Light Default, Tokyo Night Light, Solarized Light, One Light, Rosé Pine Dawn, Ayu Light, Night Owl Light, Material Theme Lighter and Visual Studio Code Light Modern. One hue classifier was applied to both sets:
 
-| Category | Dark corpus | Light corpus | Twilight (both flavors) |
+| Category | Dark themes | Light themes | Twilight (both flavors) |
 |---|---|---|---|
 | Keyword | magenta 5, red 2 | magenta 5 | Orchid |
 | Function | blue 4 | blue 7 | Sky |
@@ -346,7 +334,7 @@ The same measurement on the light corpus (§4.1), with one hue classifier applie
 | Type | cyan 3 (split) | orange 3 (split) | Sea Salt |
 | Constant | blue 3 (split) | blue 3 (split) | Gold |
 
-Every category with a majority in the light corpus agrees with the dark assignment, and no light convention contradicts it. Roles and names are therefore the same in both flavors: a keyword is Orchid in Dusk and in Dawn.
+Every category with a majority among the light themes agrees with the dark assignment, and no light convention contradicts it. Roles and names are therefore the same in both flavors: a keyword is Orchid in Dusk and in Dawn.
 
 ### 8.3 Objective
 
@@ -431,7 +419,7 @@ During validation of the 1.x Dawn, its focus color (`#de711c`) passed 3:1 on Can
 
 | Limit | Reason |
 |---|---|
-| Dawn code colors are AA (4.5:1), not AAA | Tested with the full optimizer at 7:1: the worst color-vision separation falls from ΔE 0.040 to 0.023 and normal-vision separation from 0.088 to 0.056, with yellow turning olive and blue turning navy. AA keeps distinctness at Dusk's level and is still above every theme in the light corpus (§4.1). |
+| Dawn code colors are AA (4.5:1), not AAA | Tested with the full optimizer at 7:1: the worst color-vision separation falls from ΔE 0.040 to 0.023 and normal-vision separation from 0.088 to 0.056, with yellow turning olive and blue turning navy. AA keeps the code colors as distinct as Dusk's. |
 | Dawn `selection` is 2.8 JND (target 4) | A stronger tint would push Faint text below 4.5:1. Near L 0.9 the sRGB gamut of orange is narrow (Cmax ≈ 0.06), so chroma cannot make up the difference. |
 | Dawn `find-match` is 4.3 JND (target 5) | Same bound. |
 | Dusk `find-match` is 3.6 JND (target 5); Dusk `word-highlight-write` is 2.6 JND (target 3) | Same bound. |
@@ -456,7 +444,7 @@ During validation of the 1.x Dawn, its focus color (`#de711c`) passed 3:1 on Can
 | Warm tilt τ | 0.15 | Strength of the shared warm light |
 | Chroma base | C_Afterglow / φ | Keeps the accent dominant |
 | Hue freedom | ±25° from ANSI anchors | Preserves meaning |
-| Ember hue range | 45°–70° | Keeps it in the accent family |
+| Ember hue range | seed − 7° to seed + 18° (45°–70°) | Keeps it in the accent family |
 | Floors | 7:1 Dusk, 4.5:1 Dawn | AAA / AA |
 | Text targets | 4.5, 7.0, 10.89 (7²/4.5); control 3.0 | WCAG thresholds plus one geometric step |
 | JND targets | §9.1 | Visibility per state |

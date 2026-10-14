@@ -22,11 +22,11 @@ Dawn rebuilt as the light end of the same system. Dusk is unchanged, value for v
 - Control on any surface 3.02 → 3.00:1 and `accent-text` on Raised 4.51 → 4.50:1; both still meet their WCAG thresholds.
 
 ### Documented
-- construction.md §4 rewritten (Dawn: the light end), new §4.1 light corpus, Dawn β in §6.2, light conventions in §8.2, updated limits in §11.
-- Syntax roles and names are shared by both flavors; the light corpus agrees with every role that has a majority.
+- construction.md §4 rewritten (Dawn: the light end), Dawn β in §6.2, light conventions in §8.2, updated limits in §11.
+- Syntax roles and names are shared by both flavors; ten light themes agree with every role that has a majority.
 
 ### Tooling
-- `construct.py` separates the shared core from the flavor profiles and rebuilds both flavors exactly.
+- `construct.py` separates the shared core from the flavor profiles and rebuilds both flavors exactly. Each profile carries its own seed (both use Afterglow); the neutral hue, warm tilt and Ember range follow it.
 - The ±25° hue bound is now enforced by the optimizer on the rendered hue against the exact anchor, the same way the validator checks it. Dusk is unaffected.
 - `validate.py`: the Dawn normal-vision floor rises to ΔE 0.088. The Ink (14.81) and color-vision (0.041) floors are unchanged, so this release fails them until they are explicitly reset (see Lower).
 

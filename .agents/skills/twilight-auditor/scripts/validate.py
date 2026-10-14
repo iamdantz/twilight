@@ -129,11 +129,14 @@ def rules(F, flavor):
         d = abs((k.oklch_of(F["colors"][c])[2] - anchor + 180) % 360 - 180)
         if d > 25:
             errs.append(f"{flavor}: {c} hue {d:.1f}° from its ANSI anchor (max 25°)")
-    eh = k.oklch_of(F["colors"]["ember"])[2]
-    if not 45 <= eh <= 70:
-        errs.append(f"{flavor}: ember hue {eh:.1f}° outside 45–70°")
-    if F["colors"]["afterglow"].lower() != k.SEED or F["accents"]["afterglow"]["accent"].lower() != k.SEED:
-        errs.append(f"{flavor}: afterglow must equal the seed {k.SEED}")
+    P = k.PROFILES.get(flavor)
+    if P is None:
+        return errs + [f"{flavor}: no profile in construct.py PROFILES"]
+    eh, (lo, hi) = k.oklch_of(F["colors"]["ember"])[2], k.ember_hues(P)
+    if not lo <= eh <= hi:
+        errs.append(f"{flavor}: ember hue {eh:.1f}° outside {lo}–{hi}° (seed hue {k.seed_hue(P)}° {k.EMBER_OFFSETS[0]:+}/{k.EMBER_OFFSETS[1]:+})")
+    if F["colors"]["afterglow"].lower() != P["seed"] or F["accents"]["afterglow"]["accent"].lower() != P["seed"]:
+        errs.append(f"{flavor}: afterglow must equal the {flavor} seed {P['seed']}")
     for name, fam in F["accents"].items():
         if fam["accent"].lower() != F["colors"][name].lower():
             errs.append(f"{flavor}: accents.{name}.accent differs from colors.{name}")
