@@ -60,7 +60,7 @@ What it checks:
 - **Reproduction**: rebuilds both flavors from the decided parameters (§6.5 included, about 2 minutes) and compares every token exactly. Tolerance is zero: any difference is a hand edit or an undocumented method change. A flavor with no construction is an error.
 - **Construction table**: the §6.5 hue table, Ember and L₀ in construction.md against the rebuild; every hex in a construction.md table must exist in the JSON.
 - **Consistency**: `_` keys; JSON `version` = latest CHANGELOG heading; every hex, swatch, RGB/OKLCH column and measured number in README.md and docs/design-system.md; relative links and anchors in every `.md`.
-- **Regressions** (`--compare`): any floor metric lower than the baseline (unrounded), worsened known limits, changed values with unchanged images. A background state that meets its JND target counts as the target, so overshoot changes are not regressions.
+- **Regressions** (`--compare`): any floor metric lower than the baseline (unrounded), worsened known limits, changed values with unchanged images.
 
 It does not parse construction.md prose, CHANGELOG text or images. `--no-rebuild` skips reproduction and is only for wording or link changes. Exit 0 is necessary, not sufficient: areas A, D and E still need judgment.
 
@@ -95,7 +95,7 @@ Minimums. A change may raise them, never lower them.
 
 | Check | Dusk | Dawn |
 |---|---|---|
-| Ink on Shell, Rail, Canvas, Raised | ≥ 13.76 | ≥ 13.36 |
+| Ink on Shell, Rail, Canvas, Raised | ≥ 13.76 | ≥ 14.81 |
 | Body on every surface | ≥ 10.90 | ≥ 10.89 |
 | Subtle on every surface | ≥ 7.00 | ≥ 7.00 |
 | Faint on every surface | ≥ 4.50 | ≥ 4.50 |
@@ -105,13 +105,13 @@ Minimums. A change may raise them, never lower them.
 | Every accent: `accent-text` on Raised | ≥ 7.00 | ≥ 4.50 |
 | Every accent: `accent-focus` on every surface | ≥ 3.00 | ≥ 3.00 |
 | Min pairwise ΔE OKLab, 6 code colors + cursor, normal vision | ≥ 0.089 | ≥ 0.088 |
-| Same, worst of deuteranopia / protanopia / tritanopia (full severity) | ≥ 0.054 | ≥ 0.040 |
+| Same, worst of deuteranopia / protanopia / tritanopia (full severity) | ≥ 0.054 | ≥ 0.041 |
 | Faint on transient background states | ≥ 4.50 | ≥ 4.50 |
 | Bright ANSI = normal moved 1/3 toward Ink, same hue | exact | exact |
 
 Also: no `#000000` or `#ffffff`; everything inside sRGB, gamut-mapped by chroma reduction only; hues within ±25° of their ANSI anchors; Ember hue 45–70°. Contrast is WCAG 2.x on final 8-bit sRGB. Report contrast to two decimals and ΔE to three, each next to its floor.
 
-The known limits in construction.md §11 (JND of every background state, ANSI black/white contrast, closest CVD pairs, background-state separation) may not get worse. A state that meets its JND target counts as the target. `--compare` prints them; any "known limit worse" is BLOCKING.
+The known limits in construction.md §11 (JND of every background state, ANSI black/white contrast, closest CVD pairs, background-state separation) may not get worse. `--compare` prints them; any "known limit worse" is BLOCKING.
 
 ### D. New flavors
 

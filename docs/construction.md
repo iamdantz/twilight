@@ -180,7 +180,7 @@ An earlier version placed six hues at equal 60° steps from the accent. That was
 L = L₀ + β · (L_cusp(h) − mean L_cusp)        β = 0.30 (Dusk), 0.19 (Dawn)
 ```
 
-Yellow is naturally light and blue naturally dark. Forcing equal lightness makes yellow olive and blue chalky. The slope β was **measured** by regressing the lightness of a theme's six ANSI colors against the cusp lightness of their anchor hues. For Dusk, three established themes: 0.46 (Dracula), 0.28 (Catppuccin Mocha) and 0.17 (One Dark), with correlations of 0.87, 0.85 and 0.61. β = 0.30 is their mean.
+Yellow is naturally light and blue naturally dark. Forcing equal lightness makes yellow olive and blue chalky. The slope β was **measured** by regressing the lightness of a theme's six ANSI colors against the cusp lightness of their anchor hues (the true sRGB cusp, the L of the RGB-cube corner, as in the §6.1 column; not the grid `cusp()` of §12.1). For Dusk, three established themes: 0.46 (Dracula), 0.28 (Catppuccin Mocha) and 0.17 (One Dark), with correlations of 0.87, 0.85 and 0.61. β = 0.30 is their mean.
 
 Light themes place their colors differently, so Dawn's β was measured on the light corpus (§4.1) with the same regression, keeping the themes whose correlation reaches 0.6, the lowest accepted for Dusk:
 
@@ -394,7 +394,7 @@ Function and constant are the two roles where neither convention nor perception 
 
 - **Transient states** may move in lightness, but Faint text must keep 4.5:1 on them, which also keeps every higher text level above its guarantee.
 - **Persistent states (diff lines) are code surfaces.** The code floor is solved including them (§6.6).
-- **Lightness bounded by the surfaces.** Toward the text, the only limit is Faint at 4.5:1. Away from the text, a state stops at the outermost surface: Shell in Dusk (it may not get darker than the frame), Canvas in Dawn (it may not get lighter than the lightest value of the flavor). Minimum chroma 0.010 so the hue is recognizable.
+- **Lightness bounded by the surfaces.** Toward the text, the only limit is Faint at 4.5:1. Away from the text, the lightness scan stops at the outermost surface: L_Shell in Dusk, L_Canvas in Dawn. The bound applies in OKLCH before gamut mapping and 8-bit rounding, so a rendered state can sit up to ΔL 0.001 beyond it (Dawn `diff-inserted` L 0.950 against Canvas 0.949). Minimum chroma 0.010 so the hue is recognizable.
 - **If a target is unreachable** inside those bounds, the state takes the maximum visibility the bounds allow and keeps its hue. It never falls back to a neutral. Dusk `find-match` reaches 3.6 of 5 JND and Dusk `word-highlight-write` 2.6 of 3; Dawn `selection` reaches 2.8 of 4 and Dawn `find-match` 4.3 of 5. All are documented as limits (§11).
 
 ### 9.3 Search
@@ -423,7 +423,7 @@ Every published value was checked automatically on its final sRGB hex:
 - every color inside sRGB, with no `#000000` and no `#ffffff`;
 - pairwise ΔE across normal vision and three dichromacies.
 
-During validation of the first Dawn, its focus color (`#de711c`) passed 3:1 on Canvas but only 2.65:1 on Raised. It was re-solved against all surfaces (`#cf6a1a`). This is why every target in this system is solved against the hardest surface, not the most common one.
+During validation of the 1.x Dawn, its focus color (`#de711c`) passed 3:1 on Canvas but only 2.65:1 on Raised. It was re-solved against all surfaces (`#cf6a1a`, 1.x). This is why every target in this system is solved against the hardest surface, not the most common one.
 
 ---
 

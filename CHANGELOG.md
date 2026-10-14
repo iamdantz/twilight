@@ -7,7 +7,7 @@ Dawn rebuilt as the light end of the same system. Dusk is unchanged, value for v
 ### Changed
 - Dawn: every value. Canvas and Ink now swap Dusk's two anchors (Canvas `#eeeeef`, Ink `#11171b`), so the lightest value in Twilight is L 0.95 instead of 0.975.
 - Dawn surfaces keep Dusk's perceptual distance from Canvas (ΔE OKLab) instead of its contrast ratios, and all Dawn neutrals sit on the shared neutral curve with no relative-chroma correction.
-- Dawn β is 0.19, measured on ten light themes with the same regression that gave Dusk's 0.30.
+- Dawn β is 0.19: the mean slope of the three light themes (of eight with terminal colors) whose correlation reaches 0.6, with the same regression that gave Dusk's 0.30 (construction.md §6.2).
 - Background states: away from the text, a state stops at the outermost surface (Shell in Dusk, Canvas in Dawn). Dusk is unaffected.
 
 ### Improved (Dawn, against 1.1.1)
@@ -18,6 +18,7 @@ Dawn rebuilt as the light end of the same system. Dusk is unchanged, value for v
 ### Lower (Dawn, against 1.1.1)
 - Ink on any surface: 14.81 → 13.36:1, from the darker Canvas. Ink on Canvas is now 15.58:1 in both flavors.
 - Worst color-vision separation of the code colors: ΔE 0.041 → 0.040 (0.0411 → 0.0402, about 0.05 JND).
+- `diff-removed` visibility 2.025 → 2.021 JND (target 2, still met).
 - Control on any surface 3.02 → 3.00:1 and `accent-text` on Raised 4.51 → 4.50:1; both still meet their WCAG thresholds.
 
 ### Documented
@@ -27,7 +28,7 @@ Dawn rebuilt as the light end of the same system. Dusk is unchanged, value for v
 ### Tooling
 - `construct.py` separates the shared core from the flavor profiles and rebuilds both flavors exactly.
 - The ±25° hue bound is now enforced by the optimizer on the rendered hue against the exact anchor, the same way the validator checks it. Dusk is unaffected.
-- `validate.py`: Dawn floors updated; a background state that meets its JND target no longer counts as a regression when its overshoot changes.
+- `validate.py`: the Dawn normal-vision floor rises to ΔE 0.088. The Ink (14.81) and color-vision (0.041) floors are unchanged, so this release fails them until they are explicitly reset (see Lower).
 
 ## 1.1.1
 

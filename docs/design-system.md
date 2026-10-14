@@ -28,7 +28,7 @@ How the values were derived is in [construction.md](construction.md). All values
 2. **Every color has a role.** If something is colored, the color carries meaning.
 3. **Contrast is solved against the hardest case.** Each text level, control boundary and code color is solved against the most demanding surface it can appear on, so it holds on all of them.
 4. **The accent is a detail.** It marks focus, activity and the main action. It never fills large areas and never colors content.
-5. **No pure black or white.** The darkest value is L 0.16 and the lightest is L 0.95.
+5. **No pure black or white.** The darkest value is L 0.16 and the lightest is L 0.95 (Dawn `diff-inserted` renders at 0.950 after 8-bit rounding).
 6. **One system, two ends.** Dusk and Dawn share every role and rule and the same neutral curve. Dawn uses the light end of the curve: its Canvas is Dusk's Ink and its Ink is Dusk's Canvas.
 
 ## 2. Palette
