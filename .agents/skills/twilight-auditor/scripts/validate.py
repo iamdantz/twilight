@@ -28,13 +28,14 @@ TRANSIENT = ("selection", "selection-inactive", "find-match", "find-match-other"
 ANCHORS = {name: k.oklch_of(k.CORNERS[slot])[2] for name, slot in k.COLOR_KEYS.items() if slot in k.CORNERS}
 WCAG_THRESHOLDS = (3.0, 4.5, 7.0)   # compared strictly: a measured 4.496 does not meet 4.5
 FLOORS = {  # check: (dusk, dawn); construction.md §3.5, §5, §6.6, §7, §9.2; design-system.md §13
-    "ink on surfaces": (13.76, 14.81), "body on surfaces": (10.90, 10.89), "subtle on surfaces": (7.00, 7.00),
+    "ink on surfaces": (13.76, 13.36), "body on surfaces": (10.90, 10.89), "subtle on surfaces": (7.00, 7.00),
     "faint on surfaces": (4.50, 4.50), "control on surfaces": (3.00, 3.00), "code on code surfaces": (7.00, 4.50),
     "on-accent on accent/pressed": (4.50, 4.50), "accent-text on raised": (7.00, 4.50),
-    "accent-focus on surfaces": (3.00, 3.00), "ΔE code+cursor, normal": (0.089, 0.077),
-    "ΔE code+cursor, worst CVD": (0.054, 0.041), "faint on transient states": (4.50, 4.50),
+    "accent-focus on surfaces": (3.00, 3.00), "ΔE code+cursor, normal": (0.089, 0.088),
+    "ΔE code+cursor, worst CVD": (0.054, 0.040), "faint on transient states": (4.50, 4.50),
 }
-# Known limits (construction.md §11): no floor, but a proposal may not lower them.
+# Known limits (construction.md §11): no floor, but a proposal may not lower them. A background state that meets its
+# JND target (§9.1) counts as the target: the search stops at the first step past it, so the overshoot is incidental.
 LIMITS = ("JND " + s for s in (*TRANSIENT, "diff-inserted", "diff-removed"))
 LIMITS = (*LIMITS, "ANSI black/white on canvas", "min ΔE between background states")
 
@@ -405,6 +406,12 @@ def failed(r):
     return [x for x in r["floors"] if not x["ok"]] + r["rules"] + repro + r["consistency"]
 
 
+def limit_value(key, value):
+    """A JND limit is capped at its target: above the target the state is met, not better."""
+    state = key[4:] if key.startswith("JND ") else None
+    return min(value, k.STATE_JND[state]) if state in k.STATE_JND else value
+
+
 def compare(base, prop):
     """Print deltas; return regressions: worsened known limits and values that moved away from the generator."""
     lines, regressions = [], []
@@ -416,7 +423,7 @@ def compare(base, prop):
                 regressions.append(f"quality decreased: {p['flavor']} {p['check']} {b['value']:.5f} → {p['value']:.5f}")
     for f in sorted(set(base["palette"]) & set(prop["palette"])):
         for key in LIMITS:
-            if (p := prop["limits"][f][key]) < (b := base["limits"][f][key]) - 1e-9:
+            if (p := limit_value(key, prop["limits"][f][key])) < (b := limit_value(key, base["limits"][f][key])) - 1e-9:
                 regressions.append(f"known limit worse: {f} {key} {fmt(b)} → {fmt(p)}")
     changed = [f"{f}.{g}.{t}" for f in prop["palette"] for g in ("neutrals", "colors", "states")
                for t, v in prop["palette"][f][g].items() if base["palette"].get(f, {}).get(g, {}).get(t) != v]

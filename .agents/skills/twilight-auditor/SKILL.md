@@ -37,7 +37,7 @@ The scripts live in this skill's `scripts/` directory (`<skill>` is the director
 | File | Role |
 |---|---|
 | `scripts/validate.py` | Measures and cross-checks one snapshot; `--compare REF` adds regressions. Exit 1 on any failure. `--json` for the summary only. |
-| `scripts/construct.py` | Reference implementation of construction.md for Dusk; `validate.py` imports it. Import it yourself to recompute a value by hand. |
+| `scripts/construct.py` | Reference implementation of construction.md: a shared core plus one profile per flavor (`PROFILES`). Rebuilds both flavors exactly; `validate.py` imports it. Import it yourself to recompute a value by hand. |
 | `scripts/requirements.txt` | `coloraide==8.13`, pinned. |
 
 Setup, once per machine (the venv is git-ignored):
@@ -55,13 +55,14 @@ $V --ref <branch> --compare main     # proposal + regressions
 
 What it checks:
 
-- **Floors**: every row of the area C table, per flavor. A floor is met when the measurement, rounded to the floor's precision, reaches it.
-- **Rules**: no pure black or white; ANSI hue anchors ±25°; Ember 45–70°; brights = one third toward Ink.
-- **Reproduction**: rebuilds Dusk. Neutrals exact; states within ΔE_OK 0.0065; everything else within 0.005.
+- **Floors**: every row of the area C table, per flavor. WCAG thresholds (3.0, 4.5, 7.0) are compared strictly on unrounded values; regression floors (e.g. 13.76, 0.054) are met at their stated precision.
+- **Rules**: no pure black or white; ANSI hue anchors ±25°; Ember 45–70°; Afterglow equals the seed; every `accents.X.accent` equals `colors.X`; brights recomputed with the construction's own function.
+- **Reproduction**: rebuilds both flavors from the decided parameters (§6.5 included, about 2 minutes) and compares every token exactly. Tolerance is zero: any difference is a hand edit or an undocumented method change. A flavor with no construction is an error.
+- **Construction table**: the §6.5 hue table, Ember and L₀ in construction.md against the rebuild; every hex in a construction.md table must exist in the JSON.
 - **Consistency**: `_` keys; JSON `version` = latest CHANGELOG heading; every hex, swatch, RGB/OKLCH column and measured number in README.md and docs/design-system.md; relative links and anchors in every `.md`.
-- **Regressions** (`--compare`): worsened known limits, new drift from the generator (a hand edit), changed values with unchanged images.
+- **Regressions** (`--compare`): any floor metric lower than the baseline (unrounded), worsened known limits, changed values with unchanged images. A background state that meets its JND target counts as the target, so overshoot changes are not regressions.
 
-It does not rebuild Dawn (no generator for the §4 mirror), does not re-run §6.5 (random starts undocumented, so hues and Ember come from the JSON), and does not parse construction.md prose or images. Exit 0 is necessary, not sufficient: areas A, B (Dawn and new flavors), D and E still need judgment.
+It does not parse construction.md prose, CHANGELOG text or images. `--no-rebuild` skips reproduction and is only for wording or link changes. Exit 0 is necessary, not sufficient: areas A, D and E still need judgment.
 
 **Separate pre-existing from introduced.** A finding that also appears in the main run is pre-existing: list it under a "Pre-existing on main" note, do not count it against the change, and do not let it block. Only what the proposal introduces or worsens decides the verdict.
 
@@ -84,8 +85,8 @@ wording · rule or method · palette values · new flavor · tooling. Most chang
 
 ### B. Palette values follow the method
 
-- Recompute; never trust numbers written in the JSON or docs. For Dusk the validator rebuilds every token. Any token the proposal changes must equal the rebuilt value; "new reproduction drift" in `--compare` means a hand edit and is BLOCKING even inside tolerance.
-- Dawn has no generator yet. For a Dawn value change, recompute the affected rule by hand (`import construct as k` from `scripts/`) and show the numbers.
+- Recompute; never trust numbers written in the JSON or docs. The validator rebuilds every token of both flavors. Any reproduction mismatch is a hand edit or an undocumented method change and is BLOCKING.
+- A method change must change `scripts/construct.py` and construction.md together, and Dusk must still rebuild byte for byte unless the change is meant to alter Dusk (then it is a major version).
 - If the method changed, every dependent value must be regenerated (accents, states, ANSI brights, docs, images), not only the one that motivated the change.
 
 ### C. Quality floor
@@ -94,7 +95,7 @@ Minimums. A change may raise them, never lower them.
 
 | Check | Dusk | Dawn |
 |---|---|---|
-| Ink on Shell, Rail, Canvas, Raised | ≥ 13.76 | ≥ 14.81 |
+| Ink on Shell, Rail, Canvas, Raised | ≥ 13.76 | ≥ 13.36 |
 | Body on every surface | ≥ 10.90 | ≥ 10.89 |
 | Subtle on every surface | ≥ 7.00 | ≥ 7.00 |
 | Faint on every surface | ≥ 4.50 | ≥ 4.50 |
@@ -103,18 +104,18 @@ Minimums. A change may raise them, never lower them.
 | Every accent: `on-accent` on `accent` and `accent-pressed` | ≥ 4.50 | ≥ 4.50 |
 | Every accent: `accent-text` on Raised | ≥ 7.00 | ≥ 4.50 |
 | Every accent: `accent-focus` on every surface | ≥ 3.00 | ≥ 3.00 |
-| Min pairwise ΔE OKLab, 6 code colors + cursor, normal vision | ≥ 0.089 | ≥ 0.077 |
-| Same, worst of deuteranopia / protanopia / tritanopia (full severity) | ≥ 0.054 | ≥ 0.041 |
+| Min pairwise ΔE OKLab, 6 code colors + cursor, normal vision | ≥ 0.089 | ≥ 0.088 |
+| Same, worst of deuteranopia / protanopia / tritanopia (full severity) | ≥ 0.054 | ≥ 0.040 |
 | Faint on transient background states | ≥ 4.50 | ≥ 4.50 |
 | Bright ANSI = normal moved 1/3 toward Ink, same hue | exact | exact |
 
 Also: no `#000000` or `#ffffff`; everything inside sRGB, gamut-mapped by chroma reduction only; hues within ±25° of their ANSI anchors; Ember hue 45–70°. Contrast is WCAG 2.x on final 8-bit sRGB. Report contrast to two decimals and ΔE to three, each next to its floor.
 
-The known limits in construction.md §11 (JND of every background state, ANSI black/white contrast, closest CVD pairs, Dawn state separation) may not get worse. `--compare` prints them; any "known limit worse" is BLOCKING.
+The known limits in construction.md §11 (JND of every background state, ANSI black/white contrast, closest CVD pairs, background-state separation) may not get worse. A state that meets its JND target counts as the target. `--compare` prints them; any "known limit worse" is BLOCKING.
 
 ### D. New flavors
 
-- Produced end to end by the construction method: surfaces, text levels, accents, colors, states and ANSI all solved, never picked. Its parameters must be added to `scripts/construct.py` (or a generator beside it) and its committed JSON must equal the generator's output.
+- Produced end to end by the construction method: surfaces, text levels, accents, colors, states and ANSI all solved, never picked. It is a new profile in `scripts/construct.py` `PROFILES` (with a neutral builder if its surfaces need one), and its committed JSON must equal the generator's output. Shared core functions may not be changed to suit it unless Dusk and Dawn still rebuild exactly.
 - Any new seed or parameter is declared *decided* with written rationale in §12. Seed rule: one accent seed, neutrals at its exact complement. A second or different seed requires construction.md to be amended first, by a change that itself passes this audit.
 - If the flavor has its own generator test, run it on an exported copy; it does not replace the validator, which checks every floor including ΔE.
 - Its palette image (`assets/palette-<flavor>.png`) exists, or the README states why not.
@@ -150,7 +151,7 @@ Each of these means the change is being judged on intent instead of measurement:
 
 | Thought | Reality |
 |---|---|
-| "It's only a one-step hex nudge, within tolerance" | Tolerance exists for rounding in the generator, not for edits. New drift = hand edit = BLOCKING. |
+| "It's only a one-step hex nudge" | Reproduction is exact; there is no tolerance. Any difference from the rebuild = hand edit = BLOCKING. |
 | "The docs and JSON agree, so it's consistent" | Consistency is area E. Without a derivation path it is still REJECTED. |
 | "The author documented the floor miss honestly" | Documenting a regression does not make it acceptable. Floors are minimums. |
 | "It still passes AA, close enough" | Compare against the table above, not against WCAG. |

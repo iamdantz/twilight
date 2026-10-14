@@ -46,9 +46,9 @@ I wanted my own theme but I do not trust my eye for color. So instead of choosin
 |                                                                                           | Flavor   | Character                                                                                   |
 |-------------------------------------------------------------------------------------------|----------|---------------------------------------------------------------------------------------------|
 | <img src="https://placehold.co/20x20/11171b/11171b" width="20" height="20" alt="#11171b"> | **Dusk** | Dark. Code colors at 7:1 or higher (WCAG AAA).                                              |
-| <img src="https://placehold.co/20x20/f4f7f9/f4f7f9" width="20" height="20" alt="#f4f7f9"> | **Dawn** | Light. Same structure and surface ratios as Dusk; code colors at 4.5:1 or higher (WCAG AA). |
+| <img src="https://placehold.co/20x20/eeeeef/eeeeef" width="20" height="20" alt="#eeeeef"> | **Dawn** | Light. The light end of the same system; code colors at 4.5:1 or higher (WCAG AA).          |
 
-Both flavors share every role and every rule. Only the values change.
+Both flavors share every role, every rule and one neutral curve. Dawn's Canvas is Dusk's Ink, and Dawn's Ink is Dusk's Canvas.
 
 ## Accents
 
@@ -59,13 +59,13 @@ A theme is named by flavor and accent: **Twilight Dusk Grove**, **Twilight Dawn 
 | Accent    | Dusk                                                                                                | Dawn                                                                                                | Example name            |
 |-----------|-----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|-------------------------|
 | Afterglow | <img src="https://placehold.co/20x20/ee7a1f/ee7a1f" width="20" height="20" alt="#ee7a1f"> `#ee7a1f` | <img src="https://placehold.co/20x20/ee7a1f/ee7a1f" width="20" height="20" alt="#ee7a1f"> `#ee7a1f` | Twilight Dusk Afterglow |
-| Coral     | <img src="https://placehold.co/20x20/e78975/e78975" width="20" height="20" alt="#e78975"> `#e78975` | <img src="https://placehold.co/20x20/88323e/88323e" width="20" height="20" alt="#88323e"> `#88323e` | Twilight Dusk Coral     |
-| Gold      | <img src="https://placehold.co/20x20/d6b95c/d6b95c" width="20" height="20" alt="#d6b95c"> `#d6b95c` | <img src="https://placehold.co/20x20/7a6716/7a6716" width="20" height="20" alt="#7a6716"> `#7a6716` | Twilight Dusk Gold      |
-| Grove     | <img src="https://placehold.co/20x20/99cd8a/99cd8a" width="20" height="20" alt="#99cd8a"> `#99cd8a` | <img src="https://placehold.co/20x20/3d763e/3d763e" width="20" height="20" alt="#3d763e"> `#3d763e` | Twilight Dusk Grove     |
-| Sea Salt  | <img src="https://placehold.co/20x20/6ed0d1/6ed0d1" width="20" height="20" alt="#6ed0d1"> `#6ed0d1` | <img src="https://placehold.co/20x20/186f7f/186f7f" width="20" height="20" alt="#186f7f"> `#186f7f` | Twilight Dusk Sea Salt  |
-| Sky       | <img src="https://placehold.co/20x20/7babde/7babde" width="20" height="20" alt="#7babde"> `#7babde` | <img src="https://placehold.co/20x20/2a5785/2a5785" width="20" height="20" alt="#2a5785"> `#2a5785` | Twilight Dusk Sky       |
-| Orchid    | <img src="https://placehold.co/20x20/d58ec3/d58ec3" width="20" height="20" alt="#d58ec3"> `#d58ec3` | <img src="https://placehold.co/20x20/7b3d6f/7b3d6f" width="20" height="20" alt="#7b3d6f"> `#7b3d6f` | Twilight Dusk Orchid    |
-| Ember     | <img src="https://placehold.co/20x20/fcd1ad/fcd1ad" width="20" height="20" alt="#fcd1ad"> `#fcd1ad` | <img src="https://placehold.co/20x20/6c3d0d/6c3d0d" width="20" height="20" alt="#6c3d0d"> `#6c3d0d` | Twilight Dusk Ember     |
+| Coral     | <img src="https://placehold.co/20x20/e78975/e78975" width="20" height="20" alt="#e78975"> `#e78975` | <img src="https://placehold.co/20x20/8d3826/8d3826" width="20" height="20" alt="#8d3826"> `#8d3826` | Twilight Dusk Coral     |
+| Gold      | <img src="https://placehold.co/20x20/d6b95c/d6b95c" width="20" height="20" alt="#d6b95c"> `#d6b95c` | <img src="https://placehold.co/20x20/766014/766014" width="20" height="20" alt="#766014"> `#766014` | Twilight Dusk Gold      |
+| Grove     | <img src="https://placehold.co/20x20/99cd8a/99cd8a" width="20" height="20" alt="#99cd8a"> `#99cd8a` | <img src="https://placehold.co/20x20/39713a/39713a" width="20" height="20" alt="#39713a"> `#39713a` | Twilight Dusk Grove     |
+| Sea Salt  | <img src="https://placehold.co/20x20/6ed0d1/6ed0d1" width="20" height="20" alt="#6ed0d1"> `#6ed0d1` | <img src="https://placehold.co/20x20/176a7e/176a7e" width="20" height="20" alt="#176a7e"> `#176a7e` | Twilight Dusk Sea Salt  |
+| Sky       | <img src="https://placehold.co/20x20/7babde/7babde" width="20" height="20" alt="#7babde"> `#7babde` | <img src="https://placehold.co/20x20/3f4880/3f4880" width="20" height="20" alt="#3f4880"> `#3f4880` | Twilight Dusk Sky       |
+| Orchid    | <img src="https://placehold.co/20x20/d58ec3/d58ec3" width="20" height="20" alt="#d58ec3"> `#d58ec3` | <img src="https://placehold.co/20x20/813b67/813b67" width="20" height="20" alt="#813b67"> `#813b67` | Twilight Dusk Orchid    |
+| Ember     | <img src="https://placehold.co/20x20/fcd1ad/fcd1ad" width="20" height="20" alt="#fcd1ad"> `#fcd1ad` | <img src="https://placehold.co/20x20/67320a/67320a" width="20" height="20" alt="#67320a"> `#67320a` | Twilight Dusk Ember     |
 
 Each accent comes with derived variants for text, pressed and focus states, all solved to the same contrast rules. See [Accents in the design system](docs/design-system.md#5-accents).
 
@@ -111,21 +111,21 @@ Each accent comes with derived variants for text, pressed and focus states, all 
 <summary><b>Dawn</b></summary>
 <br>
 
-<img src="https://placehold.co/24x24/ebeff2/ebeff2" width="24" height="24" alt="#ebeff2"><img src="https://placehold.co/24x24/eff3f5/eff3f5" width="24" height="24" alt="#eff3f5"><img src="https://placehold.co/24x24/f4f7f9/f4f7f9" width="24" height="24" alt="#f4f7f9"><img src="https://placehold.co/24x24/e1eaef/e1eaef" width="24" height="24" alt="#e1eaef"><img src="https://placehold.co/24x24/c1d6e2/c1d6e2" width="24" height="24" alt="#c1d6e2"><img src="https://placehold.co/24x24/748895/748895" width="24" height="24" alt="#748895"><img src="https://placehold.co/24x24/566c7a/566c7a" width="24" height="24" alt="#566c7a"><img src="https://placehold.co/24x24/3b4f5c/3b4f5c" width="24" height="24" alt="#3b4f5c"><img src="https://placehold.co/24x24/25313b/25313b" width="24" height="24" alt="#25313b"><img src="https://placehold.co/24x24/11171b/11171b" width="24" height="24" alt="#11171b">&nbsp;&nbsp;<img src="https://placehold.co/24x24/ee7a1f/ee7a1f" width="24" height="24" alt="#ee7a1f"><img src="https://placehold.co/24x24/88323e/88323e" width="24" height="24" alt="#88323e"><img src="https://placehold.co/24x24/7a6716/7a6716" width="24" height="24" alt="#7a6716"><img src="https://placehold.co/24x24/3d763e/3d763e" width="24" height="24" alt="#3d763e"><img src="https://placehold.co/24x24/186f7f/186f7f" width="24" height="24" alt="#186f7f"><img src="https://placehold.co/24x24/2a5785/2a5785" width="24" height="24" alt="#2a5785"><img src="https://placehold.co/24x24/7b3d6f/7b3d6f" width="24" height="24" alt="#7b3d6f"><img src="https://placehold.co/24x24/6c3d0d/6c3d0d" width="24" height="24" alt="#6c3d0d">
+<img src="https://placehold.co/24x24/dfe1e3/dfe1e3" width="24" height="24" alt="#dfe1e3"><img src="https://placehold.co/24x24/e6e8e8/e6e8e8" width="24" height="24" alt="#e6e8e8"><img src="https://placehold.co/24x24/eeeeef/eeeeef" width="24" height="24" alt="#eeeeef"><img src="https://placehold.co/24x24/dbdedf/dbdedf" width="24" height="24" alt="#dbdedf"><img src="https://placehold.co/24x24/c4cace/c4cace" width="24" height="24" alt="#c4cace"><img src="https://placehold.co/24x24/6c818f/6c818f" width="24" height="24" alt="#6c818f"><img src="https://placehold.co/24x24/4f6574/4f6574" width="24" height="24" alt="#4f6574"><img src="https://placehold.co/24x24/364855/364855" width="24" height="24" alt="#364855"><img src="https://placehold.co/24x24/1f2931/1f2931" width="24" height="24" alt="#1f2931"><img src="https://placehold.co/24x24/11171b/11171b" width="24" height="24" alt="#11171b">&nbsp;&nbsp;<img src="https://placehold.co/24x24/ee7a1f/ee7a1f" width="24" height="24" alt="#ee7a1f"><img src="https://placehold.co/24x24/8d3826/8d3826" width="24" height="24" alt="#8d3826"><img src="https://placehold.co/24x24/766014/766014" width="24" height="24" alt="#766014"><img src="https://placehold.co/24x24/39713a/39713a" width="24" height="24" alt="#39713a"><img src="https://placehold.co/24x24/176a7e/176a7e" width="24" height="24" alt="#176a7e"><img src="https://placehold.co/24x24/3f4880/3f4880" width="24" height="24" alt="#3f4880"><img src="https://placehold.co/24x24/813b67/813b67" width="24" height="24" alt="#813b67"><img src="https://placehold.co/24x24/67320a/67320a" width="24" height="24" alt="#67320a">
 
 **Neutrals**
 
 | | Name | Hex | RGB | OKLCH | Role |
 |:-:|---|---|---|---|---|
-| <img src="https://placehold.co/20x20/ebeff2/ebeff2" width="20" height="20" alt="#ebeff2"> | Shell | `#ebeff2` | `rgb(235, 239, 242)` | `oklch(95.0% 0.006 239.8)` | Outer frame |
-| <img src="https://placehold.co/20x20/eff3f5/eff3f5" width="20" height="20" alt="#eff3f5"> | Rail | `#eff3f5` | `rgb(239, 243, 245)` | `oklch(96.2% 0.005 228.8)` | Docked panels |
-| <img src="https://placehold.co/20x20/f4f7f9/f4f7f9" width="20" height="20" alt="#f4f7f9"> | Canvas | `#f4f7f9` | `rgb(244, 247, 249)` | `oklch(97.4% 0.004 236.5)` | Content |
-| <img src="https://placehold.co/20x20/e1eaef/e1eaef" width="20" height="20" alt="#e1eaef"> | Raised | `#e1eaef` | `rgb(225, 234, 239)` | `oklch(93.2% 0.012 231.7)` | Floating layers |
-| <img src="https://placehold.co/20x20/c1d6e2/c1d6e2" width="20" height="20" alt="#c1d6e2"> | Edge | `#c1d6e2` | `rgb(193, 214, 226)` | `oklch(86.4% 0.028 232.7)` | Dividers |
-| <img src="https://placehold.co/20x20/748895/748895" width="20" height="20" alt="#748895"> | Control | `#748895` | `rgb(116, 136, 149)` | `oklch(61.5% 0.030 236.5)` | Control boundaries |
-| <img src="https://placehold.co/20x20/566c7a/566c7a" width="20" height="20" alt="#566c7a"> | Faint | `#566c7a` | `rgb(86, 108, 122)` | `oklch(51.9% 0.034 236.2)` | Tertiary text |
-| <img src="https://placehold.co/20x20/3b4f5c/3b4f5c" width="20" height="20" alt="#3b4f5c"> | Subtle | `#3b4f5c` | `rgb(59, 79, 92)` | `oklch(41.6% 0.033 237.1)` | Secondary text, icons |
-| <img src="https://placehold.co/20x20/25313b/25313b" width="20" height="20" alt="#25313b"> | Body | `#25313b` | `rgb(37, 49, 59)` | `oklch(30.7% 0.024 243.8)` | Default text |
+| <img src="https://placehold.co/20x20/dfe1e3/dfe1e3" width="20" height="20" alt="#dfe1e3"> | Shell | `#dfe1e3` | `rgb(223, 225, 227)` | `oklch(90.9% 0.003 247.9)` | Outer frame |
+| <img src="https://placehold.co/20x20/e6e8e8/e6e8e8" width="20" height="20" alt="#e6e8e8"> | Rail | `#e6e8e8` | `rgb(230, 232, 232)` | `oklch(92.9% 0.002 197.1)` | Docked panels |
+| <img src="https://placehold.co/20x20/eeeeef/eeeeef" width="20" height="20" alt="#eeeeef"> | Canvas | `#eeeeef` | `rgb(238, 238, 239)` | `oklch(94.9% 0.001 0)` | Content |
+| <img src="https://placehold.co/20x20/dbdedf/dbdedf" width="20" height="20" alt="#dbdedf"> | Raised | `#dbdedf` | `rgb(219, 222, 223)` | `oklch(89.9% 0.004 219.5)` | Floating layers |
+| <img src="https://placehold.co/20x20/c4cace/c4cace" width="20" height="20" alt="#c4cace"> | Edge | `#c4cace` | `rgb(196, 202, 206)` | `oklch(83.6% 0.009 236.6)` | Dividers |
+| <img src="https://placehold.co/20x20/6c818f/6c818f" width="20" height="20" alt="#6c818f"> | Control | `#6c818f` | `rgb(108, 129, 143)` | `oklch(59.1% 0.033 237.3)` | Control boundaries |
+| <img src="https://placehold.co/20x20/4f6574/4f6574" width="20" height="20" alt="#4f6574"> | Faint | `#4f6574` | `rgb(79, 101, 116)` | `oklch(49.5% 0.036 238.2)` | Tertiary text |
+| <img src="https://placehold.co/20x20/364855/364855" width="20" height="20" alt="#364855"> | Subtle | `#364855` | `rgb(54, 72, 85)` | `oklch(39.2% 0.032 240.0)` | Secondary text, icons |
+| <img src="https://placehold.co/20x20/1f2931/1f2931" width="20" height="20" alt="#1f2931"> | Body | `#1f2931` | `rgb(31, 41, 49)` | `oklch(27.5% 0.020 242.6)` | Default text |
 | <img src="https://placehold.co/20x20/11171b/11171b" width="20" height="20" alt="#11171b"> | Ink | `#11171b` | `rgb(17, 23, 27)` | `oklch(20.0% 0.012 237.4)` | Titles, focus |
 
 **Colors**
@@ -133,13 +133,13 @@ Each accent comes with derived variants for text, pressed and focus states, all 
 | | Name | Hex | RGB | OKLCH | Meaning |
 |:-:|---|---|---|---|---|
 | <img src="https://placehold.co/20x20/ee7a1f/ee7a1f" width="20" height="20" alt="#ee7a1f"> | Afterglow | `#ee7a1f` | `rgb(238, 122, 31)` | `oklch(70.0% 0.170 51.9)` | Default accent |
-| <img src="https://placehold.co/20x20/88323e/88323e" width="20" height="20" alt="#88323e"> | Coral | `#88323e` | `rgb(136, 50, 62)` | `oklch(44.3% 0.118 14.9)` | Error, removed |
-| <img src="https://placehold.co/20x20/7a6716/7a6716" width="20" height="20" alt="#7a6716"> | Gold | `#7a6716` | `rgb(122, 103, 22)` | `oklch(51.8% 0.098 94.9)` | Warning, modified |
-| <img src="https://placehold.co/20x20/3d763e/3d763e" width="20" height="20" alt="#3d763e"> | Grove | `#3d763e` | `rgb(61, 118, 62)` | `oklch(51.2% 0.105 144.2)` | Success, added |
-| <img src="https://placehold.co/20x20/186f7f/186f7f" width="20" height="20" alt="#186f7f"> | Sea Salt | `#186f7f` | `rgb(24, 111, 127)` | `oklch(50.0% 0.081 213.4)` | Renamed, auxiliary |
-| <img src="https://placehold.co/20x20/2a5785/2a5785" width="20" height="20" alt="#2a5785"> | Sky | `#2a5785` | `rgb(42, 87, 133)` | `oklch(44.8% 0.091 251.0)` | Information |
-| <img src="https://placehold.co/20x20/7b3d6f/7b3d6f" width="20" height="20" alt="#7b3d6f"> | Orchid | `#7b3d6f` | `rgb(123, 61, 111)` | `oklch(45.7% 0.109 335.0)` | Conflict |
-| <img src="https://placehold.co/20x20/6c3d0d/6c3d0d" width="20" height="20" alt="#6c3d0d"> | Ember | `#6c3d0d` | `rgb(108, 61, 13)` | `oklch(40.9% 0.088 60.2)` | Parameters |
+| <img src="https://placehold.co/20x20/8d3826/8d3826" width="20" height="20" alt="#8d3826"> | Coral | `#8d3826` | `rgb(141, 56, 38)` | `oklch(45.5% 0.120 33.6)` | Error, removed |
+| <img src="https://placehold.co/20x20/766014/766014" width="20" height="20" alt="#766014"> | Gold | `#766014` | `rgb(118, 96, 20)` | `oklch(49.7% 0.094 91.5)` | Warning, modified |
+| <img src="https://placehold.co/20x20/39713a/39713a" width="20" height="20" alt="#39713a"> | Grove | `#39713a` | `rgb(57, 113, 58)` | `oklch(49.6% 0.104 144.2)` | Success, added |
+| <img src="https://placehold.co/20x20/176a7e/176a7e" width="20" height="20" alt="#176a7e"> | Sea Salt | `#176a7e` | `rgb(23, 106, 126)` | `oklch(48.7% 0.081 218.5)` | Renamed, auxiliary |
+| <img src="https://placehold.co/20x20/3f4880/3f4880" width="20" height="20" alt="#3f4880"> | Sky | `#3f4880` | `rgb(63, 72, 128)` | `oklch(42.2% 0.093 274.8)` | Information |
+| <img src="https://placehold.co/20x20/813b67/813b67" width="20" height="20" alt="#813b67"> | Orchid | `#813b67` | `rgb(129, 59, 103)` | `oklch(45.9% 0.111 343.8)` | Conflict |
+| <img src="https://placehold.co/20x20/67320a/67320a" width="20" height="20" alt="#67320a"> | Ember | `#67320a` | `rgb(103, 50, 10)` | `oklch(38.1% 0.090 51.8)` | Parameters |
 
 </details>
 
@@ -153,14 +153,14 @@ Machine-readable values for both flavors, all accents, background states and the
 | Faintest text on any surface | 4.5:1 | 4.5:1 |
 | Code colors on every code surface | 7.0:1 | 4.5:1 |
 | Control boundaries and focus | 3.0:1 | 3.0:1 |
-| Smallest code-color difference, color-vision deficiency | ΔE 0.054 | ΔE 0.041 |
+| Smallest code-color difference, color-vision deficiency | ΔE 0.054 | ΔE 0.040 |
 | Pure black or white | none | none |
 
 Contrast is WCAG 2.x, measured on final sRGB values. The color-vision figure is the worst case across simulated deuteranopia, protanopia and tritanopia. Full tables are in the [design system](docs/design-system.md#13-guarantees).
 
 ## How it was built
 
-All math is done in OKLCH and checked in sRGB. The neutrals sit at the exact complementary hue of Afterglow. Surface lightness follows a geometric progression, and text levels are solved by contrast target. The six terminal hues are anchored to the ANSI standard, placed at each hue's natural lightness and lit by one shared warm chroma law. Those six and Ember were then optimized together for distinctness under four vision models. The mapping of colors to code roles came from 207,361 tokens of real code and the measured conventions of ten widely used themes.
+All math is done in OKLCH and checked in sRGB. The neutrals sit at the exact complementary hue of Afterglow. Dusk's surface lightness follows a geometric progression; Dawn keeps the same perceptual distances at the light end of the curve. Text levels are solved by contrast target. The six terminal hues are anchored to the ANSI standard, placed at each hue's natural lightness and lit by one shared warm chroma law. Those six and Ember were then optimized together for distinctness under four vision models. The mapping of colors to code roles came from 207,361 tokens of real code and the measured conventions of ten widely used dark themes, then checked against ten light themes.
 
 The full derivation, with every formula and parameter, is in [construction.md](docs/construction.md).
 

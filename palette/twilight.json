@@ -1,6 +1,6 @@
 {
   "name": "Twilight",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "flavors": {
     "dusk": {
       "neutrals": {
@@ -114,112 +114,112 @@
     },
     "dawn": {
       "neutrals": {
-        "shell": "#ebeff2",
-        "rail": "#eff3f5",
-        "canvas": "#f4f7f9",
-        "raised": "#e1eaef",
-        "edge": "#c1d6e2",
-        "control": "#748895",
-        "faint": "#566c7a",
-        "subtle": "#3b4f5c",
-        "body": "#25313b",
+        "shell": "#dfe1e3",
+        "rail": "#e6e8e8",
+        "canvas": "#eeeeef",
+        "raised": "#dbdedf",
+        "edge": "#c4cace",
+        "control": "#6c818f",
+        "faint": "#4f6574",
+        "subtle": "#364855",
+        "body": "#1f2931",
         "ink": "#11171b"
       },
       "colors": {
         "afterglow": "#ee7a1f",
-        "coral": "#88323e",
-        "gold": "#7a6716",
-        "grove": "#3d763e",
-        "sea-salt": "#186f7f",
-        "sky": "#2a5785",
-        "orchid": "#7b3d6f",
-        "ember": "#6c3d0d"
+        "coral": "#8d3826",
+        "gold": "#766014",
+        "grove": "#39713a",
+        "sea-salt": "#176a7e",
+        "sky": "#3f4880",
+        "orchid": "#813b67",
+        "ember": "#67320a"
       },
       "accents": {
         "afterglow": {
           "accent": "#ee7a1f",
-          "accent-text": "#a55212",
+          "accent-text": "#9a4d10",
           "accent-pressed": "#c66417",
-          "accent-focus": "#cf6a1a",
+          "accent-focus": "#c46317",
           "on-accent": "#11171b"
         },
         "coral": {
-          "accent": "#88323e",
-          "accent-text": "#88323e",
-          "accent-pressed": "#5f2029",
-          "accent-focus": "#88323e",
-          "on-accent": "#f4f7f9"
+          "accent": "#8d3826",
+          "accent-text": "#8d3826",
+          "accent-pressed": "#642518",
+          "accent-focus": "#8d3826",
+          "on-accent": "#eeeeef"
         },
         "gold": {
-          "accent": "#7a6716",
-          "accent-text": "#7a6716",
-          "accent-pressed": "#5a4b0d",
-          "accent-focus": "#7a6716",
-          "on-accent": "#f4f7f9"
+          "accent": "#766014",
+          "accent-text": "#756014",
+          "accent-pressed": "#56450c",
+          "accent-focus": "#766014",
+          "on-accent": "#eeeeef"
         },
         "grove": {
-          "accent": "#3d763e",
-          "accent-text": "#3d753e",
-          "accent-pressed": "#2b572c",
-          "accent-focus": "#3d763e",
-          "on-accent": "#f4f7f9"
+          "accent": "#39713a",
+          "accent-text": "#376e38",
+          "accent-pressed": "#285228",
+          "accent-focus": "#39713a",
+          "on-accent": "#eeeeef"
         },
         "sea-salt": {
-          "accent": "#186f7f",
-          "accent-text": "#186f7f",
-          "accent-pressed": "#0f515d",
-          "accent-focus": "#186f7f",
-          "on-accent": "#f4f7f9"
+          "accent": "#176a7e",
+          "accent-text": "#176a7e",
+          "accent-pressed": "#0e4c5b",
+          "accent-focus": "#176a7e",
+          "on-accent": "#eeeeef"
         },
         "sky": {
-          "accent": "#2a5785",
-          "accent-text": "#2a5785",
-          "accent-pressed": "#1b3c5d",
-          "accent-focus": "#2a5785",
-          "on-accent": "#f4f7f9"
+          "accent": "#3f4880",
+          "accent-text": "#3f4880",
+          "accent-pressed": "#292f57",
+          "accent-focus": "#3f4880",
+          "on-accent": "#eeeeef"
         },
         "orchid": {
-          "accent": "#7b3d6f",
-          "accent-text": "#7b3d6f",
-          "accent-pressed": "#57294e",
-          "accent-focus": "#7b3d6f",
-          "on-accent": "#f4f7f9"
+          "accent": "#813b67",
+          "accent-text": "#813b67",
+          "accent-pressed": "#5b2848",
+          "accent-focus": "#813b67",
+          "on-accent": "#eeeeef"
         },
         "ember": {
-          "accent": "#6c3d0d",
-          "accent-text": "#6c3d0d",
-          "accent-pressed": "#482706",
-          "accent-focus": "#6c3d0d",
-          "on-accent": "#f4f7f9"
+          "accent": "#67320a",
+          "accent-text": "#67320a",
+          "accent-pressed": "#421e04",
+          "accent-focus": "#67320a",
+          "on-accent": "#eeeeef"
         }
       },
       "states": {
-        "selection": "#f0e7e1",
-        "selection-inactive": "#f2e8e3",
-        "find-match": "#f0e9cb",
-        "find-match-other": "#f6eed1",
-        "word-highlight": "#dceef3",
-        "word-highlight-write": "#daecf0",
-        "diff-inserted": "#e6ffe7",
-        "diff-removed": "#f2e7e8"
+        "selection": "#eedace",
+        "selection-inactive": "#f5e0d4",
+        "find-match": "#eeddaa",
+        "find-match-other": "#faeec9",
+        "word-highlight": "#ceeef8",
+        "word-highlight-write": "#c5e4ee",
+        "diff-inserted": "#e0f6dd",
+        "diff-removed": "#f4dedb"
       },
       "ansi": [
-        "#25313b",
-        "#88323e",
-        "#3d763e",
-        "#7a6716",
-        "#2a5785",
-        "#7b3d6f",
-        "#186f7f",
-        "#c1d6e2",
-        "#566c7a",
-        "#6e1929",
-        "#1e5821",
-        "#584a0d",
-        "#11406c",
-        "#612557",
-        "#0f515d",
-        "#e1eaef"
+        "#1f2931",
+        "#8d3826",
+        "#39713a",
+        "#766014",
+        "#3f4880",
+        "#813b67",
+        "#176a7e",
+        "#c4cace",
+        "#4f6574",
+        "#721e0c",
+        "#1c551f",
+        "#56450c",
+        "#2d346a",
+        "#66234f",
+        "#0e4d5d",
+        "#dbdedf"
       ]
     }
   }
