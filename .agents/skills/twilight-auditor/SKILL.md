@@ -38,7 +38,9 @@ The scripts live in this skill's `scripts/` directory (`<skill>` is the director
 |---|---|
 | `scripts/validate.py` | Measures and cross-checks one snapshot; `--compare REF` adds regressions. Exit 1 on any failure. `--json` for the summary only. |
 | `scripts/construct.py` | Reference implementation of construction.md: a shared core plus one profile per flavor (`PROFILES`). Rebuilds both flavors exactly; `validate.py` imports it. Import it yourself to recompute a value by hand. |
-| `scripts/requirements.txt` | `coloraide==8.13`, pinned. |
+| `scripts/measure_beta.py` | Reproduces the measured β of both flavors (§6.2) from the embedded theme data. About 1 minute. |
+| `scripts/solve_seed.py` | Reproduces the solved Dawn seed (§2): the orange search and its selection rule. Long: about 70 s per candidate per core. |
+| `scripts/requirements.txt` | `coloraide==8.13` and `numpy` (for `measure_beta.py`), pinned. |
 
 Setup, once per machine (the venv is git-ignored):
 

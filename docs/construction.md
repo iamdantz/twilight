@@ -181,6 +181,8 @@ Light themes place their colors differently, so Dawn's β was measured on light 
 
 β = 0.19 (mean 0.186). One Light and Light Modern define no terminal colors. The same rule applied to the ten dark themes gives 0.29, which agrees with Dusk's 0.30.
 
+The ANSI colors of every theme used here, their sources and the regression ship with the auditor skill (`scripts/measure_beta.py`), which reproduces both values.
+
 L₀ is not chosen. It is **solved by bisection** so that the weakest of the six hues meets exactly the variant floor (7:1 Dusk, 4.5:1 Dawn) on the most demanding code surface (§6.6).
 
 ### 6.3 Chroma: one shared warm light
