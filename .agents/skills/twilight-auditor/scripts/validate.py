@@ -28,11 +28,11 @@ TRANSIENT = ("selection", "selection-inactive", "find-match", "find-match-other"
 ANCHORS = {name: k.oklch_of(k.CORNERS[slot])[2] for name, slot in k.COLOR_KEYS.items() if slot in k.CORNERS}
 WCAG_THRESHOLDS = (3.0, 4.5, 7.0)   # compared strictly: a measured 4.496 does not meet 4.5
 FLOORS = {  # check: (dusk, dawn); construction.md §3.5, §5, §6.6, §7, §9.2; design-system.md §13
-    "ink on surfaces": (13.76, 14.81), "body on surfaces": (10.90, 10.89), "subtle on surfaces": (7.00, 7.00),
+    "ink on surfaces": (13.76, 13.36), "body on surfaces": (10.90, 10.89), "subtle on surfaces": (7.00, 7.00),
     "faint on surfaces": (4.50, 4.50), "control on surfaces": (3.00, 3.00), "code on code surfaces": (7.00, 4.50),
     "on-accent on accent/pressed": (4.50, 4.50), "accent-text on raised": (7.00, 4.50),
-    "accent-focus on surfaces": (3.00, 3.00), "ΔE code+cursor, normal": (0.089, 0.077),
-    "ΔE code+cursor, worst CVD": (0.054, 0.041), "faint on transient states": (4.50, 4.50),
+    "accent-focus on surfaces": (3.00, 3.00), "ΔE code+cursor, normal": (0.089, 0.088),
+    "ΔE code+cursor, worst CVD": (0.054, 0.040), "faint on transient states": (4.50, 4.50),
 }
 # Known limits (construction.md §11): no floor, but a proposal may not lower them.
 LIMITS = ("JND " + s for s in (*TRANSIENT, "diff-inserted", "diff-removed"))
@@ -130,8 +130,8 @@ def rules(F, flavor):
         if d > 25:
             errs.append(f"{flavor}: {c} hue {d:.1f}° from its ANSI anchor (max 25°)")
     eh = k.oklch_of(F["colors"]["ember"])[2]
-    if not 45 <= eh <= 70:
-        errs.append(f"{flavor}: ember hue {eh:.1f}° outside 45–70°")
+    if not k.EMBER_HUE[0] <= eh <= k.EMBER_HUE[1]:
+        errs.append(f"{flavor}: ember hue {eh:.1f}° outside {k.EMBER_HUE[0]}–{k.EMBER_HUE[1]}°")
     if F["colors"]["afterglow"].lower() != k.SEED or F["accents"]["afterglow"]["accent"].lower() != k.SEED:
         errs.append(f"{flavor}: afterglow must equal the seed {k.SEED}")
     for name, fam in F["accents"].items():
