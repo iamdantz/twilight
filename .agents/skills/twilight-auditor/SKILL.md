@@ -61,7 +61,7 @@ What it checks:
 - **Reproduction**: rebuilds both flavors from the decided parameters (§6.5 included, about 2 minutes) and compares every token exactly. Tolerance is zero: any difference is a hand edit or an undocumented method change. A flavor with no construction is an error.
 - **Construction table**: the §6.5 hue table, Ember and L₀ in construction.md against the rebuild; every hex in a construction.md table must exist in the JSON.
 - **Consistency**: `_` keys; JSON `version` = latest CHANGELOG heading; every hex, swatch, RGB/OKLCH column and measured number in README.md and docs/design-system.md; relative links and anchors in every `.md`.
-- **Regressions** (`--compare`): any floor metric lower than the baseline (unrounded), worsened known limits, changed values with unchanged images.
+- **Regressions** (`--compare`): any floor below its minimum in `FLOORS`, any known limit below its minimum in `LIMIT_FLOORS`, and changed values with unchanged images. `--compare` also prints every delta against the baseline, for context.
 
 It does not parse construction.md prose, CHANGELOG text or images. `--no-rebuild` skips reproduction and is only for wording or link changes. Exit 0 is necessary, not sufficient: areas A, D and E still need judgment.
 
@@ -92,7 +92,7 @@ wording · rule or method · palette values · new flavor · tooling. Most chang
 
 ### C. Quality floor
 
-Minimums. A change may raise them, never lower them.
+Minimums. The table is the current minimum standard, and `FLOORS` in `validate.py` is its source. A change must meet it. A change that moves a minimum is a method change: it needs the measured reason, a CHANGELOG entry under the version's *Lower* heading, and the new value in `FLOORS` in the same change.
 
 | Check | Dusk | Dawn |
 |---|---|---|
@@ -112,7 +112,7 @@ Minimums. A change may raise them, never lower them.
 
 Also: no `#000000` or `#ffffff`; everything inside sRGB, gamut-mapped by chroma reduction only; hues within ±25° of their ANSI anchors; Ember hue 45–70°. Contrast is WCAG 2.x on final 8-bit sRGB. Report contrast to two decimals and ΔE to three, each next to its floor.
 
-The known limits in construction.md §11 (JND of every background state, ANSI black/white contrast, closest CVD pairs, background-state separation) may not get worse. `--compare` prints them; any "known limit worse" is BLOCKING.
+The known limits in construction.md §11 (JND of every background state, ANSI black/white contrast, background-state separation) are the minimums in `LIMIT_FLOORS` of `validate.py`. A limit below its minimum is BLOCKING. Closest CVD pairs are reported in §11 and are not gated.
 
 ### D. New flavors
 

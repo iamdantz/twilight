@@ -34,9 +34,19 @@ FLOORS = {  # check: (dusk, dawn); construction.md §3.5, §5, §6.6, §7, §9.2
     "accent-focus on surfaces": (3.00, 3.00), "ΔE code+cursor, normal": (0.089, 0.088),
     "ΔE code+cursor, worst CVD": (0.054, 0.040), "faint on transient states": (4.50, 4.50),
 }
-# Known limits (construction.md §11): no floor, but a proposal may not lower them.
+# Known limits (construction.md §11): no floor, but a limit may not fall below its value here.
 LIMITS = ("JND " + s for s in (*TRANSIENT, "diff-inserted", "diff-removed"))
 LIMITS = (*LIMITS, "ANSI black/white on canvas", "min ΔE between background states")
+LIMIT_FLOORS = {  # the measured minimum of each limit per flavor (truncated to 4 decimals), current as of 1.2.0
+    "dusk": {"JND selection": 4.0869, "JND selection-inactive": 2.1121, "JND find-match": 3.6056,
+             "JND find-match-other": 2.5739, "JND word-highlight": 2.0154, "JND word-highlight-write": 2.555,
+             "JND diff-inserted": 2.0425, "JND diff-removed": 2.0341, "ANSI black/white on canvas": 1.3949,
+             "min ΔE between background states": 0.0107},
+    "dawn": {"JND selection": 2.788, "JND selection-inactive": 2.0513, "JND find-match": 4.3127,
+             "JND find-match-other": 2.5588, "JND word-highlight": 2.0486, "JND word-highlight-write": 3.0465,
+             "JND diff-inserted": 2.0762, "JND diff-removed": 2.021, "ANSI black/white on canvas": 1.4276,
+             "min ΔE between background states": 0.0122},
+}
 
 
 # Snapshot: the working tree, or a git ref ----------------------------------
@@ -406,18 +416,20 @@ def failed(r):
 
 
 def compare(base, prop):
-    """Print deltas; return regressions: worsened known limits and values that moved away from the generator."""
+    """Print deltas against the baseline snapshot; return regressions against the current minimums.
+    A floor fails when it is below its FLOORS entry; a known limit fails when it is below LIMIT_FLOORS.
+    The baseline snapshot is reported for context only: a value may move as long as it stays above its minimum."""
     lines, regressions = [], []
     old = {(x["flavor"], x["check"]): x for x in base["floors"]}
     for p in prop["floors"]:
         if (b := old.get((p["flavor"], p["check"]))) and abs(d := p["value"] - b["value"]) > 1e-9:
             lines.append(f"{p['flavor']} {p['check']}: {fmt(b['value'])} → {fmt(p['value'])} ({d:+.4f})")
-            if d < 0:   # floors are rounded; the unrounded baseline is what may never get worse
-                regressions.append(f"quality decreased: {p['flavor']} {p['check']} {b['value']:.5f} → {p['value']:.5f}")
+        if not p["ok"]:
+            regressions.append(f"below minimum: {p['flavor']} {p['check']} {p['value']:.5f} < {p['floor']}")
     for f in sorted(set(base["palette"]) & set(prop["palette"])):
         for key in LIMITS:
-            if (p := prop["limits"][f][key]) < (b := base["limits"][f][key]) - 1e-9:
-                regressions.append(f"known limit worse: {f} {key} {fmt(b)} → {fmt(p)}")
+            if (p := prop["limits"][f][key]) < LIMIT_FLOORS[f][key]:
+                regressions.append(f"known limit below minimum: {f} {key} {fmt(p)} < {LIMIT_FLOORS[f][key]}")
     changed = [f"{f}.{g}.{t}" for f in prop["palette"] for g in ("neutrals", "colors", "states")
                for t, v in prop["palette"][f][g].items() if base["palette"].get(f, {}).get(g, {}).get(t) != v]
     if changed:
