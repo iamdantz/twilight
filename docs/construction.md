@@ -79,10 +79,14 @@ Each level is the lightness, on the neutral curve, that meets an exact contrast 
 | Control | 3.0:1 (non-text minimum) | 0.528 | 0.615 |
 | Faint | 4.5:1 (AA text) | 0.625 | 0.519 |
 | Subtle | 7.0:1 (AAA text) | 0.742 | 0.416 |
-| Body | 10.9:1 = 7² / 4.5 (next geometric step) | 0.874 | 0.307 |
+| Body | 10.89:1 = 7² / 4.5 (next geometric step; used unrounded) | 0.874 | 0.307 |
 | Ink | fixed at L 0.95 (Dusk) / 0.20 (Dawn): the brightest/darkest value allowed by the no-absolutes rule | 0.949 | 0.200 |
 
 Solving is done by bisection on L along the neutral curve, evaluating WCAG contrast on the final hex value.
+
+Each level is the lowest L on the neutral curve that reaches its target against Raised
+(50-step bisection; search ranges: Control 0.30–0.70, Faint 0.40–0.80, Subtle 0.50–0.90,
+Body 0.60–0.95). Rail (§3.4) is a 50-step bisection between Shell and Canvas.
 
 This replaced an earlier hand-tuned scale in which the faint level reached only 4.44:1 on raised surfaces and needed an exception rule. With solved levels, no exceptions exist.
 
@@ -98,10 +102,14 @@ Dawn is not an inverted Dusk; it is Dusk's *relations* applied to a light canvas
 | Surface separation | Shell, Raised and Edge are placed at **the same contrast ratios to Canvas as in Dusk**: 1.07, 1.13 and 1.39–1.40:1 |
 | Direction | All surfaces step *down* from Canvas. Raised is darker than Canvas, matching the light-mode convention of tinted floating panels |
 | Surface chroma | Same **relative chroma** as the Dusk mirror (C / Cmax at that L and h). Copying absolute chroma would turn near-white surfaces visibly blue |
-| Text levels | Same targets (4.5 / 7.0 / 10.9 / 3.0) against Raised |
+| Text levels | Same targets (4.5 / 7.0 / 10.89 (7²/4.5) / 3.0) against Raised |
 | Ink | L 0.20, Dusk's Canvas lightness: the darkest value allowed |
 
 Result: every solved target and every surface separation is identical in both variants to within ±0.01.
+
+Search ranges. Shell, Raised and Edge: 50-step bisection over L 0.50–0.999, darker than Canvas.
+Text levels: the highest L in 0.05–0.95 that reaches the target against Raised (50 steps).
+Rail: relative chroma is the mean of the Shell and Canvas mirrors; L is bisected over 0.95–0.974.
 
 ---
 
@@ -116,6 +124,10 @@ Any of the eight colors can be the accent. Each one gets the same five tokens, b
 | `accent-text` | The color itself if it reaches 7:1 (Dusk) or 4.5:1 (Dawn) on Raised; otherwise the nearest lightness that does |
 | `accent-pressed` | `accent` darkened by up to 0.10 L, stopping early if `on-accent` would fall below 4.5:1 |
 | `accent-focus` | The color itself if it reaches 3:1 on Shell, Rail, Canvas and Raised; otherwise the nearest lightness that does |
+
+`accent-text` and `accent-focus` are 50-step bisections of L toward 0.95 (Dusk) or 0.20 (Dawn),
+keeping hue and relative chroma. `accent-pressed` is L − 0.10. If that drops the on-accent label
+below 4.5:1, a 50-step bisection finds the 4.5:1 boundary instead.
 
 For Afterglow this gives, in Dusk: text `#fb914a` (7.03:1 on Raised), pressed `#c26217` (label 4.66:1), focus `#ee7a1f` (5.65:1 or more). In Dawn: text `#a55212` (4.51:1), pressed `#c66417` (label 4.51:1), focus `#cf6a1a` (3.00:1 or more). Every other accent passes the same checks; the full table is in [design-system.md](design-system.md#5-accents).
 
@@ -186,24 +198,53 @@ subject to |hᵢ − anchorᵢ| ≤ 25°,  Ember constraints above,
            ΔE_OK(Ember, Afterglow) ≥ 0.06 (normal vision)
 ```
 
-Simulations are full-severity dichromacy (ColorAide implementation). The search is coordinate descent with 10 random restarts and hue steps of 8°, 4°, 2° and 1°.
+Simulations are full-severity dichromacy (ColorAide implementation).
+
+The search is deterministic:
+
+- Pseudo-random generator: Python `random`, seed 1, shared by all restarts of one run.
+- 10 restarts. Restart 0 starts at the anchors; restarts 1–9 start at anchor + randint(−20, 20)°.
+  Every restart draws Ember's start as randint(45, 70)° and a lightness chosen from its range.
+- Ember range: hue 45–70°; L 0.60–0.90 (Dusk) or 0.35–0.65 (Dawn) in steps of 0.01.
+- Coordinate descent over 8 variables (six hues, Ember hue, Ember L) with steps 8, 4, 2, 1
+  (degrees for hues; hundredths for Ember L). A move is accepted only if the score improves by
+  more than 1e-6.
+- For every candidate, L₀ is re-solved (§6.2): 18-step bisection over 0.50–0.95 (Dusk, returns
+  the upper bound) or 0.20–0.70 (Dawn, returns the lower bound), so the weakest of the six hues
+  meets the floor.
+- Score = min ΔE over the seven colors × four visions − 2 · max(0, 0.06 − ΔE(Ember, Afterglow)).
+  A candidate whose Ember is below the floor scores −1.
 
 | Hue | Anchor | Dusk | Shift | Dawn | Shift |
 |---|---|---|---|---|---|
 | Coral | 29° | 33° | +4 | 15° | −14 |
 | Gold | 110° | 92° | −18 | 95° | −15 |
 | Grove | 142° | 139° | −3 | 144° | +2 |
-| Sea Salt | 195° | 196° | +1 | 213° | +18 |
+| Sea Salt | 195° | 197° | +2 | 213° | +18 |
 | Sky | 264° | 251° | −13 | 251° | −13 |
 | Orchid | 328° | 336° | +8 | 335° | +7 |
 | Ember | — | 62° | — | 60° | — |
 | L₀ | | 0.758 | | 0.480 | |
 
+Hues and L₀ are the optimizer's parameters. Hues measured from the published hex can differ by up
+to 1° after gamut mapping and 8-bit rounding.
+
 Gold moved toward a warmer, metallic yellow in both variants. That is the shift that separates it from Grove under red-green deficiencies.
 
 ### 6.6 Floors are validated on every code surface
 
-Code is drawn on Canvas *and* on diff backgrounds. The floor is therefore solved against the worst of those three surfaces, not Canvas alone. In Dawn this made the code colors slightly deeper. It also fixed a defect where the light diff-removed background was invisible (ΔE 0.014): there was no contrast headroom to tint it.
+Code is drawn on Canvas *and* on diff backgrounds, so the floor is solved against the worst of
+those surfaces. This needs two passes:
+
+1. Optimize (§6.5) against Canvas.
+2. Build diff-inserted and diff-removed (§9) with the pass-1 Grove and Coral hues.
+3. The worst code surface is the one with the highest luminance in Dusk, or the lowest in Dawn.
+4. Optimize again against that surface. These are the published hues.
+
+The diff backgrounds are not rebuilt after pass 2.
+
+In Dawn this made the code colors slightly deeper. It also fixed a defect where the light
+diff-removed background was invisible (ΔE 0.014): there was no contrast headroom to tint it.
 
 ### 6.7 Brights
 
@@ -310,11 +351,20 @@ Function and constant are the two roles where neither convention nor perception 
 - **Transient states** may move in lightness, but Faint text must keep 4.5:1 on them, which also keeps every higher text level above its guarantee.
 - **Persistent states (diff lines) are code surfaces.** The code floor is solved including them (§6.6).
 - **Lightness bounded** between Shell (Dusk) and 0.985 (Dawn); minimum chroma 0.010 so the hue is recognizable.
-- **If a target is unreachable** inside those bounds, the state takes the maximum visibility the bounds allow and keeps its hue. It never falls back to a neutral. Dusk `find-match` reaches 3.6 of 5 JND; Dawn `selection` reaches 2.2 of 4 JND. Both are documented as limits; `word-highlight-write` (Dusk 2.6, Dawn 2.3 of 3 JND) and Dawn `find-match` (3.1 of 5 JND) are bounded the same way.
+- **If a target is unreachable** inside those bounds, the state takes the maximum visibility the bounds allow and keeps its hue. It never falls back to a neutral. Dusk `find-match` reaches 3.6 of 5 JND; Dawn `selection` reaches 2.2 of 4 JND. Both are documented as limits; `word-highlight-write` (Dusk 2.6, Dawn 2.3 of 3 JND) and Dawn `find-match` (3.0 of 5 JND) are bounded the same way.
 
 ### 9.3 Search
 
-For each hue, chroma rises from 0.010 in steps of 0.001. For each chroma, lightness is scanned outward from Canvas in both directions until a bound is hit. The color that reaches the target with the smallest combined change in lightness and chroma wins.
+For each hue, chroma rises from 0.010 to 0.140 in steps of 0.001. For each chroma, lightness is
+scanned outward from Canvas in both directions in steps of 0.001. A scan stops at the lightness
+bounds (Dusk: L_Shell to 1.0; Dawn: 0 to 0.985), at the first out-of-gamut color, or at the first
+color on which Faint falls below 4.5:1.
+
+The first step in each direction that reaches the target is a candidate, with cost
+1000 · |ΔL| + 100 · C. The lowest cost wins. If no candidate reaches the target, the state takes
+the most visible color found (§9.2).
+
+The selection hue is the seed hue.
 
 ---
 
@@ -363,7 +413,7 @@ During validation, Dawn's original focus color (`#de711c`) passed 3:1 on Canvas 
 | Hue freedom | ±25° from ANSI anchors | Preserves meaning |
 | Ember hue range | 45°–70° | Keeps it in the accent family |
 | Floors | 7:1 Dusk, 4.5:1 Dawn | AAA / AA |
-| Text targets | 4.5, 7.0, 10.9; control 3.0 | WCAG thresholds plus one geometric step |
+| Text targets | 4.5, 7.0, 10.89 (7²/4.5); control 3.0 | WCAG thresholds plus one geometric step |
 | JND targets | §9.1 | Visibility per state |
 | Gamut margin | 0.92 · Cmax | Safety margin |
 | Bright step | one third toward Ink | Consistent in both variants |
@@ -379,6 +429,22 @@ During validation, Dawn's original focus color (`#de711c`) passed 3:1 on Canvas 
 
 Every hex value in [design-system.md](design-system.md): L₀, the six hue shifts, Ember's hue and lightness, all text and control lightnesses, all eight accent families, Rail, every state background, every bright, and all Dawn surfaces.
 
+### 12.1 Precision conventions
+
+These conventions are part of the method. A reimplementation that differs here will produce
+different hexes.
+
+- Color → hex: convert to sRGB, gamut-map by reducing chroma (ColorAide `fit('srgb')`), round to 8 bits.
+- Cmax(L, h): 32-step bisection on chroma. Where Cmax scales a chroma, L is rounded to 0.001
+  (and h to 0.1° in §5 and §6.7).
+- Cusp(h): the L of maximum Cmax on a 0.002 grid over L 0.300–0.998.
+- Anchors: the RGB cube corners in OKLCH, rounded to whole degrees (29, 110, 142, 195, 264, 328).
+  The cusp mean in §6.2 is taken over these six anchors.
+- Hue lightness: L = round(L₀ + 0.30 · (cusp(h) − mean), 3).
+- Neutral hue: the seed hue rounded to 52°, plus 180° = 232°.
+- Contrast: WCAG 2.x relative luminance. ΔE: Euclidean distance in OKLab.
+- Thresholds are compared on unrounded values.
+
 ---
 
 ## 13. Reproducing the palette
@@ -388,14 +454,15 @@ for variant in (Dusk, Dawn):
     surfaces  ← geometric(r=1.25) [Dusk] | mirror contrast ratios [Dawn]
     rail      ← half-step contrast between shell and canvas
     levels    ← bisect L on neutral curve until contrast(level, raised) = target
+    hues₁     ← optimize(§6.5) against canvas
+    diff bg   ← state(grove₁), state(coral₁) at 2 JND
+    hues      ← optimize(§6.5) against the worst of {canvas, diff bgs}
     accents   ← for each of the 8 colors, the five tokens of §5
-    diff bg   ← state(grove), state(coral) at 2 JND under the Faint bound
-    hues      ← argmax min-ΔE over 4 vision models, with
-                 L = L₀ + β(cusp − mean),  C = min(C₀(1+τcos(h−52°)), 0.92 Cmax),
-                 L₀ solved so min contrast over {canvas, diff bgs} = floor
     brights   ← L + (L_ink − L)/3
-    states    ← JND targets under transient / persistent bounds
+    states    ← JND targets under transient / persistent bounds (§9.3)
     validate  ← every pairing in §10
 ```
 
-Tools: any library implementing OKLab/OKLCH, sRGB gamut testing, WCAG contrast and dichromacy simulation. The reference implementation used Python with ColorAide.
+Reference implementation: `tools/construct.py` (Python, ColorAide 8.13). It rebuilds every token
+of both variants exactly; `tools/validate.py` checks this on every change.
+

@@ -290,18 +290,18 @@ Visibility is measured in JND, just-noticeable differences, where 1 JND is ΔE 0
 | <img src="https://placehold.co/16x16/1d1500/1d1500" width="16" height="16" alt="#1d1500"> | `find-match-other` | `#1d1500` | Gold | 2.6 JND | transient |
 | <img src="https://placehold.co/16x16/052222/052222" width="16" height="16" alt="#052222"> | `word-highlight` | `#052222` | Sea Salt | 2.0 JND | transient |
 | <img src="https://placehold.co/16x16/112526/112526" width="16" height="16" alt="#112526"> | `word-highlight-write` | `#112526` | Sea Salt | 2.6 JND | transient |
-| <img src="https://placehold.co/16x16/0d1a09/0d1a09" width="16" height="16" alt="#0d1a09"> | `diff-inserted` | `#0d1a09` | Grove | 2.1 JND | persistent |
-| <img src="https://placehold.co/16x16/22110e/22110e" width="16" height="16" alt="#22110e"> | `diff-removed` | `#22110e` | Coral | 2.1 JND | persistent |
+| <img src="https://placehold.co/16x16/0d1a09/0d1a09" width="16" height="16" alt="#0d1a09"> | `diff-inserted` | `#0d1a09` | Grove | 2.0 JND | persistent |
+| <img src="https://placehold.co/16x16/22110e/22110e" width="16" height="16" alt="#22110e"> | `diff-removed` | `#22110e` | Coral | 2.0 JND | persistent |
 
 ### Dawn
 
 | | Token | Hex | Hue from | Visibility | Kind |
 |:-:|---|---|---|---|---|
 | <img src="https://placehold.co/16x16/f0e7e1/f0e7e1" width="16" height="16" alt="#f0e7e1"> | `selection` | `#f0e7e1` | Afterglow | 2.2 JND | transient |
-| <img src="https://placehold.co/16x16/f2e8e3/f2e8e3" width="16" height="16" alt="#f2e8e3"> | `selection-inactive` | `#f2e8e3` | Afterglow | 2.1 JND | transient |
-| <img src="https://placehold.co/16x16/f0e9cb/f0e9cb" width="16" height="16" alt="#f0e9cb"> | `find-match` | `#f0e9cb` | Gold | 3.1 JND | transient |
+| <img src="https://placehold.co/16x16/f2e8e3/f2e8e3" width="16" height="16" alt="#f2e8e3"> | `selection-inactive` | `#f2e8e3` | Afterglow | 2.0 JND | transient |
+| <img src="https://placehold.co/16x16/f0e9cb/f0e9cb" width="16" height="16" alt="#f0e9cb"> | `find-match` | `#f0e9cb` | Gold | 3.0 JND | transient |
 | <img src="https://placehold.co/16x16/f6eed1/f6eed1" width="16" height="16" alt="#f6eed1"> | `find-match-other` | `#f6eed1` | Gold | 2.5 JND | transient |
-| <img src="https://placehold.co/16x16/dceef3/dceef3" width="16" height="16" alt="#dceef3"> | `word-highlight` | `#dceef3` | Sea Salt | 2.1 JND | transient |
+| <img src="https://placehold.co/16x16/dceef3/dceef3" width="16" height="16" alt="#dceef3"> | `word-highlight` | `#dceef3` | Sea Salt | 2.0 JND | transient |
 | <img src="https://placehold.co/16x16/daecf0/daecf0" width="16" height="16" alt="#daecf0"> | `word-highlight-write` | `#daecf0` | Sea Salt | 2.3 JND | transient |
 | <img src="https://placehold.co/16x16/e6ffe7/e6ffe7" width="16" height="16" alt="#e6ffe7"> | `diff-inserted` | `#e6ffe7` | Grove | 2.1 JND | persistent |
 | <img src="https://placehold.co/16x16/f2e7e8/f2e7e8" width="16" height="16" alt="#f2e7e8"> | `diff-removed` | `#f2e7e8` | Coral | 2.0 JND | persistent |
