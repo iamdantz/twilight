@@ -65,7 +65,7 @@ It does not rebuild Dawn (no generator for the §4 mirror), does not re-run §6.
 
 **Separate pre-existing from introduced.** A finding that also appears in the main run is pre-existing: list it under a "Pre-existing on main" note, do not count it against the change, and do not let it block. Only what the proposal introduces or worsens decides the verdict.
 
-**If the change touches this skill's scripts**, the validator itself is under audit. Also run the proposal's copy (`git archive <branch> | tar -x -C <scratch>/prop`, then run `<scratch>/prop/.claude/skills/twilight-auditor/scripts/validate.py` with this skill's venv) and check that no check, floor or tolerance was loosened. A weaker validator is a weaker guarantee.
+**If the change touches this skill's scripts**, the validator itself is under audit. Also run the proposal's copy (`git archive <branch> | tar -x -C <scratch>/prop`, then run `<scratch>/prop/.agents/skills/twilight-auditor/scripts/validate.py` with this skill's venv) and check that no check, floor or tolerance was loosened. A weaker validator is a weaker guarantee.
 
 ## 3. Classify the change
 

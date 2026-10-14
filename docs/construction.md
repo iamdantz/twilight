@@ -463,6 +463,6 @@ for variant in (Dusk, Dawn):
     validate  ← every pairing in §10
 ```
 
-Reference implementation: `tools/construct.py` (Python, ColorAide 8.13). It rebuilds every token
-of both variants exactly; `tools/validate.py` checks this on every change.
+The reference implementation ships with the `twilight-auditor` skill. It rebuilds every token
+of both variants exactly, and the skill checks this on every change.
 

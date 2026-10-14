@@ -12,6 +12,10 @@ Twilight is at the definition stage. The palette, the rules and the documents in
 
 Colors are not adjusted by eye. A proposal should name the rule it changes, or the parameter in [construction.md, section 12](docs/construction.md#12-parameters-decided-vs-derived), and show that every guarantee in [design-system.md, section 13](docs/design-system.md#13-guarantees) still holds afterwards.
 
+## Before opening a pull request
+
+Run the `twilight-auditor` skill on your branch and include its report. It must return APPROVED. Palette, rules, documents, version and changelog are audited together; what it checks is defined in [the skill](.agents/skills/twilight-auditor/SKILL.md).
+
 ## Building a theme for a tool
 
 Not accepted yet. When ports open, they will follow [Building a theme from this definition](docs/design-system.md#12-building-a-theme-from-this-definition) and use the naming *Twilight {Flavor} {Accent}*.

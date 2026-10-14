@@ -173,6 +173,8 @@ Twilight is defined independently of any application. To build a theme for a too
 ```
 .
 ├── README.md
+├── .agents/skills/
+│   └── twilight-auditor/    audit skill: floors, reproduction, consistency
 ├── assets/                  palette images
 ├── docs/
 │   ├── design-system.md     roles, rules and application

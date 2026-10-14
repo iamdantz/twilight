@@ -12,7 +12,7 @@
   conventions. The palette is unchanged.
 
 ### Added
-- scripts/construct.py (reference implementation) and scripts/validate.py (auditor checks) as Twilight Auditor Skill.
+- `twilight-auditor` skill: reference implementation of the construction method and the audit checks (floors, reproduction, document consistency).
 
 ## 1.1.0
 
