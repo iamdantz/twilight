@@ -6,10 +6,6 @@ One rule added before the first ports. No values changed.
 
 - Links in running text carry a non-color cue (underline or icon). No `accent-text` reaches 3:1 against Body, so color alone fails WCAG 2.2 SC 1.4.1.
 
-## 1.0.1
-
-- Tighter wording in the README, design system and construction documents. No values or rules changed.
-
 ## 1.0.0
 
 First public definition.

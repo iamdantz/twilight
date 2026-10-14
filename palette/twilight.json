@@ -1,6 +1,6 @@
 {
   "name": "Twilight",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "flavors": {
     "dusk": {
       "neutrals": {
@@ -31,112 +31,56 @@
           "accent-text": "#fb914a",
           "accent-pressed": "#c26217",
           "accent-focus": "#ee7a1f",
-          "on-accent": "#0a0e11",
-          "_check": {
-            "label": 6.86,
-            "pressedLabel": 4.66,
-            "text": 7.03,
-            "focus": 5.65,
-            "faintOnSel": 4.55
-          }
+          "on-accent": "#0a0e11"
         },
         "coral": {
           "accent": "#e78975",
           "accent-text": "#e99785",
           "accent-pressed": "#d75c43",
           "accent-focus": "#e78975",
-          "on-accent": "#0a0e11",
-          "_check": {
-            "label": 7.6,
-            "pressedLabel": 5.08,
-            "text": 7.01,
-            "focus": 6.25,
-            "faintOnSel": 5.18
-          }
+          "on-accent": "#0a0e11"
         },
         "gold": {
           "accent": "#d6b95c",
           "accent-text": "#d6b95c",
           "accent-pressed": "#b39a4c",
           "accent-focus": "#d6b95c",
-          "on-accent": "#0a0e11",
-          "_check": {
-            "label": 10.11,
-            "pressedLabel": 7.05,
-            "text": 8.32,
-            "focus": 8.32,
-            "faintOnSel": 4.5
-          }
+          "on-accent": "#0a0e11"
         },
         "grove": {
           "accent": "#99cd8a",
           "accent-text": "#99cd8a",
           "accent-pressed": "#7fab72",
           "accent-focus": "#99cd8a",
-          "on-accent": "#0a0e11",
-          "_check": {
-            "label": 10.57,
-            "pressedLabel": 7.35,
-            "text": 8.7,
-            "focus": 8.7,
-            "faintOnSel": 4.51
-          }
+          "on-accent": "#0a0e11"
         },
         "sea-salt": {
           "accent": "#6ed0d1",
           "accent-text": "#6ed0d1",
           "accent-pressed": "#5baeaf",
           "accent-focus": "#6ed0d1",
-          "on-accent": "#0a0e11",
-          "_check": {
-            "label": 10.71,
-            "pressedLabel": 7.49,
-            "text": 8.82,
-            "focus": 8.82,
-            "faintOnSel": 4.5
-          }
+          "on-accent": "#0a0e11"
         },
         "sky": {
           "accent": "#7babde",
           "accent-text": "#82b0e0",
           "accent-pressed": "#518cc9",
           "accent-focus": "#7babde",
-          "on-accent": "#0a0e11",
-          "_check": {
-            "label": 8.05,
-            "pressedLabel": 5.48,
-            "text": 7.02,
-            "focus": 6.63,
-            "faintOnSel": 4.5
-          }
+          "on-accent": "#0a0e11"
         },
         "orchid": {
           "accent": "#d58ec3",
           "accent-text": "#d898c7",
           "accent-pressed": "#bb6aa8",
           "accent-focus": "#d58ec3",
-          "on-accent": "#0a0e11",
-          "_check": {
-            "label": 7.83,
-            "pressedLabel": 5.3,
-            "text": 7.02,
-            "focus": 6.45,
-            "faintOnSel": 5.22
-          }
+          "on-accent": "#0a0e11"
         },
         "ember": {
           "accent": "#fcd1ad",
           "accent-text": "#fcd1ad",
           "accent-pressed": "#faa453",
           "accent-focus": "#fcd1ad",
-          "on-accent": "#0a0e11",
-          "_check": {
-            "label": 13.71,
-            "pressedLabel": 9.69,
-            "text": 11.29,
-            "focus": 11.29,
-            "faintOnSel": 4.51
-          }
+          "on-accent": "#0a0e11"
         }
       },
       "states": {
@@ -197,112 +141,56 @@
           "accent-text": "#a55212",
           "accent-pressed": "#c66417",
           "accent-focus": "#cf6a1a",
-          "on-accent": "#11171b",
-          "_check": {
-            "label": 6.4,
-            "pressedLabel": 4.51,
-            "text": 4.51,
-            "focus": 3.0,
-            "faintOnSel": 4.51
-          }
+          "on-accent": "#11171b"
         },
         "coral": {
           "accent": "#88323e",
           "accent-text": "#88323e",
           "accent-pressed": "#5f2029",
           "accent-focus": "#88323e",
-          "on-accent": "#f4f7f9",
-          "_check": {
-            "label": 7.59,
-            "pressedLabel": 11.31,
-            "text": 6.69,
-            "focus": 6.69,
-            "faintOnSel": 4.5
-          }
+          "on-accent": "#f4f7f9"
         },
         "gold": {
           "accent": "#7a6716",
           "accent-text": "#7a6716",
           "accent-pressed": "#5a4b0d",
           "accent-focus": "#7a6716",
-          "on-accent": "#f4f7f9",
-          "_check": {
-            "label": 5.16,
-            "pressedLabel": 7.98,
-            "text": 4.56,
-            "focus": 4.56,
-            "faintOnSel": 4.51
-          }
+          "on-accent": "#f4f7f9"
         },
         "grove": {
           "accent": "#3d763e",
           "accent-text": "#3d753e",
           "accent-pressed": "#2b572c",
           "accent-focus": "#3d763e",
-          "on-accent": "#f4f7f9",
-          "_check": {
-            "label": 5.06,
-            "pressedLabel": 7.8,
-            "text": 4.52,
-            "focus": 4.46,
-            "faintOnSel": 4.52
-          }
+          "on-accent": "#f4f7f9"
         },
         "sea-salt": {
           "accent": "#186f7f",
           "accent-text": "#186f7f",
           "accent-pressed": "#0f515d",
           "accent-focus": "#186f7f",
-          "on-accent": "#f4f7f9",
-          "_check": {
-            "label": 5.39,
-            "pressedLabel": 8.29,
-            "text": 4.76,
-            "focus": 4.76,
-            "faintOnSel": 4.51
-          }
+          "on-accent": "#f4f7f9"
         },
         "sky": {
           "accent": "#2a5785",
           "accent-text": "#2a5785",
           "accent-pressed": "#1b3c5d",
           "accent-focus": "#2a5785",
-          "on-accent": "#f4f7f9",
-          "_check": {
-            "label": 6.97,
-            "pressedLabel": 10.55,
-            "text": 6.15,
-            "focus": 6.15,
-            "faintOnSel": 4.5
-          }
+          "on-accent": "#f4f7f9"
         },
         "orchid": {
           "accent": "#7b3d6f",
           "accent-text": "#7b3d6f",
           "accent-pressed": "#57294e",
           "accent-focus": "#7b3d6f",
-          "on-accent": "#f4f7f9",
-          "_check": {
-            "label": 7.13,
-            "pressedLabel": 10.65,
-            "text": 6.29,
-            "focus": 6.29,
-            "faintOnSel": 4.51
-          }
+          "on-accent": "#f4f7f9"
         },
         "ember": {
           "accent": "#6c3d0d",
           "accent-text": "#6c3d0d",
           "accent-pressed": "#482706",
           "accent-focus": "#6c3d0d",
-          "on-accent": "#f4f7f9",
-          "_check": {
-            "label": 8.45,
-            "pressedLabel": 12.44,
-            "text": 7.45,
-            "focus": 7.45,
-            "faintOnSel": 4.51
-          }
+          "on-accent": "#f4f7f9"
         }
       },
       "states": {
