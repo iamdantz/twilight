@@ -113,7 +113,7 @@ def _state(canvas, shell, faint, hue, target):
     Ls = oklch_of(n["shell"])[0]
     best, most = None, (-1.0, None)
     C = 0.010
-    while C <= cmax(round(Lc, 6), round(hue % 360, 4)):                    # reading: chroma up to Cmax at Canvas L
+    while C <= cmax(round(Lc, 6), round(hue % 360, 4)):                    # reading: chroma up to Cmax at Canvas L (fitted to published Dusk)
         if best and C - Cc > best[0]:                                       # no larger chroma can cost less
             break
         for d in (1, -1):
@@ -212,7 +212,7 @@ def family(n, hx, sel):
 def bright(p, hx, ink):
     L, C, h = oklch_of(hx)
     L2 = L + (oklch_of(ink)[0] - L) / 3
-    return hexof(L2, min(C, p["gamut"] * cmax(round(L2, 6), round(h, 4))), h)   # reading: "capped to gamut" = the 0.92·Cmax margin
+    return hexof(L2, min(C, p["gamut"] * cmax(round(L2, 6), round(h, 4))), h)   # reading: "capped to gamut" = the 0.92·Cmax margin (fitted to published Dusk)
 
 
 def build(p, hues, ember):

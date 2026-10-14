@@ -29,7 +29,7 @@ How the values were derived is in [construction.md](construction.md). All values
 3. **Contrast is solved against the hardest case.** Each text level, control boundary and code color is solved against the most demanding surface it can appear on, so it holds on all of them.
 4. **The accent is a detail.** It marks focus, activity and the main action. It never fills large areas and never colors content.
 5. **No pure black or white.** The darkest value is L 0.16 and the lightest is L 0.975.
-6. **Identical structure in every flavor.** Every flavor shares every role and rule; values come from each flavor's decided parameters (construction §12, §14).
+6. **Identical structure in every flavor.** Every flavor shares every role, rule and surface ratio.
 
 ## 2. Palette
 
@@ -107,7 +107,7 @@ Separation between surfaces is deliberately low (1.04 to 1.13:1). Tone tells sur
 
 ## 4. Text and control levels
 
-Each level is solved against Raised, the hardest surface for text in both flavors.
+Each level is solved against Raised, the hardest surface for text in every flavor.
 
 | Level | Minimum on any surface | Use |
 |---|---|---|
@@ -416,12 +416,12 @@ If a tool cannot express a rule, such as a border on the current line, leave the
 
 | Guarantee | Dusk | Dawn | Nightfall |
 |---|---|---|---|
-| Ink on any surface | 13.76:1 | 14.81:1 | 13.68:1 |
+| Ink on any surface | 13.76:1 | 14.81:1 | 13.82:1 |
 | Body on any surface | 10.90:1 | 10.89:1 | 10.91:1 |
-| Subtle on any surface | 7.00:1 | 7.00:1 | 7.05:1 |
-| Faint on any surface | 4.50:1 | 4.51:1 | 4.50:1 |
-| Control boundary on any surface | 3.03:1 | 3.02:1 | 3.03:1 |
-| Accent focus on any surface, every accent | 5.65:1 | 3.00:1 | 6.24:1 |
+| Subtle on any surface | 7.00:1 | 7.00:1 | 7.04:1 |
+| Faint on any surface | 4.50:1 | 4.51:1 | 4.53:1 |
+| Control boundary on any surface | 3.03:1 | 3.02:1 | 3.01:1 |
+| Accent focus on any surface, every accent | 5.65:1 | 3.00:1 | 6.30:1 |
 | Code colors on every code surface | 7.04:1 | 4.50:1 | 7.00:1 |
 | Smallest code-color difference, normal vision | ΔE 0.089 | ΔE 0.077 | ΔE 0.066 |
 | Smallest code-color difference, color-vision deficiency | ΔE 0.054 | ΔE 0.041 | ΔE 0.022 |

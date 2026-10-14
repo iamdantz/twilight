@@ -336,15 +336,15 @@
     },
     "nightfall": {
       "neutrals": {
-        "shell": "#0b0d0f",
-        "rail": "#101214",
+        "shell": "#0c0e0f",
+        "rail": "#101314",
         "canvas": "#141619",
-        "raised": "#1e2326",
-        "edge": "#2c3338",
-        "control": "#626e75",
-        "faint": "#808a91",
-        "subtle": "#a7aeb1",
-        "body": "#d5d6d8",
+        "raised": "#1e2225",
+        "edge": "#2b3237",
+        "control": "#616d74",
+        "faint": "#7f8a90",
+        "subtle": "#a6adb0",
+        "body": "#d4d5d7",
         "ink": "#eeeeef"
       },
       "colors": {
@@ -363,27 +363,27 @@
           "accent-text": "#f9a36b",
           "accent-pressed": "#e57b29",
           "accent-focus": "#f9a36b",
-          "on-accent": "#0b0d0f",
+          "on-accent": "#0c0e0f",
           "_check": {
-            "label": 9.72,
-            "pressedLabel": 6.67,
-            "text": 7.92,
-            "focus": 7.92,
-            "faintOnSel": 4.51
+            "label": 9.66,
+            "pressedLabel": 6.63,
+            "text": 8.0,
+            "focus": 8.0,
+            "faintOnSel": 4.53
           }
         },
         "coral": {
           "accent": "#d79182",
-          "accent-text": "#db9e90",
+          "accent-text": "#db9d8f",
           "accent-pressed": "#c46a58",
           "accent-focus": "#d79182",
-          "on-accent": "#0b0d0f",
+          "on-accent": "#0c0e0f",
           "_check": {
-            "label": 7.66,
-            "pressedLabel": 5.15,
-            "text": 7.03,
-            "focus": 6.24,
-            "faintOnSel": 4.51
+            "label": 7.61,
+            "pressedLabel": 5.11,
+            "text": 7.04,
+            "focus": 6.3,
+            "faintOnSel": 4.53
           }
         },
         "gold": {
@@ -391,13 +391,13 @@
           "accent-text": "#ceb979",
           "accent-pressed": "#ac9a64",
           "accent-focus": "#ceb979",
-          "on-accent": "#0b0d0f",
+          "on-accent": "#0c0e0f",
           "_check": {
-            "label": 10.05,
-            "pressedLabel": 7.01,
-            "text": 8.19,
-            "focus": 8.19,
-            "faintOnSel": 4.51
+            "label": 9.99,
+            "pressedLabel": 6.97,
+            "text": 8.27,
+            "focus": 8.27,
+            "faintOnSel": 4.53
           }
         },
         "grove": {
@@ -405,13 +405,13 @@
           "accent-text": "#a2c897",
           "accent-pressed": "#87a77d",
           "accent-focus": "#a2c897",
-          "on-accent": "#0b0d0f",
+          "on-accent": "#0c0e0f",
           "_check": {
-            "label": 10.42,
-            "pressedLabel": 7.28,
-            "text": 8.5,
-            "focus": 8.5,
-            "faintOnSel": 4.51
+            "label": 10.36,
+            "pressedLabel": 7.24,
+            "text": 8.58,
+            "focus": 8.58,
+            "faintOnSel": 4.53
           }
         },
         "sea-salt": {
@@ -419,41 +419,41 @@
           "accent-text": "#88cbcb",
           "accent-pressed": "#71aaaa",
           "accent-focus": "#88cbcb",
-          "on-accent": "#0b0d0f",
+          "on-accent": "#0c0e0f",
           "_check": {
-            "label": 10.62,
-            "pressedLabel": 7.45,
-            "text": 8.65,
-            "focus": 8.65,
-            "faintOnSel": 4.51
+            "label": 10.55,
+            "pressedLabel": 7.4,
+            "text": 8.74,
+            "focus": 8.74,
+            "faintOnSel": 4.53
           }
         },
         "sky": {
           "accent": "#87aacf",
-          "accent-text": "#8fb0d2",
+          "accent-text": "#8eafd1",
           "accent-pressed": "#628cb6",
           "accent-focus": "#87aacf",
-          "on-accent": "#0b0d0f",
+          "on-accent": "#0c0e0f",
           "_check": {
-            "label": 8.05,
-            "pressedLabel": 5.51,
-            "text": 7.03,
-            "focus": 6.56,
-            "faintOnSel": 4.51
+            "label": 8.0,
+            "pressedLabel": 5.48,
+            "text": 7.02,
+            "focus": 6.62,
+            "faintOnSel": 4.53
           }
         },
         "orchid": {
           "accent": "#c995bb",
-          "accent-text": "#cd9fc0",
+          "accent-text": "#cd9dc0",
           "accent-pressed": "#ad739f",
           "accent-focus": "#c995bb",
-          "on-accent": "#0b0d0f",
+          "on-accent": "#0c0e0f",
           "_check": {
-            "label": 7.88,
-            "pressedLabel": 5.31,
-            "text": 7.04,
-            "focus": 6.42,
-            "faintOnSel": 4.51
+            "label": 7.83,
+            "pressedLabel": 5.28,
+            "text": 7.0,
+            "focus": 6.49,
+            "faintOnSel": 4.53
           }
         },
         "ember": {
@@ -461,36 +461,36 @@
           "accent-text": "#fcd1ad",
           "accent-pressed": "#faa453",
           "accent-focus": "#fcd1ad",
-          "on-accent": "#0b0d0f",
+          "on-accent": "#0c0e0f",
           "_check": {
-            "label": 13.78,
-            "pressedLabel": 9.73,
-            "text": 11.23,
-            "focus": 11.23,
-            "faintOnSel": 4.51
+            "label": 13.69,
+            "pressedLabel": 9.67,
+            "text": 11.34,
+            "focus": 11.34,
+            "faintOnSel": 4.53
           }
         }
       },
       "states": {
-        "selection": "#351c0a",
+        "selection": "#351b09",
         "selection-inactive": "#211106",
         "find-match": "#292109",
         "find-match-other": "#211902",
         "word-highlight": "#0a2121",
-        "word-highlight-write": "#0b2627",
+        "word-highlight-write": "#0a2626",
         "diff-inserted": "#0e1b0a",
         "diff-removed": "#230f0b"
       },
       "ansi": [
-        "#2c3338",
+        "#2b3237",
         "#d79182",
         "#a2c897",
         "#ceb979",
         "#87aacf",
         "#c995bb",
         "#88cbcb",
-        "#a7aeb1",
-        "#808a91",
+        "#a6adb0",
+        "#7f8a90",
         "#f0a999",
         "#b2d9a7",
         "#dfca8a",

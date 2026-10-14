@@ -1,4 +1,4 @@
-"""Nightfall: Twilight's construction with four decided parameters fitted from the thesis conversion of Dusk
+"""Nightfall: Twilight's construction with three decided parameters fitted from the thesis conversion of Dusk
 (thesis repo commit aa39cf0, demo/twilight.js → variants.thesis.roles). Run: tools/.venv/bin/python tools/nightfall.py"""
 import json
 import math
@@ -22,11 +22,12 @@ def fit():
     Lc = k.oklch_of(THESIS["canvas"])[0]
     steps = {"shell": -1, "raised": 1, "edge": 2}                                           # §3.3 geometric, anchored at Canvas
     lnr = sum(s * math.log(k.oklch_of(THESIS[t])[0] / Lc) for t, s in steps.items()) / sum(s * s for s in steps.values())
-    return dict(amp=amp, drift=drift, r=math.exp(lnr))
+    return dict(amp=amp, drift=drift, r=math.exp(lnr))                                       # r: reported, not used (principle 6)
 
 
-# Rounded to the precision of Dusk's own decided parameters (0.035, 18°, 1.25).
-NIGHTFALL = dict(k.DUSK, seed="#f9a36b", amp=0.018, drift=8.0, r=1.26)
+# Three decided parameters, rounded to the precision of Dusk's own (0.035, 18°). r is inherited from Dusk (1.25):
+# the fitted r is reported, not used, because principle 6 requires every flavor to share the surface ratio.
+NIGHTFALL = dict(k.DUSK, seed="#f9a36b", amp=0.018, drift=8.0)
 
 
 def main():

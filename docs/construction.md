@@ -404,7 +404,7 @@ Tools: any library implementing OKLab/OKLCH, sRGB gamut testing, WCAG contrast a
 
 ## 14. Nightfall
 
-Nightfall re-runs this construction for a dark flavor with four decided parameters changed; every rule and every other parameter is Dusk's.
+Nightfall re-runs this construction for a dark flavor with three decided parameters changed; every rule and every other parameter, including the surface ratio, is Dusk's.
 
 ### 14.1 Decided parameters
 
@@ -413,9 +413,9 @@ Nightfall re-runs this construction for a dark flavor with four decided paramete
 | Afterglow seed | `#ee7a1f` | `#f9a36b` | Thesis role `accent_primary` |
 | Neutral chroma amplitude A | 0.035 | 0.018 | Fit, §14.2 (raw 0.0182) |
 | Neutral hue drift D | 18° | 8° | Fit, §14.2 (raw 8.419) |
-| Surface ratio r | 1.25 | 1.26 | Fit, §14.2 (raw 1.2639) |
+| Surface ratio r | 1.25 | 1.25 | Inherited from Dusk (fitted 1.2639, not used) |
 
-The neutral hue follows the seed (+180°), as in §12.
+The neutral hue follows the seed (+180°), as in §12. The thesis fit gives r = 1.2639, but Nightfall uses Dusk's 1.25: design-system principle 6 requires every flavor to share the surface ratio, and Twilight wins over thesis-derived values. `fit()` still reports r, labelled "reported, not used (principle 6)".
 
 ### 14.2 Fit method
 
@@ -435,8 +435,8 @@ The thesis conversion of Dusk (thesis repo commit `aa39cf0`, `demo/twilight.js`,
 | Seed | `accent_primary` | `#F9A36B` |
 
 - **A and D.** Least squares over the nine neutrals in OKLCH: C = A·sin²(πL), and h = h_n + D·(1 − L)² with D ≥ 0.
-- **r.** Log-least-squares on Shell, Raised and Edge, anchored at Canvas (§3.3 geometric steps −1, +1, +2).
-- **Rounding.** The raw values (A 0.0182, D 8.419, r 1.2639) are rounded to the precision of Dusk's own parameters: 0.018, 8°, 1.26.
+- **r (reported, not used).** Log-least-squares on Shell, Raised and Edge, anchored at Canvas (§3.3 geometric steps −1, +1, +2). Raw 1.2639.
+- **Rounding.** The raw values (A 0.0182, D 8.419) are rounded to the precision of Dusk's own parameters: 0.018, 8°.
 
 Print them with `fit()` in `tools/nightfall.py`.
 
@@ -470,7 +470,7 @@ Lower code chroma (C₀ = C_seed/φ with a softer seed) brings the code colors c
 | Min ΔE_OK, six code colors plus cursor, color-vision deficiency (design-system §13) | 0.054 | 0.022 |
 | Min ΔE_OK, same set, normal vision (§13) | 0.089 | 0.066 |
 
-The two color-vision rows use different color sets. The second includes Afterglow as the cursor, and Nightfall's Afterglow is close to Ember. Nightfall is less distinguishable than Dusk on every one of them.
+The two color-vision rows use different color sets. The second includes Afterglow as the cursor. Its minimum is Gold against the Afterglow cursor under deuteranopia (ΔE 0.022); Afterglow against Ember is at least 0.108 in every vision. Without the cursor the six code colors reach 0.039. Nightfall is less distinguishable than Dusk on every one of them.
 
 ### 14.7 Reproducing
 

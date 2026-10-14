@@ -26,7 +26,7 @@
 
 <br>
 
-Twilight is a color theme specification: two flavors, ten neutrals, eight colors and the rules that connect them. None of the colors were picked by eye. Two were chosen as seeds; every other value was calculated, and every pairing was checked for contrast and for color-vision deficiency.
+Twilight is a color theme specification: three flavors, ten neutrals, eight colors and the rules that connect them. None of the colors were picked by eye. Two were chosen as seeds; every other value was calculated, and every pairing was checked for contrast and for color-vision deficiency.
 
 ## Why
 
@@ -47,7 +47,7 @@ I wanted my own theme but I do not trust my eye for color. So instead of choosin
 |-------------------------------------------------------------------------------------------|----------|---------------------------------------------------------------------------------------------|
 | <img src="https://placehold.co/20x20/11171b/11171b" width="20" height="20" alt="#11171b"> | **Dusk** | Dark. Code colors at 7:1 or higher (WCAG AAA).                                              |
 | <img src="https://placehold.co/20x20/f4f7f9/f4f7f9" width="20" height="20" alt="#f4f7f9"> | **Dawn** | Light. Same structure and surface ratios as Dusk; code colors at 4.5:1 or higher (WCAG AA). |
-| <img src="https://placehold.co/20x20/141619/141619" width="20" height="20" alt="#141619"> | **Nightfall** *(preview)* | Dark. Dusk's construction with a creamier Afterglow and quieter, less blue neutrals. Code colors at 7:1 or higher (WCAG AAA). |
+| <img src="https://placehold.co/20x20/141619/141619" width="20" height="20" alt="#141619"> | **Nightfall** *(preview)* | Dark. Dusk's construction with a creamier Afterglow and quieter, less blue neutrals. Code colors at 7:1 or higher (WCAG AAA). Hues inherited from Dusk; code colors are less distinct under color-vision deficiency (ΔE 0.022 vs 0.054, design-system §13). |
 
 All flavors share every role and every rule. Only the values change.
 
@@ -144,7 +144,7 @@ Each accent comes with derived variants for text, pressed and focus states, all 
 
 </details>
 
-Machine-readable values for both flavors, all accents, background states and the 16 terminal colors are in [palette/twilight.json](palette/twilight.json).
+Machine-readable values for all three flavors, all accents, background states and the 16 terminal colors are in [palette/twilight.json](palette/twilight.json).
 
 ## Guarantees
 

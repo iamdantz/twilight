@@ -26,10 +26,12 @@ def check_nightfall():
     import nightfall as nf
     raw = nf.fit()
     assert abs(raw["amp"] - 0.0182) < 0.0005 and abs(raw["drift"] - 8.42) < 0.3 and abs(raw["r"] - 1.2645) < 0.003, raw
-    assert (nf.NIGHTFALL["amp"], nf.NIGHTFALL["drift"], nf.NIGHTFALL["r"], nf.NIGHTFALL["seed"]) == (0.018, 8.0, 1.26, "#f9a36b")
-    same = lambda p: {a: b for a, b in p.items() if a not in ("seed", "amp", "drift", "r")}
-    assert same(nf.NIGHTFALL) == same(k.DUSK)                                       # only the four fitted parameters differ
+    assert (nf.NIGHTFALL["amp"], nf.NIGHTFALL["drift"], nf.NIGHTFALL["seed"]) == (0.018, 8.0, "#f9a36b")
+    assert nf.NIGHTFALL["r"] == k.DUSK["r"]                                         # principle 6: shared surface ratio
+    same = lambda p: {a: b for a, b in p.items() if a not in ("seed", "amp", "drift")}
+    assert same(nf.NIGHTFALL) == same(k.DUSK)                                       # only the three fitted parameters differ
     f = json.loads((Path(__file__).resolve().parent.parent / "palette" / "twilight.json").read_text())["flavors"]["nightfall"]
+    assert f == k.build(nf.NIGHTFALL, *k.inherited(PUB))                            # committed JSON is the generator's output
     n, c, s = f["neutrals"], f["colors"], f["states"]
     surf = [n[x] for x in ("shell", "rail", "canvas", "raised")]
     for lvl, tgt in dict(faint=4.5, subtle=7.0, body=10.9, control=3.0).items():   # §13 text and control levels
