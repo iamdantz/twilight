@@ -47,8 +47,9 @@ I wanted my own theme but I do not trust my eye for color. So instead of choosin
 |-------------------------------------------------------------------------------------------|----------|---------------------------------------------------------------------------------------------|
 | <img src="https://placehold.co/20x20/11171b/11171b" width="20" height="20" alt="#11171b"> | **Dusk** | Dark. Code colors at 7:1 or higher (WCAG AAA).                                              |
 | <img src="https://placehold.co/20x20/f4f7f9/f4f7f9" width="20" height="20" alt="#f4f7f9"> | **Dawn** | Light. Same structure and surface ratios as Dusk; code colors at 4.5:1 or higher (WCAG AA). |
+| <img src="https://placehold.co/20x20/141619/141619" width="20" height="20" alt="#141619"> | **Nightfall** *(preview)* | Dark. Dusk's construction with a creamier Afterglow and quieter, less blue neutrals. Code colors at 7:1 or higher (WCAG AAA). |
 
-Both flavors share every role and every rule. Only the values change.
+All flavors share every role and every rule. Only the values change.
 
 ## Accents
 
@@ -179,6 +180,7 @@ Twilight is defined independently of any application. To build a theme for a too
 │   └── construction.md      derivation, optimization and validation
 ├── palette/
 │   └── twilight.json        all values, machine-readable
+├── tools/                   construction engine (construct.py, nightfall.py)
 ├── CONTRIBUTING.md
 ├── CHANGELOG.md
 └── LICENSE

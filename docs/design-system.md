@@ -1,6 +1,6 @@
 # Twilight design system
 
-Version 1.0 · Flavors: Dusk (dark), Dawn (light)
+Version 1.2 (preview) · Flavors: Dusk (dark), Dawn (light), Nightfall (dark, preview)
 
 This document defines Twilight: what each color is, what it means, where it may go, and what it guarantees. It does not describe any particular application. A theme for any tool can be built from it by mapping that tool's regions onto the roles below.
 
@@ -29,7 +29,7 @@ How the values were derived is in [construction.md](construction.md). All values
 3. **Contrast is solved against the hardest case.** Each text level, control boundary and code color is solved against the most demanding surface it can appear on, so it holds on all of them.
 4. **The accent is a detail.** It marks focus, activity and the main action. It never fills large areas and never colors content.
 5. **No pure black or white.** The darkest value is L 0.16 and the lightest is L 0.975.
-6. **Identical structure in both flavors.** Dusk and Dawn share every role, rule and surface ratio.
+6. **Identical structure in every flavor.** Every flavor shares every role and rule; values come from each flavor's decided parameters (construction §12, §14).
 
 ## 2. Palette
 
@@ -414,18 +414,20 @@ If a tool cannot express a rule, such as a border on the current line, leave the
 
 ## 13. Guarantees
 
-| Guarantee | Dusk | Dawn |
-|---|---|---|
-| Ink on any surface | 13.76:1 | 14.81:1 |
-| Body on any surface | 10.90:1 | 10.89:1 |
-| Subtle on any surface | 7.00:1 | 7.00:1 |
-| Faint on any surface | 4.50:1 | 4.51:1 |
-| Control boundary on any surface | 3.03:1 | 3.02:1 |
-| Accent focus on any surface, every accent | 5.65:1 | 3.00:1 |
-| Code colors on every code surface | 7.04:1 | 4.50:1 |
-| Smallest code-color difference, normal vision | ΔE 0.089 | ΔE 0.077 |
-| Smallest code-color difference, color-vision deficiency | ΔE 0.054 | ΔE 0.041 |
-| Pure black or white | none | none |
-| Gamut | sRGB | sRGB |
+| Guarantee | Dusk | Dawn | Nightfall |
+|---|---|---|---|
+| Ink on any surface | 13.76:1 | 14.81:1 | 13.68:1 |
+| Body on any surface | 10.90:1 | 10.89:1 | 10.91:1 |
+| Subtle on any surface | 7.00:1 | 7.00:1 | 7.05:1 |
+| Faint on any surface | 4.50:1 | 4.51:1 | 4.50:1 |
+| Control boundary on any surface | 3.03:1 | 3.02:1 | 3.03:1 |
+| Accent focus on any surface, every accent | 5.65:1 | 3.00:1 | 6.24:1 |
+| Code colors on every code surface | 7.04:1 | 4.50:1 | 7.00:1 |
+| Smallest code-color difference, normal vision | ΔE 0.089 | ΔE 0.077 | ΔE 0.066 |
+| Smallest code-color difference, color-vision deficiency | ΔE 0.054 | ΔE 0.041 | ΔE 0.022 |
+| Pure black or white | none | none | none |
+| Gamut | sRGB | sRGB | sRGB |
 
 Contrast is WCAG 2.x relative-luminance contrast on final sRGB values. Color-vision figures are the worst case across simulated deuteranopia, protanopia and tritanopia, over the six code colors (Orchid, Sky, Sea Salt, Grove, Gold, Ember) and the cursor.
+
+Nightfall's full palette, accents and states are in palette/twilight.json.

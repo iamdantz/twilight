@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0 (preview)
+
+- Nightfall: a third flavor, dark. Dusk's construction re-run with four decided parameters fitted from a thesis conversion of Dusk: seed `#f9a36b`, neutral chroma 0.018, hue drift 8°, surface ratio 1.26. No rule changed.
+- `tools/`: a construction engine that rebuilds Dusk from its parameters.
+
 ## 1.1.0
 
 One rule added before the first ports. No values changed.

@@ -399,3 +399,84 @@ for variant in (Dusk, Dawn):
 ```
 
 Tools: any library implementing OKLab/OKLCH, sRGB gamut testing, WCAG contrast and dichromacy simulation. The reference implementation used Python with ColorAide.
+
+---
+
+## 14. Nightfall
+
+Nightfall re-runs this construction for a dark flavor with four decided parameters changed; every rule and every other parameter is Dusk's.
+
+### 14.1 Decided parameters
+
+| Parameter | Dusk | Nightfall | Source |
+|---|---|---|---|
+| Afterglow seed | `#ee7a1f` | `#f9a36b` | Thesis role `accent_primary` |
+| Neutral chroma amplitude A | 0.035 | 0.018 | Fit, §14.2 (raw 0.0182) |
+| Neutral hue drift D | 18° | 8° | Fit, §14.2 (raw 8.419) |
+| Surface ratio r | 1.25 | 1.26 | Fit, §14.2 (raw 1.2639) |
+
+The neutral hue follows the seed (+180°), as in §12.
+
+### 14.2 Fit method
+
+The thesis conversion of Dusk (thesis repo commit `aa39cf0`, `demo/twilight.js`, `variants.thesis.roles`) gives hex values for the roles below. Each is matched to the Twilight token with the most similar definition.
+
+| Twilight token | Thesis role | Hex |
+|---|---|---|
+| Shell | `bg_crust` | `#03070A` |
+| Rail | `bg_mantle` | `#090F13` |
+| Canvas | `bg_base` | `#11171B` |
+| Raised | `bg_floating` | `#1E2428` |
+| Edge | `border_subtle` | `#242A2F` |
+| Control | `bg_overlay0` | `#646B70` |
+| Faint | `text_subtle` | `#7A8086` |
+| Subtle | `text_subtext1` | `#BAC0C7` |
+| Body | `text_body` | `#D0D6DD` |
+| Seed | `accent_primary` | `#F9A36B` |
+
+- **A and D.** Least squares over the nine neutrals in OKLCH: C = A·sin²(πL), and h = h_n + D·(1 − L)² with D ≥ 0.
+- **r.** Log-least-squares on Shell, Raised and Edge, anchored at Canvas (§3.3 geometric steps −1, +1, +2).
+- **Rounding.** The raw values (A 0.0182, D 8.419, r 1.2639) are rounded to the precision of Dusk's own parameters: 0.018, 8°, 1.26.
+
+Print them with `fit()` in `tools/nightfall.py`.
+
+### 14.3 What the thesis proposed and Twilight overrode
+
+- One shared accent lightness. Twilight keeps its per-hue lightness (§6.2).
+- A darker Shell. Twilight keeps Shell at L 0.16, so the darkest value stays above pure black (design-system §1, principle 5).
+- A neutral selection. Twilight keeps selection tinted by the seed (§9).
+
+### 14.4 What is inherited, and what is re-solved
+
+- **Inherited from Dusk, not re-optimized.** The six hue angles, and Ember's hue and lightness. This was a decision. The §6.5 joint optimization cannot be re-run reproducibly: the original random starts are undocumented, and in 74 starts the engine never reached Dusk's published optimum.
+- **Re-solved with Nightfall's parameters.** L₀ (the 7:1 floor), chroma, accents, states and brights.
+
+### 14.5 Readings in the engine
+
+Where this document is ambiguous, `tools/construct.py` marks the reading with a `# reading:` comment.
+
+- Neutral hue = seed hue + 180°.
+- State cost is Euclidean in (ΔL, ΔC).
+- L₀ is solved on the six hues; Ember's floor is a check.
+- Fitted to the published Dusk (the text does not state them): bright chroma capped at 0.92·Cmax, and state chroma bounded by Cmax at Canvas lightness.
+
+### 14.6 Measured cost
+
+Lower code chroma (C₀ = C_seed/φ with a softer seed) brings the code colors closer together.
+
+| Measure | Dusk | Nightfall |
+|---|---|---|
+| Min ΔE_OK, six hues plus Ember, normal vision and three dichromacies (`distinctness()`) | 0.0536 | 0.0395 |
+| Min ΔE_OK, six code colors plus cursor, color-vision deficiency (design-system §13) | 0.054 | 0.022 |
+| Min ΔE_OK, same set, normal vision (§13) | 0.089 | 0.066 |
+
+The two color-vision rows use different color sets. The second includes Afterglow as the cursor, and Nightfall's Afterglow is close to Ember. Nightfall is less distinguishable than Dusk on every one of them.
+
+### 14.7 Reproducing
+
+```
+tools/.venv/bin/python tools/nightfall.py
+tools/.venv/bin/python tools/test_construct.py
+```
+
+The test first proves the engine rebuilds Dusk. The neutrals match exactly. Of the other 72 tokens, 7 differ by ΔE_OK ≤ 0.0025, and 2 background states differ by 0.0059 and 0.0061, which is below 1 JND (0.02). A tolerance of 0.0065 for states was accepted. The test then checks Nightfall's guarantees.
