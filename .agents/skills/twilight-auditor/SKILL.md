@@ -38,8 +38,7 @@ The scripts live in this skill's `scripts/` directory (`<skill>` is the director
 |---|---|
 | `scripts/validate.py` | Measures and cross-checks one snapshot; `--compare REF` adds regressions. Exit 1 on any failure. `--json` for the summary only. |
 | `scripts/construct.py` | Reference implementation of construction.md: a shared core plus one profile per flavor (`PROFILES`). Rebuilds both flavors exactly; `validate.py` imports it. Import it yourself to recompute a value by hand. |
-| `scripts/measure_beta.py` | Reproduces the measured β of both flavors (§6.2) from the embedded theme data. About 1 minute. |
-| `scripts/requirements.txt` | `coloraide` and `numpy` (for `measure_beta.py`), both pinned. |
+| `scripts/requirements.txt` | `coloraide==8.13`, pinned. |
 
 Setup, once per machine (the venv is git-ignored):
 
@@ -61,13 +60,13 @@ What it checks:
 - **Reproduction**: rebuilds both flavors from the decided parameters (§6.5 included, about 2 minutes) and compares every token exactly. Tolerance is zero: any difference is a hand edit or an undocumented method change. A flavor with no construction is an error.
 - **Construction table**: the §6.5 hue table, Ember and L₀ in construction.md against the rebuild; every hex in a construction.md table must exist in the JSON.
 - **Consistency**: `_` keys; JSON `version` = latest CHANGELOG heading; every hex, swatch, RGB/OKLCH column and measured number in README.md and docs/design-system.md; relative links and anchors in every `.md`.
-- **Regressions** (`--compare`): any floor below its minimum in `FLOORS`, any known limit below its minimum in `LIMIT_FLOORS`, and changed values with unchanged images. `--compare` also prints every delta against the baseline, for context.
+- **Regressions** (`--compare`): any floor below its minimum in `FLOORS`; any known limit below `LIMIT_FLOORS`; a fixed guarantee lowered; a measured minimum or known limit lowered without a `### Lower` section in the latest CHANGELOG entry; a check or table removed; changed values with unchanged images. The base and proposal tables are read from each snapshot's own `validate.py`. Every delta against the baseline is printed for context.
 
 It does not parse construction.md prose, CHANGELOG text or images. `--no-rebuild` skips reproduction and is only for wording or link changes. Exit 0 is necessary, not sufficient: areas A, D and E still need judgment.
 
 **Separate pre-existing from introduced.** A finding that also appears in the main run is pre-existing: list it under a "Pre-existing on main" note, do not count it against the change, and do not let it block. Only what the proposal introduces or worsens decides the verdict.
 
-**If the change touches this skill's scripts**, the validator itself is under audit. Also run the proposal's copy (`git archive <branch> | tar -x -C <scratch>/prop`, then run `<scratch>/prop/.agents/skills/twilight-auditor/scripts/validate.py` with this skill's venv) and check that no check, floor or tolerance was loosened. A weaker validator is a weaker guarantee.
+**If the change touches this skill's scripts**, the validator itself is under audit. Also run the proposal's copy (`git archive <branch> | tar -x -C <scratch>/prop`, then run `<scratch>/prop/.agents/skills/twilight-auditor/scripts/validate.py` with this skill's venv) and check that no check or tolerance was loosened and no fixed guarantee went down. Measured minimums may move only as area C allows. A weaker validator is a weaker guarantee.
 
 ## 3. Classify the change
 
@@ -82,7 +81,8 @@ wording · rule or method · palette values · new flavor · tooling. Most chang
 - A rule or method change is acceptable only if it states all five: the problem it fixes; the measurable improvement; the new formula and parameters; validation numbers; its effect on every guarantee.
 - "Looks better", "felt off", "warmer", "rounded for taste" or a constant with no derivation is BLOCKING. Either it is declared *decided* with rationale, or it is rejected.
 - Removing or weakening a rule, check or guarantee is BLOCKING unless replaced by something strictly stronger and measured to be so.
-- "Fitted" or "measured" parameters must name their data and fitting method so a reader can redo the fit.
+- "Fitted" or "measured" parameters must name their data and fitting method so a reader can redo the fit, and the data must be Twilight's own: its palette, its rebuilds, its measurements.
+- Other themes' palettes are never a data source. A parameter taken from another theme is BLOCKING; declare it *decided* with a rationale measured on Twilight, or derive it.
 
 ### B. Palette values follow the method
 
@@ -92,7 +92,10 @@ wording · rule or method · palette values · new flavor · tooling. Most chang
 
 ### C. Quality floor
 
-Minimums. The table is the current minimum standard, and `FLOORS` in `validate.py` is its source. A change must meet it. A change that moves a minimum is a method change: it needs the measured reason, a CHANGELOG entry under the version's *Lower* heading, and the new value in `FLOORS` in the same change.
+Minimums. `FLOORS` in `validate.py` is the source of this table, and every change must meet it. There are two kinds:
+
+- **Fixed guarantees**: every row except Ink and the two ΔE rows. They are WCAG thresholds and the text targets of construction.md §3.5, and they define what Twilight promises. They never go down.
+- **Measured minimums**: Ink and the two ΔE rows, plus the known limits below. They are what the current palette reaches. A method change may lower one only with the measured cause in construction.md, a `### Lower` section in the version's CHANGELOG entry, and the new value in `FLOORS` or `LIMIT_FLOORS` in the same change. A palette change that lowers one without a method change is a regression.
 
 | Check | Dusk | Dawn |
 |---|---|---|
@@ -112,7 +115,7 @@ Minimums. The table is the current minimum standard, and `FLOORS` in `validate.p
 
 Also: no `#000000` or `#ffffff`; everything inside sRGB, gamut-mapped by chroma reduction only; hues within ±25° of their ANSI anchors; Ember hue 45–70°. Contrast is WCAG 2.x on final 8-bit sRGB. Report contrast to two decimals and ΔE to three, each next to its floor.
 
-The known limits in construction.md §11 (JND of every background state, ANSI black/white contrast, background-state separation) are the minimums in `LIMIT_FLOORS` of `validate.py`. A limit below its minimum is BLOCKING. Closest CVD pairs are reported in §11 and are not gated.
+The known limits in construction.md §11 (JND of every background state, ANSI black/white contrast, background-state separation) are the minimums in `LIMIT_FLOORS` of `validate.py`. A limit below its minimum, or lowered without a Lower entry, is BLOCKING. Closest CVD pairs are reported in §11 and are covered by the CVD floor.
 
 ### D. New flavors
 
@@ -120,7 +123,7 @@ The known limits in construction.md §11 (JND of every background state, ANSI bl
 - Any new seed or parameter is declared *decided* with written rationale in §12. Seed rule: one accent seed, neutrals at its exact complement. A second or different seed requires construction.md to be amended first, by a change that itself passes this audit.
 - If the flavor has its own generator test, run it on an exported copy; it does not replace the validator, which checks every floor including ΔE.
 - Its palette image (`assets/palette-<flavor>.png`) exists, or the README states why not.
-- Dark flavors meet Dusk floors; light flavors meet Dawn floors. The validator applies this automatically (by Canvas lightness). A flavor that only passes after lowering a floor, or by declaring a floor miss "an honest cost", is BLOCKING.
+- Dark flavors meet Dusk floors; light flavors meet Dawn floors. The validator applies this automatically (by Canvas lightness). A flavor that only passes after lowering a fixed guarantee, or by lowering a measured minimum without a method change, is BLOCKING.
 - Every role, rule and naming convention (`Twilight <Flavor> <Accent>`) preserved; the flavor appears in every document and in the JSON.
 - "Nothing is chosen at random" is absolute. A value with no derivation path is BLOCKING.
 
@@ -135,6 +138,7 @@ All of these stay in sync with each other and with the recomputed values:
 - assets/palette-dusk.png, assets/palette-dawn.png: regenerated whenever a shown value changes; otherwise flag as stale.
 - CHANGELOG.md: a new entry for every change. Versions follow [CONTRIBUTING.md](../../../CONTRIBUTING.md#versions): **patch** for wording or tooling, **minor** for added rules or tokens and for values regenerated by the documented method after a method change, **major** for a removed or renamed token. A value that changed without a method change has no derivation path (area B). JSON `version` equals the latest CHANGELOG heading. A pre-release suffix that does not match the heading is a mismatch.
 - English, sober, no filler, no claim that cannot be measured.
+- No other theme or palette is named or compared in the documents or scripts. The README's history paragraph is the only exception.
 
 The validator does not parse construction.md prose or CHANGELOG text. For every hex or number the change edits, grep its old value across every `.md` file: a copy left behind is a MAJOR finding in this change, not a follow-up.
 
@@ -142,7 +146,7 @@ The validator does not parse construction.md prose or CHANGELOG text. For every 
 
 - **APPROVED**: no BLOCKING or MAJOR finding introduced by the change, and every checklist item passes.
 - **CHANGES REQUESTED**: the change is derivable and keeps every guarantee, but docs, version or images are out of sync, or a parameter lacks its classification or rationale.
-- **REJECTED**: the change weakens the system (lowers a floor, worsens a limit, removes a check) or has no derivation path, however consistent its documents are.
+- **REJECTED**: the change weakens the system (lowers a fixed guarantee, lowers a measured minimum or limit without its method change and Lower entry, removes a check) or has no derivation path, however consistent its documents are.
 
 Severity: **BLOCKING** breaks a rule, method or floor. **MAJOR** docs out of sync, unjustified or unclassified parameter, wrong version. **MINOR** wording, formatting.
 
@@ -154,7 +158,7 @@ Each of these means the change is being judged on intent instead of measurement:
 |---|---|
 | "It's only a one-step hex nudge" | Reproduction is exact; there is no tolerance. Any difference from the rebuild = hand edit = BLOCKING. |
 | "The docs and JSON agree, so it's consistent" | Consistency is area E. Without a derivation path it is still REJECTED. |
-| "The author documented the floor miss honestly" | Documenting a regression does not make it acceptable. Floors are minimums. |
+| "The author documented the floor miss" | A fixed guarantee never moves. A measured minimum moves only with a method change, its measured cause and a Lower entry. A palette that misses a minimum is a regression however it is documented. |
 | "It still passes AA, close enough" | Compare against the table above, not against WCAG. |
 | "The validator passed" | Exit 0 covers what it parses. Areas A, D and construction.md prose need you. |
 | "Small enough to fix in a follow-up" | If the change leaves the docs inconsistent, it is MAJOR now. Verdict: CHANGES REQUESTED, with the exact fix. |

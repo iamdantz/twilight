@@ -230,7 +230,7 @@ Coral is reserved for danger. It never colors a frequent code category, so an er
 
 ## 7. Syntax roles
 
-The mapping was measured ([construction.md, section 8](construction.md#8-syntax-roles)). Categories are named generically so they map onto any grammar.
+The mapping is fixed by [construction.md, section 8](construction.md#8-syntax-roles). Categories are named generically so they map onto any grammar.
 
 | Category | Includes | Color | Style |
 |---|---|---|---|
@@ -254,7 +254,7 @@ The mapping was measured ([construction.md, section 8](construction.md#8-syntax-
 
 Only comments, parameters and `this`/`self` are italic.
 
-Properties are uncolored on purpose. They are among the most frequent tokens, and coloring them adds noise without adding information. Eight of the ten themes measured leave them uncolored as well.
+Properties are uncolored on purpose, so code is not colored end to end.
 
 ## 8. Semantic states
 

@@ -9,9 +9,11 @@ The rebuild runs construct.py (both flavors, §6.5 included) once per invocation
 Exit status 1 if any floor, consistency or reproduction check fails.
 """
 import argparse
+import ast
 import contextlib
 import io
 import json
+import math
 import re
 import subprocess
 import sys
@@ -34,7 +36,11 @@ FLOORS = {  # check: (dusk, dawn); construction.md §3.5, §5, §6.6, §7, §9.2
     "accent-focus on surfaces": (3.00, 3.00), "ΔE code+cursor, normal": (0.089, 0.088),
     "ΔE code+cursor, worst CVD": (0.054, 0.040), "faint on transient states": (4.50, 4.50),
 }
-# Known limits (construction.md §11): no floor, but a limit may not fall below its value here.
+# Two kinds of floor. Fixed guarantees (every check not listed below) are WCAG thresholds and the text targets
+# of construction.md §3.5: they never go down. Measured minimums are what the current palette reaches: a method
+# change may lower one only if the latest CHANGELOG entry has a "### Lower" section (SKILL.md, area C).
+MEASURED = ("ink on surfaces", "ΔE code+cursor, normal", "ΔE code+cursor, worst CVD")
+# Known limits (construction.md §11) are measured minimums too.
 LIMITS = ("JND " + s for s in (*TRANSIENT, "diff-inserted", "diff-removed"))
 LIMITS = (*LIMITS, "ANSI black/white on canvas", "min ΔE between background states")
 LIMIT_FLOORS = {  # the measured minimum of each limit per flavor (truncated to 4 decimals), current as of 1.2.0
@@ -369,6 +375,28 @@ def _norm(p):
     return out
 
 
+SCRIPT = ".agents/skills/twilight-auditor/scripts/validate.py"
+
+
+def minimum_tables(snap):
+    """FLOORS and LIMIT_FLOORS as written in the snapshot's own validate.py (None when absent)."""
+    if SCRIPT not in snap.files:
+        return None, None
+    found = {}
+    for node in ast.parse(snap.read(SCRIPT)).body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
+            if node.targets[0].id in ("FLOORS", "LIMIT_FLOORS"):
+                found[node.targets[0].id] = ast.literal_eval(node.value)
+    return found.get("FLOORS"), found.get("LIMIT_FLOORS")
+
+
+def declares_lower(snap):
+    """True if the latest CHANGELOG entry has a '### Lower' section."""
+    text = snap.read("CHANGELOG.md")
+    entries = re.split(r"^## (?=\d+\.\d+\.\d+)", text, flags=re.M)
+    return len(entries) > 1 and re.search(r"^### Lower\b", entries[1], flags=re.M) is not None
+
+
 def version_checks(snap, P_raw):
     errs = [f"palette/twilight.json: internal key {key}" for key in underscore_keys(P_raw)]
     latest = next((m.group(1) for line in snap.read("CHANGELOG.md").splitlines() if (m := re.match(r"## (\d+\.\d+\.\d+)", line))), None)
@@ -390,7 +418,7 @@ def run(snap, json_path="palette/twilight.json", do_rebuild=True):
         snapshot=snap.label(), floors=floors, limits={f: M[f][1] for f in P},
         rules=[e for f in P for e in rules(P[f], f)], reproduction=repro_errs,
         consistency=version_checks(snap, raw) + doc_checks(snap, P, M) + construction_checks(snap, P, meta) + link_checks(snap),
-        palette=P,
+        palette=P, tables=minimum_tables(snap), lower=declares_lower(snap),
     )
 
 
@@ -415,6 +443,43 @@ def failed(r):
     return [x for x in r["floors"] if not x["ok"]] + r["rules"] + repro + r["consistency"]
 
 
+def minimum_changes(base, prop, lines):
+    """Changes to the minimums themselves, base tables against proposal tables.
+    A fixed guarantee may never go down. A measured minimum or known limit may go down only when the latest
+    CHANGELOG entry declares it under '### Lower'. A removed check or table is a regression."""
+    out = []
+    (bF, bL), (pF, pL) = base["tables"], prop["tables"]
+    if bF is None:
+        return out
+    if pF is None:
+        return ["FLOORS removed from validate.py"]
+    for check, old in bF.items():
+        if check not in pF:
+            out.append(f"check removed: {check}")
+            continue
+        for i, flavor in enumerate(("dusk", "dawn")):
+            new = pF[check][i]
+            if new < old[i] - 1e-12:
+                if check not in MEASURED:
+                    out.append(f"fixed guarantee lowered: {flavor} {check} {old[i]} → {new}")
+                elif not prop["lower"]:
+                    out.append(f"measured minimum lowered without a Lower entry in CHANGELOG: {flavor} {check} {old[i]} → {new}")
+                else:
+                    lines.append(f"measured minimum lowered (declared under Lower): {flavor} {check} {old[i]} → {new}")
+    if bL is not None and pL is None:
+        return out + ["LIMIT_FLOORS removed from validate.py"]
+    for f in sorted(set(base["palette"]) & set(prop["palette"])):
+        for key in LIMITS:
+            old = bL[f][key] if bL else math.floor(base["limits"][f][key] * 1e4) / 1e4   # LIMIT_FLOORS precision
+            new = pL[f][key] if pL else prop["limits"][f][key]
+            if new < old - 1e-9:
+                if prop["lower"]:
+                    lines.append(f"known limit lowered (declared under Lower): {f} {key} {old} → {new}")
+                else:
+                    out.append(f"known limit lowered without a Lower entry in CHANGELOG: {f} {key} {old} → {new}")
+    return out
+
+
 def compare(base, prop):
     """Print deltas against the baseline snapshot; return regressions against the current minimums.
     A floor fails when it is below its FLOORS entry; a known limit fails when it is below LIMIT_FLOORS.
@@ -430,6 +495,7 @@ def compare(base, prop):
         for key in LIMITS:
             if (p := prop["limits"][f][key]) < LIMIT_FLOORS[f][key]:
                 regressions.append(f"known limit below minimum: {f} {key} {fmt(p)} < {LIMIT_FLOORS[f][key]}")
+    regressions += minimum_changes(base, prop, lines)
     changed = [f"{f}.{g}.{t}" for f in prop["palette"] for g in ("neutrals", "colors", "states")
                for t, v in prop["palette"][f][g].items() if base["palette"].get(f, {}).get(g, {}).get(t) != v]
     if changed:

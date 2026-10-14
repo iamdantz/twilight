@@ -14,9 +14,9 @@ The companion document, [design-system.md](design-system.md), defines the system
 4. **Neutral surfaces follow a geometric progression** in Dusk and keep the same perceptual distances in Dawn; text levels are solved by contrast targets against the hardest surface.
 5. **The six hues are anchored to the ANSI standard** (RGB cube corners), lit by one shared "sunset" chroma law, and optimized jointly with a seventh hue (Ember) for distinguishability, including under color-vision deficiency.
 6. **The variant floor is solved**: the base lightness is raised (Dusk) or lowered (Dawn) until the weakest code color meets exactly 7:1 or 4.5:1 on the most demanding code surface.
-7. **Syntax roles are assigned from data**: measured token frequencies and adjacencies in real code, plus the measured conventions of ten widely used dark themes, checked against ten light themes.
+7. **Syntax roles are fixed per category**: one color each, the same in both flavors, with Coral and Afterglow kept out of code.
 8. **Background states are measured in just-noticeable differences** and bounded so no text level loses its guarantee.
-9. **Dawn is the light end of the same system**: one neutral curve, Canvas and Ink swapped, the same perceptual surface distances, the same text targets and rules, and its own measured β.
+9. **Dawn is the light end of the same system**: one neutral curve, Canvas and Ink swapped, the same perceptual surface distances, the same text targets and rules, and its own β.
 
 Designer decisions are listed explicitly in §12; everything else follows from them.
 
@@ -105,7 +105,7 @@ Dawn is the same system read from the other end of the neutral curve. Every form
 | Rail | half step (§3.4) | half step (§3.4) |
 | Text levels | lowest L reaching the target against Raised | highest L reaching the target against Raised |
 | Code floor | 7:1 (AAA) | 4.5:1 (AA), see §11 |
-| β (§6.2) | 0.30 | 0.19, measured on light themes |
+| β (§6.2) | 0.30 | 0.19 |
 
 **Canvas and Ink swap.** The two anchors of the system are Dusk's Canvas (L 0.20) and Dusk's Ink (L 0.95). Dawn uses the same two colors with their roles exchanged, so Dawn's Canvas is `#eeeeef` and its Ink is `#11171b`. Ink on Canvas is 15.58:1 in both flavors. The lightest value in Twilight is therefore L 0.95, a cool silver from the near-neutral end of the curve.
 
@@ -170,20 +170,18 @@ An earlier version placed six hues at equal 60° steps from the accent. That was
 L = L₀ + β · (L_cusp(h) − mean L_cusp)        β = 0.30 (Dusk), 0.19 (Dawn)
 ```
 
-Yellow is naturally light and blue naturally dark. Forcing equal lightness makes yellow olive and blue chalky. The slope β was measured by regressing the lightness of a theme's six ANSI colors against the cusp lightness of their anchor hues (the true sRGB cusp, the L of the RGB-cube corner, as in the §6.1 column; not the grid `cusp()` of §12.1). For Dusk, three established themes: 0.46 (Dracula), 0.28 (Catppuccin Mocha) and 0.17 (One Dark), with correlations of 0.87, 0.85 and 0.61. β = 0.30 is their mean.
+Yellow is naturally light and blue naturally dark. Forcing equal lightness (β = 0) makes yellow olive and blue chalky. β sets how much of each hue's natural height (its sRGB cusp lightness, §6.1) the palette keeps. It is a decided parameter (§12).
 
-Light themes place their colors differently, so Dawn's β was measured on light themes (the ten listed in §8.2) with the same regression, keeping the themes whose correlation reaches 0.6, the lowest accepted for Dusk:
+- Dusk: β = 0.30, part of the Dusk definition.
+- Dawn: β = 0.19. On a light canvas every hue must stay dark enough for 4.5:1, so a wide spread pushes the dark hues further down. With Dawn's surfaces and floor, three values were built with the full method:
 
-| Light theme | β | r |
-|---|---|---|
-| Material Theme Lighter | 0.288 | 0.80 |
-| Ayu Light | 0.160 | 0.76 |
-| Solarized Light | 0.110 | 0.74 |
-| *Excluded (r < 0.6):* Catppuccin Latte 0.208 (0.54), Night Owl Light 0.182 (0.51), Rosé Pine Dawn 0.137 (0.30), Tokyo Night Light 0.047 (0.40), GitHub Light Default −0.312 (−0.66) | | |
+| β (Dawn) | Min ΔE, code colors + cursor, normal | Same, color-vision deficiency | Sky L |
+|---|---|---|---|
+| 0.10 | 0.075 | 0.035 | 0.47 |
+| 0.19 | 0.088 | 0.040 | 0.42 |
+| 0.30 | 0.087 | 0.041 | 0.38 |
 
-β = 0.19 (mean 0.186). One Light and Light Modern define no terminal colors. The same rule applied to the ten dark themes gives 0.29, which agrees with Dusk's 0.30.
-
-The ANSI colors of every theme used here, their sources and the regression ship with the auditor skill (`scripts/measure_beta.py`), which reproduces both values.
+0.19 gives the widest normal-vision separation of the three and keeps Sky at L 0.42 instead of 0.38. 0.30 gains 0.0007 under color-vision deficiency and loses 0.001 in normal vision.
 
 L₀ is solved by bisection so that the weakest of the six hues meets exactly the variant floor (7:1 Dusk, 4.5:1 Dawn) on the most demanding code surface (§6.6).
 
@@ -280,91 +278,36 @@ Each bright moves one third of the way toward Ink. It is brighter in Dusk and de
 
 ## 7. Measured distinctness
 
-| Theme | Min contrast (6 hues) | Min ΔE, normal | Min ΔE, color-vision deficiency |
+| Flavor | Min contrast (6 hues) | Min ΔE, normal | Min ΔE, color-vision deficiency |
 |---|---|---|---|
-| **Twilight Dusk** | **7.08** | 0.074 | **0.044** |
-| **Twilight Dawn** | **5.04** | 0.088 | **0.040** |
-| Catppuccin Mocha | 7.08 | 0.070 | 0.022 |
-| Monokai | 3.93 | 0.110 | 0.052 |
-| Dracula | 4.53 | 0.131 | 0.009 |
-| One Dark | 4.38 | 0.077 | 0.009 |
+| Twilight Dusk | 7.08 | 0.074 | 0.044 |
+| Twilight Dawn | 5.04 | 0.088 | 0.040 |
 
-Same method for all: the six ANSI chromatic colors plus each theme's orange; contrast on each theme's own background; color-vision figure = worst case across the three dichromacies.
-
-Themes with larger normal-vision separation achieve it with contrast below AA. Twilight is the only one that combines AAA contrast, high separation and strong color-vision robustness. On the six colors used for code plus the cursor (Coral excluded, since it marks only errors), the figures are 0.089 / 0.054 (Dusk) and 0.088 / 0.040 (Dawn).
+Measured on the six ANSI chromatic colors plus Afterglow; contrast on Canvas; the color-vision figure is the worst case across the three dichromacies. On the six colors used for code plus the cursor (Coral excluded, since it marks only errors), the figures are 0.089 / 0.054 (Dusk) and 0.088 / 0.040 (Dawn).
 
 ---
 
 ## 8. Syntax roles
 
-Which hue colors which code category was derived from data.
+Each code category gets one color, the same in both flavors. The assignment comes from a study of 207,361 tokens of real TypeScript, JavaScript and Python: the share of the screen each category occupies, which categories sit next to each other, and 5,040 candidate assignments scored in 36 scenarios. The corpus is not part of this repository. The assignment it produced is fixed here as a decided parameter (§12), so both flavors rebuild from it without the study:
 
-### 8.1 Corpus
-
-Real source code was tokenized with standard TextMate grammars:
-
-| Language | Files | Tokens |
+| Category | Color | Reason |
 |---|---|---|
-| TypeScript | 21 | 27,923 |
-| JavaScript | 22 | 62,783 |
-| Python | 20 | 116,655 |
-| **Total** | **63** | **207,361** |
+| Keyword | Orchid | The magenta slot. |
+| String | Grove | The green slot. |
+| Function | Sky | The blue slot. |
+| Type | Sea Salt | The cyan slot, between Grove and Sky. |
+| Constant | Gold | The yellow slot. |
+| Parameter | Ember | Afterglow's family, separated from it by lightness (§6.4). |
+| Property | uncolored (Body) | One category stays uncolored, so code is not colored end to end. |
 
-For each category, the study measured its share of characters (how much of the screen it occupies) and its adjacency with other categories (which colors end up side by side). The most frequent adjacency is keyword next to plain variable (14 %).
+Three rules hold the assignment in place:
 
-### 8.2 Convention
+- Coral never colors code. It is reserved for errors, so an error always stands out.
+- Afterglow never colors code. It is the default accent, and the accent never colors content.
+- No two categories share a color.
 
-The colors that ten widely used themes give each category were measured on the same corpus: Dracula, One Dark Pro, Monokai, Catppuccin Mocha, GitHub Dark, Tokyo Night, Nord, Ayu Dark, Rosé Pine and Night Owl. Strongest conventions:
-
-| Category | Measured convention |
-|---|---|
-| Property | uncolored in 8/10 |
-| Keyword | magenta, pink or red in 7/10 |
-| String | green in 5/10 |
-| Function | blue in 4/10 |
-| Parameter | orange in 4/10 |
-| Type | cyan in 3/10 (split) |
-| Constant | blue in 4/10 (split) |
-
-The same measurement on ten widely used light themes: Catppuccin Latte, GitHub Light Default, Tokyo Night Light, Solarized Light, One Light, Rosé Pine Dawn, Ayu Light, Night Owl Light, Material Theme Lighter and Visual Studio Code Light Modern. One hue classifier was applied to both sets:
-
-| Category | Dark themes | Light themes | Twilight (both flavors) |
-|---|---|---|---|
-| Keyword | magenta 5, red 2 | magenta 5 | Orchid |
-| Function | blue 4 | blue 7 | Sky |
-| String | green 5 | green 5 | Grove |
-| Property | uncolored 7 | uncolored 5 | uncolored |
-| Parameter | orange 5 | split (no hue above 2) | Ember |
-| Type | cyan 3 (split) | orange 3 (split) | Sea Salt |
-| Constant | blue 3 (split) | blue 3 (split) | Gold |
-
-Every category with a majority among the light themes agrees with the dark assignment, and no light convention contradicts it. Roles and names are therefore the same in both flavors: a keyword is Orchid in Dusk and in Dawn.
-
-### 8.3 Objective
-
-```
-J = ½ · Convention + ½ · (AdjacencyDistinctness − VisualEnergy)
-```
-
-- **Convention**: the share of the ten themes that agree with a given category→hue pairing.
-- **AdjacencyDistinctness**: ΔE between colors, weighted by how often their categories are adjacent.
-- **VisualEnergy**: Σ (category share × the color's salience against Body). Frequent categories should be calm; rare ones may stand out.
-
-Hard rules: Coral is excluded (reserved for errors), Afterglow is excluded (it is the default accent), and at least one category stays uncolored.
-
-All 5,040 assignments were scored. The search was repeated in 36 scenarios (each language alone and combined, × three weightings of each term). The assignment that won the most scenarios (10 of 36, more than any other) was adopted. Per category, the votes were:
-
-| Category | Result | Votes (of 36) |
-|---|---|---|
-| Keyword | Orchid | 31 |
-| String | Grove | 26 |
-| Type | Sea Salt | 19 |
-| Parameter | Ember | 19 |
-| Property | uncolored (Body) | 19 |
-| Function | Sky | 11 (tied with Sea Salt; decided by the winning full assignment) |
-| Constant | Gold | 13 (Sky had 18, but Sky is taken by functions in the winning full assignment) |
-
-Function and constant are the two roles where neither convention nor perception gives a clear majority. The whole-assignment winner was used so that no two roles claim the same color.
+Every code color meets the flavor floor on every code surface (§6.6), and the seven are optimized together for distinctness (§6.5), so the assignment cannot make two categories hard to tell apart.
 
 ---
 
@@ -428,7 +371,7 @@ While Dawn 1.0 was being validated, its focus color (`#de711c`) passed 3:1 on Ca
 | Dawn `find-match` is 4.3 JND (target 5) | Same bound. |
 | Dusk `find-match` is 3.6 JND (target 5); Dusk `word-highlight-write` is 2.6 JND (target 3) | Same bound. |
 | ANSI black and white are 1.4:1 on the background | Convention: they are used mostly as backgrounds. Bright black (Faint) is readable as text. |
-| Closest pairs under color-vision deficiency: Sky–Orchid and Gold–Grove in Dusk (ΔE 0.054–0.057); Sea Salt–Grove, Grove–cursor and Orchid–Sea Salt in Dawn (ΔE 0.040–0.041) | No seven-hue palette separates every pair for every vision type. Twilight's worst case is about twice that of the strongest comparable AAA theme. |
+| Closest pairs under color-vision deficiency: Sky–Orchid and Gold–Grove in Dusk (ΔE 0.054–0.057); Sea Salt–Grove, Grove–cursor and Orchid–Sea Salt in Dawn (ΔE 0.040–0.041) | No seven-hue palette separates every pair for every vision type. These are the smallest separations the joint optimization (§6.5) reaches. |
 | Some background states sit within 1 JND of each other | Dusk: inactive selection and removed diff (0.54 JND), the two word highlights (0.97). Dawn: inactive selection and removed diff (0.61), selection and inactive selection (0.96). Both pairs share a warm hue at low visibility. They rarely appear in the same place, but they cannot be told apart by color alone. |
 | OKLCH hue drift in near-neutrals | Below C 0.002, 8-bit quantization makes hue undefined (Dusk's Ink, Dawn's Canvas). This is invisible by definition. |
 
@@ -454,14 +397,8 @@ While Dawn 1.0 was being validated, its focus color (`#de711c`) passed 3:1 on Ca
 | JND targets | §9.1 | Visibility per state |
 | Gamut margin | 0.92 · Cmax | Safety margin |
 | Bright step | one third toward Ink | Consistent in both variants |
-
-### Measured (from data)
-
-| Parameter | Source |
-|---|---|
-| β = 0.30 (Dusk) | Mean slope of three established dark themes |
-| β = 0.19 (Dawn) | Mean slope of the light themes with r ≥ 0.6 (§6.2) |
-| Syntax role assignment | 207,361 tokens and ten dark themes, checked against ten light themes (§8) |
+| β | 0.30 Dusk, 0.19 Dawn | How much of each hue's natural height is kept (§6.2) |
+| Syntax roles | §8 | Fixed from the token study; one color per category, Coral and Afterglow out of code |
 
 ### Solved (everything else)
 

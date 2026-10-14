@@ -160,7 +160,7 @@ Contrast is WCAG 2.x, measured on final sRGB values. The color-vision figure is 
 
 ## How it was built
 
-All math is done in OKLCH and checked in sRGB. The neutrals sit at the exact complementary hue of Afterglow. Dusk's surface lightness follows a geometric progression; Dawn keeps the same perceptual distances at the light end of the curve. Text levels are solved by contrast target. The six terminal hues are anchored to the ANSI standard, placed at each hue's natural lightness and lit by one shared warm chroma law. Those six and Ember were then optimized together for distinctness under four vision models. The mapping of colors to code roles came from 207,361 tokens of real code and the measured conventions of ten widely used dark themes, then checked against ten light themes.
+All math is done in OKLCH and checked in sRGB. The neutrals sit at the exact complementary hue of Afterglow. Dusk's surface lightness follows a geometric progression; Dawn keeps the same perceptual distances at the light end of the curve. Text levels are solved by contrast target. The six terminal hues are anchored to the ANSI standard, placed at each hue's natural lightness and lit by one shared warm chroma law. Those six and Ember were then optimized together for distinctness under four vision models. Each code category has one color, and Coral and Afterglow never color code.
 
 The full derivation, with every formula and parameter, is in [construction.md](docs/construction.md).
 
