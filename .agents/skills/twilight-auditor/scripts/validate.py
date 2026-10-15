@@ -113,10 +113,11 @@ def decimals(x):
 
 
 def passes(value, floor):
-    """WCAG thresholds are strict. Regression floors (e.g. 13.76, 0.054) are met at their stated precision."""
+    """WCAG thresholds are strict. Regression floors are met at their stated precision: two decimals for
+    contrast (13.76), three for ΔE (0.054, 0.040; a float drops the trailing zero, so ΔE always uses three)."""
     if floor in WCAG_THRESHOLDS:
         return value >= floor
-    return round(value, max(2, decimals(floor))) >= floor
+    return round(value, 3 if floor < 1 else max(2, decimals(floor))) >= floor
 
 
 def fmt(x, floor=None):

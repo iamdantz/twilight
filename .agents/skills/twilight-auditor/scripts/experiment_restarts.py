@@ -55,7 +55,9 @@ def run(job):
     dusk = k.dusk_neutrals()
     N = dusk if flavor == "dusk" else k.dawn_neutrals(dusk)
     cursor = k.family(N, k.SEED, P)["accent-focus"]
-    original = k.distinctness
+    if not hasattr(k, "_distinctness_a"):                 # workers are reused: keep objective A from the first import
+        k._distinctness_a = k.distinctness
+    original = k._distinctness_a
 
     def objective_b(cols):
         vals = list(cols.values()) + [cursor]
