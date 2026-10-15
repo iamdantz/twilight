@@ -6,7 +6,7 @@ palette/twilight.json exactly. Nothing here is fitted to the published values.
 Structure:
 - The core (primitives, the neutral curve, §6 hues, §9 states, §5 families, §6.7 brights) is shared
   by every flavor and knows nothing about dark or light.
-- A flavor is a profile: its polarity, its anchors on the neutral curve, its floor and its search ranges.
+- A flavor is a profile: its polarity, its anchors on the neutral curve, its floor and its measured β.
   Dusk is the dark profile; Dawn is the light one (construction.md §4).
 
 Usage:
@@ -33,7 +33,6 @@ DRIFT, AMP = 18.0, 0.035              # §3.1, §3.2
 SURFACES_L = dict(frame=0.16, content=0.20, elevated=0.25, border=0.3125)   # §3.3, r = 1.25 (Dusk)
 TEXT_TARGETS = dict(control=3.0, muted=4.5, secondary=7.0, body=49 / 4.5)  # §3.5 (10.9 = 7² / 4.5)
 PHI = (1 + 5 ** 0.5) / 2
-BETA = 0.30                           # §6.2
 TAU, GAMUT = 0.15, 0.92               # §6.3
 FREEDOM = 25                          # §6.1
 EMBER_HUE = (45, 70)                  # §6.4
@@ -49,9 +48,9 @@ VISIONS = (None, "deutan", "protan", "tritan")
 # dark:  Canvas at the dark anchor, text above it.  light: Canvas at the light anchor, text below it.
 # The two anchors are Dusk's Canvas (L 0.20) and Dusk's Ink (L 0.95); Dawn swaps them.
 PROFILES = {
-    "dusk": dict(dark=True, canvas_L=0.20, ink_L=0.95, floor=7.0,
+    "dusk": dict(dark=True, canvas_L=0.20, ink_L=0.95, floor=7.0, beta=0.30,
                  L0_range=(0.5, 0.95), ember_L=[round(0.60 + 0.01 * i, 2) for i in range(31)]),
-    "dawn": dict(dark=False, canvas_L=0.95, ink_L=0.20, floor=4.5,
+    "dawn": dict(dark=False, canvas_L=0.95, ink_L=0.20, floor=4.5, beta=0.19,
                  L0_range=(0.2, 0.7), ember_L=[round(0.35 + 0.01 * i, 2) for i in range(31)]),
 }
 
@@ -201,7 +200,7 @@ def chroma(L, h):
 def hue_colors(L0, hues, ember, P):
     out = {}
     for name, h in zip(SIX, hues):
-        L = round(L0 + BETA * (cusp(h) - CUSP_MEAN), 3)
+        L = round(L0 + P["beta"] * (cusp(h) - CUSP_MEAN), 3)
         out[name] = hexof(oklch(L, chroma(L, h), h))
     eh, eL = ember
     out["ember"] = hexof(oklch(eL, chroma(eL, eh), eh))

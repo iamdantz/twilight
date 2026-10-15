@@ -81,8 +81,8 @@ wording · rule or method · palette values · new flavor · tooling. Most chang
 - A rule or method change is acceptable only if it states all five: the problem it fixes; the measurable improvement; the new formula and parameters; validation numbers; its effect on every guarantee.
 - "Looks better", "felt off", "warmer", "rounded for taste" or a constant with no derivation is BLOCKING. Either it is declared *decided* with rationale, or it is rejected.
 - Removing or weakening a rule, check or guarantee is BLOCKING unless replaced by something strictly stronger and measured to be so.
-- "Fitted" or "measured" parameters must name their data and fitting method so a reader can redo the fit, and the data must be Twilight's own: its palette, its rebuilds, its measurements.
-- Other themes' palettes are never a data source. A parameter taken from another theme is BLOCKING; declare it *decided* with a rationale measured on Twilight, or derive it.
+- "Fitted" or "measured" parameters must state their method, inclusion rule and result, so a reader can redo the fit on a sample of their own.
+- A measured parameter may come from an analysis of other themes. construction.md states the method, the inclusion rule and the result, without naming any theme, and no other theme's palette ships with the repository. Copying another theme's colors or values directly, with no measurement, is BLOCKING.
 
 ### B. Palette values follow the method
 

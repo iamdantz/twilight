@@ -170,18 +170,11 @@ An earlier version placed six hues at equal 60° steps from the accent. That was
 L = L₀ + β · (L_cusp(h) − mean L_cusp)        β = 0.30 (Dusk), 0.19 (Dawn)
 ```
 
-Yellow is naturally light and blue naturally dark. Forcing equal lightness (β = 0) makes yellow olive and blue chalky. β sets how much of each hue's natural height (its sRGB cusp lightness, §6.1) the palette keeps. It is a decided parameter (§12).
+Yellow is naturally light and blue naturally dark. Forcing equal lightness (β = 0) makes yellow olive and blue chalky. β sets how much of each hue's natural height (its sRGB cusp lightness, §6.1) the palette keeps.
 
-- Dusk: β = 0.30, part of the Dusk definition.
-- Dawn: β = 0.19. On a light canvas every hue must stay dark enough for 4.5:1, so a wide spread pushes the dark hues further down. With Dawn's surfaces and floor, three values were built with the full method:
+β was measured on established dark and light themes. For each theme, the lightness of its six ANSI colors was regressed against the cusp lightness of their anchor hues. Themes whose colors do not follow the cusp (correlation below 0.6) were left out. β is the mean slope, rounded to two decimals: 0.30 for dark themes (0.304) and 0.19 for light themes (0.186). Light themes keep less of the natural spread.
 
-| β (Dawn) | Min ΔE, code colors + cursor, normal | Same, color-vision deficiency | Sky L |
-|---|---|---|---|
-| 0.10 | 0.075 | 0.035 | 0.47 |
-| 0.19 | 0.088 | 0.040 | 0.42 |
-| 0.30 | 0.087 | 0.041 | 0.38 |
-
-0.19 gives the widest normal-vision separation of the three and keeps Sky at L 0.42 instead of 0.38. 0.30 gains 0.0007 under color-vision deficiency and loses 0.001 in normal vision.
+The formula is the same in both flavors; β is an input, like Canvas, Ink and the floor.
 
 L₀ is solved by bisection so that the weakest of the six hues meets exactly the variant floor (7:1 Dusk, 4.5:1 Dawn) on the most demanding code surface (§6.6).
 
@@ -397,8 +390,13 @@ While Dawn 1.0 was being validated, its focus color (`#de711c`) passed 3:1 on Ca
 | JND targets | §9.1 | Visibility per state |
 | Gamut margin | 0.92 · Cmax | Safety margin |
 | Bright step | one third toward Ink | Consistent in both variants |
-| β | 0.30 Dusk, 0.19 Dawn | How much of each hue's natural height is kept (§6.2) |
 | Syntax roles | §8 | Fixed from the token study; one color per category, Coral and Afterglow out of code |
+
+### Measured (from data)
+
+| Parameter | Source |
+|---|---|
+| β = 0.30 (Dusk), 0.19 (Dawn) | Mean slope of ANSI lightness against cusp lightness, measured on established dark and light themes (§6.2) |
 
 ### Solved (everything else)
 
