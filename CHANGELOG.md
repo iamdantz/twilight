@@ -16,9 +16,9 @@ Dawn rebuilt as the light end of the same system. Dusk is unchanged, value for v
 - Smallest code-color difference, normal vision: ΔE 0.077 → 0.088.
 
 ### Lower (Dawn, against 1.1.1)
-- Ink on any surface: 14.81 → 13.36:1, from the darker Canvas. Ink on Canvas is 15.58:1 in both flavors.
-- Worst color-vision separation of the code colors: ΔE 0.041 → 0.040 (0.0411 → 0.0402, about 0.05 JND).
-- `diff-removed` visibility 2.025 → 2.021 JND (target 2, still met).
+- `ink on surfaces`: 14.81 → 13.36:1, from the darker Canvas. Ink on Canvas is 15.58:1 in both flavors.
+- `ΔE code+cursor, worst CVD`: 0.041 → 0.040 (0.0411 → 0.0402, about 0.05 JND).
+- `JND diff-removed`: 2.025 → 2.021 (target 2, still met).
 - Control on any surface 3.02 → 3.00:1 and `accent-text` on Raised 4.51 → 4.50:1; both still meet their WCAG thresholds.
 
 ### Documented
@@ -30,7 +30,7 @@ Dawn rebuilt as the light end of the same system. Dusk is unchanged, value for v
 - `construct.py` splits the shared core from two flavor profiles (anchors, floor, β, search ranges) and rebuilds both flavors exactly.
 - The ±25° hue bound is enforced by the optimizer on the rendered hue against the exact anchor, the same way the validator checks it. Dusk is unaffected.
 - `validate.py`: Dawn floors follow the rebuilt flavor. Ink 13.36, color-vision ΔE 0.040, normal-vision ΔE 0.088 (construction.md §4).
-- `validate.py --compare`: WCAG thresholds and text targets are fixed guarantees and never go down. Ink, the two ΔE floors and the known limits (`LIMIT_FLOORS`) are measured minimums and go down only with a `### Lower` section in the version's entry. Removing a check is a regression.
+- `validate.py --compare`: WCAG thresholds and text targets are fixed guarantees and never go down. Ink, the two ΔE floors and the known limits (`LIMIT_FLOORS`) are measured minimums and go down only when the version's entry names each one, in backticks, under `### Lower`. Removing a check is a regression.
 
 ## 1.1.1
 

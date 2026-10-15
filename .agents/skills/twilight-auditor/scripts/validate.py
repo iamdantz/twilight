@@ -38,7 +38,7 @@ FLOORS = {  # check: (dusk, dawn); construction.md §3.5, §5, §6.6, §7, §9.2
 }
 # Two kinds of floor. Fixed guarantees (every check not listed below) are WCAG thresholds and the text targets
 # of construction.md §3.5: they never go down. Measured minimums are what the current palette reaches: a method
-# change may lower one only if the latest CHANGELOG entry has a "### Lower" section (SKILL.md, area C).
+# change may lower one only if the latest CHANGELOG entry names it, in backticks, under "### Lower" (SKILL.md, area C).
 MEASURED = ("ink on surfaces", "ΔE code+cursor, normal", "ΔE code+cursor, worst CVD")
 # Known limits (construction.md §11) are measured minimums too.
 LIMITS = ("JND " + s for s in (*TRANSIENT, "diff-inserted", "diff-removed"))
@@ -390,11 +390,18 @@ def minimum_tables(snap):
     return found.get("FLOORS"), found.get("LIMIT_FLOORS")
 
 
-def declares_lower(snap):
-    """True if the latest CHANGELOG entry has a '### Lower' section."""
+def lower_section(snap):
+    """The '### Lower' section of the latest CHANGELOG entry, or "" when there is none."""
     text = snap.read("CHANGELOG.md")
     entries = re.split(r"^## (?=\d+\.\d+\.\d+)", text, flags=re.M)
-    return len(entries) > 1 and re.search(r"^### Lower\b", entries[1], flags=re.M) is not None
+    if len(entries) < 2 or not (m := re.search(r"^### Lower\b.*?(?=^### |\Z)", entries[1], flags=re.M | re.S)):
+        return ""
+    return m.group(0)
+
+
+def declared(lower, name):
+    """A lowered minimum is declared when the Lower section names its check in backticks."""
+    return f"`{name}`" in lower
 
 
 def version_checks(snap, P_raw):
@@ -418,7 +425,7 @@ def run(snap, json_path="palette/twilight.json", do_rebuild=True):
         snapshot=snap.label(), floors=floors, limits={f: M[f][1] for f in P},
         rules=[e for f in P for e in rules(P[f], f)], reproduction=repro_errs,
         consistency=version_checks(snap, raw) + doc_checks(snap, P, M) + construction_checks(snap, P, meta) + link_checks(snap),
-        palette=P, tables=minimum_tables(snap), lower=declares_lower(snap),
+        palette=P, tables=minimum_tables(snap), lower=lower_section(snap),
     )
 
 
@@ -446,7 +453,7 @@ def failed(r):
 def minimum_changes(base, prop, lines):
     """Changes to the minimums themselves, base tables against proposal tables.
     A fixed guarantee may never go down. A measured minimum or known limit may go down only when the latest
-    CHANGELOG entry declares it under '### Lower'. A removed check or table is a regression."""
+    CHANGELOG entry names its check, in backticks, under '### Lower'. A removed check or table is a regression."""
     out = []
     (bF, bL), (pF, pL) = base["tables"], prop["tables"]
     if bF is None:
@@ -462,8 +469,8 @@ def minimum_changes(base, prop, lines):
             if new < old[i] - 1e-12:
                 if check not in MEASURED:
                     out.append(f"fixed guarantee lowered: {flavor} {check} {old[i]} → {new}")
-                elif not prop["lower"]:
-                    out.append(f"measured minimum lowered without a Lower entry in CHANGELOG: {flavor} {check} {old[i]} → {new}")
+                elif not declared(prop["lower"], check):
+                    out.append(f"measured minimum lowered without `{check}` under Lower in CHANGELOG: {flavor} {old[i]} → {new}")
                 else:
                     lines.append(f"measured minimum lowered (declared under Lower): {flavor} {check} {old[i]} → {new}")
     if bL is not None and pL is None:
@@ -473,10 +480,10 @@ def minimum_changes(base, prop, lines):
             old = bL[f][key] if bL else math.floor(base["limits"][f][key] * 1e4) / 1e4   # LIMIT_FLOORS precision
             new = pL[f][key] if pL else prop["limits"][f][key]
             if new < old - 1e-9:
-                if prop["lower"]:
+                if declared(prop["lower"], key):
                     lines.append(f"known limit lowered (declared under Lower): {f} {key} {old} → {new}")
                 else:
-                    out.append(f"known limit lowered without a Lower entry in CHANGELOG: {f} {key} {old} → {new}")
+                    out.append(f"known limit lowered without `{key}` under Lower in CHANGELOG: {f} {old} → {new}")
     return out
 
 

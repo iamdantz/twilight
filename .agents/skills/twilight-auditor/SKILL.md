@@ -60,7 +60,7 @@ What it checks:
 - **Reproduction**: rebuilds both flavors from the decided parameters (§6.5 included, about 2 minutes) and compares every token exactly. Tolerance is zero: any difference is a hand edit or an undocumented method change. A flavor with no construction is an error.
 - **Construction table**: the §6.5 hue table, Ember and L₀ in construction.md against the rebuild; every hex in a construction.md table must exist in the JSON.
 - **Consistency**: `_` keys; JSON `version` = latest CHANGELOG heading; every hex, swatch, RGB/OKLCH column and measured number in README.md and docs/design-system.md; relative links and anchors in every `.md`.
-- **Regressions** (`--compare`): any floor below its minimum in `FLOORS`; any known limit below `LIMIT_FLOORS`; a fixed guarantee lowered; a measured minimum or known limit lowered without a `### Lower` section in the latest CHANGELOG entry; a check or table removed; changed values with unchanged images. The base and proposal tables are read from each snapshot's own `validate.py`. Every delta against the baseline is printed for context.
+- **Regressions** (`--compare`): any floor below its minimum in `FLOORS`; any known limit below `LIMIT_FLOORS`; a fixed guarantee lowered; a measured minimum or known limit lowered without its check named, in backticks, under `### Lower` in the latest CHANGELOG entry; a check or table removed; changed values with unchanged images. The base and proposal tables are read from each snapshot's own `validate.py`. Every delta against the baseline is printed for context.
 
 It does not parse construction.md prose, CHANGELOG text or images. `--no-rebuild` skips reproduction and is only for wording or link changes. Exit 0 is necessary, not sufficient: areas A, D and E still need judgment.
 
@@ -95,7 +95,7 @@ wording · rule or method · palette values · new flavor · tooling. Most chang
 Minimums. `FLOORS` in `validate.py` is the source of this table, and every change must meet it. There are two kinds:
 
 - **Fixed guarantees**: every row except Ink and the two ΔE rows. They are WCAG thresholds and the text targets of construction.md §3.5, and they define what Twilight promises. They never go down.
-- **Measured minimums**: Ink and the two ΔE rows, plus the known limits below. They are what the current palette reaches. A method change may lower one only with the measured cause in construction.md, a `### Lower` section in the version's CHANGELOG entry, and the new value in `FLOORS` or `LIMIT_FLOORS` in the same change. A palette change that lowers one without a method change is a regression.
+- **Measured minimums**: Ink and the two ΔE rows, plus the known limits below. They are what the current palette reaches. A method change may lower one only with the measured cause in construction.md, a line under `### Lower` in the version's CHANGELOG entry that names the check exactly as `validate.py` does, in backticks (`` `ink on surfaces` ``, `` `JND diff-removed` ``), and the new value in `FLOORS` or `LIMIT_FLOORS` in the same change. A palette change that lowers one without a method change is a regression.
 
 | Check | Dusk | Dawn |
 |---|---|---|
