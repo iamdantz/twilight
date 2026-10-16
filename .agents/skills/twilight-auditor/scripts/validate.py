@@ -33,8 +33,8 @@ FLOORS = {  # check: (dusk, dawn); construction.md §3.5, §5, §6.6, §7, §9.2
     "ink on surfaces": (13.76, 13.36), "body on surfaces": (10.90, 10.89), "subtle on surfaces": (7.00, 7.00),
     "faint on surfaces": (4.50, 4.50), "control on surfaces": (3.00, 3.00), "code on code surfaces": (7.00, 4.50),
     "on-accent on accent/pressed": (4.50, 4.50), "accent-text on raised": (7.00, 4.50),
-    "accent-focus on surfaces": (3.00, 3.00), "ΔE code+cursor, normal": (0.089, 0.088),
-    "ΔE code+cursor, worst CVD": (0.054, 0.040), "faint on transient states": (4.50, 4.50),
+    "accent-focus on surfaces": (3.00, 3.00), "ΔE code+cursor, normal": (0.097, 0.088),
+    "ΔE code+cursor, worst CVD": (0.061, 0.040), "faint on transient states": (4.50, 4.50),
 }
 # Two kinds of floor. Fixed guarantees (every check not listed below) are WCAG thresholds and the text targets
 # of construction.md §3.5: they never go down. Measured minimums are what the current palette reaches: a method
@@ -43,10 +43,10 @@ MEASURED = ("ink on surfaces", "ΔE code+cursor, normal", "ΔE code+cursor, wors
 # Known limits (construction.md §11) are measured minimums too.
 LIMITS = ("JND " + s for s in (*TRANSIENT, "diff-inserted", "diff-removed"))
 LIMITS = (*LIMITS, "ANSI black/white on canvas", "min ΔE between background states")
-LIMIT_FLOORS = {  # the measured minimum of each limit per flavor (truncated to 4 decimals), current as of 1.2.0
+LIMIT_FLOORS = {  # the measured minimum of each limit per flavor (truncated to 4 decimals), current as of 1.3.0
     "dusk": {"JND selection": 4.0869, "JND selection-inactive": 2.1121, "JND find-match": 3.6056,
-             "JND find-match-other": 2.5739, "JND word-highlight": 2.0154, "JND word-highlight-write": 2.555,
-             "JND diff-inserted": 2.0425, "JND diff-removed": 2.0341, "ANSI black/white on canvas": 1.3949,
+             "JND find-match-other": 2.5739, "JND word-highlight": 2.0129, "JND word-highlight-write": 2.689,
+             "JND diff-inserted": 2.021, "JND diff-removed": 2.0341, "ANSI black/white on canvas": 1.3949,
              "min ΔE between background states": 0.0107},
     "dawn": {"JND selection": 2.788, "JND selection-inactive": 2.0513, "JND find-match": 4.3127,
              "JND find-match-other": 2.5588, "JND word-highlight": 2.0486, "JND word-highlight-write": 3.0465,
@@ -149,8 +149,8 @@ def rules(F, flavor):
     eh = k.oklch_of(F["colors"]["ember"])[2]
     if not k.EMBER_HUE[0] <= eh <= k.EMBER_HUE[1]:
         errs.append(f"{flavor}: ember hue {eh:.1f}° outside {k.EMBER_HUE[0]}–{k.EMBER_HUE[1]}°")
-    if F["colors"]["afterglow"].lower() != k.SEED or F["accents"]["afterglow"]["accent"].lower() != k.SEED:
-        errs.append(f"{flavor}: afterglow must equal the seed {k.SEED}")
+    if F["colors"]["afterglow"].lower() != k.AFTERGLOW or F["accents"]["afterglow"]["accent"].lower() != k.AFTERGLOW:
+        errs.append(f"{flavor}: afterglow must equal the cusp of the seed hue {k.AFTERGLOW}")
     for name, fam in F["accents"].items():
         if fam["accent"].lower() != F["colors"][name].lower():
             errs.append(f"{flavor}: accents.{name}.accent differs from colors.{name}")
@@ -213,7 +213,7 @@ def construction_checks(snap, P, meta):
             want = [f"{meta[f]['L0']:.3f}" for f in ("dusk", "dawn")]
             if shown and shown != want:
                 errs.append(f"docs/construction.md:{no}: L₀ shows {shown}, rebuilt {want}")
-    allhex = {h.lower() for f in P for h in all_hexes(P[f])}
+    allhex = {h.lower() for f in P for h in all_hexes(P[f])} | {k.SEED}   # the seed is documented, not a token
     for no, line in enumerate(text.splitlines(), 1):
         if not line.startswith("|"):          # prose may cite historical values; tables state current ones
             continue
@@ -236,7 +236,7 @@ def token_of(cell):
 def doc_checks(snap, P, M):
     """Hexes, swatches and numbers in README.md and design-system.md against the JSON and the measurements."""
     errs = []
-    allhex = {h.lower() for f in P for h in all_hexes(P[f])}
+    allhex = {h.lower() for f in P for h in all_hexes(P[f])} | {k.SEED}   # the seed is documented, not a token
     for path in ("README.md", "docs/design-system.md"):
         flavor, section = None, ""
         for no, line in enumerate(snap.read(path).splitlines(), 1):

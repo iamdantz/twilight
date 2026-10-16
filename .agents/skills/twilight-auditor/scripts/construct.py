@@ -26,7 +26,7 @@ import random
 from coloraide import Color
 
 # Decided parameters shared by both flavors (construction.md §12) ------------------
-SEED = "#ee7a1f"                      # Afterglow
+SEED = "#ee7a1f"                      # the origin: its hue places Afterglow (§2); its chroma is the light chroma base (§6.3)
 SEED_HUE_DEG = 52                     # seed hue rounded to the degree; used for the neutral hue and the warm tilt
 NEUTRAL_HUE = SEED_HUE_DEG + 180      # 232°
 DRIFT, AMP = 18.0, 0.035              # §3.1, §3.2
@@ -36,7 +36,7 @@ PHI = (1 + 5 ** 0.5) / 2
 TAU, GAMUT = 0.15, 0.92               # §6.3
 FREEDOM = 25                          # §6.1
 EMBER_HUE = (45, 70)                  # §6.4
-EMBER_VS_SEED = 0.06
+EMBER_VS_AFTERGLOW = 0.06
 OPT_SEED, OPT_RESTARTS, OPT_JITTER, OPT_STEPS = 1, 10, 20, (8, 4, 2, 1)     # §6.5
 JND = 0.02
 STATE_JND = {"selection": 4, "selection-inactive": 2, "find-match": 5, "find-match-other": 2.5,
@@ -47,10 +47,11 @@ VISIONS = (None, "deutan", "protan", "tritan")
 # Flavor profiles (construction.md §3, §4, §6) --------------------------------------
 # dark:  Canvas at the dark anchor, text above it.  light: Canvas at the light anchor, text below it.
 # The two anchors are Dusk's Canvas (L 0.20) and Dusk's Ink (L 0.95); Dawn swaps them.
+# chroma_base: the chroma divided by φ to give C₀ (§6.3), Afterglow's in dark themes and the seed's in light ones.
 PROFILES = {
-    "dusk": dict(dark=True, canvas_L=0.20, ink_L=0.95, floor=7.0, beta=0.30,
+    "dusk": dict(dark=True, canvas_L=0.20, ink_L=0.95, floor=7.0, beta=0.30, chroma_base="afterglow",
                  L0_range=(0.5, 0.95), ember_L=[round(0.60 + 0.01 * i, 2) for i in range(31)]),
-    "dawn": dict(dark=False, canvas_L=0.95, ink_L=0.20, floor=4.5, beta=0.19,
+    "dawn": dict(dark=False, canvas_L=0.95, ink_L=0.20, floor=4.5, beta=0.19, chroma_base="seed",
                  L0_range=(0.2, 0.7), ember_L=[round(0.35 + 0.01 * i, 2) for i in range(31)]),
 }
 
@@ -190,20 +191,29 @@ ANCHORS = {k: round(oklch_of(v)[2]) for k, v in CORNERS.items()}                
 EXACT_ANCHORS = {k: oklch_of(v)[2] for k, v in CORNERS.items()}                             # for the ±25° rule
 SIX = list(ANCHORS)
 CUSP_MEAN = sum(cusp(h) for h in ANCHORS.values()) / 6
-C0 = oklch_of(SEED)[1] / PHI
+
+# §2 Afterglow: the most chromatic color sRGB holds at the seed hue (its cusp). The seed itself is not a token.
+_H = round(oklch_of(SEED)[2], 1)
+AFTERGLOW = hexof(oklch(cusp(_H), cmax(cusp(_H), _H), _H))
+BASE_CHROMA = {"afterglow": oklch_of(AFTERGLOW)[1], "seed": oklch_of(SEED)[1]}
 
 
-def chroma(L, h):
-    return min(C0 * (1 + TAU * math.cos(math.radians(h - SEED_HUE_DEG))), GAMUT * cmax(round(L, 3), h))
+def c0(P):
+    """§6.3: C₀ = C_base / φ, with the base chosen by the profile."""
+    return BASE_CHROMA[P["chroma_base"]] / PHI
+
+
+def chroma(L, h, P):
+    return min(c0(P) * (1 + TAU * math.cos(math.radians(h - SEED_HUE_DEG))), GAMUT * cmax(round(L, 3), h))
 
 
 def hue_colors(L0, hues, ember, P):
     out = {}
     for name, h in zip(SIX, hues):
         L = round(L0 + P["beta"] * (cusp(h) - CUSP_MEAN), 3)
-        out[name] = hexof(oklch(L, chroma(L, h), h))
+        out[name] = hexof(oklch(L, chroma(L, h, P), h))
     eh, eL = ember
-    out["ember"] = hexof(oklch(eL, chroma(eL, eh), eh))
+    out["ember"] = hexof(oklch(eL, chroma(eL, eh, P), eh))
     return out
 
 
@@ -222,11 +232,11 @@ def solve_L0(hues, ember, surface, P):
 
 
 def distinctness(cols):
-    """§6.5 objective: min ΔE OKLab over the 7 hue colors × 4 visions, minus the Ember–seed penalty."""
+    """§6.5 objective: min ΔE OKLab over the 7 hue colors × 4 visions, minus the Ember–Afterglow penalty."""
     vals = list(cols.values())
     worst = min(sim(a, v).delta_e(sim(b, v), method="ok")
                 for v in VISIONS for i, a in enumerate(vals) for b in vals[i + 1:])
-    return worst - 2 * max(0.0, EMBER_VS_SEED - de_ok(cols["ember"], SEED))
+    return worst - 2 * max(0.0, EMBER_VS_AFTERGLOW - de_ok(cols["ember"], AFTERGLOW))
 
 
 def optimize(surface, P):
@@ -372,7 +382,7 @@ def build_flavor(flavor, dusk_neutrals_hex=None):
     worst = (max if dark else min)([N["content"], d_ins, d_rem], key=lum)
     # Pass 2: hues against the worst code surface. Diff backgrounds are not recomputed.
     hues, ember, S, L0 = optimize(worst, P)
-    sh = hue(SEED)
+    sh = hue(AFTERGLOW)
     states = {
         "selection": state(N, sh, STATE_JND["selection"], P),
         "selection-inactive": state(N, sh, STATE_JND["selection-inactive"], P),
@@ -382,7 +392,7 @@ def build_flavor(flavor, dusk_neutrals_hex=None):
         "word-highlight-write": state(N, hue(S["cyan"]), STATE_JND["word-highlight-write"], P),
         "diff-inserted": d_ins, "diff-removed": d_rem,
     }
-    colors = {"afterglow": SEED, **{k: S[v] for k, v in COLOR_KEYS.items()}}
+    colors = {"afterglow": AFTERGLOW, **{k: S[v] for k, v in COLOR_KEYS.items()}}
     order = ["red", "green", "yellow", "blue", "magenta", "cyan"]
     ansi = ([N["border"] if dark else N["body"]] + [S[k] for k in order] + [N["secondary"] if dark else N["border"]]
             + [N["muted"]] + [bright(S[k], N["primary"]) for k in order] + [N["primary"] if dark else N["elevated"]])

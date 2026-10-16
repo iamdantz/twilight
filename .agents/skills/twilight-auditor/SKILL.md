@@ -8,7 +8,7 @@ allowed-tools: Read, Grep, Glob, Bash
 
 ## Overview
 
-Twilight's value is that every color comes from a documented, measurable, reproducible method. Afterglow `#ee7a1f` and the neutral hue at its complement (232°) are the only values chosen by hand. Everything else is solved by docs/construction.md and validated in sRGB.
+Twilight's value is that every color comes from a documented, measurable, reproducible method. The seed `#ee7a1f` is the only color chosen by hand: Afterglow is the sRGB cusp of its hue and the neutral hue is its complement (232°). Everything else is solved by docs/construction.md and validated in sRGB.
 
 This audit decides whether a change to the definition keeps Twilight being Twilight. It approves only on measurements, never on intent. A change that is internally consistent but has no derivation path is still rejected.
 
@@ -56,7 +56,7 @@ $V --ref <branch> --compare main     # proposal + regressions
 What it checks:
 
 - **Floors**: every row of the area C table, per flavor. WCAG thresholds (3.0, 4.5, 7.0) are compared strictly on unrounded values; regression floors (e.g. 13.76, 0.054) are met at their stated precision.
-- **Rules**: no pure black or white; ANSI hue anchors ±25°; Ember 45–70°; Afterglow equals the seed; every `accents.X.accent` equals `colors.X`; brights recomputed with the construction's own function.
+- **Rules**: no pure black or white; ANSI hue anchors ±25°; Ember 45–70°; Afterglow equals the sRGB cusp of the seed hue; every `accents.X.accent` equals `colors.X`; brights recomputed with the construction's own function.
 - **Reproduction**: rebuilds both flavors from the decided parameters (§6.5 included, about 2 minutes) and compares every token exactly. Tolerance is zero: any difference is a hand edit or an undocumented method change. A flavor with no construction is an error.
 - **Construction table**: the §6.5 hue table, Ember and L₀ in construction.md against the rebuild; every hex in a construction.md table must exist in the JSON.
 - **Consistency**: `_` keys; JSON `version` = latest CHANGELOG heading; every hex, swatch, RGB/OKLCH column and measured number in README.md and docs/design-system.md; relative links and anchors in every `.md`.
@@ -120,7 +120,7 @@ The known limits in construction.md §11 (JND of every background state, ANSI bl
 ### D. New flavors
 
 - Produced end to end by the construction method: surfaces, text levels, accents, colors, states and ANSI all solved, never picked. It is a new profile in `scripts/construct.py` `PROFILES` (with a neutral builder if its surfaces need one), and its committed JSON must equal the generator's output. Shared core functions may not be changed to suit it unless Dusk and Dawn still rebuild exactly.
-- Any new seed or parameter is declared *decided* with written rationale in §12. Seed rule: one accent seed, neutrals at its exact complement. A second or different seed requires construction.md to be amended first, by a change that itself passes this audit.
+- Any new seed or parameter is declared *decided* with written rationale in §12. Seed rule: one seed; Afterglow at the cusp of its hue, neutrals at its exact complement. A second or different seed requires construction.md to be amended first, by a change that itself passes this audit.
 - If the flavor has its own generator test, run it on an exported copy; it does not replace the validator, which checks every floor including ΔE.
 - Its palette image (`assets/palette-<flavor>.png`) exists, or the README states why not.
 - Dark flavors meet Dusk floors; light flavors meet Dawn floors. The validator applies this automatically (by Canvas lightness). A flavor that only passes after lowering a fixed guarantee, or by lowering a measured minimum without a method change, is BLOCKING.
