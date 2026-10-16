@@ -55,7 +55,7 @@ $V --ref <branch> --compare main     # proposal + regressions
 
 What it checks:
 
-- **Floors**: every row of the area C table, per flavor. WCAG thresholds (3.0, 4.5, 7.0) are compared strictly on unrounded values; regression floors (e.g. 13.76, 0.054) are met at their stated precision.
+- **Floors**: every row of the area C table, per flavor. WCAG thresholds (3.0, 4.5, 7.0) are compared strictly on unrounded values; regression floors (e.g. 13.76, 0.061) are met at their stated precision.
 - **Rules**: no pure black or white; ANSI hue anchors ±25°; Ember 45–70°; Afterglow equals the sRGB cusp of the seed hue; every `accents.X.accent` equals `colors.X`; brights recomputed with the construction's own function.
 - **Reproduction**: rebuilds both flavors from the decided parameters (§6.5 included, about 2 minutes) and compares every token exactly. Tolerance is zero: any difference is a hand edit or an undocumented method change. A flavor with no construction is an error.
 - **Construction table**: the §6.5 hue table, Ember and L₀ in construction.md against the rebuild; every hex in a construction.md table must exist in the JSON.
@@ -108,8 +108,8 @@ Minimums. `FLOORS` in `validate.py` is the source of this table, and every chang
 | Every accent: `on-accent` on `accent` and `accent-pressed` | ≥ 4.50 | ≥ 4.50 |
 | Every accent: `accent-text` on Raised | ≥ 7.00 | ≥ 4.50 |
 | Every accent: `accent-focus` on every surface | ≥ 3.00 | ≥ 3.00 |
-| Min pairwise ΔE OKLab, 6 code colors + cursor, normal vision | ≥ 0.089 | ≥ 0.088 |
-| Same, worst of deuteranopia / protanopia / tritanopia (full severity) | ≥ 0.054 | ≥ 0.040 |
+| Min pairwise ΔE OKLab, 6 code colors + cursor, normal vision | ≥ 0.097 | ≥ 0.088 |
+| Same, worst of deuteranopia / protanopia / tritanopia (full severity) | ≥ 0.061 | ≥ 0.040 |
 | Faint on transient background states | ≥ 4.50 | ≥ 4.50 |
 | Bright ANSI = normal moved 1/3 toward Ink, same hue | exact | exact |
 

@@ -1,6 +1,6 @@
 # Twilight design system
 
-Version 1.3 · Flavors: Dusk (dark), Dawn (light)
+Version 1.4 · Flavors: Dusk (dark), Dawn (light)
 
 This document defines Twilight: what each color is, what it means, where it may go, and what it guarantees. It does not describe any particular application. A theme for any tool can be built from it by mapping that tool's regions onto the roles below.
 
@@ -79,13 +79,13 @@ The palette has ten neutrals and eight colors per flavor. Token names are lowerc
 | | Token | Hex | OKLCH | On Canvas | Worst code surface |
 |:-:|---|---|---|---|---|
 | <img src="https://placehold.co/16x16/ff7d00/ff7d00" width="16" height="16" alt="#ff7d00"> | `afterglow` | `#ff7d00` | `oklch(72.7% 0.188 51.7)` | 2.21 | — |
-| <img src="https://placehold.co/16x16/8d3826/8d3826" width="16" height="16" alt="#8d3826"> | `coral` | `#8d3826` | `oklch(45.5% 0.120 33.6)` | 6.64 | 5.99 |
-| <img src="https://placehold.co/16x16/766014/766014" width="16" height="16" alt="#766014"> | `gold` | `#766014` | `oklch(49.7% 0.094 91.5)` | 5.24 | 4.72 |
-| <img src="https://placehold.co/16x16/39713a/39713a" width="16" height="16" alt="#39713a"> | `grove` | `#39713a` | `oklch(49.6% 0.104 144.2)` | 5.04 | 4.54 |
-| <img src="https://placehold.co/16x16/176a7e/176a7e" width="16" height="16" alt="#176a7e"> | `sea-salt` | `#176a7e` | `oklch(48.7% 0.081 218.5)` | 5.33 | 4.80 |
-| <img src="https://placehold.co/16x16/3f4880/3f4880" width="16" height="16" alt="#3f4880"> | `sky` | `#3f4880` | `oklch(42.2% 0.093 274.8)` | 7.39 | 6.66 |
-| <img src="https://placehold.co/16x16/813b67/813b67" width="16" height="16" alt="#813b67"> | `orchid` | `#813b67` | `oklch(45.9% 0.111 343.8)` | 6.57 | 5.92 |
-| <img src="https://placehold.co/16x16/67320a/67320a" width="16" height="16" alt="#67320a"> | `ember` | `#67320a` | `oklch(38.1% 0.090 51.8)` | 8.89 | 8.01 |
+| <img src="https://placehold.co/16x16/8d3826/8d3826" width="16" height="16" alt="#8d3826"> | `coral` | `#8d3826` | `oklch(45.5% 0.120 33.6)` | 6.64 | 5.97 |
+| <img src="https://placehold.co/16x16/766014/766014" width="16" height="16" alt="#766014"> | `gold` | `#766014` | `oklch(49.7% 0.094 91.5)` | 5.24 | 4.71 |
+| <img src="https://placehold.co/16x16/39713a/39713a" width="16" height="16" alt="#39713a"> | `grove` | `#39713a` | `oklch(49.6% 0.104 144.2)` | 5.04 | 4.52 |
+| <img src="https://placehold.co/16x16/176a7e/176a7e" width="16" height="16" alt="#176a7e"> | `sea-salt` | `#176a7e` | `oklch(48.7% 0.081 218.5)` | 5.33 | 4.79 |
+| <img src="https://placehold.co/16x16/3f4880/3f4880" width="16" height="16" alt="#3f4880"> | `sky` | `#3f4880` | `oklch(42.2% 0.093 274.8)` | 7.39 | 6.64 |
+| <img src="https://placehold.co/16x16/813b67/813b67" width="16" height="16" alt="#813b67"> | `orchid` | `#813b67` | `oklch(45.9% 0.111 343.8)` | 6.57 | 5.90 |
+| <img src="https://placehold.co/16x16/67320a/67320a" width="16" height="16" alt="#67320a"> | `ember` | `#67320a` | `oklch(38.1% 0.090 51.8)` | 8.89 | 7.98 |
 
 *Worst code surface* is the lowest contrast across Canvas and both diff backgrounds, the surfaces where code is drawn. Afterglow is not a code color, so it has no entry.
 
@@ -279,17 +279,18 @@ Visibility is measured in JND, just-noticeable differences, where 1 JND is ΔE 0
 
 - **Transient** states (selection, search matches, word highlights) may change lightness, but Faint text must keep 4.5:1 on them.
 - **Persistent** states (diff lines) are treated as code surfaces. Code colors are validated on them and keep their full minimum.
+- **Apart from each other.** Every state is at least 1 JND from every other state, so a read and a write highlight, or the current and other search matches, never look the same. The one exception is Dawn's selection and inactive selection (0.96 JND), which mark the focused and unfocused editors.
 
 ### Dusk
 
 | | Token | Hex | Hue from | Visibility | Kind |
 |:-:|---|---|---|---|---|
 | <img src="https://placehold.co/16x16/351a08/351a08" width="16" height="16" alt="#351a08"> | `selection` | `#351a08` | Afterglow | 4.1 JND | transient |
-| <img src="https://placehold.co/16x16/211209/211209" width="16" height="16" alt="#211209"> | `selection-inactive` | `#211209` | Afterglow | 2.1 JND | transient |
+| <img src="https://placehold.co/16x16/260f02/260f02" width="16" height="16" alt="#260f02"> | `selection-inactive` | `#260f02` | Afterglow | 2.9 JND | transient |
 | <img src="https://placehold.co/16x16/292108/292108" width="16" height="16" alt="#292108"> | `find-match` | `#292108` | Gold | 3.6 JND | transient |
 | <img src="https://placehold.co/16x16/1d1500/1d1500" width="16" height="16" alt="#1d1500"> | `find-match-other` | `#1d1500` | Gold | 2.6 JND | transient |
 | <img src="https://placehold.co/16x16/062221/062221" width="16" height="16" alt="#062221"> | `word-highlight` | `#062221` | Sea Salt | 2.0 JND | transient |
-| <img src="https://placehold.co/16x16/092625/092625" width="16" height="16" alt="#092625"> | `word-highlight-write` | `#092625` | Sea Salt | 2.7 JND | transient |
+| <img src="https://placehold.co/16x16/182423/182423" width="16" height="16" alt="#182423"> | `word-highlight-write` | `#182423` | Sea Salt | 2.5 JND | transient |
 | <img src="https://placehold.co/16x16/0e1a09/0e1a09" width="16" height="16" alt="#0e1a09"> | `diff-inserted` | `#0e1a09` | Grove | 2.0 JND | persistent |
 | <img src="https://placehold.co/16x16/22110e/22110e" width="16" height="16" alt="#22110e"> | `diff-removed` | `#22110e` | Coral | 2.0 JND | persistent |
 
@@ -304,7 +305,7 @@ Visibility is measured in JND, just-noticeable differences, where 1 JND is ΔE 0
 | <img src="https://placehold.co/16x16/ceeef8/ceeef8" width="16" height="16" alt="#ceeef8"> | `word-highlight` | `#ceeef8` | Sea Salt | 2.0 JND | transient |
 | <img src="https://placehold.co/16x16/c5e4ee/c5e4ee" width="16" height="16" alt="#c5e4ee"> | `word-highlight-write` | `#c5e4ee` | Sea Salt | 3.0 JND | transient |
 | <img src="https://placehold.co/16x16/e0f6dd/e0f6dd" width="16" height="16" alt="#e0f6dd"> | `diff-inserted` | `#e0f6dd` | Grove | 2.1 JND | persistent |
-| <img src="https://placehold.co/16x16/f4dedb/f4dedb" width="16" height="16" alt="#f4dedb"> | `diff-removed` | `#f4dedb` | Coral | 2.0 JND | persistent |
+| <img src="https://placehold.co/16x16/f4dde0/f4dde0" width="16" height="16" alt="#f4dde0"> | `diff-removed` | `#f4dde0` | Coral | 2.1 JND | persistent |
 
 ### Line structure
 
@@ -422,7 +423,7 @@ If a tool cannot express a rule, such as a border on the current line, leave the
 | Faint on any surface | 4.50:1 | 4.51:1 |
 | Control boundary on any surface | 3.03:1 | 3.00:1 |
 | Accent focus on any surface, every accent | 6.22:1 | 3.01:1 |
-| Code colors on every code surface | 7.00:1 | 4.54:1 |
+| Code colors on every code surface | 7.00:1 | 4.52:1 |
 | Smallest code-color difference, normal vision | ΔE 0.097 | ΔE 0.088 |
 | Smallest code-color difference, color-vision deficiency | ΔE 0.061 | ΔE 0.040 |
 | Pure black or white | none | none |

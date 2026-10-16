@@ -231,16 +231,18 @@ def solve_L0(hues, ember, surface, P):
     return hi if P["dark"] else lo
 
 
-def distinctness(cols):
-    """§6.5 objective: min ΔE OKLab over the 7 hue colors × 4 visions, minus the Ember–Afterglow penalty."""
+def distinctness(cols, cursor):
+    """§6.5 objective: min ΔE OKLab × 4 visions over every pair of the 7 hue colors and every code color against
+    the cursor (Coral excluded, as in the guarantee), minus the Ember–Afterglow penalty."""
     vals = list(cols.values())
-    worst = min(sim(a, v).delta_e(sim(b, v), method="ok")
-                for v in VISIONS for i, a in enumerate(vals) for b in vals[i + 1:])
+    pairs = [(a, b) for i, a in enumerate(vals) for b in vals[i + 1:]]
+    pairs += [(cols[n], cursor) for n in cols if n != "red"]
+    worst = min(sim(a, v).delta_e(sim(b, v), method="ok") for v in VISIONS for a, b in pairs)
     return worst - 2 * max(0.0, EMBER_VS_AFTERGLOW - de_ok(cols["ember"], AFTERGLOW))
 
 
-def optimize(surface, P):
-    """§6.5: seeded coordinate descent. Returns (hues, ember, colors, L0)."""
+def optimize(surface, P, cursor):
+    """§6.5: seeded coordinate descent. `cursor` is Afterglow's accent-focus. Returns (hues, ember, colors, L0)."""
     floor, rng = P["floor"], P["ember_L"]
     random.seed(OPT_SEED)
     base = [ANCHORS[n] for n in SIX]
@@ -250,7 +252,7 @@ def optimize(surface, P):
         cols = hue_colors(L0, hues, ember, P)
         if any(abs((oklch_of(cols[n])[2] - EXACT_ANCHORS[n] + 180) % 360 - 180) > FREEDOM for n in SIX):
             return -2.0, cols, L0            # §6.1 is checked on the rendered hue, against the exact anchor
-        return (-1.0 if contrast(cols["ember"], surface) < floor else distinctness(cols)), cols, L0
+        return (-1.0 if contrast(cols["ember"], surface) < floor else distinctness(cols, cursor)), cols, L0
 
     best = None
     for r in range(OPT_RESTARTS):
@@ -292,15 +294,16 @@ def state_bounds(N, P):
     return (oklch_of(N["frame"])[0], 1.0) if P["dark"] else (0.0, oklch_of(N["content"])[0])
 
 
-def state(N, hue, jnd, P):
+def state(N, hue, jnd, P, built=()):
     """§9.3. Chroma 0.010–0.140 in 0.001 steps; for each chroma and direction, L moves from Canvas in 0.001 steps
     until a bound; the first step reaching the target is a candidate with cost 1000·|ΔL| + 100·C; lowest cost wins
-    (earliest on ties). If no candidate exists, the most visible color found."""
+    (earliest on ties). If no candidate exists, the most visible color found.
+    §9.4: among those, a color at least 1 JND from every state in `built` is preferred; visibility comes first."""
     bg = N["content"]
     target = jnd * JND
     L0 = oklch_of(bg)[0]
     Lmin, Lmax = state_bounds(N, P)
-    best, most = None, None
+    best, most, best_sep, most_sep = None, None, None, None
     for ci in range(10, 141):
         C = ci / 1000
         for sign in (1, -1):
@@ -315,13 +318,21 @@ def state(N, hue, jnd, P):
                 if contrast(N["muted"], hx) < 4.5:
                     break
                 d = de_ok(hx, bg)
+                apart = all(de_ok(hx, b) >= JND for b in built)
                 if most is None or d > most[1]:
                     most = (hx, d)
+                if apart and (most_sep is None or d > most_sep[1]):
+                    most_sep = (hx, d)
                 if d >= target:
-                    if best is None or li + C * 100 < best[0]:
-                        best = (li + C * 100, hx)
+                    cost = li + C * 100
+                    if best is None or cost < best[0]:
+                        best = (cost, hx)
+                    if apart and (best_sep is None or cost < best_sep[0]):
+                        best_sep = (cost, hx)
                     break
-    return best[1] if best else most[0]
+    if best:
+        return (best_sep or best)[1]
+    return (most_sep or most)[0]
 
 
 # §5 Accent families ----------------------------------------------------------------
@@ -376,22 +387,23 @@ def build_flavor(flavor, dusk_neutrals_hex=None):
     N = dusk_neutrals() if flavor == "dusk" else dawn_neutrals(dusk_neutrals_hex)
     hue = lambda hx: oklch_of(hx)[2]
     # Pass 1 (§6.6): hues against Canvas; their Grove and Coral place the diff backgrounds.
-    _, _, first, _ = optimize(N["content"], P)
+    cursor = family(N, AFTERGLOW, P)["accent-focus"]
+    _, _, first, _ = optimize(N["content"], P, cursor)
     d_ins = state(N, hue(first["green"]), STATE_JND["diff-inserted"], P)
-    d_rem = state(N, hue(first["red"]), STATE_JND["diff-removed"], P)
+    d_rem = state(N, hue(first["red"]), STATE_JND["diff-removed"], P, [d_ins])
     worst = (max if dark else min)([N["content"], d_ins, d_rem], key=lum)
     # Pass 2: hues against the worst code surface. Diff backgrounds are not recomputed.
-    hues, ember, S, L0 = optimize(worst, P)
+    hues, ember, S, L0 = optimize(worst, P, cursor)
     sh = hue(AFTERGLOW)
-    states = {
-        "selection": state(N, sh, STATE_JND["selection"], P),
-        "selection-inactive": state(N, sh, STATE_JND["selection-inactive"], P),
-        "find-match": state(N, hue(S["yellow"]), STATE_JND["find-match"], P),
-        "find-match-other": state(N, hue(S["yellow"]), STATE_JND["find-match-other"], P),
-        "word-highlight": state(N, hue(S["cyan"]), STATE_JND["word-highlight"], P),
-        "word-highlight-write": state(N, hue(S["cyan"]), STATE_JND["word-highlight-write"], P),
-        "diff-inserted": d_ins, "diff-removed": d_rem,
-    }
+    # §9.4: transient states are built in this order, each kept ≥ 1 JND from every state built before it.
+    sources = {"selection": sh, "selection-inactive": sh, "find-match": hue(S["yellow"]),
+               "find-match-other": hue(S["yellow"]), "word-highlight": hue(S["cyan"]),
+               "word-highlight-write": hue(S["cyan"])}
+    states, built = {}, [d_ins, d_rem]
+    for name, h in sources.items():
+        states[name] = state(N, h, STATE_JND[name], P, built)
+        built.append(states[name])
+    states.update({"diff-inserted": d_ins, "diff-removed": d_rem})
     colors = {"afterglow": AFTERGLOW, **{k: S[v] for k, v in COLOR_KEYS.items()}}
     order = ["red", "green", "yellow", "blue", "magenta", "cyan"]
     ansi = ([N["border"] if dark else N["body"]] + [S[k] for k in order] + [N["secondary"] if dark else N["border"]]

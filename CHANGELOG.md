@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.4.0
+
+The construction now builds what the validator guarantees: the cursor is part of the hue optimization, and background states keep 1 JND from each other. Code colors are unchanged in both flavors.
+
+### Changed
+- §6.5: the optimizer compares every code color with the cursor (Afterglow's `accent-focus`), Coral excluded, the same pairs as the color-vision guarantee. Published hues are unchanged; Dawn's first pass moves, so Dawn `diff-removed` is now `#f4dde0`.
+- §9.4: states are built in a fixed order, each kept at least 1 JND from the states before it whenever a color that reaches its target allows it. Dusk `selection-inactive` is now `#260f02` and Dusk `word-highlight-write` `#182423`.
+
+### Improved (against 1.3.0)
+- Dusk: the two word highlights 0.80 → 1.23 JND apart; inactive selection and removed diff 0.54 → 1.08 JND; closest pair of states ΔE 0.011 → 0.022.
+- Dusk `selection-inactive` 2.1 → 2.9 JND.
+- Dawn: inactive selection and removed diff 0.61 → 1.01 JND; closest pair of states ΔE 0.012 → 0.019; `diff-removed` 2.02 → 2.06 JND.
+- Pairs of states under 1 JND: four → one (Dawn selection and inactive selection, 0.96 JND).
+
+### Lower (against 1.3.0)
+- `JND word-highlight-write`: Dusk 2.689 → 2.501 (target 3 was not reached before either). The color keeps its lightness at half the chroma, 0.88 JND from the old one, and is now distinguishable from `word-highlight`.
+- Dawn code colors on every code surface 4.54 → 4.52:1, from the new removed-diff background; still meets 4.5:1.
+
+### Documented
+- construction.md §6.5 (cursor in the objective), §9.4 (separation between states), §11 (one state pair under 1 JND), §12 and §13.
+- design-system.md §9: states stay 1 JND apart.
+
+### Tooling
+- `construct.py`: `optimize()` takes the cursor; `state()` takes the states already built and prefers a color 1 JND from them.
+- `validate.py`: `LIMIT_FLOORS` current as of 1.4.0 (Dusk and Dawn closest state pair 0.0215 and 0.0191).
+- Auditor skill: the floors table shows the Dusk ΔE floors raised in 1.3.0 (0.097, 0.061).
+- `validate.py --compare`: the stale-image check looks only at neutrals and colors, the values `assets/palette-*.png` shows. A change to background states no longer requires new images.
+
 ## 1.3.0
 
 Afterglow and the chroma base are computed from the seed. Dusk's code colors gain chroma; Dawn changes only in Afterglow.
