@@ -1,5 +1,35 @@
 # Changelog
 
+## 1.3.0
+
+Afterglow and the chroma base are computed from the seed. Dusk's code colors gain chroma; Dawn changes only in Afterglow.
+
+### Changed
+- Afterglow is the sRGB cusp of the seed hue: `#ff7d00` (L 0.727, C 0.188) instead of the seed itself. The seed `#ee7a1f` stays the origin of the system and is no longer a token. Both flavors share the new Afterglow and its accent family.
+- The chroma base C₀ depends on polarity, like β: C_Afterglow / φ = 0.116 in dark flavors, C_seed / φ = 0.105 in light ones (construction.md §6.3). Dawn's code colors are unchanged.
+- Dusk: every code color, its accent family and its bright, plus `word-highlight`, `word-highlight-write` and `diff-inserted`, follow from the new base. Dusk's neutrals are unchanged.
+- The selection hue is Afterglow's hue (51.7°). Both selection states keep their values.
+
+### Improved (against 1.2.0)
+- Dusk smallest code-color difference, normal vision: ΔE 0.089 → 0.097.
+- Dusk smallest code-color difference, color-vision deficiency: ΔE 0.054 → 0.061.
+- Dusk `word-highlight-write` 2.6 → 2.7 JND. Dusk Afterglow focus 5.65 → 6.22:1; on-accent on Afterglow 6.86 → 7.55:1.
+- Dawn: label on pressed Afterglow 4.51 → 4.85:1.
+
+### Lower (against 1.2.0)
+- `JND word-highlight`: Dusk 2.015 → 2.013 (target 2, still met).
+- `JND diff-inserted`: Dusk 2.043 → 2.021 (target 2, still met).
+- Dusk code colors on every code surface 7.04 → 7.00:1 and `accent-text` on Raised 7.01 → 7.00:1; both still meet 7:1.
+- Dawn Afterglow focus 3.02 → 3.01:1; still meets 3:1.
+
+### Documented
+- construction.md §2 (seed and Afterglow), §4 (chroma base per flavor), §6.3 (why light flavors take the seed's chroma), §6.5 hue table, §7, §11 and §12.
+- design-system.md and README: one seed instead of two, and the regenerated Dusk values.
+
+### Tooling
+- `construct.py`: `AFTERGLOW` is computed from the seed hue; each profile names its `chroma_base`.
+- `validate.py`: Afterglow must equal the cusp of the seed hue. Dusk floors follow the rebuilt flavor (normal-vision ΔE 0.097, color-vision ΔE 0.061) and `LIMIT_FLOORS` are current as of 1.3.0. The seed hex may appear in the documents.
+
 ## 1.2.0
 
 Dawn rebuilt as the light end of the same system. Dusk is unchanged, value for value.
