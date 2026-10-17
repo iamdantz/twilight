@@ -1,6 +1,6 @@
 # Twilight construction
 
-Version 1.3. How every value was derived, optimized and validated.
+Version 1.4. How every value was derived, optimized and validated.
 
 The companion document, [design-system.md](design-system.md), defines the system and how to apply it. This one explains why each value is what it is. It is written so the full palette can be rebuilt from one seed and the rules below.
 
@@ -15,7 +15,7 @@ The companion document, [design-system.md](design-system.md), defines the system
 5. **The six hues are anchored to the ANSI standard** (RGB cube corners), lit by one shared "sunset" chroma law, and optimized jointly with a seventh hue (Ember) for distinguishability, including under color-vision deficiency.
 6. **The variant floor is solved**: the base lightness is raised (Dusk) or lowered (Dawn) until the weakest code color meets exactly 7:1 or 4.5:1 on the most demanding code surface.
 7. **Syntax roles are fixed per category**: one color each, the same in both flavors, with Coral and Afterglow kept out of code.
-8. **Background states are measured in just-noticeable differences** and bounded so no text level loses its guarantee.
+8. **Background states are measured in just-noticeable differences**, bounded so no text level loses its guarantee, and kept 1 JND apart from each other wherever their targets allow.
 9. **Dawn is the light end of the same system**: one neutral curve, Canvas and Ink swapped, the same perceptual surface distances, the same text targets and rules, and its own β and chroma base.
 
 Designer decisions are listed explicitly in §12; everything else follows from them.
@@ -209,7 +209,8 @@ The optimizer placed Ember at the light edge of its range in Dusk, `#fcd6b7` (L 
 ### 6.5 Joint optimization
 
 ```
-maximize   min over all pairs (i, j) and vision ∈ {normal, deuteranopia, protanopia, tritanopia}
+maximize   min over vision ∈ {normal, deuteranopia, protanopia, tritanopia} and over
+               every pair (i, j) of the seven colors, and every code color i against the cursor:
                ΔE_OK( sim_vision(cᵢ), sim_vision(cⱼ) )
 subject to |hᵢ − anchorᵢ| ≤ 25°,  Ember constraints above,
            every color ≥ floor on every code surface,
@@ -217,6 +218,8 @@ subject to |hᵢ − anchorᵢ| ≤ 25°,  Ember constraints above,
 ```
 
 Simulations are full-severity dichromacy (ColorAide implementation).
+
+The cursor is Afterglow's `accent-focus` (§5). It is fixed before the search, because Afterglow does not depend on the hues. The color-vision guarantee in [design-system.md](design-system.md#13-guarantees) covers the six code colors plus the cursor, so the optimizer covers the same pairs. Coral marks only errors and is not compared with the cursor. In Dusk and Dawn no pair with the cursor is the closest one, so the published hues of both flavors are unchanged. Only Dawn's first pass (§6.6) moves: its Coral hue goes from 29° to 10°, which places the removed-diff background at 2.06 JND instead of 2.02 and 1.01 JND from the inactive selection instead of 0.61. Including the cursor keeps a future change from moving a code color onto it unnoticed.
 
 The search is deterministic:
 
@@ -230,7 +233,7 @@ The search is deterministic:
 - For every candidate, L₀ is re-solved (§6.2): 18-step bisection over 0.50–0.95 (Dusk, returns
   the upper bound) or 0.20–0.70 (Dawn, returns the lower bound), so the weakest of the six hues
   meets the floor.
-- Score = min ΔE over the seven colors × four visions − 2 · max(0, 0.06 − ΔE(Ember, Afterglow)).
+- Score = min ΔE over the pairs above × four visions − 2 · max(0, 0.06 − ΔE(Ember, Afterglow)).
   A candidate whose Ember is below the floor scores −1. A candidate whose rendered hue leaves ±25°
   of its exact anchor (§6.1) scores −2, so it is never accepted.
 
@@ -329,7 +332,7 @@ Every code color meets the flavor floor on every code surface (§6.6), and the s
 - **Transient states** may move in lightness, but Faint text must keep 4.5:1 on them, which also keeps every higher text level above its guarantee.
 - **Persistent states (diff lines) are code surfaces.** The code floor is solved including them (§6.6).
 - **Lightness bounded by the surfaces.** Toward the text, the only limit is Faint at 4.5:1. Away from the text, the lightness scan stops at the outermost surface: L_Shell in Dusk, L_Canvas in Dawn. The bound applies in OKLCH before gamut mapping and 8-bit rounding, so a rendered state can sit up to ΔL 0.001 beyond it (Dawn `diff-inserted` L 0.950 against Canvas 0.949). Minimum chroma 0.010 so the hue is recognizable.
-- **If a target is unreachable** inside those bounds, the state takes the maximum visibility the bounds allow and keeps its hue. It never falls back to a neutral. Dusk `find-match` reaches 3.6 of 5 JND and Dusk `word-highlight-write` 2.7 of 3; Dawn `selection` reaches 2.8 of 4 and Dawn `find-match` 4.3 of 5. All are documented as limits (§11).
+- **If a target is unreachable** inside those bounds, the state takes the maximum visibility the bounds allow and keeps its hue. It never falls back to a neutral. Dusk `find-match` reaches 3.6 of 5 JND and Dusk `word-highlight-write` 2.5 of 3; Dawn `selection` reaches 2.8 of 4 and Dawn `find-match` 4.3 of 5. All are documented as limits (§11).
 
 ### 9.3 Search
 
@@ -343,6 +346,19 @@ The first step in each direction that reaches the target is a candidate, with co
 the most visible color found (§9.2).
 
 The selection hue is Afterglow's hue.
+
+### 9.4 Separation between states
+
+Two states that share a hue differ only in visibility, so when a bound stops the stronger one short of its target, the two can land on nearly the same color. Each state is therefore built after the ones before it, in a fixed order, and kept at least 1 JND (ΔE_OK 0.02) from every state already built:
+
+```
+diff-inserted, diff-removed, selection, selection-inactive,
+find-match, find-match-other, word-highlight, word-highlight-write
+```
+
+Visibility comes first. Among the colors that reach the state's target, the lowest-cost one that is 1 JND from every earlier state wins; if none is, the lowest-cost one wins, as in §9.3. If no color reaches the target, the most visible color that keeps the separation is taken, or the most visible color found when none keeps it.
+
+In Dusk this moves two states. `selection-inactive` goes from 2.1 to 2.9 JND, and `word-highlight-write` from 2.7 to 2.5 JND with half the chroma. The two word highlights were 0.80 JND apart, so a read and a write of the same variable looked the same; they are now 1.23 JND apart. The inactive selection and the removed diff go from 0.54 to 1.08 JND. In Dawn no color that reaches the inactive selection's target is 1 JND from the selection, so both keep their values (§11).
 
 ---
 
@@ -368,10 +384,10 @@ While Dawn 1.0 was being validated, its focus color (`#de711c`) passed 3:1 on Ca
 | Dawn code colors are AA (4.5:1), not AAA | Tested with the full optimizer at 7:1: the worst color-vision separation falls from ΔE 0.040 to 0.023 and normal-vision separation from 0.088 to 0.056, with yellow turning olive and blue turning navy. AA keeps the code colors as distinct as Dusk's. |
 | Dawn `selection` is 2.8 JND (target 4) | A stronger tint would push Faint text below 4.5:1. Near L 0.9 the sRGB gamut of orange is narrow (Cmax ≈ 0.06), so chroma cannot make up the difference. |
 | Dawn `find-match` is 4.3 JND (target 5) | Same bound. |
-| Dusk `find-match` is 3.6 JND (target 5); Dusk `word-highlight-write` is 2.7 JND (target 3) | Same bound. |
+| Dusk `find-match` is 3.6 JND (target 5); Dusk `word-highlight-write` is 2.5 JND (target 3) | Same bound, and the write highlight keeps 1 JND from the read one (§9.4). |
 | ANSI black and white are 1.4:1 on the background | Convention: they are used mostly as backgrounds. Bright black (Faint) is readable as text. |
 | Closest pairs under color-vision deficiency: Sky–Orchid, Gold–Grove and Sea Salt–Grove in Dusk (ΔE 0.061–0.062); Sea Salt–Grove and Orchid–Sea Salt in Dawn (ΔE 0.040–0.041) | No seven-hue palette separates every pair for every vision type. These are the smallest separations the joint optimization (§6.5) reaches. |
-| Some background states sit within 1 JND of each other | Dusk: inactive selection and removed diff (0.54 JND), the two word highlights (0.80). Dawn: inactive selection and removed diff (0.61), selection and inactive selection (0.96). Both pairs share a warm hue at low visibility. They rarely appear in the same place, but they cannot be told apart by color alone. |
+| Dawn `selection` and `selection-inactive` are 0.96 JND apart | Both carry Afterglow's hue below Canvas, where Faint at 4.5:1 bounds them. No color that reaches the inactive selection's 2 JND target is 1 JND from the selection (§9.4). One marks the focused editor and the other the unfocused ones, so they do not share a place. Every other pair of states, in both flavors, is at least 1 JND apart. |
 | OKLCH hue drift in near-neutrals | Below C 0.002, 8-bit quantization makes hue undefined (Dusk's Ink, Dawn's Canvas). This is invisible by definition. |
 
 ## 12. Parameters: decided vs derived
@@ -395,6 +411,7 @@ While Dawn 1.0 was being validated, its focus color (`#de711c`) passed 3:1 on Ca
 | Floors | 7:1 Dusk, 4.5:1 Dawn | AAA / AA |
 | Text targets | 4.5, 7.0, 10.89 (7²/4.5); control 3.0 | WCAG thresholds plus one geometric step |
 | JND targets | §9.1 | Visibility per state |
+| State order and separation | §9.4, 1 JND | States that share a hue stay distinguishable |
 | Gamut margin | 0.92 · Cmax | Safety margin |
 | Bright step | one third toward Ink | Consistent in both variants |
 | Syntax roles | §8 | Fixed from the token study; one color per category, Coral and Afterglow out of code |
@@ -441,7 +458,7 @@ for variant in (Dusk, Dawn):
     hues      ← optimize(§6.5) against the worst of {canvas, diff bgs}
     accents   ← for each of the 8 colors, the five tokens of §5
     brights   ← L + (L_ink − L)/3
-    states    ← JND targets under transient / persistent bounds (§9.3)
+    states    ← JND targets under transient / persistent bounds (§9.3), 1 JND apart in order (§9.4)
     validate  ← every pairing in §10
 ```
 

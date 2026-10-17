@@ -43,15 +43,15 @@ MEASURED = ("ink on surfaces", "ΔE code+cursor, normal", "ΔE code+cursor, wors
 # Known limits (construction.md §11) are measured minimums too.
 LIMITS = ("JND " + s for s in (*TRANSIENT, "diff-inserted", "diff-removed"))
 LIMITS = (*LIMITS, "ANSI black/white on canvas", "min ΔE between background states")
-LIMIT_FLOORS = {  # the measured minimum of each limit per flavor (truncated to 4 decimals), current as of 1.3.0
-    "dusk": {"JND selection": 4.0869, "JND selection-inactive": 2.1121, "JND find-match": 3.6056,
-             "JND find-match-other": 2.5739, "JND word-highlight": 2.0129, "JND word-highlight-write": 2.689,
+LIMIT_FLOORS = {  # the measured minimum of each limit per flavor (truncated to 4 decimals), current as of 1.4.0
+    "dusk": {"JND selection": 4.0869, "JND selection-inactive": 2.9143, "JND find-match": 3.6056,
+             "JND find-match-other": 2.5739, "JND word-highlight": 2.0129, "JND word-highlight-write": 2.5012,
              "JND diff-inserted": 2.021, "JND diff-removed": 2.0341, "ANSI black/white on canvas": 1.3949,
-             "min ΔE between background states": 0.0107},
+             "min ΔE between background states": 0.0215},
     "dawn": {"JND selection": 2.788, "JND selection-inactive": 2.0513, "JND find-match": 4.3127,
              "JND find-match-other": 2.5588, "JND word-highlight": 2.0486, "JND word-highlight-write": 3.0465,
-             "JND diff-inserted": 2.0762, "JND diff-removed": 2.021, "ANSI black/white on canvas": 1.4276,
-             "min ΔE between background states": 0.0122},
+             "JND diff-inserted": 2.0762, "JND diff-removed": 2.0586, "ANSI black/white on canvas": 1.4276,
+             "min ΔE between background states": 0.0191},
 }
 
 
@@ -506,8 +506,10 @@ def compare(base, prop):
     regressions += minimum_changes(base, prop, lines)
     changed = [f"{f}.{g}.{t}" for f in prop["palette"] for g in ("neutrals", "colors", "states")
                for t, v in prop["palette"][f][g].items() if base["palette"].get(f, {}).get(g, {}).get(t) != v]
+    shown = [c for c in changed if c.split(".")[1] in ("neutrals", "colors")]   # what assets/palette-*.png draws
     if changed:
         lines.append(f"changed values: {', '.join(changed)}")
+    if shown:
         span = [base["snapshot"], *([prop["snapshot"]] if prop["snapshot"] != "working tree" else [])]
         if not git("diff", "--name-only", *span, "--", "assets/").strip():
             regressions.append("stale assets/palette-*.png: shown values changed, images did not")
