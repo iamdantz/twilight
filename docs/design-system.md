@@ -1,6 +1,6 @@
 # Twilight design system
 
-Version 1.5 · Flavors: Dusk (dark), Dawn (light)
+Version 1.6 · Flavors: Dusk (dark), Dawn (light)
 
 This document defines Twilight: what each color is, what it means, where it may go, and what it guarantees. It does not describe any particular application. A theme for any tool can be built from it by mapping that tool's regions onto the roles below.
 
@@ -429,4 +429,4 @@ If a tool cannot express a rule, such as a border on the current line, leave the
 | Pure black or white | none | none |
 | Gamut | sRGB | sRGB |
 
-Contrast is WCAG 2.x relative-luminance contrast on final sRGB values. Color-vision figures are the worst case across simulated deuteranopia, protanopia and tritanopia, over the six code colors (Orchid, Sky, Sea Salt, Grove, Gold, Ember) and the cursor.
+These are the values each flavor reaches today; no change may lower one without the conditions of [construction.md §10.1](construction.md#101-quality-floors), and no flavor, present or future, may fall below the minimums listed there. Contrast is WCAG 2.x relative-luminance contrast on final sRGB values. Color-vision figures are the worst case across simulated deuteranopia, protanopia and tritanopia, over the six code colors (Orchid, Sky, Sea Salt, Grove, Gold, Ember) and the cursor.

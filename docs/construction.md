@@ -1,6 +1,6 @@
 # Twilight construction
 
-Version 1.5. How every value was derived, optimized and validated.
+Version 1.6. How every value was derived, optimized and validated.
 
 The companion document, [design-system.md](design-system.md), defines the system and how to apply it. This one explains why each value is what it is. It is written so the full palette can be rebuilt from one seed and the rules below.
 
@@ -402,6 +402,28 @@ Every published value was checked automatically on its final sRGB hex:
 - pairwise ΔE across normal vision and three dichromacies.
 
 While Dawn 1.0 was being validated, its focus color (`#de711c`) passed 3:1 on Canvas but only 2.65:1 on Raised, and was re-solved against all surfaces. Since then every target in this system is solved against the hardest surface.
+
+### 10.1 Quality floors
+
+Twilight holds its flavors to two levels of floor.
+
+**Category minimums** are the Twilight standard. Every dark flavor meets the dark column and every light flavor the light one, including a flavor added later. They sit above what established themes reach: on popular dark themes the median ANSI color is 4.8:1 on its background, and the best color-vision separation among them is ΔE 0.044.
+
+| Minimum | Dark | Light |
+|---|---|---|
+| Code colors on every code surface | 7:1 | 4.5:1 |
+| Body, Subtle, Faint, Control (§3.5) | 10.89, 7, 4.5, 3 | the same |
+| Ink | ≥ 10.89 and above Body | the same |
+| `accent-focus`, `on-accent`, `accent-text` | 3, 4.5, 7 | 3, 4.5, 4.5 |
+| Code colors plus cursor, ΔE OKLab, normal vision | ≥ 0.080 (4 JND) | the same |
+| The same, worst color-vision deficiency | ≥ 0.040 (2 JND) | the same |
+| Every background state from Canvas | ≥ 2 JND, the lowest target of §9.1 | the same |
+| Every pair of background states | ≥ 1 JND (§9.4) | the same |
+| Faint on transient states | 4.5:1 (§9.2) | the same |
+
+**Flavor floors** are what each flavor reaches today. They keep a change from quietly degrading Dusk or Dawn. A flavor floor may go down only when the new value still meets the category minimum, the version's changelog names the check under Lower with its cause and the benefit it pays for, and the loss is imperceptible or stays well inside the standard: under 1 JND for color and state measures, or a contrast that stays clearly above its minimum. A new flavor is checked against the minimums of its category, not against another flavor's floors; once accepted, its own measured values become its floors.
+
+Both levels live in the auditor's validator, which reports every value next to its floor and its minimum.
 
 ---
 

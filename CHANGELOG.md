@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.6.0
+
+Quality floors in two levels: category minimums, the Twilight standard every dark or light flavor meets, and flavor floors, what Dusk and Dawn reach today. No value changes.
+
+### Added
+- Category minimums for dark and light themes (construction.md §10.1): code 7:1 or 4.5:1; Body, Subtle, Faint and Control at the §3.5 targets; Ink at least the Body target and above Body; focus 3, on-accent 4.5, accent-text 7 or 4.5; code-color ΔE at least 4 JND in normal vision and 2 JND under color-vision deficiency; every background state at least 2 JND from Canvas and every pair at least 1 JND apart.
+- Rule for lowering a flavor floor: it still meets its category minimum, the changelog names it under Lower with its cause and benefit, and the loss is imperceptible or well inside the standard.
+- A new flavor is checked against its category's minimums; its measured values become its floors.
+
+### Tooling
+- `validate.py`: `MINIMUMS` per category and `FLOORS` per flavor replace the (Dusk, Dawn) table and the fixed/measured split. Every value is reported next to its flavor floor and its category minimum. `--compare` rejects a lowered category minimum, a flavor floor lowered without its Lower entry, and a flavor floor below its minimum; a flavor with no floors is reported. Base snapshots with the earlier table format are read per flavor.
+- New checks: every background state ≥ 2 JND from Canvas, the closest pair of states ≥ 1 JND, and Ink above Body on every surface.
+
+### Documented
+- construction.md §10.1; design-system.md §13; CONTRIBUTING; auditor skill area C, D and the verdict rules.
+
 ## 1.5.0
 
 The surface ratio r goes from 1.25 to 1.3125 (21/16): the smallest value at which both flavors keep every guarantee, every pair of background states is at least 1 JND apart, and Dusk's write highlight reaches its target. Code colors and Afterglow are unchanged.
