@@ -1,18 +1,18 @@
 {
   "name": "Twilight",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "flavors": {
     "dusk": {
       "neutrals": {
-        "shell": "#0a0e11",
-        "rail": "#0e1316",
+        "shell": "#090c0f",
+        "rail": "#0e1215",
         "canvas": "#11171b",
-        "raised": "#1a2329",
-        "edge": "#26333c",
-        "control": "#586f7d",
-        "faint": "#778b97",
-        "subtle": "#a0aeb5",
-        "body": "#d2d6d8",
+        "raised": "#1d262d",
+        "edge": "#2c3b46",
+        "control": "#5a717f",
+        "faint": "#7a8e9a",
+        "subtle": "#a5b1b8",
+        "body": "#d6dadb",
         "ink": "#eeeeef"
       },
       "colors": {
@@ -28,81 +28,81 @@
       "accents": {
         "afterglow": {
           "accent": "#ff7d00",
-          "accent-text": "#ff8f42",
+          "accent-text": "#ff944d",
           "accent-pressed": "#d26600",
           "accent-focus": "#ff7d00",
-          "on-accent": "#0a0e11"
+          "on-accent": "#090c0f"
         },
         "coral": {
           "accent": "#ee8476",
-          "accent-text": "#f09386",
+          "accent-text": "#f0988c",
           "accent-pressed": "#e8473a",
           "accent-focus": "#ee8476",
-          "on-accent": "#0a0e11"
+          "on-accent": "#090c0f"
         },
         "gold": {
           "accent": "#dbba50",
           "accent-text": "#dbba50",
           "accent-pressed": "#b79b41",
           "accent-focus": "#dbba50",
-          "on-accent": "#0a0e11"
+          "on-accent": "#090c0f"
         },
         "grove": {
           "accent": "#99d086",
           "accent-text": "#99d086",
           "accent-pressed": "#7fae6f",
           "accent-focus": "#99d086",
-          "on-accent": "#0a0e11"
+          "on-accent": "#090c0f"
         },
         "sea-salt": {
           "accent": "#65d5d2",
           "accent-text": "#65d5d2",
           "accent-pressed": "#53b2b0",
           "accent-focus": "#65d5d2",
-          "on-accent": "#0a0e11"
+          "on-accent": "#090c0f"
         },
         "sky": {
           "accent": "#78aee6",
-          "accent-text": "#7cb0e7",
+          "accent-text": "#82b4e8",
           "accent-pressed": "#498fd4",
           "accent-focus": "#78aee6",
-          "on-accent": "#0a0e11"
+          "on-accent": "#090c0f"
         },
         "orchid": {
           "accent": "#db8dc7",
-          "accent-text": "#dd95ca",
+          "accent-text": "#de9acc",
           "accent-pressed": "#c365ad",
           "accent-focus": "#db8dc7",
-          "on-accent": "#0a0e11"
+          "on-accent": "#090c0f"
         },
         "ember": {
           "accent": "#fcd6b7",
           "accent-text": "#fcd6b7",
           "accent-pressed": "#f9aa63",
           "accent-focus": "#fcd6b7",
-          "on-accent": "#0a0e11"
+          "on-accent": "#090c0f"
         }
       },
       "states": {
         "selection": "#351a08",
         "selection-inactive": "#260f02",
-        "find-match": "#292108",
+        "find-match": "#2c240b",
         "find-match-other": "#1d1500",
         "word-highlight": "#062221",
-        "word-highlight-write": "#182423",
+        "word-highlight-write": "#0b2827",
         "diff-inserted": "#0e1a09",
         "diff-removed": "#22110e"
       },
       "ansi": [
-        "#26333c",
+        "#2c3b46",
         "#ee8476",
         "#99d086",
         "#dbba50",
         "#78aee6",
         "#db8dc7",
         "#65d5d2",
-        "#a0aeb5",
-        "#778b97",
+        "#a5b1b8",
+        "#7a8e9a",
         "#faa497",
         "#a9e095",
         "#ecca61",
@@ -114,15 +114,15 @@
     },
     "dawn": {
       "neutrals": {
-        "shell": "#dfe1e3",
-        "rail": "#e6e8e8",
+        "shell": "#dcdee0",
+        "rail": "#e5e6e7",
         "canvas": "#eeeeef",
-        "raised": "#dbdedf",
-        "edge": "#c4cace",
-        "control": "#6c818f",
-        "faint": "#4f6574",
-        "subtle": "#364855",
-        "body": "#1f2931",
+        "raised": "#d6dadc",
+        "edge": "#b8c1c6",
+        "control": "#697e8c",
+        "faint": "#4d6271",
+        "subtle": "#344552",
+        "body": "#1d262e",
         "ink": "#11171b"
       },
       "colors": {
@@ -138,9 +138,9 @@
       "accents": {
         "afterglow": {
           "accent": "#ff7d00",
-          "accent-text": "#9d4b00",
+          "accent-text": "#994900",
           "accent-pressed": "#d26600",
-          "accent-focus": "#c86100",
+          "accent-focus": "#c45e00",
           "on-accent": "#11171b"
         },
         "coral": {
@@ -152,21 +152,21 @@
         },
         "gold": {
           "accent": "#766014",
-          "accent-text": "#756014",
+          "accent-text": "#735d13",
           "accent-pressed": "#56450c",
           "accent-focus": "#766014",
           "on-accent": "#eeeeef"
         },
         "grove": {
           "accent": "#39713a",
-          "accent-text": "#376e38",
+          "accent-text": "#366b37",
           "accent-pressed": "#285228",
           "accent-focus": "#39713a",
           "on-accent": "#eeeeef"
         },
         "sea-salt": {
           "accent": "#176a7e",
-          "accent-text": "#176a7e",
+          "accent-text": "#17687c",
           "accent-pressed": "#0e4c5b",
           "accent-focus": "#176a7e",
           "on-accent": "#eeeeef"
@@ -194,9 +194,9 @@
         }
       },
       "states": {
-        "selection": "#eedace",
+        "selection": "#ead5c9",
         "selection-inactive": "#f5e0d4",
-        "find-match": "#eeddaa",
+        "find-match": "#ead8a6",
         "find-match-other": "#faeec9",
         "word-highlight": "#ceeef8",
         "word-highlight-write": "#c5e4ee",
@@ -204,22 +204,22 @@
         "diff-removed": "#f4dde0"
       },
       "ansi": [
-        "#1f2931",
+        "#1d262e",
         "#8d3826",
         "#39713a",
         "#766014",
         "#3f4880",
         "#813b67",
         "#176a7e",
-        "#c4cace",
-        "#4f6574",
+        "#b8c1c6",
+        "#4d6271",
         "#721e0c",
         "#1c551f",
         "#56450c",
         "#2d346a",
         "#66234f",
         "#0e4d5d",
-        "#dbdedf"
+        "#d6dadc"
       ]
     }
   }

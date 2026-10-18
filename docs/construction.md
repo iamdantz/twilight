@@ -1,6 +1,6 @@
 # Twilight construction
 
-Version 1.4. How every value was derived, optimized and validated.
+Version 1.5. How every value was derived, optimized and validated.
 
 The companion document, [design-system.md](design-system.md), defines the system and how to apply it. This one explains why each value is what it is. It is written so the full palette can be rebuilt from one seed and the rules below.
 
@@ -69,15 +69,27 @@ Chroma peaks at mid-lightness (≈ 0.035) and approaches zero at both ends, so d
 The system defines how far each surface sits from Canvas. The distances come from a geometric progression in lightness, measured as ΔE OKLab from its middle step:
 
 ```
-scale:     L_ref / r,  L_ref,  L_ref · r,  L_ref · r²        r = 1.25, L_ref = 0.20
-distance:  Shell = ΔE_OK(L_ref / r, L_ref) = 0.0396 (1.98 JND)
-           Raised = ΔE_OK(L_ref · r, L_ref) = 0.0501 (2.51 JND)
-           Edge = ΔE_OK(L_ref · r², L_ref) = 0.1135 (5.68 JND)
+scale:     L_ref / r,  L_ref,  L_ref · r,  L_ref · r²        r = 1.3125 (21/16), L_ref = 0.20
+distance:  Shell = ΔE_OK(L_ref / r, L_ref) = 0.0481 (2.41 JND)
+           Raised = ΔE_OK(L_ref · r, L_ref) = 0.0631 (3.16 JND)
+           Edge = ΔE_OK(L_ref · r², L_ref) = 0.1443 (7.22 JND)
 ```
 
-Each flavor places its surfaces on the neutral curve at these distances from its own Canvas, in its category's direction (§4). Equal ratios in L produce steps that look evenly spaced in the dark range, where absolute lightness differences are perceived more strongly; measured as ΔE, the same steps look as far apart at the light end. In Dusk, whose Canvas is L_ref, the placement returns the scale itself: Shell L 0.16, Raised 0.25, Edge 0.3125.
+Each flavor places its surfaces on the neutral curve at these distances from its own Canvas, in its category's direction (§4). Equal ratios in L produce steps that look evenly spaced in the dark range, where absolute lightness differences are perceived more strongly; measured as ΔE, the same steps look as far apart at the light end. In Dusk, whose Canvas is L_ref, the placement returns the scale itself: Shell L 0.152, Raised 0.2625, Edge 0.345.
 
 Placement: a 50-step bisection between Canvas and L 0.02 (darker) or L 0.999 (lighter); the result is the L nearest Canvas that reaches the distance.
+
+**Why r = 1.3125.** Until 1.4, r was 1.25, the ratio of the original hand-picked scale. It was then swept with every other parameter fixed, each flavor rebuilt in full:
+
+| r | Dusk | Dawn |
+|---|---|---|
+| below 1.30 | `word-highlight-write` short of its 3 JND target (1.67 at 1.15, 2.50 at 1.25) | a pair of states under 1 JND (0.61–0.96) |
+| 1.30 | every state target that Dusk reached before, plus `word-highlight-write` at 3.05 JND | inactive selection and removed diff 0.61 JND apart |
+| **1.3125** | the same; `find-match` 4.06 JND | **every pair of states ≥ 1 JND; `selection` 3.45 JND** |
+| 1.325 | the same | the same |
+| 1.3375–1.40 | the same, Ink keeps falling | worst color-vision ΔE below 0.040 |
+
+r is the smallest value, on a 0.0125 grid, at which both flavors keep every guarantee, every pair of background states is at least 1 JND apart, and Dusk's write highlight reaches its target. Dawn's results were the same with 10 and with 20 optimizer restarts, so the window is a property of the geometry, not of the search. Larger r moves Raised further from Canvas, which lowers Ink on Raised (Dusk 13.76 → 13.25:1, Dawn 13.36 → 12.84:1); the Ink color itself does not change. Code colors do not depend on r: they are solved against Canvas, which r does not move.
 
 ### 3.4 Rail: a half step
 
@@ -87,7 +99,7 @@ Rail is placed so its contrast to Shell equals its contrast to Canvas:
 contrast(Rail, Canvas) = contrast(Rail, Shell) = √ contrast(Shell, Canvas)
 ```
 
-Dusk: `#0e1316` (1.035:1 to each side). Dawn: `#e6e8e8` (1.061:1 to Canvas, 1.066:1 to Shell).
+Dusk: `#0e1215` (1.041:1 to Canvas, 1.042:1 to Shell). Dawn: `#e5e6e7` (1.078:1 to Canvas, 1.079:1 to Shell).
 
 ### 3.5 Text and control levels: solved by contrast
 
@@ -95,10 +107,10 @@ Each level is the lightness, on the neutral curve, that meets an exact contrast 
 
 | Level | Target vs Raised | Dusk L | Dawn L |
 |---|---|---|---|
-| Control | 3.0:1 (non-text minimum) | 0.528 | 0.591 |
-| Faint | 4.5:1 (AA text) | 0.625 | 0.495 |
-| Subtle | 7.0:1 (AAA text) | 0.742 | 0.392 |
-| Body | 10.89:1 = 7² / 4.5 (next geometric step; used unrounded) | 0.874 | 0.275 |
+| Control | 3.0:1 (non-text minimum) | 0.535 | 0.581 |
+| Faint | 4.5:1 (AA text) | 0.635 | 0.485 |
+| Subtle | 7.0:1 (AAA text) | 0.753 | 0.381 |
+| Body | 10.89:1 = 7² / 4.5 (next geometric step; used unrounded) | 0.886 | 0.264 |
 | Ink | fixed per flavor: L 0.95 in Dusk, L 0.20 in Dawn (§4) | 0.949 | 0.200 |
 
 Solving is done by bisection on L along the neutral curve, evaluating WCAG contrast on the final hex value.
@@ -129,7 +141,7 @@ Dawn is the same system read from the other end of the neutral curve. Every form
 
 **Canvas and Ink.** Each flavor sets its own two anchors. Dawn's Canvas (L 0.95, `#eeeeef`) and Ink (L 0.20, `#11171b`) are the same two colors as Dusk's Ink and Canvas, with the roles exchanged; they are Dawn's own parameters, so changing Dusk's anchors does not move Dawn. Ink on Canvas is 15.58:1 in both flavors. The lightest value in Twilight is therefore L 0.95, a cool silver from the near-neutral end of the curve.
 
-**Surfaces keep the system's perceptual distances.** Shell, Raised and Edge are placed at the §3.3 distances from Canvas (1.98, 2.51 and 5.68 JND), stepping down from Canvas, the same distances Dusk uses. ΔE is the perceptual measure Twilight uses everywhere (§9.1). Matching contrast ratios instead, as Dawn did before 1.2, gives smaller visible steps near white: WCAG contrast changes faster with L at the light end, so the same ratio covers less lightness. With equal ΔE, Dawn's surfaces look as far apart as Dusk's, and the extra room lets background states reach their targets (§9.2).
+**Surfaces keep the system's perceptual distances.** Shell, Raised and Edge are placed at the §3.3 distances from Canvas (2.41, 3.16 and 7.22 JND), stepping down from Canvas, the same distances Dusk uses. ΔE is the perceptual measure Twilight uses everywhere (§9.1). Matching contrast ratios instead, as Dawn did before 1.2, gives smaller visible steps near white: WCAG contrast changes faster with L at the light end, so the same ratio covers less lightness. With equal ΔE, Dawn's surfaces look as far apart as Dusk's, and the extra room lets background states reach their targets (§9.2).
 
 **Every surface is darker than Canvas.** Light interfaces darken frames, side panels and borders against the content area rather than lightening them, and there is no room above Canvas: it already sits at the lightest value of the system.
 
@@ -157,7 +169,7 @@ Any of the eight colors can be the accent. Each one gets the same five tokens, b
 keeping hue and relative chroma. `accent-pressed` is L − 0.10. If that drops the on-accent label
 below 4.5:1, a 50-step bisection finds the 4.5:1 boundary instead.
 
-For Afterglow this gives, in Dusk: text `#ff8f42` (7.03:1 on Raised), pressed `#d26600` (label 5.21:1), focus `#ff7d00` (6.22:1 or more). In Dawn: text `#9d4b00` (4.51:1), pressed `#d26600` (label 4.85:1), focus `#c86100` (3.01:1 or more). Every other accent passes the same checks; the full table is in [design-system.md](design-system.md#5-accents).
+For Afterglow this gives, in Dusk: text `#ff944d` (7.02:1 on Raised), pressed `#d26600` (label 5.27:1), focus `#ff7d00` (5.99:1 or more). In Dawn: text `#994900` (4.51:1), pressed `#d26600` (label 4.85:1), focus `#c45e00` (3.02:1 or more). Every other accent passes the same checks; the full table is in [design-system.md](design-system.md#5-accents).
 
 An earlier hand-made accent ramp used arbitrary hue drifts (−6°, +8°, +12°) and chromas. It was replaced: a constant hue is the safe choice in OKLCH, and the targets make each variant's lightness necessary.
 
@@ -348,7 +360,7 @@ Every code color meets the flavor floor on every code surface (§6.6), and the s
 - **Transient states** may move in lightness, but Faint text must keep 4.5:1 on them, which also keeps every higher text level above its guarantee.
 - **Persistent states (diff lines) are code surfaces.** The code floor is solved including them (§6.6).
 - **Lightness bounded by the surfaces.** Toward the text, the only limit is Faint at 4.5:1. Away from the text, the lightness scan stops at the outermost surface: L_Shell in Dusk, L_Canvas in Dawn. The bound applies in OKLCH before gamut mapping and 8-bit rounding, so a rendered state can sit up to ΔL 0.001 beyond it (Dawn `diff-inserted` L 0.950 against Canvas 0.949). Minimum chroma 0.010 so the hue is recognizable.
-- **If a target is unreachable** inside those bounds, the state takes the maximum visibility the bounds allow and keeps its hue. It never falls back to a neutral. Dusk `find-match` reaches 3.6 of 5 JND and Dusk `word-highlight-write` 2.5 of 3; Dawn `selection` reaches 2.8 of 4 and Dawn `find-match` 4.3 of 5. All are documented as limits (§11).
+- **If a target is unreachable** inside those bounds, the state takes the maximum visibility the bounds allow and keeps its hue. It never falls back to a neutral. Dusk `find-match` reaches 4.1 of 5 JND; Dawn `selection` reaches 3.5 of 4 and Dawn `find-match` 4.7 of 5. All are documented as limits (§11).
 
 ### 9.3 Search
 
@@ -374,7 +386,7 @@ find-match, find-match-other, word-highlight, word-highlight-write
 
 Visibility comes first. Among the colors that reach the state's target, the lowest-cost one that is 1 JND from every earlier state wins; if none is, the lowest-cost one wins, as in §9.3. If no color reaches the target, the most visible color that keeps the separation is taken, or the most visible color found when none keeps it.
 
-In Dusk this moves two states. `selection-inactive` goes from 2.1 to 2.9 JND, and `word-highlight-write` from 2.7 to 2.5 JND with half the chroma. The two word highlights were 0.80 JND apart, so a read and a write of the same variable looked the same; they are now 1.23 JND apart. The inactive selection and the removed diff go from 0.54 to 1.08 JND. In Dawn no color that reaches the inactive selection's target is 1 JND from the selection, so both keep their values (§11).
+In Dusk this moves two states. `selection-inactive` goes from 2.1 to 2.9 JND, and `word-highlight-write` from 2.7 to 2.5 JND with half the chroma. The two word highlights were 0.80 JND apart, so a read and a write of the same variable looked the same; they are now 1.23 JND apart. The inactive selection and the removed diff go from 0.54 to 1.08 JND. With the surface distances of 1.4, Dawn had no color for the inactive selection that reached its target 1 JND from the selection; with those of §3.3, every pair of states in both flavors is at least 1 JND apart.
 
 ---
 
@@ -398,12 +410,11 @@ While Dawn 1.0 was being validated, its focus color (`#de711c`) passed 3:1 on Ca
 | Limit | Reason |
 |---|---|
 | Dawn code colors are AA (4.5:1), not AAA | Tested with the full optimizer at 7:1: the worst color-vision separation falls from ΔE 0.040 to 0.023 and normal-vision separation from 0.088 to 0.056, with yellow turning olive and blue turning navy. AA keeps the code colors as distinct as Dusk's. |
-| Dawn `selection` is 2.8 JND (target 4) | A stronger tint would push Faint text below 4.5:1. Near L 0.9 the sRGB gamut of orange is narrow (Cmax ≈ 0.06), so chroma cannot make up the difference. |
-| Dawn `find-match` is 4.3 JND (target 5) | Same bound. |
-| Dusk `find-match` is 3.6 JND (target 5); Dusk `word-highlight-write` is 2.5 JND (target 3) | Same bound, and the write highlight keeps 1 JND from the read one (§9.4). |
+| Dawn `selection` is 3.5 JND (target 4) | A stronger tint would push Faint text below 4.5:1. Near L 0.9 the sRGB gamut of orange is narrow (Cmax ≈ 0.06), so chroma cannot make up the difference. |
+| Dawn `find-match` is 4.7 JND (target 5) | Same bound. |
+| Dusk `find-match` is 4.1 JND (target 5) | Same bound. |
 | ANSI black and white are 1.4:1 on the background | Convention: they are used mostly as backgrounds. Bright black (Faint) is readable as text. |
 | Closest pairs under color-vision deficiency: Sky–Orchid, Gold–Grove and Sea Salt–Grove in Dusk (ΔE 0.061–0.062); Sea Salt–Grove and Orchid–Sea Salt in Dawn (ΔE 0.040–0.041) | No seven-hue palette separates every pair for every vision type. These are the smallest separations the joint optimization (§6.5) reaches. |
-| Dawn `selection` and `selection-inactive` are 0.96 JND apart | Both carry Afterglow's hue below Canvas, where Faint at 4.5:1 bounds them. No color that reaches the inactive selection's 2 JND target is 1 JND from the selection (§9.4). One marks the focused editor and the other the unfocused ones, so they do not share a place. Every other pair of states, in both flavors, is at least 1 JND apart. |
 | OKLCH hue drift in near-neutrals | Below C 0.002, 8-bit quantization makes hue undefined (Dusk's Ink, Dawn's Canvas). This is invisible by definition. |
 
 ## 12. Parameters: decided vs derived
@@ -417,7 +428,7 @@ While Dawn 1.0 was being validated, its focus color (`#de711c`) passed 3:1 on Ca
 | Neutral hue | complement of the seed (232°) | Structural choice |
 | Neutral hue drift | +18° · (1 − L)² | "Shadows lean toward night" |
 | Neutral chroma amplitude (flavor) | 0.035 in Dusk and Dawn | Tint strength |
-| Surface ratio (system) | r = 1.25 at L_ref = 0.20, as ΔE_OK distances (§3.3) | Matches the original hand-picked scale |
+| Surface ratio (system) | r = 1.3125 at L_ref = 0.20, as ΔE_OK distances (§3.3) | The smallest r at which both flavors keep every guarantee and every pair of states is 1 JND apart (§3.3) |
 | Surface directions (category) | dark: Shell darker, Raised and Edge lighter; light: all darker | Light interfaces darken their panels (§4) |
 | Anchors (flavor) | Dusk: Canvas L 0.20, Ink L 0.95. Dawn: Canvas L 0.95, Ink L 0.20 | The same two neutrals, roles exchanged |
 | Warm tilt τ | 0.15 | Strength of the shared warm light |
