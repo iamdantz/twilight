@@ -12,6 +12,7 @@ import argparse
 import ast
 import contextlib
 import io
+import itertools
 import json
 import math
 import re
@@ -29,17 +30,36 @@ CVD_SET = ("orchid", "sky", "sea-salt", "grove", "gold", "ember")          # + c
 TRANSIENT = ("selection", "selection-inactive", "find-match", "find-match-other", "word-highlight", "word-highlight-write")
 ANCHORS = {name: k.oklch_of(k.CORNERS[slot])[2] for name, slot in k.COLOR_KEYS.items() if slot in k.CORNERS}
 WCAG_THRESHOLDS = (3.0, 4.5, 7.0)   # compared strictly: a measured 4.496 does not meet 4.5
-FLOORS = {  # check: (dusk, dawn); construction.md §3.5, §5, §6.6, §7, §9.2; design-system.md §13
-    "ink on surfaces": (13.25, 12.84), "body on surfaces": (10.90, 10.89), "subtle on surfaces": (7.00, 7.00),
-    "faint on surfaces": (4.50, 4.50), "control on surfaces": (3.00, 3.00), "code on code surfaces": (7.00, 4.50),
-    "on-accent on accent/pressed": (4.50, 4.50), "accent-text on raised": (7.00, 4.50),
-    "accent-focus on surfaces": (3.00, 3.00), "ΔE code+cursor, normal": (0.097, 0.088),
-    "ΔE code+cursor, worst CVD": (0.061, 0.040), "faint on transient states": (4.50, 4.50),
+# Quality floors (construction.md §10.1). Two levels:
+# MINIMUMS: the Twilight standard for each category. Every flavor of the category meets them, a new flavor included,
+#   and they never go down.
+# FLOORS: what each flavor reaches today, guarding it against regressions. A flavor floor may go down only when the
+#   latest CHANGELOG entry names the check, in backticks, under "### Lower", and the new floor still meets the
+#   category minimum (SKILL.md, area C).
+BODY_TARGET = 49 / 4.5                                    # construction.md §3.5
+MINIMUMS = {
+    "dark": {"ink on surfaces": BODY_TARGET, "body on surfaces": BODY_TARGET, "subtle on surfaces": 7.00,
+             "faint on surfaces": 4.50, "control on surfaces": 3.00, "code on code surfaces": 7.00,
+             "on-accent on accent/pressed": 4.50, "accent-text on raised": 7.00, "accent-focus on surfaces": 3.00,
+             "ΔE code+cursor, normal": 0.080, "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50,
+             "every state from Canvas (JND)": 2.0, "closest pair of states (JND)": 1.0},
+    "light": {"ink on surfaces": BODY_TARGET, "body on surfaces": BODY_TARGET, "subtle on surfaces": 7.00,
+              "faint on surfaces": 4.50, "control on surfaces": 3.00, "code on code surfaces": 4.50,
+              "on-accent on accent/pressed": 4.50, "accent-text on raised": 4.50, "accent-focus on surfaces": 3.00,
+              "ΔE code+cursor, normal": 0.080, "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50,
+              "every state from Canvas (JND)": 2.0, "closest pair of states (JND)": 1.0},
 }
-# Two kinds of floor. Fixed guarantees (every check not listed below) are WCAG thresholds and the text targets
-# of construction.md §3.5: they never go down. Measured minimums are what the current palette reaches: a method
-# change may lower one only if the latest CHANGELOG entry names it, in backticks, under "### Lower" (SKILL.md, area C).
-MEASURED = ("ink on surfaces", "ΔE code+cursor, normal", "ΔE code+cursor, worst CVD")
+FLOORS = {
+    "dusk": {"ink on surfaces": 13.25, "body on surfaces": 10.90, "subtle on surfaces": 7.00, "faint on surfaces": 4.50,
+             "control on surfaces": 3.00, "code on code surfaces": 7.00, "on-accent on accent/pressed": 4.50,
+             "accent-text on raised": 7.00, "accent-focus on surfaces": 3.00, "ΔE code+cursor, normal": 0.097,
+             "ΔE code+cursor, worst CVD": 0.061, "faint on transient states": 4.50},
+    "dawn": {"ink on surfaces": 12.84, "body on surfaces": 10.89, "subtle on surfaces": 7.00, "faint on surfaces": 4.50,
+             "control on surfaces": 3.00, "code on code surfaces": 4.50, "on-accent on accent/pressed": 4.50,
+             "accent-text on raised": 4.50, "accent-focus on surfaces": 3.00, "ΔE code+cursor, normal": 0.088,
+             "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50},
+}
+CHECKS = list(MINIMUMS["dark"])
 # Known limits (construction.md §11) are measured minimums too.
 LIMITS = ("JND " + s for s in (*TRANSIENT, "diff-inserted", "diff-removed"))
 LIMITS = (*LIMITS, "ANSI black/white on canvas", "min ΔE between background states")
@@ -97,6 +117,8 @@ def measure(F):
         "ΔE code+cursor, normal": min(k.de_ok(a, b) for i, a in enumerate(cvd) for b in cvd[i + 1:]),
         "ΔE code+cursor, worst CVD": worst_cvd(cvd),
         "faint on transient states": min(cr(n["faint"], s[x]) for x in TRANSIENT),
+        "every state from Canvas (JND)": min(k.de_ok(v, n["canvas"]) for v in s.values()) / k.JND,
+        "closest pair of states (JND)": min(k.de_ok(a, b) for a, b in itertools.combinations(s.values(), 2)) / k.JND,
     }
     limits = {f"JND {x}": k.de_ok(v, n["canvas"]) / 0.02 for x, v in s.items()}
     limits["ANSI black/white on canvas"] = min(cr(F["ansi"][0], n["canvas"]), cr(F["ansi"][7], n["canvas"]))
@@ -113,9 +135,9 @@ def decimals(x):
 
 
 def passes(value, floor):
-    """WCAG thresholds are strict. Regression floors are met at their stated precision: two decimals for
-    contrast (13.76), three for ΔE (0.054, 0.040; a float drops the trailing zero, so ΔE always uses three)."""
-    if floor in WCAG_THRESHOLDS:
+    """WCAG thresholds and the text targets are strict. Other floors are met at their stated precision: two decimals
+    for contrast (13.76), three for ΔE (0.054, 0.040; a float drops the trailing zero, so ΔE always uses three)."""
+    if floor in WCAG_THRESHOLDS or floor == BODY_TARGET:
         return value >= floor
     return round(value, 3 if floor < 1 else max(2, decimals(floor))) >= floor
 
@@ -158,6 +180,10 @@ def rules(F, flavor):
     for i, (want, got) in enumerate(zip(brights, F["ansi"][9:15]), 9):
         if want != got.lower():
             errs.append(f"{flavor}: ansi[{i}] is {got}, the 1/3-toward-Ink rule gives {want}")
+    n = F["neutrals"]
+    ink, body = (min(k.contrast(n[x], n[y]) for y in SURF) for x in ("ink", "body"))
+    if ink <= body:
+        errs.append(f"{flavor}: Ink ({ink:.2f}:1) must contrast more than Body ({body:.2f}:1) on every surface")
     return errs
 
 
@@ -380,15 +406,23 @@ SCRIPT = ".agents/skills/twilight-auditor/scripts/validate.py"
 
 
 def minimum_tables(snap):
-    """FLOORS and LIMIT_FLOORS as written in the snapshot's own validate.py (None when absent)."""
+    """FLOORS, LIMIT_FLOORS and MINIMUMS as written in the snapshot's own validate.py (None when absent).
+    FLOORS is returned per flavor; before 1.6 it was a table of (dusk, dawn) pairs."""
     if SCRIPT not in snap.files:
-        return None, None
+        return None, None, None
     found = {}
     for node in ast.parse(snap.read(SCRIPT)).body:
         if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
-            if node.targets[0].id in ("FLOORS", "LIMIT_FLOORS"):
-                found[node.targets[0].id] = ast.literal_eval(node.value)
-    return found.get("FLOORS"), found.get("LIMIT_FLOORS")
+            name = node.targets[0].id
+            if name in ("FLOORS", "LIMIT_FLOORS", "MINIMUMS"):
+                try:
+                    found[name] = ast.literal_eval(node.value)
+                except ValueError:                      # MINIMUMS refers to BODY_TARGET
+                    found[name] = eval(compile(ast.Expression(node.value), SCRIPT, "eval"), {"BODY_TARGET": BODY_TARGET})
+    F = found.get("FLOORS")
+    if F and isinstance(next(iter(F.values())), tuple):
+        F = {flavor: {c: v[i] for c, v in F.items()} for i, flavor in enumerate(("dusk", "dawn"))}
+    return F, found.get("LIMIT_FLOORS"), found.get("MINIMUMS")
 
 
 def lower_section(snap):
@@ -418,24 +452,45 @@ def run(snap, json_path="palette/twilight.json", do_rebuild=True):
     raw = json.loads(snap.read(json_path) if snap.ref or not Path(json_path).is_absolute() else Path(json_path).read_text())
     P = raw["flavors"]
     M = {f: measure(P[f]) for f in P}
-    dark = {f: k.oklch_of(P[f]["neutrals"]["canvas"])[0] < 0.5 for f in P}     # a new flavor takes Dusk (dark) or Dawn (light) floors
-    floors = [dict(flavor=f, check=c, value=M[f][0][c], floor=FLOORS[c][0 if dark[f] else 1],
-                   ok=passes(M[f][0][c], FLOORS[c][0 if dark[f] else 1])) for c in FLOORS for f in P]
+    category = {f: k.FLAVORS[f]["category"] if f in k.FLAVORS else
+                ("dark" if k.oklch_of(P[f]["neutrals"]["canvas"])[0] < 0.5 else "light") for f in P}
+    floors = []
+    for c in CHECKS:
+        for f in P:
+            v, mn, fl = M[f][0][c], MINIMUMS[category[f]][c], FLOORS.get(f, {}).get(c)
+            ok_min, ok_fl = passes(v, mn), fl is None or passes(v, fl)
+            floors.append(dict(flavor=f, check=c, value=v, minimum=mn, floor=fl, ok=ok_min and ok_fl,
+                               fails=[x for x, ok in (("minimum", ok_min), ("flavor floor", ok_fl)) if not ok]))
     repro_errs, meta = reproduce(P) if do_rebuild else (["skipped (--no-rebuild): values were not reproduced"], None)
     return dict(
         snapshot=snap.label(), floors=floors, limits={f: M[f][1] for f in P},
         rules=[e for f in P for e in rules(P[f], f)], reproduction=repro_errs,
-        consistency=version_checks(snap, raw) + doc_checks(snap, P, M) + construction_checks(snap, P, meta) + link_checks(snap),
+        consistency=version_checks(snap, raw) + doc_checks(snap, P, M) + construction_checks(snap, P, meta) + link_checks(snap)
+                    + floor_table_checks(P, category),
         palette=P, tables=minimum_tables(snap), lower=lower_section(snap),
     )
 
 
+def floor_table_checks(P, category):
+    """Every flavor has floors and limit floors, and no flavor floor sits below its category minimum."""
+    errs = []
+    for f in P:
+        if f not in FLOORS or f not in LIMIT_FLOORS:
+            errs.append(f"{f}: no FLOORS or LIMIT_FLOORS entry (a new flavor's measured values become its floors)")
+            continue
+        for c, v in FLOORS[f].items():
+            if c in MINIMUMS[category[f]] and v < MINIMUMS[category[f]][c] - 1e-9:
+                errs.append(f"{f}: flavor floor {c} {v} is below the {category[f]} minimum {MINIMUMS[category[f]][c]:.3f}")
+    return errs
+
+
 def report(r):
     print(f"# Twilight validation: {r['snapshot']}\n")
-    print(f"{'check':34} " + "   ".join(f"{f:>8} {'floor':>7}" for f in r["palette"]))
-    for c in FLOORS:
+    print(f"{'check':34} " + "   ".join(f"{f:>8} {'floor':>7} {'min':>7}" for f in r["palette"]))
+    for c in CHECKS:
         row = [x for x in r["floors"] if x["check"] == c]
-        cells = "   ".join(f"{fmt(x['value'], x['floor']):>8} {fmt(x['floor'], x['floor']):>7}{'' if x['ok'] else ' FAIL'}" for x in row)
+        cells = "   ".join(f"{fmt(x['value'], x['minimum']):>8} {fmt(x['floor'], x['floor']) if x['floor'] is not None else '—':>7}"
+                           f" {fmt(x['minimum'], x['minimum']):>7}{'' if x['ok'] else ' FAIL ' + '+'.join(x['fails'])}" for x in row)
         print(f"{c:34} {cells}")
     print("\nKnown limits (§11, must not get worse):")
     for key in LIMITS:
@@ -452,28 +507,37 @@ def failed(r):
 
 
 def minimum_changes(base, prop, lines):
-    """Changes to the minimums themselves, base tables against proposal tables.
-    A fixed guarantee may never go down. A measured minimum or known limit may go down only when the latest
-    CHANGELOG entry names its check, in backticks, under '### Lower'. A removed check or table is a regression."""
+    """Changes to the floor tables themselves, base against proposal.
+    A category minimum may never go down. A flavor floor or known limit may go down only when the latest CHANGELOG
+    entry names its check, in backticks, under '### Lower' (the new floor must still meet the minimum; see
+    floor_table_checks). A removed check or table is a regression."""
     out = []
-    (bF, bL), (pF, pL) = base["tables"], prop["tables"]
+    (bF, bL, bM), (pF, pL, pM) = base["tables"], prop["tables"]
+    if bM is not None:
+        if pM is None:
+            out.append("MINIMUMS removed from validate.py")
+        else:
+            for cat, checks in bM.items():
+                for check, old in checks.items():
+                    new = pM.get(cat, {}).get(check)
+                    if new is None:
+                        out.append(f"minimum removed: {cat} {check}")
+                    elif new < old - 1e-12:
+                        out.append(f"category minimum lowered: {cat} {check} {old} → {new}")
     if bF is None:
         return out
     if pF is None:
-        return ["FLOORS removed from validate.py"]
-    for check, old in bF.items():
-        if check not in pF:
-            out.append(f"check removed: {check}")
-            continue
-        for i, flavor in enumerate(("dusk", "dawn")):
-            new = pF[check][i]
-            if new < old[i] - 1e-12:
-                if check not in MEASURED:
-                    out.append(f"fixed guarantee lowered: {flavor} {check} {old[i]} → {new}")
-                elif not declared(prop["lower"], check):
-                    out.append(f"measured minimum lowered without `{check}` under Lower in CHANGELOG: {flavor} {old[i]} → {new}")
+        return out + ["FLOORS removed from validate.py"]
+    for flavor, checks in bF.items():
+        for check, old in checks.items():
+            new = pF.get(flavor, {}).get(check)
+            if new is None:
+                out.append(f"check removed: {flavor} {check}")
+            elif new < old - 1e-12:
+                if not declared(prop["lower"], check):
+                    out.append(f"flavor floor lowered without `{check}` under Lower in CHANGELOG: {flavor} {old} → {new}")
                 else:
-                    lines.append(f"measured minimum lowered (declared under Lower): {flavor} {check} {old[i]} → {new}")
+                    lines.append(f"flavor floor lowered (declared under Lower): {flavor} {check} {old} → {new}")
     if bL is not None and pL is None:
         return out + ["LIMIT_FLOORS removed from validate.py"]
     for f in sorted(set(base["palette"]) & set(prop["palette"])):
@@ -498,10 +562,10 @@ def compare(base, prop):
         if (b := old.get((p["flavor"], p["check"]))) and abs(d := p["value"] - b["value"]) > 1e-9:
             lines.append(f"{p['flavor']} {p['check']}: {fmt(b['value'])} → {fmt(p['value'])} ({d:+.4f})")
         if not p["ok"]:
-            regressions.append(f"below minimum: {p['flavor']} {p['check']} {p['value']:.5f} < {p['floor']}")
+            regressions.append(f"below {' and '.join(p['fails'])}: {p['flavor']} {p['check']} {p['value']:.5f}")
     for f in sorted(set(base["palette"]) & set(prop["palette"])):
         for key in LIMITS:
-            if (p := prop["limits"][f][key]) < LIMIT_FLOORS[f][key]:
+            if f in LIMIT_FLOORS and (p := prop["limits"][f][key]) < LIMIT_FLOORS[f][key]:
                 regressions.append(f"known limit below minimum: {f} {key} {fmt(p)} < {LIMIT_FLOORS[f][key]}")
     regressions += minimum_changes(base, prop, lines)
     changed = [f"{f}.{g}.{t}" for f in prop["palette"] for g in ("neutrals", "colors", "states")

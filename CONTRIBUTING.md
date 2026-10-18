@@ -10,7 +10,7 @@ Twilight is at the definition stage. The palette, the rules and the documents in
 
 ## Proposing a change to a color
 
-Colors are not adjusted by eye. A proposal should name the rule it changes, or the parameter in [construction.md, section 12](docs/construction.md#12-parameters-decided-vs-derived), and show that every guarantee in [design-system.md, section 13](docs/design-system.md#13-guarantees) still holds afterwards.
+Colors are not adjusted by eye. A proposal should name the rule it changes, or the parameter in [construction.md, section 12](docs/construction.md#12-parameters-decided-vs-derived), and show that every guarantee in [design-system.md, section 13](docs/design-system.md#13-guarantees) still holds afterwards. A guarantee may go down only under the conditions in [construction.md, section 10.1](docs/construction.md#101-quality-floors): never below its category minimum, named in the changelog, and with a loss that is imperceptible or well inside the standard.
 
 ## Before opening a pull request
 
