@@ -32,7 +32,7 @@ SEED = "#ee7a1f"                      # the origin: its hue places Afterglow (§
 SEED_HUE_DEG = 52                     # seed hue rounded to the degree; used for the neutral hue and the warm tilt
 NEUTRAL_HUE = SEED_HUE_DEG + 180      # 232°
 DRIFT, AMP = 18.0, 0.035              # §3.1, §3.2 (AMP: the reference amplitude; a flavor sets its own `amp`)
-R, L_REF = 1.25, 0.20                 # §3.3: surface ratio and the lightness its scale is measured at
+R, L_REF = 1.3125, 0.20                 # §3.3: surface ratio and the lightness its scale is measured at
 TEXT_TARGETS = dict(control=3.0, muted=4.5, secondary=7.0, body=49 / 4.5)  # §3.5 (10.9 = 7² / 4.5)
 PHI = (1 + 5 ** 0.5) / 2
 TAU, GAMUT = 0.15, 0.92               # §6.3

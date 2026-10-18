@@ -30,7 +30,7 @@ TRANSIENT = ("selection", "selection-inactive", "find-match", "find-match-other"
 ANCHORS = {name: k.oklch_of(k.CORNERS[slot])[2] for name, slot in k.COLOR_KEYS.items() if slot in k.CORNERS}
 WCAG_THRESHOLDS = (3.0, 4.5, 7.0)   # compared strictly: a measured 4.496 does not meet 4.5
 FLOORS = {  # check: (dusk, dawn); construction.md §3.5, §5, §6.6, §7, §9.2; design-system.md §13
-    "ink on surfaces": (13.76, 13.36), "body on surfaces": (10.90, 10.89), "subtle on surfaces": (7.00, 7.00),
+    "ink on surfaces": (13.25, 12.84), "body on surfaces": (10.90, 10.89), "subtle on surfaces": (7.00, 7.00),
     "faint on surfaces": (4.50, 4.50), "control on surfaces": (3.00, 3.00), "code on code surfaces": (7.00, 4.50),
     "on-accent on accent/pressed": (4.50, 4.50), "accent-text on raised": (7.00, 4.50),
     "accent-focus on surfaces": (3.00, 3.00), "ΔE code+cursor, normal": (0.097, 0.088),
@@ -43,15 +43,15 @@ MEASURED = ("ink on surfaces", "ΔE code+cursor, normal", "ΔE code+cursor, wors
 # Known limits (construction.md §11) are measured minimums too.
 LIMITS = ("JND " + s for s in (*TRANSIENT, "diff-inserted", "diff-removed"))
 LIMITS = (*LIMITS, "ANSI black/white on canvas", "min ΔE between background states")
-LIMIT_FLOORS = {  # the measured minimum of each limit per flavor (truncated to 4 decimals), current as of 1.4.0
-    "dusk": {"JND selection": 4.0869, "JND selection-inactive": 2.9143, "JND find-match": 3.6056,
-             "JND find-match-other": 2.5739, "JND word-highlight": 2.0129, "JND word-highlight-write": 2.5012,
-             "JND diff-inserted": 2.021, "JND diff-removed": 2.0341, "ANSI black/white on canvas": 1.3949,
+LIMIT_FLOORS = {  # the measured minimum of each limit per flavor (truncated to 4 decimals), current as of 1.5.0
+    "dusk": {"JND selection": 4.0869, "JND selection-inactive": 2.9143, "JND find-match": 4.0626,
+             "JND find-match-other": 2.5739, "JND word-highlight": 2.0129, "JND word-highlight-write": 3.0469,
+             "JND diff-inserted": 2.021, "JND diff-removed": 2.0341, "ANSI black/white on canvas": 1.5669,
              "min ΔE between background states": 0.0215},
-    "dawn": {"JND selection": 2.788, "JND selection-inactive": 2.0513, "JND find-match": 4.3127,
+    "dawn": {"JND selection": 3.45, "JND selection-inactive": 2.0513, "JND find-match": 4.7366,
              "JND find-match-other": 2.5588, "JND word-highlight": 2.0486, "JND word-highlight-write": 3.0465,
-             "JND diff-inserted": 2.0762, "JND diff-removed": 2.0586, "ANSI black/white on canvas": 1.4276,
-             "min ΔE between background states": 0.0191},
+             "JND diff-inserted": 2.0762, "JND diff-removed": 2.0586, "ANSI black/white on canvas": 1.5774,
+             "min ΔE between background states": 0.0202},
 }
 
 
