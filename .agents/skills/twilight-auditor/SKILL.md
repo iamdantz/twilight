@@ -37,7 +37,7 @@ The scripts live in this skill's `scripts/` directory (`<skill>` is the director
 | File | Role |
 |---|---|
 | `scripts/validate.py` | Measures and cross-checks one snapshot; `--compare REF` adds regressions. Exit 1 on any failure. `--json` for the summary only. |
-| `scripts/construct.py` | Reference implementation of construction.md: a shared core plus one profile per flavor (`PROFILES`). Rebuilds both flavors exactly; `validate.py` imports it. Import it yourself to recompute a value by hand. |
+| `scripts/construct.py` | Reference implementation of construction.md in three levels (§1.1): system constants, `CATEGORIES` (dark, light) and `FLAVORS`; `PROFILES` merges each flavor with its category. Rebuilds every flavor exactly, each from the system and its own category only; `validate.py` imports it. Import it yourself to recompute a value by hand. |
 | `scripts/requirements.txt` | `coloraide==8.13`, pinned. |
 
 Setup, once per machine (the venv is git-ignored):
@@ -119,7 +119,7 @@ The known limits in construction.md §11 (JND of every background state, ANSI bl
 
 ### D. New flavors
 
-- Produced end to end by the construction method: surfaces, text levels, accents, colors, states and ANSI all solved, never picked. It is a new profile in `scripts/construct.py` `PROFILES` (with a neutral builder if its surfaces need one), and its committed JSON must equal the generator's output. Shared core functions may not be changed to suit it unless Dusk and Dawn still rebuild exactly.
+- Produced end to end by the construction method: surfaces, text levels, accents, colors, states and ANSI all solved, never picked. It is a new entry in `scripts/construct.py` `FLAVORS`, in an existing category, that sets only flavor parameters (Canvas, Ink, neutral chroma amplitude), and its committed JSON must equal the generator's output. System and category parameters may not be changed to suit it unless every other flavor still rebuilds exactly.
 - Any new seed or parameter is declared *decided* with written rationale in §12. Seed rule: one seed; Afterglow at the cusp of its hue, neutrals at its exact complement. A second or different seed requires construction.md to be amended first, by a change that itself passes this audit.
 - If the flavor has its own generator test, run it on an exported copy; it does not replace the validator, which checks every floor including ΔE.
 - Its palette image (`assets/palette-<flavor>.png`) exists, or the README states why not.

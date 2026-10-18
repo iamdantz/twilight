@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.4.1
+
+The method is organized in three levels: system, category and flavor. Dawn no longer reads Dusk. No value changes.
+
+### Tooling
+- `construct.py`: system constants, `CATEGORIES` (dark, light) and `FLAVORS` (Dusk, Dawn). One neutral builder places every flavor's surfaces at the system distances from its own Canvas, in its category's direction, and solves its text levels and Rail. Dawn's anchors are its own parameters, and its surface distances come from the system, not from Dusk's neutrals.
+- The surface ratio is a system parameter: r = 1.25 at L_ref = 0.20, as ΔE distances (1.98, 2.51, 5.68 JND).
+- The neutral chroma amplitude is a flavor parameter (0.035 in both).
+- Both flavors rebuild exactly. Changing Dusk's Canvas, Ink or amplitude no longer moves any Dawn token.
+
+### Documented
+- construction.md §1.1 (the three levels), §3.3 (surface distances), §4 (Dawn's own anchors), §12 and §13.
+- Auditor skill: the construction's levels; a new flavor is an entry in `FLAVORS` within an existing category.
+
 ## 1.4.0
 
 The construction now builds what the validator guarantees: the cursor is part of the hue optimization, and background states keep 1 JND from each other. Code colors are unchanged in both flavors.

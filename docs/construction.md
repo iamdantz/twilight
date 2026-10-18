@@ -11,14 +11,24 @@ The companion document, [design-system.md](design-system.md), defines the system
 1. **One seed is chosen by hand**, `#ee7a1f`. Its hue places Afterglow (the most chromatic orange sRGB holds at that hue) and the neutral hue at its exact complement.
 2. **Everything is computed in OKLCH** (perceptual lightness L, chroma C, hue h) and validated in sRGB with WCAG 2.x contrast. OKLCH predicts perception; it does not compute contrast, so every result is checked on the rendered value.
 3. **Out-of-gamut colors are mapped by reducing chroma**, which preserves L and h, never by clipping RGB channels.
-4. **Neutral surfaces follow a geometric progression** in Dusk and keep the same perceptual distances in Dawn; text levels are solved by contrast targets against the hardest surface.
+4. **Neutral surfaces sit at fixed perceptual distances from Canvas**, taken from one geometric progression; each category sets their direction, and text levels are solved by contrast targets against the hardest surface.
 5. **The six hues are anchored to the ANSI standard** (RGB cube corners), lit by one shared "sunset" chroma law, and optimized jointly with a seventh hue (Ember) for distinguishability, including under color-vision deficiency.
 6. **The variant floor is solved**: the base lightness is raised (Dusk) or lowered (Dawn) until the weakest code color meets exactly 7:1 or 4.5:1 on the most demanding code surface.
 7. **Syntax roles are fixed per category**: one color each, the same in both flavors, with Coral and Afterglow kept out of code.
 8. **Background states are measured in just-noticeable differences**, bounded so no text level loses its guarantee, and kept 1 JND apart from each other wherever their targets allow.
-9. **Dawn is the light end of the same system**: one neutral curve, Canvas and Ink swapped, the same perceptual surface distances, the same text targets and rules, and its own β and chroma base.
+9. **Dawn is the light end of the same system**: one neutral curve, the same perceptual surface distances, the same text targets and rules, and the light category's β and chroma base.
 
 Designer decisions are listed explicitly in §12; everything else follows from them.
+
+### 1.1 Three levels
+
+Every parameter belongs to one level, and a flavor reads only the system and its own category, never another flavor. Changing the system changes every flavor; changing a flavor changes only that flavor.
+
+| Level | Parameters |
+|---|---|
+| System | Seed and Afterglow (§2); the neutral curve (§3.1–3.2); the surface distances from r and L_ref (§3.3); Rail as a half step (§3.4); text targets (§3.5); accent families (§5); ANSI anchors, τ, gamut margin, φ, Ember's hue range and the optimizer (§6); syntax roles (§8); JND targets and state rules (§9) |
+| Category (dark, light) | Direction of each surface from Canvas; direction of the text search; code floor; β; chroma base; L₀ and Ember lightness ranges; state bounds (§4) |
+| Flavor (Dusk, Dawn) | Its category; Canvas and Ink lightness; neutral chroma amplitude |
 
 ---
 
@@ -54,14 +64,20 @@ C(L) = 0.035 · sin²(π · L)
 
 Chroma peaks at mid-lightness (≈ 0.035) and approaches zero at both ends, so dark surfaces and light text (Dusk), and light surfaces and dark text (Dawn), read as clean, not muddy or tinted. At L 0.95 chroma is ≈ 0.001, below what 8-bit sRGB can express, so Dusk's Ink and Dawn's Canvas are effectively neutral: a cool silver, never paper white.
 
-### 3.3 Surfaces (Dusk): geometric in lightness
+### 3.3 Surfaces: one perceptual scale
+
+The system defines how far each surface sits from Canvas. The distances come from a geometric progression in lightness, measured as ΔE OKLab from its middle step:
 
 ```
-L(Shell) = 0.16   L(Canvas) = 0.20   L(Raised) = 0.25   L(Edge) = 0.3125
-ratio r = 1.25 between consecutive steps, anchored at Canvas = 0.20
+scale:     L_ref / r,  L_ref,  L_ref · r,  L_ref · r²        r = 1.25, L_ref = 0.20
+distance:  Shell = ΔE_OK(L_ref / r, L_ref) = 0.0396 (1.98 JND)
+           Raised = ΔE_OK(L_ref · r, L_ref) = 0.0501 (2.51 JND)
+           Edge = ΔE_OK(L_ref · r², L_ref) = 0.1135 (5.68 JND)
 ```
 
-Equal ratios in L produce steps that look evenly spaced in the dark range, where absolute lightness differences are perceived more strongly.
+Each flavor places its surfaces on the neutral curve at these distances from its own Canvas, in its category's direction (§4). Equal ratios in L produce steps that look evenly spaced in the dark range, where absolute lightness differences are perceived more strongly; measured as ΔE, the same steps look as far apart at the light end. In Dusk, whose Canvas is L_ref, the placement returns the scale itself: Shell L 0.16, Raised 0.25, Edge 0.3125.
+
+Placement: a 50-step bisection between Canvas and L 0.02 (darker) or L 0.999 (lighter); the result is the L nearest Canvas that reaches the distance.
 
 ### 3.4 Rail: a half step
 
@@ -83,13 +99,13 @@ Each level is the lightness, on the neutral curve, that meets an exact contrast 
 | Faint | 4.5:1 (AA text) | 0.625 | 0.495 |
 | Subtle | 7.0:1 (AAA text) | 0.742 | 0.392 |
 | Body | 10.89:1 = 7² / 4.5 (next geometric step; used unrounded) | 0.874 | 0.275 |
-| Ink | fixed: L 0.95 in Dusk, L 0.20 in Dawn (the two anchors, swapped; §4) | 0.949 | 0.200 |
+| Ink | fixed per flavor: L 0.95 in Dusk, L 0.20 in Dawn (§4) | 0.949 | 0.200 |
 
 Solving is done by bisection on L along the neutral curve, evaluating WCAG contrast on the final hex value.
 
-In Dusk, each level is the lowest L on the neutral curve that reaches its target against Raised
+In dark flavors, each level is the lowest L on the neutral curve that reaches its target against Raised
 (50-step bisection; search ranges: Control 0.30–0.70, Faint 0.40–0.80, Subtle 0.50–0.90,
-Body 0.60–0.95). Rail (§3.4) is a 50-step bisection between Shell and Canvas.
+Body 0.60–0.95). In light flavors it is the highest L in 0.05–0.95. Rail (§3.4) is a 50-step bisection between Shell and Canvas.
 
 This replaced an earlier hand-tuned scale in which the faint level reached only 4.44:1 on raised surfaces and needed an exception rule. With solved levels, no exceptions exist.
 
@@ -97,23 +113,23 @@ This replaced an earlier hand-tuned scale in which the faint level reached only 
 
 ## 4. Dawn: the light end
 
-Dawn is the same system read from the other end of the neutral curve. Every formula in §3 and §5–§9 is shared; only the flavor profile below is specific to Dawn.
+Dawn is the same system read from the other end of the neutral curve. Every formula in §3 and §5–§9 is shared; the table lists what the light category and the Dawn flavor set.
 
-| Rule | Dusk | Dawn |
-|---|---|---|
-| Neutral curve | h(L), C(L) of §3.1–3.2 | the same curve, no correction |
-| Canvas | L 0.20 | L 0.95 (Dusk's Ink) |
-| Ink | L 0.95 | L 0.20 (Dusk's Canvas) |
-| Shell, Raised, Edge | geometric scale (§3.3) | the same ΔE_OK from Canvas as in Dusk, darker than Canvas |
-| Rail | half step (§3.4) | half step (§3.4) |
-| Text levels | lowest L reaching the target against Raised | highest L reaching the target against Raised |
-| Code floor | 7:1 (AAA) | 4.5:1 (AA), see §11 |
-| β (§6.2) | 0.30 | 0.19 |
-| Chroma base C₀ (§6.3) | C_Afterglow / φ = 0.116 | C_seed / φ = 0.105 |
+| Level | Rule | Dusk (dark) | Dawn (light) |
+|---|---|---|---|
+| Category | Shell, Raised, Edge | at the §3.3 distances: Shell darker than Canvas, Raised and Edge lighter | at the §3.3 distances, all darker than Canvas |
+| Category | Text levels | lowest L reaching the target against Raised | highest L reaching the target against Raised |
+| Category | Code floor | 7:1 (AAA) | 4.5:1 (AA), see §11 |
+| Category | β (§6.2) | 0.30 | 0.19 |
+| Category | Chroma base C₀ (§6.3) | C_Afterglow / φ = 0.116 | C_seed / φ = 0.105 |
+| Flavor | Canvas | L 0.20 | L 0.95 |
+| Flavor | Ink | L 0.95 | L 0.20 |
+| Flavor | Neutral chroma amplitude | 0.035 | 0.035 |
+| System | Neutral curve, Rail (§3.4) | h(L), C(L) of §3.1–3.2; half step | the same |
 
-**Canvas and Ink swap.** The two anchors of the system are Dusk's Canvas (L 0.20) and Dusk's Ink (L 0.95). Dawn uses the same two colors with their roles exchanged, so Dawn's Canvas is `#eeeeef` and its Ink is `#11171b`. Ink on Canvas is 15.58:1 in both flavors. The lightest value in Twilight is therefore L 0.95, a cool silver from the near-neutral end of the curve.
+**Canvas and Ink.** Each flavor sets its own two anchors. Dawn's Canvas (L 0.95, `#eeeeef`) and Ink (L 0.20, `#11171b`) are the same two colors as Dusk's Ink and Canvas, with the roles exchanged; they are Dawn's own parameters, so changing Dusk's anchors does not move Dawn. Ink on Canvas is 15.58:1 in both flavors. The lightest value in Twilight is therefore L 0.95, a cool silver from the near-neutral end of the curve.
 
-**Surfaces keep Dusk's perceptual distances.** Shell, Raised and Edge are placed at the same ΔE_OK from Canvas as in Dusk (0.040, 0.050, 0.114), stepping down from Canvas. ΔE is the perceptual measure Twilight uses everywhere (§9.1). Matching contrast ratios instead, as Dawn did before 1.2, gives smaller visible steps near white: WCAG contrast changes faster with L at the light end, so the same ratio covers less lightness. With equal ΔE, Dawn's surfaces look as far apart as Dusk's, and the extra room lets background states reach their targets (§9.2).
+**Surfaces keep the system's perceptual distances.** Shell, Raised and Edge are placed at the §3.3 distances from Canvas (1.98, 2.51 and 5.68 JND), stepping down from Canvas, the same distances Dusk uses. ΔE is the perceptual measure Twilight uses everywhere (§9.1). Matching contrast ratios instead, as Dawn did before 1.2, gives smaller visible steps near white: WCAG contrast changes faster with L at the light end, so the same ratio covers less lightness. With equal ΔE, Dawn's surfaces look as far apart as Dusk's, and the extra room lets background states reach their targets (§9.2).
 
 **Every surface is darker than Canvas.** Light interfaces darken frames, side panels and borders against the content area rather than lightening them, and there is no room above Canvas: it already sits at the lightest value of the system.
 
@@ -121,7 +137,7 @@ Dawn is the same system read from the other end of the neutral curve. Every form
 
 **Two Dawn floors moved with Canvas.** Before 1.2, Dawn's Canvas sat at L 0.975 (`#f4f7f9`). At L 0.95 the light surfaces are closer to Ink, so Ink on Raised, the darkest surface text sits on, falls from 14.81:1 to 13.36:1, still above every text target. The hues were optimized again for the new surfaces and β: the normal-vision separation of the code colors rose from ΔE 0.077 to 0.088, and the worst color-vision case went from 0.041 to 0.040 (Sea Salt against Grove). Dawn's floors in [design-system.md](design-system.md#13-guarantees) are these measured values.
 
-Search ranges. Shell, Raised and Edge: 50-step bisection over L 0.50–0.95 on ΔE_OK to Canvas; the result is the lightest L that reaches the distance. Text levels: the highest L in 0.05–0.95 that reaches the target against Raised (50 steps). Rail: §3.4, bisected between Shell and Canvas.
+Search ranges. Shell, Raised and Edge: §3.3. Text levels: the highest L in 0.05–0.95 that reaches the target against Raised (50 steps). Rail: §3.4, bisected between Shell and Canvas.
 
 ---
 
@@ -400,10 +416,10 @@ While Dawn 1.0 was being validated, its focus color (`#de711c`) passed 3:1 on Ca
 | Afterglow | the sRGB cusp of the seed hue (§2) | The most chromatic color at the seed's hue |
 | Neutral hue | complement of the seed (232°) | Structural choice |
 | Neutral hue drift | +18° · (1 − L)² | "Shadows lean toward night" |
-| Neutral chroma amplitude | 0.035 | Tint strength |
-| Surface ratio | r = 1.25, Canvas at L 0.20 (Dusk) | Matches the original hand-picked scale |
-| Anchors | Canvas L 0.20 and Ink L 0.95 in Dusk; swapped in Dawn | One pair of neutrals for both flavors |
-| Dawn surfaces | Dusk's ΔE_OK from Canvas, darker than Canvas | Same perceptual separation as Dusk |
+| Neutral chroma amplitude (flavor) | 0.035 in Dusk and Dawn | Tint strength |
+| Surface ratio (system) | r = 1.25 at L_ref = 0.20, as ΔE_OK distances (§3.3) | Matches the original hand-picked scale |
+| Surface directions (category) | dark: Shell darker, Raised and Edge lighter; light: all darker | Light interfaces darken their panels (§4) |
+| Anchors (flavor) | Dusk: Canvas L 0.20, Ink L 0.95. Dawn: Canvas L 0.95, Ink L 0.20 | The same two neutrals, roles exchanged |
 | Warm tilt τ | 0.15 | Strength of the shared warm light |
 | Chroma base | C_Afterglow / φ (Dusk), C_seed / φ (Dawn) | Keeps the accent dominant; the light flavor is bounded by the gamut at 4.5:1 (§6.3) |
 | Hue freedom | ±25° from ANSI anchors | Preserves meaning |
@@ -450,7 +466,7 @@ different hexes.
 
 ```
 for variant in (Dusk, Dawn):
-    surfaces  ← geometric(r=1.25) [Dusk] | Dusk's ΔE from Canvas, below Canvas L 0.95 [Dawn]
+    surfaces  ← the §3.3 distances from the flavor's Canvas, in the category's direction
     rail      ← half-step contrast between shell and canvas
     levels    ← bisect L on neutral curve until contrast(level, raised) = target
     hues₁     ← optimize(§6.5) against canvas
