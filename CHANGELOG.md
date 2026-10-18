@@ -1,5 +1,45 @@
 # Changelog
 
+## 1.6.0
+
+Quality floors in two levels: category minimums, the Twilight standard every dark or light flavor meets, and flavor floors, what Dusk and Dawn reach today. No value changes.
+
+### Added
+- Category minimums for dark and light themes (construction.md §10.1): code 7:1 or 4.5:1; Body, Subtle, Faint and Control at the §3.5 targets; Ink at least the Body target and above Body; focus 3, on-accent 4.5, accent-text 7 or 4.5; code-color ΔE at least 4 JND in normal vision and 2 JND under color-vision deficiency; every background state at least 2 JND from Canvas and every pair at least 1 JND apart.
+- Rule for lowering a flavor floor: it still meets its category minimum, the changelog names it under Lower with its cause and benefit, and the loss is imperceptible or well inside the standard.
+- A new flavor is checked against its category's minimums; its measured values become its floors.
+
+### Tooling
+- `validate.py`: `MINIMUMS` per category and `FLOORS` per flavor replace the (Dusk, Dawn) table and the fixed/measured split. Every value is reported next to its flavor floor and its category minimum. `--compare` rejects a lowered category minimum, a flavor floor lowered without its Lower entry, and a flavor floor below its minimum; a flavor with no floors is reported. Base snapshots with the earlier table format are read per flavor.
+- New checks: every background state ≥ 2 JND from Canvas, the closest pair of states ≥ 1 JND, and Ink above Body on every surface.
+
+### Documented
+- construction.md §10.1; design-system.md §13; CONTRIBUTING; auditor skill area C, D and the verdict rules.
+
+## 1.5.0
+
+The surface ratio r goes from 1.25 to 1.3125 (21/16): the smallest value at which both flavors keep every guarantee, every pair of background states is at least 1 JND apart, and Dusk's write highlight reaches its target. Code colors and Afterglow are unchanged.
+
+### Changed
+- System: r = 1.3125 at L_ref = 0.20. Surface distances from Canvas: Shell 2.41, Raised 3.16, Edge 7.22 JND (were 1.98, 2.51, 5.68).
+- Dusk and Dawn: Shell, Rail, Raised and Edge, the text levels solved against Raised, `accent-text` where it is solved against Raised, `on-accent` (the new Shell in Dusk), Dawn's Afterglow `accent-focus`, and the states that follow. Canvas and Ink are unchanged.
+
+### Improved (against 1.4.1)
+- Dusk `word-highlight-write` 2.50 → 3.05 JND (target reached); `find-match` 3.61 → 4.06 JND; ANSI black and white on Canvas 1.39 → 1.57:1; Shell and Rail 1.10 → 1.35 JND apart.
+- Dawn `selection` 2.79 → 3.45 JND; `find-match` 4.31 → 4.74 JND; ANSI black and white 1.43 → 1.58:1; selection and inactive selection 0.96 → 1.68 JND apart. Every pair of states in both flavors is now at least 1 JND apart.
+
+### Lower (against 1.4.1)
+- `ink on surfaces`: Dusk 13.76 → 13.25:1, Dawn 13.36 → 12.84:1. Ink is the same color; Raised sits further from Canvas. Ink on Canvas stays 15.58:1.
+- Dusk control on every surface 3.03 → 3.00:1 and Afterglow focus 6.22 → 5.99:1; both still meet their thresholds.
+
+### Documented
+- construction.md §3.3 (r and the sweep that set it), §3.4, §3.5, §5, §9.2, §9.4, §11 (the Dawn state pair under 1 JND is gone) and §12.
+- design-system.md and README: regenerated neutral, accent, state and terminal tables; guarantees; surface lightnesses.
+- `assets/palette-*.png` repainted with the new neutrals.
+
+### Tooling
+- `validate.py`: Ink floors 13.25 (Dusk) and 12.84 (Dawn); `LIMIT_FLOORS` current as of 1.5.0.
+
 ## 1.4.1
 
 The method is organized in three levels: system, category and flavor. Dawn no longer reads Dusk. No value changes.
