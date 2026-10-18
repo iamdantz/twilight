@@ -3,11 +3,13 @@
 Rebuilds both flavors from the decided parameters (construction.md §12) and reproduces
 palette/twilight.json exactly. Nothing here is fitted to the published values.
 
-Structure:
-- The core (primitives, the neutral curve, §6 hues, §9 states, §5 families, §6.7 brights) is shared
-  by every flavor and knows nothing about dark or light.
-- A flavor is a profile: its polarity, its anchors on the neutral curve, its floor and its measured β.
-  Dusk is the dark profile; Dawn is the light one (construction.md §4).
+Structure (construction.md §1):
+- System: the rules every flavor shares, from the seed and the neutral curve to the surface ratio, the text
+  targets, the states, the families and the optimizer. Changing one changes every flavor.
+- Category (CATEGORIES): what dark and light themes do differently: direction of the surfaces and of the text
+  search, β, the chroma base, the code floor and the search ranges.
+- Flavor (FLAVORS): its category and its own anchors (Canvas and Ink lightness) and neutral tint. A flavor reads
+  only the system and its category, never another flavor.
 
 Usage:
     python construct.py            # print the rebuilt palette as JSON (about 2 minutes)
@@ -29,8 +31,8 @@ from coloraide import Color
 SEED = "#ee7a1f"                      # the origin: its hue places Afterglow (§2); its chroma is the light chroma base (§6.3)
 SEED_HUE_DEG = 52                     # seed hue rounded to the degree; used for the neutral hue and the warm tilt
 NEUTRAL_HUE = SEED_HUE_DEG + 180      # 232°
-DRIFT, AMP = 18.0, 0.035              # §3.1, §3.2
-SURFACES_L = dict(frame=0.16, content=0.20, elevated=0.25, border=0.3125)   # §3.3, r = 1.25 (Dusk)
+DRIFT, AMP = 18.0, 0.035              # §3.1, §3.2 (AMP: the reference amplitude; a flavor sets its own `amp`)
+R, L_REF = 1.25, 0.20                 # §3.3: surface ratio and the lightness its scale is measured at
 TEXT_TARGETS = dict(control=3.0, muted=4.5, secondary=7.0, body=49 / 4.5)  # §3.5 (10.9 = 7² / 4.5)
 PHI = (1 + 5 ** 0.5) / 2
 TAU, GAMUT = 0.15, 0.92               # §6.3
@@ -44,16 +46,27 @@ STATE_JND = {"selection": 4, "selection-inactive": 2, "find-match": 5, "find-mat
 CORNERS = dict(red="#ff0000", yellow="#ffff00", green="#00ff00", cyan="#00ffff", blue="#0000ff", magenta="#ff00ff")
 VISIONS = (None, "deutan", "protan", "tritan")
 
-# Flavor profiles (construction.md §3, §4, §6) --------------------------------------
-# dark:  Canvas at the dark anchor, text above it.  light: Canvas at the light anchor, text below it.
-# The two anchors are Dusk's Canvas (L 0.20) and Dusk's Ink (L 0.95); Dawn swaps them.
+# Categories (construction.md §4) ----------------------------------------------------
+# surfaces: the direction of each surface from Canvas (+1 lighter, −1 darker), at the system distances (§3.3).
+# text: dark themes take the lowest L that reaches each target (search range per level); light themes the highest.
 # chroma_base: the chroma divided by φ to give C₀ (§6.3), Afterglow's in dark themes and the seed's in light ones.
-PROFILES = {
-    "dusk": dict(dark=True, canvas_L=0.20, ink_L=0.95, floor=7.0, beta=0.30, chroma_base="afterglow",
+CATEGORIES = {
+    "dark": dict(dark=True, surfaces=dict(frame=-1, elevated=+1, border=+1),
+                 text=dict(control=(0.3, 0.7), muted=(0.4, 0.8), secondary=(0.5, 0.9), body=(0.6, 0.95)),
+                 floor=7.0, beta=0.30, chroma_base="afterglow",
                  L0_range=(0.5, 0.95), ember_L=[round(0.60 + 0.01 * i, 2) for i in range(31)]),
-    "dawn": dict(dark=False, canvas_L=0.95, ink_L=0.20, floor=4.5, beta=0.19, chroma_base="seed",
-                 L0_range=(0.2, 0.7), ember_L=[round(0.35 + 0.01 * i, 2) for i in range(31)]),
+    "light": dict(dark=False, surfaces=dict(frame=-1, elevated=-1, border=-1),
+                  text=dict(control=(0.05, 0.95), muted=(0.05, 0.95), secondary=(0.05, 0.95), body=(0.05, 0.95)),
+                  floor=4.5, beta=0.19, chroma_base="seed",
+                  L0_range=(0.2, 0.7), ember_L=[round(0.35 + 0.01 * i, 2) for i in range(31)]),
 }
+
+# Flavors (construction.md §4) ------------------------------------------------------------
+FLAVORS = {
+    "dusk": dict(category="dark", canvas_L=0.20, ink_L=0.95, amp=AMP),
+    "dawn": dict(category="light", canvas_L=0.95, ink_L=0.20, amp=AMP),
+}
+PROFILES = {name: {**CATEGORIES[f["category"]], **f} for name, f in FLAVORS.items()}
 
 
 # Primitives --------------------------------------------------------------------
@@ -106,83 +119,65 @@ def cusp(h):
     return best[0]
 
 
-# §3 The neutral curve (shared by both flavors) ---------------------------------------
+# §3 The neutral curve (system) -----------------------------------------------------------
 def n_hue(L):
     return NEUTRAL_HUE + DRIFT * (1 - L) ** 2
 
 
-def n_chroma(L):
-    return AMP * math.sin(math.pi * L) ** 2
+def n_chroma(L, amp=AMP):
+    return amp * math.sin(math.pi * L) ** 2
 
 
-def neutral(L):
-    return hexof(oklch(L, n_chroma(L), n_hue(L)))
+def neutral(L, amp=AMP):
+    return hexof(oklch(L, n_chroma(L, amp), n_hue(L)))
 
 
-def _half_step(N, lo, hi):
-    """§3.4: contrast(Rail, Canvas) = √ contrast(Shell, Canvas); 50-step bisection between Shell and Canvas, last midpoint."""
+# §3.3 Surface distances (system): the geometric scale L_REF · rⁿ, measured as ΔE OKLab from its middle step
+SEPARATIONS = {name: de_ok(neutral(L_REF * R ** n), neutral(L_REF)) for name, n in (("frame", -1), ("elevated", 1), ("border", 2))}
+
+
+def neutrals(flavor):
+    """§3, §4: a flavor's ten neutrals. Every one is a point of the neutral curve with the flavor's amplitude."""
+    P = PROFILES[flavor]
+    amp, canvas_L = P["amp"], P["canvas_L"]
+    nt = lambda L: neutral(L, amp)
+    N = {"content": nt(canvas_L)}
+
+    def place(sign, sep):
+        """§3.3: the L nearest Canvas, in the category's direction, whose ΔE OKLab from Canvas reaches `sep`."""
+        lo, hi = (canvas_L, 0.999) if sign > 0 else (0.02, canvas_L)
+        for _ in range(50):
+            m = (lo + hi) / 2
+            far = de_ok(nt(m), N["content"]) >= sep
+            if sign > 0:
+                lo, hi = (lo, m) if far else (m, hi)
+            else:
+                lo, hi = (m, hi) if far else (lo, m)
+        return hi if sign > 0 else lo
+
+    Ls = {k: place(sign, SEPARATIONS[k]) for k, sign in P["surfaces"].items()}
+    N.update({k: nt(L) for k, L in Ls.items()})
+
+    # §3.5: each text level solved against Raised, upward in dark themes and downward in light ones
+    for k, (lo, hi) in P["text"].items():
+        for _ in range(50):
+            m = (lo + hi) / 2
+            ok = contrast(nt(m), N["elevated"]) >= TEXT_TARGETS[k]
+            if P["dark"]:
+                lo, hi = (lo, m) if ok else (m, hi)
+            else:
+                lo, hi = (m, hi) if ok else (lo, m)
+        N[k] = nt(hi if P["dark"] else lo)
+    N["primary"] = nt(P["ink_L"])
+
+    # §3.4: Rail is a half step, contrast(Rail, Canvas) = √ contrast(Shell, Canvas); 50-step bisection, last midpoint
     target = contrast(N["frame"], N["content"]) ** 0.5
+    lo, hi = Ls["frame"], canvas_L
     for _ in range(50):
         m = (lo + hi) / 2
-        c = neutral(m)
+        c = nt(m)
         lo, hi = (m, hi) if contrast(c, N["content"]) > target else (lo, m)
-    return c
-
-
-# §3.3–3.5 Dusk: surfaces on the geometric scale ------------------------------------
-def _lowest_L(target, against, lo, hi):
-    """Lowest L on the neutral curve whose contrast against `against` reaches `target`."""
-    for _ in range(50):
-        m = (lo + hi) / 2
-        lo, hi = (lo, m) if contrast(neutral(m), against) >= target else (m, hi)
-    return hi
-
-
-def dusk_neutrals():
-    P = PROFILES["dusk"]
-    N = {k: neutral(L) for k, L in SURFACES_L.items()}
-    for k, lo, hi in (("control", 0.3, 0.7), ("muted", 0.4, 0.8), ("secondary", 0.5, 0.9), ("body", 0.6, 0.95)):
-        N[k] = neutral(_lowest_L(TEXT_TARGETS[k], N["elevated"], lo, hi))
-    N["primary"] = neutral(P["ink_L"])
-    N["rail"] = _half_step(N, SURFACES_L["frame"], SURFACES_L["content"])
-    return N
-
-
-# §4 Dawn: the light end of the same curve --------------------------------------------
-# Canvas and Ink swap Dusk's anchors (Canvas = Dusk Ink, Ink = Dusk Canvas). Shell, Raised and Edge keep Dusk's
-# perceptual separation from Canvas (ΔE OKLab), on the light side of the curve. Text levels and Rail use the
-# same rules as Dusk. Every Dawn neutral is a point of the shared curve.
-def surface_separations(dusk):
-    """§4: the perceptual separation of each surface from Canvas (ΔE OKLab), defined once by Dusk's geometric scale."""
-    return {k: de_ok(dusk[k], dusk["content"]) for k in ("frame", "elevated", "border")}
-
-
-def dawn_neutrals(dusk):
-    P = PROFILES["dawn"]
-    canvas_L = P["canvas_L"]
-
-    def darker_by(sep):
-        """Lightest L below Canvas whose ΔE OKLab from Canvas reaches `sep` (50-step bisection)."""
-        lo, hi = 0.5, canvas_L
-        for _ in range(50):
-            m = (lo + hi) / 2
-            lo, hi = (lo, m) if de_ok(neutral(m), N["content"]) < sep else (m, hi)
-        return lo
-
-    def highest_L(target, against):
-        lo, hi = 0.05, 0.95
-        for _ in range(50):
-            m = (lo + hi) / 2
-            lo, hi = (m, hi) if contrast(neutral(m), against) >= target else (lo, m)
-        return neutral(lo)
-
-    N = {"content": neutral(canvas_L)}
-    Ls = {k: darker_by(d) for k, d in surface_separations(dusk).items()}
-    N.update({k: neutral(L) for k, L in Ls.items()})
-    for k in ("control", "muted", "secondary", "body"):
-        N[k] = highest_L(TEXT_TARGETS[k], N["elevated"])
-    N["primary"] = neutral(P["ink_L"])
-    N["rail"] = _half_step(N, Ls["frame"], canvas_L)
+    N["rail"] = c
     return N
 
 
@@ -381,10 +376,10 @@ NAMES = dict(shell="frame", rail="rail", canvas="content", raised="elevated", ed
 COLOR_KEYS = dict(coral="red", gold="yellow", grove="green", **{"sea-salt": "cyan"}, sky="blue", orchid="magenta", ember="ember")
 
 
-def build_flavor(flavor, dusk_neutrals_hex=None):
+def build_flavor(flavor):
     P = PROFILES[flavor]
     dark = P["dark"]
-    N = dusk_neutrals() if flavor == "dusk" else dawn_neutrals(dusk_neutrals_hex)
+    N = neutrals(flavor)
     hue = lambda hx: oklch_of(hx)[2]
     # Pass 1 (§6.6): hues against Canvas; their Grove and Coral place the diff backgrounds.
     cursor = family(N, AFTERGLOW, P)["accent-focus"]
@@ -415,10 +410,9 @@ def build_flavor(flavor, dusk_neutrals_hex=None):
 
 
 def build_palette():
-    """Both flavors, in the shape of palette/twilight.json → flavors. Returns (palette, meta)."""
-    dusk, dusk_meta, dusk_raw = build_flavor("dusk")
-    dawn, dawn_meta, _ = build_flavor("dawn", dusk_raw)
-    return {"dusk": dusk, "dawn": dawn}, {"dusk": dusk_meta, "dawn": dawn_meta}
+    """Every flavor, in the shape of palette/twilight.json → flavors. Returns (palette, meta)."""
+    built = {name: build_flavor(name) for name in FLAVORS}
+    return {n: b[0] for n, b in built.items()}, {n: b[1] for n, b in built.items()}
 
 
 if __name__ == "__main__":
