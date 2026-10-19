@@ -57,7 +57,7 @@ $V --ref <branch> --compare main     # proposal + regressions
 What it checks:
 
 - **Floors**: every row of the area C table, per flavor, against its category minimum and its flavor floor. WCAG thresholds (3.0, 4.5, 7.0) and the Body target (10.89) are compared strictly on unrounded values; other floors (e.g. 13.25, 0.061) are met at their stated precision.
-- **Rules**: no pure black or white; ANSI hue anchors ±25°; Ember 45–70°; Afterglow equals the sRGB cusp of the seed hue; every `accents.X.accent` equals `colors.X`; brights recomputed with the construction's own function.
+- **Rules**: no pure black or white; the JSON `series` equals `construct.SERIES` and the §7.1 search on Dusk and Dawn still returns it; ANSI hue anchors ±25°; Ember 45–70°; Afterglow equals the sRGB cusp of the seed hue; every `accents.X.accent` equals `colors.X`; brights recomputed with the construction's own function.
 - **Reproduction**: rebuilds both flavors from the decided parameters (§6.5 included, about 2 minutes) and compares every token exactly. Tolerance is zero: any difference is a hand edit or an undocumented method change. A flavor with no construction is an error.
 - **Construction table**: the §6.5 hue table, Ember and L₀ in construction.md against the rebuild; every hex in a construction.md table must exist in the JSON.
 - **Consistency**: `_` keys; `docs.py --check` (generated tables, facts and image pixels); JSON `version` = latest CHANGELOG heading; every hex, swatch, RGB/OKLCH column and measured number in README.md and docs/design-system.md; relative links and anchors in every `.md`.
@@ -141,7 +141,7 @@ The known limits in construction.md §11 (JND of every background state, ANSI bl
 All of these stay in sync with each other and with the recomputed values:
 
 - palette/twilight.json: values, structure, `version`; no `_`-prefixed or debug keys.
-- docs/design-system.md: every hex, contrast number, swatch URL (`placehold.co/<size>/<hex>/<hex>` matches its label) and the §13 guarantee table.
+- docs/design-system.md: every hex, contrast number, swatch URL (`placehold.co/<size>/<hex>/<hex>` matches its label) the §12 application tables and the §14 guarantee table.
 - docs/construction.md: formulas, parameters, worked numbers, §11 limits, §12 table. The validator does not parse its prose: check worked numbers by hand.
 - README.md: palette and accent tables, guarantees, swatches, links, anchors, repository layout.
 - assets/palette-dusk.png, assets/palette-dawn.png: drawn by `scripts/docs.py` whenever a shown value changes; otherwise flag as stale.

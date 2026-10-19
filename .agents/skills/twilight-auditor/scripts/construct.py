@@ -21,6 +21,7 @@ Precision conventions (part of the method, see construction.md §12.1):
 - WCAG 2.x contrast and ΔE OKLab as implemented by coloraide.
 """
 import functools
+import itertools
 import json
 import math
 import random
@@ -407,6 +408,36 @@ def build_flavor(flavor):
            "accents": {k: family(N, v, P) for k, v in colors.items()}, "states": states, "ansi": ansi}
     meta = {"hues": hues, "ember": ember, "L0": L0, "pass1_hues": {k: round(hue(first[k])) for k in ("green", "red")}}
     return out, meta, N
+
+
+# Data series (§7.1) ----------------------------------------------------------------------
+SERIES = ("sky", "ember", "gold", "sea-salt", "orchid", "grove")   # decided: series_order() on SERIES_BASIS
+SERIES_OTHER = "control"                                         # the neutral for any series past the sixth
+SERIES_BASIS = ("dusk", "dawn")
+
+
+def worst_de(cols):
+    """Smallest ΔE OKLab over every pair of `cols` and every vision (normal and three dichromacies)."""
+    return min(sim(a, v).delta_e(sim(b, v), method="ok") for v in VISIONS for i, a in enumerate(cols) for b in cols[i + 1:])
+
+
+def series_order(palettes):
+    """§7.1: the order of the six code colors (Coral excluded) whose every prefix keeps, in every flavor given, the
+    largest share of the best separation any set of that size reaches; ties go to the first series farthest from
+    Afterglow. `palettes` maps flavor → palette (as in palette/twilight.json → flavors)."""
+    six = [c for c in COLOR_KEYS if c != "coral"]
+    cache = {}
+
+    def w(f, s):
+        key = (f, frozenset(s))
+        if key not in cache:
+            cache[key] = worst_de([palettes[f]["colors"][c] for c in s])
+        return cache[key]
+
+    best = {f: {n: max(w(f, s) for s in itertools.combinations(six, n)) for n in range(2, 7)} for f in palettes}
+    glow = lambda c: min(worst_de([palettes[f]["colors"][c], AFTERGLOW]) for f in palettes)
+    key = lambda o: (*(min(w(f, o[:n]) / best[f][n] for f in palettes) for n in range(2, 7)), glow(o[0]))
+    return max(itertools.permutations(six), key=key)
 
 
 def build_palette():

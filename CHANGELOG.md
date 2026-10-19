@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.7.0
+
+How to apply Twilight to any target, and how not to. No color changes.
+
+### Added
+- `series` in palette/twilight.json: the order of data series (Sky, Ember, Gold, Sea Salt, Orchid, Grove) and the neutral for any series past the sixth (Control). The order is searched on Dusk and Dawn and shared by every flavor (construction.md §7.1).
+- design-system.md §12, Applying the system: regions by function, nesting and elevation, states of neutral rows and controls, data visualization, and limited targets (fewer surfaces or text levels, one accent color, sixteen terminal colors).
+- design-system.md §13, How not to apply: each misuse, what it breaks, and what to use instead.
+- Category minimums: Subtle on an Edge fill 4.5:1; the chip label on `accent-text` 4.5:1; Other at least ΔE 0.040 from every series in every vision; the closest pair of neutral row and control states at least 1 JND.
+
+### Changed
+- A selected row is no longer Raised. Raised is the hover fill on Rail and Canvas; a selected row takes `selection-inactive` or `selection`. On Shell and Raised, which are less than 1 JND apart in light flavors, hover takes `selection-inactive`.
+- The guarantee table moves from §13 to §14 of design-system.md.
+
+### Tooling
+- `validate.py`: the four new checks with their flavor floors; the published series must equal the decided order, and the search of §7.1 must still return it. Guarantee rows are matched with specific labels first, and a section heading without a flavor name ends the previous flavor's tables.
+- `docs.py`: generates the series table, the new guarantee rows and the facts of §12.
+
 ## 1.6.2
 
 Tooling to keep documents and images generated from the palette. No value changes.

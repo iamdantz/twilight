@@ -1,6 +1,10 @@
 {
   "name": "Twilight",
-  "version": "1.6.2",
+  "version": "1.7.0",
+  "series": {
+    "order": ["sky", "ember", "gold", "sea-salt", "orchid", "grove"],
+    "other": "control"
+  },
   "flavors": {
     "dusk": {
       "neutrals": {

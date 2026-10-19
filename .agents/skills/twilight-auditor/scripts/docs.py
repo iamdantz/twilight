@@ -61,6 +61,12 @@ def facts(P, M):
         label_on = n["shell"] if dark else n["canvas"]
         chips.append(min(k.contrast(label_on, c[x]) for x in ("coral", "gold", "grove", "sea-salt", "sky", "orchid")))
     out["chip"] = f"{min(chips):.2f}"
+    label = lambda F: max(F["neutrals"].values(), key=lambda x: k.contrast(x, F["neutrals"]["ink"]))
+    out["series_label"] = f"{min(k.contrast(label(F), F['colors'][x]) for F in P.values() for x in k.SERIES):.2f}"
+    rc = [k.de_ok(F["neutrals"]["rail"], F["neutrals"]["canvas"]) / k.JND for F in P.values()]
+    out["rail_canvas"] = f"{min(rc):.2f} to {max(rc):.2f}"
+    out["min.subtle_edge"] = f"{min(M[f][0]['subtle on edge'] for f in P):.2f}"
+    out["min.accent_label"] = f"{min(M[f][0]['chip label on accent-text'] for f in P):.2f}"
     for lvl in ("ink", "body", "subtle", "faint", "control"):
         out[f"min.{lvl}"] = f"{min(M[f][0][lvl + ' on surfaces'] for f in P):.2f}"
     return out
@@ -81,15 +87,20 @@ def img(hx, size):
 
 
 # Tables ------------------------------------------------------------------------------
-GUARANTEE_ROWS = {  # design-system §13 row label → (measurement, decimals)
-    "Ink on any surface": ("ink on surfaces", 2), "Body on any surface": ("body on surfaces", 2),
-    "Subtle on any surface": ("subtle on surfaces", 2), "Faint on any surface": ("faint on surfaces", 2),
-    "Control boundary on any surface": ("control on surfaces", 2),
-    "Accent focus on any surface, every accent": ("accent-focus on surfaces", 2),
-    "Code colors on every code surface": ("code on code surfaces", 2),
-    "Smallest code-color difference, normal vision": ("ΔE code+cursor, normal", 3),
-    "Smallest code-color difference, color-vision deficiency": ("ΔE code+cursor, worst CVD", 3),
+GUARANTEE_ROWS = {  # design-system guarantee row label → (measurement, unit)
+    "Ink on any surface": ("ink on surfaces", "ratio"), "Body on any surface": ("body on surfaces", "ratio"),
+    "Subtle on any surface": ("subtle on surfaces", "ratio"), "Faint on any surface": ("faint on surfaces", "ratio"),
+    "Control boundary on any surface": ("control on surfaces", "ratio"),
+    "Subtle on an Edge fill": ("subtle on edge", "ratio"),
+    "Accent focus on any surface, every accent": ("accent-focus on surfaces", "ratio"),
+    "Chip label on `accent-text`, every accent": ("chip label on accent-text", "ratio"),
+    "Code colors on every code surface": ("code on code surfaces", "ratio"),
+    "Smallest code-color difference, normal vision": ("ΔE code+cursor, normal", "de"),
+    "Smallest code-color difference, color-vision deficiency": ("ΔE code+cursor, worst CVD", "de"),
+    "Other series from every series, every vision": ("ΔE other series, every vision", "de"),
+    "Neutral row and control states, closest pair": ("neutral states, closest pair (JND)", "jnd"),
 }
+UNITS = {"ratio": lambda v: f"{v:.2f}:1", "de": lambda v: f"ΔE {v:.3f}", "jnd": lambda v: f"{v:.1f} JND"}
 README_GUARANTEES = {  # README row label → (measurements, decimals); the shown value is the lower one
     "Body text on any surface": (("body on surfaces",), 2), "Faintest text on any surface": (("faint on surfaces",), 2),
     "Code colors on every code surface": (("code on code surfaces",), 2),
@@ -110,6 +121,31 @@ def row(cs):
 def flavor_of_heading(line, P):
     m = re.match(r"^(?:#+\s*|<summary><b>)(\w+)", line)
     return m.group(1).lower() if m and m.group(1).lower() in P else None
+
+
+def display(tok):
+    return {v: n for n, v in NAMES.items()}.get(tok, tok.capitalize())
+
+
+def series_row(cs, H, P):
+    """One row of the series table: its color, a swatch per flavor, and per flavor the smallest ΔE (every vision) among
+    the series up to this one, or for Other, between Control and every series."""
+    pos = cs[0].strip()
+    other = pos == "Other"
+    tok = k.SERIES_OTHER if other else k.SERIES[int(pos) - 1]
+    cells = [cs[0], f" {display(tok)} "]
+    for h in H[2:]:
+        if h.lower() in P:
+            F = P[h.lower()]
+            cells.append(f" {img(F['neutrals' if other else 'colors'][tok], 16)} `{F['neutrals' if other else 'colors'][tok]}` ")
+        else:                                                   # "Smallest ΔE, <Flavor>"
+            c, n = P[h.split(", ")[1].lower()]["colors"], P[h.split(", ")[1].lower()]["neutrals"]
+            if other:
+                v = min(k.worst_de([n[tok], c[x]]) for x in k.SERIES)
+            else:
+                v = k.worst_de([c[x] for x in k.SERIES[:int(pos)]]) if int(pos) > 1 else None
+            cells.append(" — " if v is None else f" {v:.3f} ")
+    return cells
 
 
 def render(text, P, M, F_):
@@ -141,14 +177,16 @@ def render(text, P, M, F_):
         elif H[0] == "Guarantee" and all(h.lower() in P for h in H[1:]):                       # design-system §13
             label = cs[0].strip()
             if label in GUARANTEE_ROWS:
-                key, d = GUARANTEE_ROWS[label]
-                new = [cs[0]] + [f" {('ΔE ' if d == 3 else '')}{M[f][0][key]:.{d}f}{':1' if d == 2 else ''} " for f in (h.lower() for h in H[1:])]
+                key, unit = GUARANTEE_ROWS[label]
+                new = [cs[0]] + [f" {UNITS[unit](M[f][0][key])} " for f in (h.lower() for h in H[1:])]
         elif H[0] == "" and len(H) == 3 and all(h.lower() in P for h in H[1:]):                 # README guarantees
             label = cs[0].strip()
             if label in README_GUARANTEES:
                 keys, d = README_GUARANTEES[label]
                 vals = [min(M[f][0][x] for x in keys) for f in (h.lower() for h in H[1:])]
                 new = [cs[0]] + [f" {('ΔE ' + format(v, '.3f')) if d == 3 else format(v, f'.{d}f') + ':1'} " for v in vals]
+        elif H[:2] == ["Series", "Color"]:                                                      # design-system data series
+            new = series_row(cs, H, P)
         elif H[0] == "Level" and H[1].startswith("Minimum"):                                     # design-system §4
             if (lvl := LEVELS.get(cs[0].strip())):
                 new = [cs[0], f" {F_['min.' + lvl]}:1 ", *cs[2:]]

@@ -10,7 +10,7 @@ Twilight is at the definition stage. The palette, the rules and the documents in
 
 ## Proposing a change to a color
 
-Colors are not adjusted by eye. A proposal should name the rule it changes, or the parameter in [construction.md, section 12](docs/construction.md#12-parameters-decided-vs-derived), and show that every guarantee in [design-system.md, section 13](docs/design-system.md#13-guarantees) still holds afterwards. A guarantee may go down only under the conditions in [construction.md, section 10.1](docs/construction.md#101-quality-floors): never below its category minimum, named in the changelog, and with a loss that is imperceptible or well inside the standard.
+Colors are not adjusted by eye. A proposal should name the rule it changes, or the parameter in [construction.md, section 12](docs/construction.md#12-parameters-decided-vs-derived), and show that every guarantee in [design-system.md, section 14](docs/design-system.md#14-guarantees) still holds afterwards. A guarantee may go down only under the conditions in [construction.md, section 10.1](docs/construction.md#101-quality-floors): never below its category minimum, named in the changelog, and with a loss that is imperceptible or well inside the standard.
 
 ## Before opening a pull request
 
@@ -26,7 +26,7 @@ Run the `twilight-auditor` skill on your branch and include its report. It must 
 
 ## Building a theme for a tool
 
-Not accepted yet. When ports open, they will follow [Building a theme from this definition](docs/design-system.md#12-building-a-theme-from-this-definition) and use the naming *Twilight {Flavor} {Accent}*.
+Not accepted yet. When ports open, they will follow [Applying the system](docs/design-system.md#12-applying-the-system) and use the naming *Twilight {Flavor} {Accent}*.
 
 ## Writing
 

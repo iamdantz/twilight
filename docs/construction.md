@@ -147,7 +147,7 @@ Dawn is the same system read from the other end of the neutral curve. Every form
 
 **No chroma correction.** Before 1.2, Dawn copied the relative chroma of Dusk's surfaces to keep near-white surfaces from turning blue. On the shared curve that correction is unnecessary: chroma vanishes at both ends by construction (§3.2).
 
-**Two Dawn floors moved with Canvas.** Before 1.2, Dawn's Canvas sat at L 0.975 (`#f4f7f9`). At L 0.95 the light surfaces are closer to Ink, so Ink on Raised, the darkest surface text sits on, falls from 14.81:1 to 13.36:1, still above every text target. The hues were optimized again for the new surfaces and β: the normal-vision separation of the code colors rose from ΔE 0.077 to 0.088, and the worst color-vision case went from 0.041 to 0.040 (Sea Salt against Grove). Dawn's floors in [design-system.md](design-system.md#13-guarantees) are these measured values.
+**Two Dawn floors moved with Canvas.** Before 1.2, Dawn's Canvas sat at L 0.975 (`#f4f7f9`). At L 0.95 the light surfaces are closer to Ink, so Ink on Raised, the darkest surface text sits on, falls from 14.81:1 to 13.36:1, still above every text target. The hues were optimized again for the new surfaces and β: the normal-vision separation of the code colors rose from ΔE 0.077 to 0.088, and the worst color-vision case went from 0.041 to 0.040 (Sea Salt against Grove). Dawn's floors in [design-system.md](design-system.md#14-guarantees) are these measured values.
 
 Search ranges. Shell, Raised and Edge: §3.3. Text levels: the highest L in 0.05–0.95 that reaches the target against Raised (50 steps). Rail: §3.4, bisected between Shell and Canvas.
 
@@ -247,7 +247,7 @@ subject to |hᵢ − anchorᵢ| ≤ 25°,  Ember constraints above,
 
 Simulations are full-severity dichromacy (ColorAide implementation).
 
-The cursor is Afterglow's `accent-focus` (§5). It is fixed before the search, because Afterglow does not depend on the hues. The color-vision guarantee in [design-system.md](design-system.md#13-guarantees) covers the six code colors plus the cursor, so the optimizer covers the same pairs. Coral marks only errors and is not compared with the cursor. In Dusk and Dawn no pair with the cursor is the closest one, so the published hues of both flavors are unchanged. Only Dawn's first pass (§6.6) moves: its Coral hue goes from 29° to 10°, which places the removed-diff background at 2.06 JND instead of 2.02 and 1.01 JND from the inactive selection instead of 0.61. Including the cursor keeps a future change from moving a code color onto it unnoticed.
+The cursor is Afterglow's `accent-focus` (§5). It is fixed before the search, because Afterglow does not depend on the hues. The color-vision guarantee in [design-system.md](design-system.md#14-guarantees) covers the six code colors plus the cursor, so the optimizer covers the same pairs. Coral marks only errors and is not compared with the cursor. In Dusk and Dawn no pair with the cursor is the closest one, so the published hues of both flavors are unchanged. Only Dawn's first pass (§6.6) moves: its Coral hue goes from 29° to 10°, which places the removed-diff background at 2.06 JND instead of 2.02 and 1.01 JND from the inactive selection instead of 0.61. Including the cursor keeps a future change from moving a code color onto it unnoticed.
 
 The search is deterministic:
 
@@ -314,6 +314,14 @@ Each bright moves one third of the way toward Ink. It is brighter in Dusk and de
 | Twilight Dawn | 5.04 | 0.088 | 0.040 |
 
 Measured on the six ANSI chromatic colors plus Afterglow; contrast on Canvas; the color-vision figure is the worst case across the three dichromacies. On the six colors used for code plus the cursor (Coral excluded, since it marks only errors), the figures are 0.097 / 0.061 (Dusk) and 0.088 / 0.040 (Dawn).
+
+### 7.1 Series order
+
+Data series use the six colors that color code, leaving out Coral and Afterglow as §8 does, in one order shared by every flavor, so a series keeps its color across dark and light themes. For each number of series n from 2 to 6, the best set of n colors is the one with the largest smallest ΔE OKLab over its pairs, worst case across normal vision and the three dichromacies. An order is scored, for each n, by the share of that best value its first n colors reach, taking the lower share of Dusk and Dawn; orders are compared on n = 2 first, then 3, and so on. All 720 orders are searched. Two orders tie by swapping the first two series; the tie goes to the one whose first series is farther from Afterglow, since charts sit next to accent elements.
+
+The result is Sky, Ember, Gold, Sea Salt, Orchid, Grove. A shared order costs Dawn some separation at two series (ΔE 0.128 instead of the 0.173 of its best pair) and 0.001 at five; both stay far above the 0.040 minimum, and the six colors together are the code colors, so the full set keeps the guarantees of §6.5. The order is a decided parameter (§12), searched on Dusk and Dawn. A later flavor keeps it and must meet the series minimums of §10.1.
+
+Series past the sixth are grouped as Other in Control. Faint was rejected for that role: under color-vision deficiency it sits 1.05 JND from Dawn's Grove, while Control is at least ΔE 0.078 from every series in both flavors.
 
 ---
 
@@ -420,6 +428,10 @@ Twilight holds its flavors to two levels of floor.
 | Every background state from Canvas | ≥ 2 JND, the lowest target of §9.1 | the same |
 | Every pair of background states | ≥ 1 JND (§9.4) | the same |
 | Faint on transient states | 4.5:1 (§9.2) | the same |
+| Subtle on an Edge fill | 4.5:1 | the same |
+| Chip label on `accent-text`, every accent | 4.5:1 | the same |
+| Other series (Control) from every series, every vision | ≥ 0.040 (2 JND) | the same |
+| Closest pair of neutral row and control states | ≥ 1 JND | the same |
 
 **Flavor floors** are what each flavor reaches today. They keep a change from quietly degrading Dusk or Dawn. A flavor floor may go down only when the new value still meets the category minimum, the version's changelog names the check under Lower with its cause and the benefit it pays for, and the loss is imperceptible or stays well inside the standard: under 1 JND for color and state measures, or a contrast that stays clearly above its minimum. A new flavor is checked against the minimums of its category, not against another flavor's floors; once accepted, its own measured values become its floors.
 
@@ -464,6 +476,7 @@ Both levels live in the auditor's validator, which reports every value next to i
 | Gamut margin | 0.92 · Cmax | Safety margin |
 | Bright step | one third toward Ink | Consistent in both variants |
 | Syntax roles | §8 | Fixed from the token study; one color per category, Coral and Afterglow out of code |
+| Series order | Sky, Ember, Gold, Sea Salt, Orchid, Grove; Other in Control (§7.1) | Searched on Dusk and Dawn and shared, so a series keeps its color in every flavor |
 
 ### Measured (from data)
 
