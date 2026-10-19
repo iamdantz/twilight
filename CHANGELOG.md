@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.6.1
+
+Documentation brought up to date with 1.6. No value changes.
+
+### Fixed
+- design-system.md §3: surface separation is 1.04 to 1.28:1 in Dusk and 1.04 to 1.21:1 in Dawn (it still read 1.13 and 1.17).
+- design-system.md §4: the Ink minimum is 12.8:1 (it still read 13.4).
+- design-system.md §6: Afterglow is computed from the seed; it is not the seed.
+- design-system.md §10 and construction.md §11: of ANSI black and white, the slot that matches the background is Edge; the other is a text level. Both used to be described as 1.4:1 surfaces.
+
+### Documented
+- design-system.md: rules that differ between dark and light themes name the category, not the flavor (principle 6, §2, §5 `accent-text`, §8 chip labels, §10 brights, rule 13 shadows, §12 checklist), so every flavor of a category follows them.
+
 ## 1.6.0
 
 Quality floors in two levels: category minimums, the Twilight standard every dark or light flavor meets, and flavor floors, what Dusk and Dawn reach today. No value changes.

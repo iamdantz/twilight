@@ -24,16 +24,16 @@ How the values were derived is in [construction.md](construction.md). All values
 
 ## 1. Principles
 
-1. **One seed, everything else derived.** The seed `#ee7a1f` is the only color chosen by hand. Afterglow is the most chromatic orange sRGB holds at its hue, and the neutrals sit at its exact complement (232°).
+1. **One seed, everything else derived.** The seed `#ee7a1f` is the only color chosen by hand. Afterglow is the most chromatic orange sRGB holds at the seed's hue, and the neutrals sit at the exact complement of that hue (232°).
 2. **Every color has a role.** If something is colored, the color carries meaning.
 3. **Contrast is solved against the hardest case.** Each text level, control boundary and code color is solved against the most demanding surface it can appear on, so it holds on all of them.
 4. **The accent is a detail.** It marks focus, activity and the main action. It never fills large areas and never colors content.
 5. **No pure black or white.** The darkest value is L 0.15 and the lightest is L 0.95 (Dawn `diff-inserted` renders at 0.950 after 8-bit rounding).
-6. **One system, two ends.** Dusk and Dawn share every role and rule and the same neutral curve. Dawn uses the light end of the curve: its Canvas is Dusk's Ink and its Ink is Dusk's Canvas.
+6. **One system, two categories.** Every flavor is dark or light. All flavors share every role and rule and the same neutral curve; where a rule differs between dark and light, it says so, and every flavor of that category follows it. Dusk is dark; Dawn is light and uses the light end of the curve, with Dusk's Canvas and Ink in exchanged roles.
 
 ## 2. Palette
 
-The palette has ten neutrals and eight colors per flavor. Token names are lowercase and hyphenated (`sea-salt`, `accent-focus`). Names refer to roles, so `canvas` is dark in Dusk and light in Dawn.
+The palette has ten neutrals and eight colors per flavor. Token names are lowercase and hyphenated (`sea-salt`, `accent-focus`). Names refer to roles, so `canvas` is dark in a dark flavor and light in a light one.
 
 ### Dusk
 
@@ -103,15 +103,15 @@ Five neutrals form the spatial structure of an interface.
 
 In Dusk the surfaces get lighter as they come forward: Shell (L 0.15), Rail (0.18), Canvas (0.20), Raised (0.26), Edge (0.34). In Dawn, Canvas is the lightest (L 0.95) and the others step down from it at the same perceptual distance from Canvas as in Dusk: Rail (0.92), Shell (0.90), Raised (0.89), Edge (0.81).
 
-Separation between surfaces is deliberately low (Dusk 1.04 to 1.13:1, Dawn 1.06 to 1.17:1). Tone tells surfaces apart; Edge lines and Control boundaries carry the structure that has to be seen.
+Separation between surfaces is deliberately low (Dusk 1.04 to 1.28:1, Dawn 1.04 to 1.21:1). Tone tells surfaces apart; Edge lines and Control boundaries carry the structure that has to be seen.
 
 ## 4. Text and control levels
 
-Each level is solved against Raised, the hardest surface for text in both flavors.
+Each level is solved against Raised, the hardest surface for text in every flavor.
 
 | Level | Minimum on any surface | Use |
 |---|---|---|
-| **Ink** | 13.4:1 | Titles, headings, focused and selected items |
+| **Ink** | 12.8:1 | Titles, headings, focused and selected items |
 | **Body** | 10.9:1 | Default text; variables and properties in code |
 | **Subtle** | 7.0:1 | Secondary labels, icons, placeholders; punctuation and operators in code |
 | **Faint** | 4.5:1 | Metadata, line numbers, inactive tabs, comments, hints, ignored items |
@@ -131,7 +131,7 @@ Each accent provides five tokens:
 |---|---|---|
 | `accent` | Fills: badges, the main button, progress | The color itself |
 | `on-accent` | Text and icons on `accent` and `accent-pressed` | The extreme neutral with the higher contrast on `accent` |
-| `accent-text` | Links, matched characters in lists | The color itself if it reaches 7:1 (Dusk) or 4.5:1 (Dawn) on Raised; otherwise moved in lightness until it does |
+| `accent-text` | Links, matched characters in lists | The color itself if it reaches the code floor of its category on Raised (7:1 dark, 4.5:1 light); otherwise moved in lightness until it does |
 | `accent-pressed` | Pressed and hover state of filled controls | `accent` darkened by up to 0.10 L, stopping early if `on-accent` would drop below 4.5:1 |
 | `accent-focus` | Focus rings, cursor, active indicators | The color itself if it reaches 3:1 on every surface; otherwise moved in lightness until it does |
 
@@ -213,7 +213,7 @@ When the accent is Coral, Gold or Grove, accent indicators share a hue with a se
 
 ## 6. Colors
 
-Six of the eight colors fill the ANSI chromatic slots and are anchored to the corners of the RGB cube, so their meaning matches what terminals and tools expect. Ember is a seventh code color in Afterglow's hue family. Afterglow is the default accent and the seed of the system.
+Six of the eight colors fill the ANSI chromatic slots and are anchored to the corners of the RGB cube, so their meaning matches what terminals and tools expect. Ember is a seventh code color in Afterglow's hue family. Afterglow is the default accent; it is computed from the seed and is not a code color.
 
 | Color | ANSI slot | Semantic meaning | Code role |
 |---|---|---|---|
@@ -271,7 +271,7 @@ Properties are uncolored on purpose, so code is not colored end to end.
 
 Version-control markers (gutter bars, file decorations) follow the same mapping: added Grove, modified Gold, removed Coral, renamed Sea Salt, ignored Faint, conflict Orchid.
 
-Semantic colors are used as foregrounds: icons, text, 3 px bars. On a filled chip, the label is Shell in Dusk and Canvas in Dawn. Both reach at least 5.04:1 on every semantic color.
+Semantic colors are used as foregrounds: icons, text, 3 px bars. On a filled chip, the label is Shell in dark flavors and Canvas in light ones. Both reach at least 5.04:1 on every semantic color.
 
 ## 9. Background states
 
@@ -320,7 +320,7 @@ Visibility is measured in JND, just-noticeable differences, where 1 JND is ΔE 0
 
 ## 10. Terminal colors
 
-The six chromatic normals are the six ANSI colors above. Each bright moves one third of the way toward Ink, so brights are lighter in Dusk and deeper in Dawn.
+The six chromatic normals are the six ANSI colors above. Each bright moves one third of the way toward Ink, so brights are lighter in dark flavors and deeper in light ones.
 
 ### Dusk (background Canvas `#11171b`)
 
@@ -374,7 +374,7 @@ The six chromatic normals are the six ANSI colors above. Each bright moves one t
 | Selection | `selection` |
 | Links | `accent-text` |
 
-Black and white are mostly used as backgrounds, so they map to surfaces and sit at 1.4:1 against the background. Bright black is Faint and is readable as text.
+Of black and white, the one that matches the background's polarity is a surface: Edge, as black in dark flavors and as white in light ones. Tools use it mostly as a background, so its contrast on Canvas is low by design. The other is a text level: Subtle as white in dark flavors, Body as black in light ones. Bright black is Faint and is readable as text.
 
 ## 11. Rules
 
@@ -390,7 +390,7 @@ Black and white are mostly used as backgrounds, so they map to surfaces and sit 
 10. **Terminals use only the sixteen ANSI colors.** Prompts and tools must not depend on others.
 11. **The current line uses a border, not a fill.**
 12. **New surfaces are derived.** If a tool needs a surface not listed here, derive it with the surface rules in [construction.md](construction.md#3-neutrals) and re-check every text level on it.
-13. **Shadows use the darkest neutral with transparency:** Shell at 60 % in Dusk, Body at 20 % in Dawn.
+13. **Shadows use the darkest neutral with transparency:** Shell at 60 % in dark flavors, Body at 20 % in light ones.
 14. **Tokens are solid.** If a platform requires transparency, choose the alpha so that the result over Canvas equals the solid token.
 15. **No gradients.** Depth comes from tone.
 
@@ -406,7 +406,7 @@ Black and white are mostly used as backgrounds, so they map to surfaces and sit 
 8. Ship one theme per flavor and accent, named *Twilight {Flavor} {Accent}*.
 9. Check before shipping:
    - every foreground meets its level on the surface it sits on;
-   - code colors meet the flavor minimum (7:1 Dusk, 4.5:1 Dawn) on Canvas and on diff backgrounds;
+   - code colors meet the category floor (7:1 dark, 4.5:1 light) on Canvas and on diff backgrounds;
    - control boundaries and focus indicators reach 3:1;
    - no `#000000`, no `#ffffff`, nothing outside sRGB;
    - the accent fills nothing larger than a button or badge.

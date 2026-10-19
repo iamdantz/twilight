@@ -435,7 +435,7 @@ Both levels live in the auditor's validator, which reports every value next to i
 | Dawn `selection` is 3.5 JND (target 4) | A stronger tint would push Faint text below 4.5:1. Near L 0.9 the sRGB gamut of orange is narrow (Cmax ≈ 0.06), so chroma cannot make up the difference. |
 | Dawn `find-match` is 4.7 JND (target 5) | Same bound. |
 | Dusk `find-match` is 4.1 JND (target 5) | Same bound. |
-| ANSI black and white are 1.4:1 on the background | Convention: they are used mostly as backgrounds. Bright black (Faint) is readable as text. |
+| ANSI black (dark flavors) and white (light flavors) are about 1.6:1 on Canvas | Convention: the slot that matches the background is used mostly as a background, so it maps to Edge. The other is a text level, and bright black (Faint) is readable as text. |
 | Closest pairs under color-vision deficiency: Sky–Orchid, Gold–Grove and Sea Salt–Grove in Dusk (ΔE 0.061–0.062); Sea Salt–Grove and Orchid–Sea Salt in Dawn (ΔE 0.040–0.041) | No seven-hue palette separates every pair for every vision type. These are the smallest separations the joint optimization (§6.5) reaches. |
 | OKLCH hue drift in near-neutrals | Below C 0.002, 8-bit quantization makes hue undefined (Dusk's Ink, Dawn's Canvas). This is invisible by definition. |
 
