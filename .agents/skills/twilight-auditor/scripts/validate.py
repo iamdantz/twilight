@@ -1,7 +1,7 @@
 """Twilight validator: quality floors, construction reproduction and document consistency.
 
 Usage (from anywhere inside the Twilight repository):
-    <skill>/.venv/bin/python <skill>/scripts/validate.py [palette/twilight.json] [--ref REF] [--compare REF] [--json] [--no-rebuild]
+    <skill>/.venv/bin/python <skill>/scripts/validate.py [palette/twilight.json] [--ref REF] [--compare REF] [--json] [--no-rebuild] [--robust]
 
 The rebuild runs construct.py (both flavors, §6.5 included) once per invocation, about 2 minutes.
 --no-rebuild skips it; use only for changes that cannot touch values (wording, links).
@@ -198,6 +198,19 @@ def rebuild():
     return _REBUILD
 
 
+def robustness(P, restarts=20):
+    """§6.5 is a local search. Rebuilt with twice the restarts, every flavor must come out the same; a flavor that
+    changes sits on an optimum that more search can leave (SKILL.md, area D)."""
+    saved = k.OPT_RESTARTS
+    k.OPT_RESTARTS = restarts
+    try:
+        built, _ = k.build_palette()
+    finally:
+        k.OPT_RESTARTS = saved
+    return [f"{f}: with {restarts} optimizer restarts the rebuild differs ({', '.join(t for t in P[f]['colors'] if P[f]['colors'][t] != built[f]['colors'][t]) or 'states or accents'})"
+            for f in P if f in built and built[f] != P[f]]
+
+
 def reproduce(P):
     """Every published value must equal the rebuild exactly. Any difference is a hand edit or an undocumented method change."""
     built, meta = rebuild()
@@ -222,23 +235,29 @@ def construction_checks(snap, P, meta):
     errs = []
     text = snap.read("docs/construction.md")
     rows = {"Coral": "red", "Gold": "yellow", "Grove": "green", "Sea Salt": "cyan", "Sky": "blue", "Orchid": "magenta"}
+    cols = {}                                     # §6.5 hue table: flavor → column, from its header row
     for no, line in enumerate(text.splitlines(), 1):
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if len(cells) == 6 and cells[0] in rows and meta:
+        if cells[:2] == ["Hue", "Anchor"]:
+            cols = {c.lower(): i for i, c in enumerate(cells) if meta and c.lower() in meta}
+            continue
+        if not cols or not meta:
+            continue
+        if cells and cells[0] in rows:
             i = list(k.ANCHORS).index(rows[cells[0]])
-            for col, f in ((2, "dusk"), (4, "dawn")):
+            for f, col in cols.items():
                 want = f"{meta[f]['hues'][i]}°"
                 if cells[col] != want:
                     errs.append(f"docs/construction.md:{no}: {cells[0]} {f} hue shows {cells[col]}, rebuilt {want}")
-        if cells and cells[0] == "Ember" and len(cells) == 6 and meta:
-            for col, f in ((2, "dusk"), (4, "dawn")):
+        elif cells and cells[0] == "Ember":
+            for f, col in cols.items():
                 if cells[col] != f"{meta[f]['ember'][0]}°":
                     errs.append(f"docs/construction.md:{no}: Ember {f} hue shows {cells[col]}, rebuilt {meta[f]['ember'][0]}°")
-        if cells and cells[0].startswith("L₀") and meta:
-            shown = [c for c in cells[1:] if re.fullmatch(r"\d\.\d{3}", c)]
-            want = [f"{meta[f]['L0']:.3f}" for f in ("dusk", "dawn")]
-            if shown and shown != want:
-                errs.append(f"docs/construction.md:{no}: L₀ shows {shown}, rebuilt {want}")
+        elif cells and cells[0].startswith("L₀"):
+            for f, col in cols.items():
+                if cells[col] != f"{meta[f]['L0']:.3f}":
+                    errs.append(f"docs/construction.md:{no}: L₀ {f} shows {cells[col]}, rebuilt {meta[f]['L0']:.3f}")
+            cols = {}
     allhex = {h.lower() for f in P for h in all_hexes(P[f])} | {k.SEED}   # the seed is documented, not a token
     for no, line in enumerate(text.splitlines(), 1):
         if not line.startswith("|"):          # prose may cite historical values; tables state current ones
@@ -466,9 +485,18 @@ def run(snap, json_path="palette/twilight.json", do_rebuild=True):
         snapshot=snap.label(), floors=floors, limits={f: M[f][1] for f in P},
         rules=[e for f in P for e in rules(P[f], f)], reproduction=repro_errs,
         consistency=version_checks(snap, raw) + doc_checks(snap, P, M) + construction_checks(snap, P, meta) + link_checks(snap)
-                    + floor_table_checks(P, category),
+                    + floor_table_checks(P, category) + generated_checks(snap, P),
         palette=P, tables=minimum_tables(snap), lower=lower_section(snap),
     )
+
+
+def generated_checks(snap, P):
+    """Tables, measured figures in prose and the palette images must equal what scripts/docs.py renders."""
+    import docs
+    errs = docs.document_errors(snap.read, P)
+    if not snap.ref:                                  # images are read from the working tree
+        errs += docs.image_errors(P)
+    return errs
 
 
 def floor_table_checks(P, category):
@@ -590,8 +618,11 @@ def main():
     ap.add_argument("--compare", metavar="REF", help="also report deltas and regressions against REF (usually main)")
     ap.add_argument("--json", action="store_true", help="print only the JSON summary")
     ap.add_argument("--no-rebuild", action="store_true", help="skip reproduction (wording or link changes only)")
+    ap.add_argument("--robust", action="store_true", help="also rebuild with 20 optimizer restarts (required for a new flavor)")
     a = ap.parse_args()
     r = run(Snap(a.ref), a.path, not a.no_rebuild)
+    if a.robust:
+        r["reproduction"] += robustness(r["palette"])
     summary = {key: r[key] for key in ("snapshot", "floors", "limits", "rules", "reproduction", "consistency")}
     if not a.json:
         report(r)

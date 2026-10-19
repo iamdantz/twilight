@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.6.2
+
+Tooling to keep documents and images generated from the palette. No value changes.
+
+### Tooling
+- `scripts/docs.py` regenerates every table, measured number and swatch strip in README.md and design-system.md, and redraws both palette images, from palette/twilight.json. Numbers that appear in prose sit between `<!-- fact:NAME -->` markers. `--check` reports any difference and exits 1.
+- `validate.py`: the consistency step runs the generator in check mode, so a document or image that drifts from the palette fails. Images are checked by sampling each swatch and circle against the JSON.
+- `validate.py --robust`: rebuilds every flavor with 20 optimizer restarts instead of 10 and fails if any token changes, so a shipped solution cannot sit on an optimum that more search would leave.
+- `validate.py` reads the flavor columns of the construction.md hue table from its header, so a new flavor needs no change to the check.
+- Pillow 11.3.0 pinned in requirements.txt.
+
+### Documented
+- README guarantees and design-system.md §4 minimums are rounded to two decimals from the measured values; both images redrawn by the generator.
+
 ## 1.6.1
 
 Documentation brought up to date with 1.6. No value changes.

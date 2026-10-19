@@ -28,7 +28,7 @@ How the values were derived is in [construction.md](construction.md). All values
 2. **Every color has a role.** If something is colored, the color carries meaning.
 3. **Contrast is solved against the hardest case.** Each text level, control boundary and code color is solved against the most demanding surface it can appear on, so it holds on all of them.
 4. **The accent is a detail.** It marks focus, activity and the main action. It never fills large areas and never colors content.
-5. **No pure black or white.** The darkest value is L 0.15 and the lightest is L 0.95 (Dawn `diff-inserted` renders at 0.950 after 8-bit rounding).
+5. **No pure black or white.** The darkest value is L <!-- fact:darkest -->0.15<!-- /fact --> and the lightest is L <!-- fact:lightest -->0.95<!-- /fact --> (Dawn `diff-inserted` renders at 0.950 after 8-bit rounding).
 6. **One system, two categories.** Every flavor is dark or light. All flavors share every role and rule and the same neutral curve; where a rule differs between dark and light, it says so, and every flavor of that category follows it. Dusk is dark; Dawn is light and uses the light end of the curve, with Dusk's Canvas and Ink in exchanged roles.
 
 ## 2. Palette
@@ -101,9 +101,9 @@ Five neutrals form the spatial structure of an interface.
 | **Raised** | Floating layers without code | Menus, command palettes, dropdowns, notifications, text fields, selected or hovered rows, inline hints |
 | **Edge** | One-pixel structure | Dividers, outlines of floating layers, current-line border, indent guides, scrollbar thumb at rest |
 
-In Dusk the surfaces get lighter as they come forward: Shell (L 0.15), Rail (0.18), Canvas (0.20), Raised (0.26), Edge (0.34). In Dawn, Canvas is the lightest (L 0.95) and the others step down from it at the same perceptual distance from Canvas as in Dusk: Rail (0.92), Shell (0.90), Raised (0.89), Edge (0.81).
+In Dusk the surfaces get lighter as they come forward: <!-- fact:dusk.surfaces -->Shell (L 0.15), Rail (0.18), Canvas (0.20), Raised (0.26), Edge (0.34)<!-- /fact -->. In Dawn, Canvas is the lightest (L <!-- fact:dawn.canvas_L -->0.95<!-- /fact -->) and the others step down from it at the same perceptual distance from Canvas as in Dusk: <!-- fact:dawn.surfaces -->Rail (0.92), Shell (0.90), Raised (0.89), Edge (0.81)<!-- /fact -->.
 
-Separation between surfaces is deliberately low (Dusk 1.04 to 1.28:1, Dawn 1.04 to 1.21:1). Tone tells surfaces apart; Edge lines and Control boundaries carry the structure that has to be seen.
+Separation between surfaces is deliberately low (Dusk <!-- fact:dusk.separation -->1.04 to 1.28<!-- /fact -->:1, Dawn <!-- fact:dawn.separation -->1.04 to 1.21<!-- /fact -->:1). Tone tells surfaces apart; Edge lines and Control boundaries carry the structure that has to be seen.
 
 ## 4. Text and control levels
 
@@ -111,11 +111,11 @@ Each level is solved against Raised, the hardest surface for text in every flavo
 
 | Level | Minimum on any surface | Use |
 |---|---|---|
-| **Ink** | 12.8:1 | Titles, headings, focused and selected items |
-| **Body** | 10.9:1 | Default text; variables and properties in code |
-| **Subtle** | 7.0:1 | Secondary labels, icons, placeholders; punctuation and operators in code |
-| **Faint** | 4.5:1 | Metadata, line numbers, inactive tabs, comments, hints, ignored items |
-| **Control** | 3.0:1 | Boundaries of text fields, checkboxes, selects and toggles; disabled glyphs; active indent guide; scrollbar thumb on hover |
+| **Ink** | 12.84:1 | Titles, headings, focused and selected items |
+| **Body** | 10.90:1 | Default text; variables and properties in code |
+| **Subtle** | 7.01:1 | Secondary labels, icons, placeholders; punctuation and operators in code |
+| **Faint** | 4.51:1 | Metadata, line numbers, inactive tabs, comments, hints, ignored items |
+| **Control** | 3.00:1 | Boundaries of text fields, checkboxes, selects and toggles; disabled glyphs; active indent guide; scrollbar thumb on hover |
 
 The text steps are geometric: 4.5, 7.0, 10.9.
 
@@ -193,7 +193,7 @@ Every variant keeps the hue and relative chroma of its color. Only lightness cha
 - Badges and counters: `accent` with `on-accent`
 - The single main action of a view: `accent`, `accent-pressed`, `on-accent`
 - Progress indicators: `accent`
-- Links and matched characters: `accent-text`. Links in running text are also underlined, or marked by an icon where an underline cannot be drawn. No `accent-text` reaches 3:1 against Body (Dusk 1.04–1.56, Dawn 1.49–2.42), so color alone cannot separate a link from the text around it (WCAG 2.2 SC 1.4.1, technique G183). With Afterglow, `accent-text` is also ΔE_OK 0.074 (Dusk) and 0.059 (Dawn) from Coral, below the smallest code-color difference ([§13](#13-guarantees)). Links whose role is clear from position, such as navigation items and buttons, need no extra cue.
+- Links and matched characters: `accent-text`. Links in running text are also underlined, or marked by an icon where an underline cannot be drawn. No `accent-text` reaches 3:1 against Body (Dusk <!-- fact:dusk.link_body -->1.04–1.56<!-- /fact -->, Dawn <!-- fact:dawn.link_body -->1.49–2.42<!-- /fact -->), so color alone cannot separate a link from the text around it (WCAG 2.2 SC 1.4.1, technique G183). With Afterglow, `accent-text` is also ΔE_OK <!-- fact:dusk.link_coral -->0.074<!-- /fact --> (Dusk) and <!-- fact:dawn.link_coral -->0.059<!-- /fact --> (Dawn) from Coral, below the smallest code-color difference ([§13](#13-guarantees)). Links whose role is clear from position, such as navigation items and buttons, need no extra cue.
 - A small emblem: `accent-focus`
 
 ### Where it never goes
@@ -271,7 +271,7 @@ Properties are uncolored on purpose, so code is not colored end to end.
 
 Version-control markers (gutter bars, file decorations) follow the same mapping: added Grove, modified Gold, removed Coral, renamed Sea Salt, ignored Faint, conflict Orchid.
 
-Semantic colors are used as foregrounds: icons, text, 3 px bars. On a filled chip, the label is Shell in dark flavors and Canvas in light ones. Both reach at least 5.04:1 on every semantic color.
+Semantic colors are used as foregrounds: icons, text, 3 px bars. On a filled chip, the label is Shell in dark flavors and Canvas in light ones. Both reach at least <!-- fact:chip -->5.04<!-- /fact -->:1 on every semantic color.
 
 ## 9. Background states
 

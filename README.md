@@ -149,10 +149,10 @@ Machine-readable values for both flavors, all accents, background states and the
 
 | | Dusk | Dawn |
 |---|---|---|
-| Body text on any surface | 10.9:1 | 10.9:1 |
-| Faintest text on any surface | 4.5:1 | 4.5:1 |
-| Code colors on every code surface | 7.0:1 | 4.5:1 |
-| Control boundaries and focus | 3.0:1 | 3.0:1 |
+| Body text on any surface | 10.90:1 | 10.90:1 |
+| Faintest text on any surface | 4.51:1 | 4.52:1 |
+| Code colors on every code surface | 7.00:1 | 4.52:1 |
+| Control boundaries and focus | 3.00:1 | 3.01:1 |
 | Smallest code-color difference, color-vision deficiency | ΔE 0.061 | ΔE 0.040 |
 | Pure black or white | none | none |
 
