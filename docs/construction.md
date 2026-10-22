@@ -155,7 +155,7 @@ Search ranges. Shell, Raised and Edge: §3.3. Text levels: the highest L in 0.05
 
 ## 5. Accent families
 
-Any of the eight colors can be the accent. Each one gets the same five tokens, built by the same rules. Every variant keeps the hue and relative chroma (C / Cmax) of its color; only lightness moves.
+Every theme uses Afterglow as its accent. Each of the eight colors gets an accent family of five tokens, built by the same rules, so the accent could become a choice without changing any other token. Every variant keeps the hue and relative chroma (C / Cmax) of its color; only lightness moves.
 
 | Token | Rule |
 |---|---|
@@ -342,7 +342,7 @@ Each code category gets one color, the same in both flavors. The assignment come
 Three rules hold the assignment in place:
 
 - Coral never colors code. It is reserved for errors, so an error always stands out.
-- Afterglow never colors code. It is the default accent, and the accent never colors content.
+- Afterglow never colors code. It is the accent, and the accent never colors content.
 - No two categories share a color.
 
 Every code color meets the flavor floor on every code surface (§6.6), and the seven are optimized together for distinctness (§6.5), so the assignment cannot make two categories hard to tell apart.

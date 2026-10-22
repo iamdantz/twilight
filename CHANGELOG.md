@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.8.0
+
+Afterglow is the accent of every theme. No token is removed and no value changes.
+
+### Changed
+- A theme is named by its flavor alone, *Twilight Dusk* or *Twilight Dawn*, and uses Afterglow as its accent. The accent families of the other seven colors stay in palette/twilight.json, built and validated as before; no theme uses them, and their colors keep their roles as code, semantic and series colors.
+- The cursor belongs to the flavor, like selection: it is Afterglow's `accent-focus`, the color the code colors are optimized against, whatever the accent.
+- design-system.md §13 lists an accent family other than Afterglow as a misuse.
+
 ## 1.7.0
 
 How to apply Twilight to any target, and how not to. No color changes.

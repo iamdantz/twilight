@@ -133,7 +133,7 @@ The known limits in construction.md §11 (JND of every background state, ANSI bl
 - Its palette image (`assets/palette-<flavor>.png`) is drawn by `scripts/docs.py`, or the README states why not.
 - It passes `validate.py --robust`: twice the optimizer restarts rebuild it unchanged.
 - It meets every minimum of its category. It is not held to another flavor's floors: a new flavor neither improves nor degrades the others, it is another flavor. Its measured values, once accepted, become its own `FLOORS` and `LIMIT_FLOORS` entries in the same change. A flavor that only passes after lowering a category minimum is BLOCKING.
-- Every role, rule and naming convention (`Twilight <Flavor> <Accent>`) preserved; the flavor appears in every document and in the JSON.
+- Every role, rule and naming convention (`Twilight <Flavor>`, Afterglow as the accent) preserved; the flavor appears in every document and in the JSON.
 - "Nothing is chosen at random" is absolute. A value with no derivation path is BLOCKING.
 
 ### E. Documentation consistency

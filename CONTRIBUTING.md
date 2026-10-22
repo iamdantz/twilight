@@ -26,7 +26,7 @@ Run the `twilight-auditor` skill on your branch and include its report. It must 
 
 ## Building a theme for a tool
 
-Not accepted yet. When ports open, they will follow [Applying the system](docs/design-system.md#12-applying-the-system) and use the naming *Twilight {Flavor} {Accent}*.
+Not accepted yet. When ports open, they will follow [Applying the system](docs/design-system.md#12-applying-the-system) and use the naming *Twilight {Flavor}*, with Afterglow as the accent.
 
 ## Writing
 
