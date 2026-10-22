@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.8.1
+
+Continuous validation. No value changes.
+
+### Tooling
+- `.github/workflows/validate.yml`: every pull request to `main` and every push to it runs the validator against the base, with full reproduction, and writes the report to the job summary. Pull requests that touch the construction also run `--robust`. Pull requests that edit the validator also run the base branch's copy on the change, without blocking, so a loosened check is visible.
+- CONTRIBUTING: what the workflow checks, how to run it locally, and the merge methods.
+
 ## 1.8.0
 
 Afterglow is the accent of every theme. No token is removed and no value changes.

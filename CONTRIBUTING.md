@@ -16,6 +16,16 @@ Colors are not adjusted by eye. A proposal should name the rule it changes, or t
 
 Run the `twilight-auditor` skill on your branch and include its report. It must return APPROVED. Palette, rules, documents, version and changelog are audited together; what it checks is defined in [the skill](.agents/skills/twilight-auditor/SKILL.md).
 
+Every pull request to `main` also runs the [Validate workflow](.github/workflows/validate.yml):
+
+- **validate** runs the skill's validator against the base branch, rebuilding every flavor. It must pass before merging. The report is in the job summary.
+- **robust** rebuilds with twice the optimizer restarts when the change touches `construct.py`, `validate.py`, `requirements.txt` or the palette.
+- When the change edits the validator, the base branch's copy also runs on it. That step never blocks; a difference there needs a reviewer to confirm that no check was loosened.
+
+The same checks run locally with `python .agents/skills/twilight-auditor/scripts/validate.py --compare main`, adding `--robust` for construction changes. The workflow does not replace the audit: the validator's exit 0 is necessary, not sufficient.
+
+Pull requests are merged with a merge commit or a rebase, so each version stays its own commit.
+
 ## Versions
 
 - **Patch**: wording, documentation fixes, tooling.

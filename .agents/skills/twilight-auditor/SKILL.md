@@ -65,6 +65,8 @@ What it checks:
 
 `--robust` rebuilds with 20 optimizer restarts instead of 10 and fails if any token changes. It does not parse construction.md prose or CHANGELOG text. `--no-rebuild` skips reproduction and is only for wording or link changes. Exit 0 is necessary, not sufficient: areas A, D and E still need judgment.
 
+The repository's Validate workflow (`.github/workflows/validate.yml`) runs the same validator on every pull request, plus `--robust` when the construction changes and the base copy of the validator when the scripts change. A green workflow is the same evidence as a local exit 0; read its job summary instead of rerunning when it is available.
+
 **Separate pre-existing from introduced.** A finding that also appears in the main run is pre-existing: list it under a "Pre-existing on main" note, do not count it against the change, and do not let it block. Only what the proposal introduces or worsens decides the verdict.
 
 **If the change touches this skill's scripts**, the validator itself is under audit. Also run the proposal's copy (`git archive <branch> | tar -x -C <scratch>/prop`, then run `<scratch>/prop/.agents/skills/twilight-auditor/scripts/validate.py` with this skill's venv) and check that no check or tolerance was loosened and no category minimum went down. Flavor floors may move only as area C allows. A weaker validator is a weaker guarantee.
