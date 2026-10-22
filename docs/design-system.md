@@ -1,6 +1,6 @@
 # Twilight design system
 
-Version 1.7 · Flavors: Dusk (dark), Dawn (light)
+Version 1.8 · Flavors: Dusk (dark), Dawn (light)
 
 This document defines Twilight: what each color is, what it means, where it may go, and what it guarantees. It does not describe any particular application. A theme for any tool can be built from it by mapping that tool's regions onto the roles below.
 
@@ -124,9 +124,11 @@ Placeholders use Subtle, never Faint. A placeholder can sit on Raised, and readi
 
 ## 5. Accents
 
-Any of the eight colors can be the accent. A theme is named by flavor and accent, for example *Twilight Dusk Grove*. When no accent is named, it is Afterglow.
+Afterglow is the accent of every Twilight theme, and a theme is named by its flavor alone: *Twilight Dusk*, *Twilight Dawn*.
 
-Each accent provides five tokens:
+The other seven colors also have accent families, built and validated by the same rules and published in [palette/twilight.json](../palette/twilight.json). No theme uses them. They are kept so the accent can become a choice without changing any other token; until then, those colors keep only their roles as code, semantic and series colors.
+
+Each family provides five tokens:
 
 | Token | Use | Rule |
 |---|---|---|
@@ -134,7 +136,7 @@ Each accent provides five tokens:
 | `on-accent` | Text and icons on `accent` and `accent-pressed` | The extreme neutral with the higher contrast on `accent` |
 | `accent-text` | Links, matched characters in lists | The color itself if it reaches the code floor of its category on Raised (7:1 dark, 4.5:1 light); otherwise moved in lightness until it does |
 | `accent-pressed` | Pressed and hover state of filled controls | `accent` darkened by up to 0.10 L, stopping early if `on-accent` would drop below 4.5:1 |
-| `accent-focus` | Focus rings, cursor, active indicators | The color itself if it reaches 3:1 on every surface; otherwise moved in lightness until it does |
+| `accent-focus` | Focus rings, active indicators; Afterglow's is also the cursor | The color itself if it reaches 3:1 on every surface; otherwise moved in lightness until it does |
 
 Every variant keeps the hue and relative chroma of its color. Only lightness changes.
 
@@ -189,7 +191,6 @@ Every variant keeps the hue and relative chroma of its color. Only lightness cha
 ### Where the accent goes
 
 - Focus rings and outlines: `accent-focus`
-- Text cursor: `accent-focus`
 - Active indicators, such as a 2 px line on the active tab, the active item in a navigation strip, the active panel title: `accent-focus`
 - Badges and counters: `accent` with `on-accent`
 - The single main action of a view: `accent`, `accent-pressed`, `on-accent`
@@ -209,17 +210,17 @@ A view should contain one accent element besides focus and cursor indicators.
 
 ### What the accent does not change
 
-Code colors, semantic states, background states (including selection) and terminal colors belong to the flavor and are identical in every accent. Background-state hues were allocated so that no two collide, and letting the accent tint them would break that.
+Code colors, semantic states, background states (including selection), the cursor and terminal colors belong to the flavor and would stay identical whatever the accent. Background-state hues were allocated so that no two collide, and letting the accent tint them would break that.
 
-When the accent is Coral, Gold or Grove, accent indicators share a hue with a semantic state. Semantic states never rely on color alone (see [rule 6](#11-rules)), so meaning is preserved.
+The cursor is Afterglow's `accent-focus`, the color the code colors are optimized against ([construction.md §6.5](construction.md#65-joint-optimization)). Text under it is Afterglow's `on-accent`.
 
 ## 6. Colors
 
-Six of the eight colors fill the ANSI chromatic slots and are anchored to the corners of the RGB cube, so their meaning matches what terminals and tools expect. Ember is a seventh code color in Afterglow's hue family. Afterglow is the default accent; it is computed from the seed and is not a code color.
+Six of the eight colors fill the ANSI chromatic slots and are anchored to the corners of the RGB cube, so their meaning matches what terminals and tools expect. Ember is a seventh code color in Afterglow's hue family. Afterglow is the accent; it is computed from the seed and is not a code color.
 
 | Color | ANSI slot | Semantic meaning | Code role |
 |---|---|---|---|
-| **Afterglow** | none | Default accent; tints selection | None |
+| **Afterglow** | none | Accent and cursor; tints selection | None |
 | **Coral** | red | Error, destructive, removed, invalid | Invalid code only |
 | **Gold** | yellow | Warning, modified | Constants |
 | **Grove** | green | Success, added, untracked | Strings |
@@ -371,8 +372,8 @@ The six chromatic normals are the six ANSI colors above. Each bright moves one t
 | Background | Canvas |
 | Foreground | Body |
 | Bold | Ink |
-| Cursor | `accent-focus` |
-| Text under cursor | `on-accent` |
+| Cursor | Afterglow `accent-focus` |
+| Text under cursor | Afterglow `on-accent` |
 | Selection | `selection` |
 | Links | `accent-text` |
 
@@ -512,7 +513,7 @@ In light flavors, bright white is Raised, a surface: it never colors text.
 5. Map semantic states and version-control markers.
 6. Map background states, using the solid tokens.
 7. Map code and terminal colors, and data series with §12.4.
-8. Ship one theme per flavor and accent, named *Twilight {Flavor} {Accent}*.
+8. Ship one theme per flavor, named *Twilight {Flavor}*, with Afterglow as the accent.
 9. Check before shipping:
    - every foreground meets its level on the surface it sits on;
    - code colors meet the category floor (7:1 dark, 4.5:1 light) on Canvas and on diff backgrounds;
@@ -534,7 +535,8 @@ Each misuse below breaks a role or a guarantee. Ports are checked against this t
 | Coral for anything but danger: a brand mark, a highlight, a harmless removal, a series | An error no longer stands out | Gold, Grove or a neutral, by meaning |
 | `accent` in place of `accent-text` for text, or in place of `accent-focus` for rings | The contrast guarantee belongs to the variant | The variant named in §5 |
 | The accent on content, large fills, semantic states or data series | The accent stops marking interaction | [§5](#where-the-accent-goes) |
-| Tokens from two flavors, or two accents, in one theme | Contrast and separation are solved within one flavor | One flavor and one accent family per theme |
+| An accent family other than Afterglow in a theme | Its color already codes syntax or a semantic state, so focus and active indicators would share a hue with content or meaning | Afterglow |
+| Tokens from two flavors, or two accent families, in one theme | Contrast and separation are solved within one flavor | One flavor and one accent family per theme |
 | Code on Raised | Code colors are solved on code surfaces only | Canvas with an Edge outline ([rule 1](#11-rules)) |
 | A card or group filled with Raised | It reads as hovered | Its parent surface with an Edge outline (§12.2) |
 | Faint or Control text on Edge, or text on any fill not listed in §12.3 | The level falls below its minimum | Body, Ink, or Subtle for icons |

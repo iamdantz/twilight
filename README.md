@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="#flavors">Flavors</a> ·
-  <a href="#accents">Accents</a> ·
+  <a href="#accent">Accent</a> ·
   <a href="#palette">Palette</a> ·
   <a href="docs/design-system.md">Design system</a> ·
   <a href="docs/construction.md">Construction</a>
@@ -50,24 +50,11 @@ I wanted my own theme but I do not trust my eye for color. So instead of choosin
 
 Both flavors share every role, every rule and one neutral curve. Dawn's Canvas is Dusk's Ink, and Dawn's Ink is Dusk's Canvas.
 
-## Accents
+## Accent
 
-Any of the eight colors can be the accent. The accent marks focus, the cursor, active items, badges, links and the main action; it never colors content. Code colors and background states stay the same whichever accent you pick.
+Afterglow, the most chromatic orange sRGB holds at the seed's hue, is the accent of every Twilight theme. It marks focus, the cursor, active items, badges, links and the main action; it never colors content. Its variants for text, pressed and focus states are solved to the same contrast rules as everything else. See [Accent in the design system](docs/design-system.md#5-accents).
 
-A theme is named by flavor and accent: **Twilight Dusk Grove**, **Twilight Dawn Sky**. Afterglow is the default, so **Twilight Dusk** means Twilight Dusk Afterglow.
-
-| Accent    | Dusk                                                                                                | Dawn                                                                                                | Example name            |
-|-----------|-----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|-------------------------|
-| Afterglow | <img src="https://placehold.co/20x20/ff7d00/ff7d00" width="20" height="20" alt="#ff7d00"> `#ff7d00` | <img src="https://placehold.co/20x20/ff7d00/ff7d00" width="20" height="20" alt="#ff7d00"> `#ff7d00` | Twilight Dusk Afterglow |
-| Coral     | <img src="https://placehold.co/20x20/ee8476/ee8476" width="20" height="20" alt="#ee8476"> `#ee8476` | <img src="https://placehold.co/20x20/8d3826/8d3826" width="20" height="20" alt="#8d3826"> `#8d3826` | Twilight Dusk Coral     |
-| Gold      | <img src="https://placehold.co/20x20/dbba50/dbba50" width="20" height="20" alt="#dbba50"> `#dbba50` | <img src="https://placehold.co/20x20/766014/766014" width="20" height="20" alt="#766014"> `#766014` | Twilight Dusk Gold      |
-| Grove     | <img src="https://placehold.co/20x20/99d086/99d086" width="20" height="20" alt="#99d086"> `#99d086` | <img src="https://placehold.co/20x20/39713a/39713a" width="20" height="20" alt="#39713a"> `#39713a` | Twilight Dusk Grove     |
-| Sea Salt  | <img src="https://placehold.co/20x20/65d5d2/65d5d2" width="20" height="20" alt="#65d5d2"> `#65d5d2` | <img src="https://placehold.co/20x20/176a7e/176a7e" width="20" height="20" alt="#176a7e"> `#176a7e` | Twilight Dusk Sea Salt  |
-| Sky       | <img src="https://placehold.co/20x20/78aee6/78aee6" width="20" height="20" alt="#78aee6"> `#78aee6` | <img src="https://placehold.co/20x20/3f4880/3f4880" width="20" height="20" alt="#3f4880"> `#3f4880` | Twilight Dusk Sky       |
-| Orchid    | <img src="https://placehold.co/20x20/db8dc7/db8dc7" width="20" height="20" alt="#db8dc7"> `#db8dc7` | <img src="https://placehold.co/20x20/813b67/813b67" width="20" height="20" alt="#813b67"> `#813b67` | Twilight Dusk Orchid    |
-| Ember     | <img src="https://placehold.co/20x20/fcd6b7/fcd6b7" width="20" height="20" alt="#fcd6b7"> `#fcd6b7` | <img src="https://placehold.co/20x20/67320a/67320a" width="20" height="20" alt="#67320a"> `#67320a` | Twilight Dusk Ember     |
-
-Each accent comes with derived variants for text, pressed and focus states, all solved to the same contrast rules. See [Accents in the design system](docs/design-system.md#5-accents).
+A theme is named by its flavor: **Twilight Dusk**, **Twilight Dawn**.
 
 ## Palette
 
@@ -96,7 +83,7 @@ Each accent comes with derived variants for text, pressed and focus states, all 
 
 | | Name | Hex | RGB | OKLCH | Meaning |
 |:-:|---|---|---|---|---|
-| <img src="https://placehold.co/20x20/ff7d00/ff7d00" width="20" height="20" alt="#ff7d00"> | Afterglow | `#ff7d00` | `rgb(255, 125, 0)` | `oklch(72.7% 0.188 51.7)` | Default accent |
+| <img src="https://placehold.co/20x20/ff7d00/ff7d00" width="20" height="20" alt="#ff7d00"> | Afterglow | `#ff7d00` | `rgb(255, 125, 0)` | `oklch(72.7% 0.188 51.7)` | Accent |
 | <img src="https://placehold.co/20x20/ee8476/ee8476" width="20" height="20" alt="#ee8476"> | Coral | `#ee8476` | `rgb(238, 132, 118)` | `oklch(72.6% 0.132 28.6)` | Error, removed |
 | <img src="https://placehold.co/20x20/dbba50/dbba50" width="20" height="20" alt="#dbba50"> | Gold | `#dbba50` | `rgb(219, 186, 80)` | `oklch(79.8% 0.129 91.9)` | Warning, modified |
 | <img src="https://placehold.co/20x20/99d086/99d086" width="20" height="20" alt="#99d086"> | Grove | `#99d086` | `rgb(153, 208, 134)` | `oklch(80.1% 0.116 137.9)` | Success, added |
@@ -132,7 +119,7 @@ Each accent comes with derived variants for text, pressed and focus states, all 
 
 | | Name | Hex | RGB | OKLCH | Meaning |
 |:-:|---|---|---|---|---|
-| <img src="https://placehold.co/20x20/ff7d00/ff7d00" width="20" height="20" alt="#ff7d00"> | Afterglow | `#ff7d00` | `rgb(255, 125, 0)` | `oklch(72.7% 0.188 51.7)` | Default accent |
+| <img src="https://placehold.co/20x20/ff7d00/ff7d00" width="20" height="20" alt="#ff7d00"> | Afterglow | `#ff7d00` | `rgb(255, 125, 0)` | `oklch(72.7% 0.188 51.7)` | Accent |
 | <img src="https://placehold.co/20x20/8d3826/8d3826" width="20" height="20" alt="#8d3826"> | Coral | `#8d3826` | `rgb(141, 56, 38)` | `oklch(45.5% 0.120 33.6)` | Error, removed |
 | <img src="https://placehold.co/20x20/766014/766014" width="20" height="20" alt="#766014"> | Gold | `#766014` | `rgb(118, 96, 20)` | `oklch(49.7% 0.094 91.5)` | Warning, modified |
 | <img src="https://placehold.co/20x20/39713a/39713a" width="20" height="20" alt="#39713a"> | Grove | `#39713a` | `rgb(57, 113, 58)` | `oklch(49.6% 0.104 144.2)` | Success, added |
@@ -143,7 +130,7 @@ Each accent comes with derived variants for text, pressed and focus states, all 
 
 </details>
 
-Machine-readable values for both flavors, all accents, background states, the 16 terminal colors and the order of data series are in [palette/twilight.json](palette/twilight.json).
+Machine-readable values for both flavors, the accent families, background states, the 16 terminal colors and the order of data series are in [palette/twilight.json](palette/twilight.json).
 
 ## Guarantees
 
