@@ -1,6 +1,6 @@
 # Twilight design system
 
-Version 1.6 · Flavors: Dusk (dark), Dawn (light)
+Version 1.7 · Flavors: Dusk (dark), Dawn (light)
 
 This document defines Twilight: what each color is, what it means, where it may go, and what it guarantees. It does not describe any particular application. A theme for any tool can be built from it by mapping that tool's regions onto the roles below.
 
@@ -19,21 +19,22 @@ How the values were derived is in [construction.md](construction.md). All values
 9. [Background states](#9-background-states)
 10. [Terminal colors](#10-terminal-colors)
 11. [Rules](#11-rules)
-12. [Building a theme from this definition](#12-building-a-theme-from-this-definition)
-13. [Guarantees](#13-guarantees)
+12. [Applying the system](#12-applying-the-system)
+13. [How not to apply](#13-how-not-to-apply)
+14. [Guarantees](#14-guarantees)
 
 ## 1. Principles
 
-1. **One seed, everything else derived.** The seed `#ee7a1f` is the only color chosen by hand. Afterglow is the most chromatic orange sRGB holds at its hue, and the neutrals sit at its exact complement (232°).
+1. **One seed, everything else derived.** The seed `#ee7a1f` is the only color chosen by hand. Afterglow is the most chromatic orange sRGB holds at the seed's hue, and the neutrals sit at the exact complement of that hue (232°).
 2. **Every color has a role.** If something is colored, the color carries meaning.
 3. **Contrast is solved against the hardest case.** Each text level, control boundary and code color is solved against the most demanding surface it can appear on, so it holds on all of them.
 4. **The accent is a detail.** It marks focus, activity and the main action. It never fills large areas and never colors content.
-5. **No pure black or white.** The darkest value is L 0.15 and the lightest is L 0.95 (Dawn `diff-inserted` renders at 0.950 after 8-bit rounding).
-6. **One system, two ends.** Dusk and Dawn share every role and rule and the same neutral curve. Dawn uses the light end of the curve: its Canvas is Dusk's Ink and its Ink is Dusk's Canvas.
+5. **No pure black or white.** The darkest value is L <!-- fact:darkest -->0.15<!-- /fact --> and the lightest is L <!-- fact:lightest -->0.95<!-- /fact --> (Dawn `diff-inserted` renders at 0.950 after 8-bit rounding).
+6. **One system, two categories.** Every flavor is dark or light. All flavors share every role and rule and the same neutral curve; where a rule differs between dark and light, it says so, and every flavor of that category follows it. Dusk is dark; Dawn is light and uses the light end of the curve, with Dusk's Canvas and Ink in exchanged roles.
 
 ## 2. Palette
 
-The palette has ten neutrals and eight colors per flavor. Token names are lowercase and hyphenated (`sea-salt`, `accent-focus`). Names refer to roles, so `canvas` is dark in Dusk and light in Dawn.
+The palette has ten neutrals and eight colors per flavor. Token names are lowercase and hyphenated (`sea-salt`, `accent-focus`). Names refer to roles, so `canvas` is dark in a dark flavor and light in a light one.
 
 ### Dusk
 
@@ -98,24 +99,24 @@ Five neutrals form the spatial structure of an interface.
 | **Shell** | Outer frame | Title bars, primary navigation strips, status bars, inactive tabs |
 | **Rail** | Docked panels, half a step between Shell and Canvas | Sidebars, trees and file lists, tab strips, bottom panel headers |
 | **Canvas** | Content | Documents, pages, code, terminal output, the active tab |
-| **Raised** | Floating layers without code | Menus, command palettes, dropdowns, notifications, text fields, selected or hovered rows, inline hints |
+| **Raised** | Floating layers without code | Menus, command palettes, dropdowns, dialogs, notifications, tooltips, text fields, hovered rows, inline hints |
 | **Edge** | One-pixel structure | Dividers, outlines of floating layers, current-line border, indent guides, scrollbar thumb at rest |
 
-In Dusk the surfaces get lighter as they come forward: Shell (L 0.15), Rail (0.18), Canvas (0.20), Raised (0.26), Edge (0.34). In Dawn, Canvas is the lightest (L 0.95) and the others step down from it at the same perceptual distance from Canvas as in Dusk: Rail (0.92), Shell (0.90), Raised (0.89), Edge (0.81).
+In Dusk the surfaces get lighter as they come forward: <!-- fact:dusk.surfaces -->Shell (L 0.15), Rail (0.18), Canvas (0.20), Raised (0.26), Edge (0.34)<!-- /fact -->. In Dawn, Canvas is the lightest (L <!-- fact:dawn.canvas_L -->0.95<!-- /fact -->) and the others step down from it at the same perceptual distance from Canvas as in Dusk: <!-- fact:dawn.surfaces -->Rail (0.92), Shell (0.90), Raised (0.89), Edge (0.81)<!-- /fact -->.
 
-Separation between surfaces is deliberately low (Dusk 1.04 to 1.13:1, Dawn 1.06 to 1.17:1). Tone tells surfaces apart; Edge lines and Control boundaries carry the structure that has to be seen.
+Separation between surfaces is deliberately low (Dusk <!-- fact:dusk.separation -->1.04 to 1.28<!-- /fact -->:1, Dawn <!-- fact:dawn.separation -->1.04 to 1.21<!-- /fact -->:1). Tone tells surfaces apart; Edge lines and Control boundaries carry the structure that has to be seen.
 
 ## 4. Text and control levels
 
-Each level is solved against Raised, the hardest surface for text in both flavors.
+Each level is solved against Raised, the hardest surface for text in every flavor.
 
 | Level | Minimum on any surface | Use |
 |---|---|---|
-| **Ink** | 13.4:1 | Titles, headings, focused and selected items |
-| **Body** | 10.9:1 | Default text; variables and properties in code |
-| **Subtle** | 7.0:1 | Secondary labels, icons, placeholders; punctuation and operators in code |
-| **Faint** | 4.5:1 | Metadata, line numbers, inactive tabs, comments, hints, ignored items |
-| **Control** | 3.0:1 | Boundaries of text fields, checkboxes, selects and toggles; disabled glyphs; active indent guide; scrollbar thumb on hover |
+| **Ink** | 12.84:1 | Titles, headings, focused and selected items |
+| **Body** | 10.90:1 | Default text; variables and properties in code |
+| **Subtle** | 7.01:1 | Secondary labels, icons, placeholders; punctuation and operators in code |
+| **Faint** | 4.51:1 | Metadata, line numbers, inactive tabs, comments, hints, ignored items |
+| **Control** | 3.00:1 | Boundaries of text fields, checkboxes, selects and toggles; disabled glyphs; active indent guide; scrollbar thumb on hover |
 
 The text steps are geometric: 4.5, 7.0, 10.9.
 
@@ -131,7 +132,7 @@ Each accent provides five tokens:
 |---|---|---|
 | `accent` | Fills: badges, the main button, progress | The color itself |
 | `on-accent` | Text and icons on `accent` and `accent-pressed` | The extreme neutral with the higher contrast on `accent` |
-| `accent-text` | Links, matched characters in lists | The color itself if it reaches 7:1 (Dusk) or 4.5:1 (Dawn) on Raised; otherwise moved in lightness until it does |
+| `accent-text` | Links, matched characters in lists | The color itself if it reaches the code floor of its category on Raised (7:1 dark, 4.5:1 light); otherwise moved in lightness until it does |
 | `accent-pressed` | Pressed and hover state of filled controls | `accent` darkened by up to 0.10 L, stopping early if `on-accent` would drop below 4.5:1 |
 | `accent-focus` | Focus rings, cursor, active indicators | The color itself if it reaches 3:1 on every surface; otherwise moved in lightness until it does |
 
@@ -193,7 +194,7 @@ Every variant keeps the hue and relative chroma of its color. Only lightness cha
 - Badges and counters: `accent` with `on-accent`
 - The single main action of a view: `accent`, `accent-pressed`, `on-accent`
 - Progress indicators: `accent`
-- Links and matched characters: `accent-text`. Links in running text are also underlined, or marked by an icon where an underline cannot be drawn. No `accent-text` reaches 3:1 against Body (Dusk 1.04–1.56, Dawn 1.49–2.42), so color alone cannot separate a link from the text around it (WCAG 2.2 SC 1.4.1, technique G183). With Afterglow, `accent-text` is also ΔE_OK 0.074 (Dusk) and 0.059 (Dawn) from Coral, below the smallest code-color difference ([§13](#13-guarantees)). Links whose role is clear from position, such as navigation items and buttons, need no extra cue.
+- Links and matched characters: `accent-text`. Links in running text are also underlined, or marked by an icon where an underline cannot be drawn. No `accent-text` reaches 3:1 against Body (Dusk <!-- fact:dusk.link_body -->1.04–1.56<!-- /fact -->, Dawn <!-- fact:dawn.link_body -->1.49–2.42<!-- /fact -->), so color alone cannot separate a link from the text around it (WCAG 2.2 SC 1.4.1, technique G183). With Afterglow, `accent-text` is also ΔE_OK <!-- fact:dusk.link_coral -->0.074<!-- /fact --> (Dusk) and <!-- fact:dawn.link_coral -->0.059<!-- /fact --> (Dawn) from Coral, below the smallest code-color difference ([§14](#14-guarantees)). Links whose role is clear from position, such as navigation items and buttons, need no extra cue.
 - A small emblem: `accent-focus`
 
 ### Where it never goes
@@ -201,6 +202,7 @@ Every variant keeps the hue and relative chroma of its color. Only lightness cha
 - Large fills: frames, toolbars, sidebars, backgrounds, headers
 - Content: code, terminal output, body text
 - Semantic meaning: the accent never signals error, warning or success
+- Data series ([§12.4](#124-data-visualization))
 - Gradients or washes
 
 A view should contain one accent element besides focus and cursor indicators.
@@ -213,7 +215,7 @@ When the accent is Coral, Gold or Grove, accent indicators share a hue with a se
 
 ## 6. Colors
 
-Six of the eight colors fill the ANSI chromatic slots and are anchored to the corners of the RGB cube, so their meaning matches what terminals and tools expect. Ember is a seventh code color in Afterglow's hue family. Afterglow is the default accent and the seed of the system.
+Six of the eight colors fill the ANSI chromatic slots and are anchored to the corners of the RGB cube, so their meaning matches what terminals and tools expect. Ember is a seventh code color in Afterglow's hue family. Afterglow is the default accent; it is computed from the seed and is not a code color.
 
 | Color | ANSI slot | Semantic meaning | Code role |
 |---|---|---|---|
@@ -271,7 +273,7 @@ Properties are uncolored on purpose, so code is not colored end to end.
 
 Version-control markers (gutter bars, file decorations) follow the same mapping: added Grove, modified Gold, removed Coral, renamed Sea Salt, ignored Faint, conflict Orchid.
 
-Semantic colors are used as foregrounds: icons, text, 3 px bars. On a filled chip, the label is Shell in Dusk and Canvas in Dawn. Both reach at least 5.04:1 on every semantic color.
+Semantic colors are used as foregrounds: icons, text, 3 px bars. On a filled chip, the label is Shell in dark flavors and Canvas in light ones. Both reach at least <!-- fact:chip -->5.04<!-- /fact -->:1 on every semantic color.
 
 ## 9. Background states
 
@@ -320,7 +322,7 @@ Visibility is measured in JND, just-noticeable differences, where 1 JND is ΔE 0
 
 ## 10. Terminal colors
 
-The six chromatic normals are the six ANSI colors above. Each bright moves one third of the way toward Ink, so brights are lighter in Dusk and deeper in Dawn.
+The six chromatic normals are the six ANSI colors above. Each bright moves one third of the way toward Ink, so brights are lighter in dark flavors and deeper in light ones.
 
 ### Dusk (background Canvas `#11171b`)
 
@@ -374,7 +376,7 @@ The six chromatic normals are the six ANSI colors above. Each bright moves one t
 | Selection | `selection` |
 | Links | `accent-text` |
 
-Black and white are mostly used as backgrounds, so they map to surfaces and sit at 1.4:1 against the background. Bright black is Faint and is readable as text.
+Of black and white, the one that matches the background's polarity is a surface: Edge, as black in dark flavors and as white in light ones. Tools use it mostly as a background, so its contrast on Canvas is low by design. The other is a text level: Subtle as white in dark flavors, Body as black in light ones. Bright black is Faint and is readable as text.
 
 ## 11. Rules
 
@@ -390,30 +392,163 @@ Black and white are mostly used as backgrounds, so they map to surfaces and sit 
 10. **Terminals use only the sixteen ANSI colors.** Prompts and tools must not depend on others.
 11. **The current line uses a border, not a fill.**
 12. **New surfaces are derived.** If a tool needs a surface not listed here, derive it with the surface rules in [construction.md](construction.md#3-neutrals) and re-check every text level on it.
-13. **Shadows use the darkest neutral with transparency:** Shell at 60 % in Dusk, Body at 20 % in Dawn.
+13. **Shadows use the darkest neutral with transparency:** Shell at 60 % in dark flavors, Body at 20 % in light ones.
 14. **Tokens are solid.** If a platform requires transparency, choose the alpha so that the result over Canvas equals the solid token.
 15. **No gradients.** Depth comes from tone.
 
-## 12. Building a theme from this definition
+## 12. Applying the system
 
-1. List the regions of the target tool and classify each one as outer frame, docked panel, content, floating layer or divider. Assign Shell, Rail, Canvas, Raised or Edge.
+Any interface, document or graphic is mapped onto the roles above by what each of its parts does. A slide, a web page, an editor and a terminal user interface follow the same tables.
+
+### 12.1 Regions by function
+
+| Function | Surface | Text | Structure |
+|---|---|---|---|
+| Outer frame: title, navigation and status bars | Shell | Subtle; Ink for the current item | Edge where the frame meets content |
+| Docked panel: sidebar, tree, list, tab strip, panel header | Rail | Body; Faint for metadata | Edge on the side facing Canvas |
+| Content: document, page, slide, code, terminal, table | Canvas | Body; Ink for titles and headings | Edge dividers |
+| Card, group or code block inside content | Canvas | As content | 1 px Edge outline |
+| Floating layer without code: menu, dropdown, dialog, notification, tooltip | Raised | Body; Faint for shortcuts and hints | 1 px Edge outline and the shadow of [rule 13](#11-rules) |
+| Floating layer with code: hover, preview, completion list | Canvas | As content | 1 px Edge outline and shadow |
+| Text field, select | Raised | Body; Subtle for the placeholder | Control boundary |
+| Modal backdrop | The shadow color of rule 13, over everything behind the dialog | None | None |
+
+Tables in content have no fill: headers in Ink, cells in Body, Edge between rows. Alternating row fills are not used, since Rail sits only <!-- fact:rail_canvas -->1.06 to 1.25<!-- /fact --> JND from Canvas and any stronger fill would be a surface without a role.
+
+### 12.2 Nesting and elevation
+
+There are two elevations. Shell, Rail and Canvas are in the flow; Raised floats.
+
+- A card or group inside content keeps its parent's surface and takes an Edge outline. Raised is the hover fill, so a card filled with it reads as hovered.
+- A floating layer over another one (a submenu, a dropdown inside a dialog) is Raised again. Its Edge outline and shadow separate it; there is no third surface.
+- Fields and buttons inside a Raised layer keep Raised and are carried by their Control boundary.
+- Sections inside a floating layer are divided with Edge, not with a different fill.
+
+A target that needs another level derives it with [rule 12](#11-rules); a token is never lightened or darkened by hand to make one.
+
+### 12.3 Neutral controls and rows
+
+Controls and rows that are not the single main action carry no accent fill. Their states move through surfaces and background states that already exist.
+
+Rows and items: lists, trees, menus, table rows, tabs in a strip.
+
+| State | On Rail or Canvas | On Shell or Raised |
+|---|---|---|
+| Rest | The parent surface | The parent surface |
+| Hover | Raised | `selection-inactive` |
+| Selected, container not focused | `selection-inactive` | `selection` |
+| Selected or keyboard-active, container focused | `selection` | `selection` |
+| Disabled | The parent surface, text in Control | The parent surface, text in Control |
+
+Shell and Raised share a column because in light flavors they are less than 1 JND apart, so Raised cannot mark hover on Shell. On every parent, the fills its column allows are at least 1 JND from each other and from the parent ([§14](#14-guarantees)), and Faint keeps 4.5:1 on all of them.
+
+Buttons and other bounded controls:
+
+| State | Fill | Label | Boundary |
+|---|---|---|---|
+| Rest | The parent surface | Body | Control |
+| Hover | Raised on Rail or Canvas; Edge on Shell or Raised | Body | Control |
+| Pressed | Edge | Body or Ink | Control |
+| Focused | As in its current state | As in its current state | Adds the `accent-focus` ring |
+| Checked or on | Unchanged; the check mark or knob is drawn in Body | Body | Control |
+| Invalid | Unchanged | Body, with a message ([rule 6](#11-rules)) | Coral |
+| Disabled | The parent surface, no hover or pressed state | Control | Edge |
+
+On Shell or Raised, hover and pressed share Edge. Only Body, Ink and Subtle (for icons) sit on an Edge fill: Subtle keeps <!-- fact:min.subtle_edge -->5.26<!-- /fact -->:1 there, while Faint and Control fall below their levels.
+
+### 12.4 Data visualization
+
+Data series take the code colors in a fixed order, the same in every flavor, so a series keeps its color when a chart moves between a dark and a light theme. The order keeps the largest separation at every number of series ([construction.md §7.1](construction.md#71-series-order)). The figures are the smallest ΔE OKLab among the series up to that row, worst case across normal vision and the three dichromacies; for Other, between Control and every series.
+
+| Series | Color | Dusk | Dawn | Smallest ΔE, Dusk | Smallest ΔE, Dawn |
+|---|---|---|---|---|---|
+| 1 | Sky | <img src="https://placehold.co/16x16/78aee6/78aee6" width="16" height="16" alt="#78aee6"> `#78aee6` | <img src="https://placehold.co/16x16/3f4880/3f4880" width="16" height="16" alt="#3f4880"> `#3f4880` | — | — |
+| 2 | Ember | <img src="https://placehold.co/16x16/fcd6b7/fcd6b7" width="16" height="16" alt="#fcd6b7"> `#fcd6b7` | <img src="https://placehold.co/16x16/67320a/67320a" width="16" height="16" alt="#67320a"> `#67320a` | 0.183 | 0.128 |
+| 3 | Gold | <img src="https://placehold.co/16x16/dbba50/dbba50" width="16" height="16" alt="#dbba50"> `#dbba50` | <img src="https://placehold.co/16x16/766014/766014" width="16" height="16" alt="#766014"> `#766014` | 0.100 | 0.116 |
+| 4 | Sea Salt | <img src="https://placehold.co/16x16/65d5d2/65d5d2" width="16" height="16" alt="#65d5d2"> `#65d5d2` | <img src="https://placehold.co/16x16/176a7e/176a7e" width="16" height="16" alt="#176a7e"> `#176a7e` | 0.064 | 0.075 |
+| 5 | Orchid | <img src="https://placehold.co/16x16/db8dc7/db8dc7" width="16" height="16" alt="#db8dc7"> `#db8dc7` | <img src="https://placehold.co/16x16/813b67/813b67" width="16" height="16" alt="#813b67"> `#813b67` | 0.061 | 0.041 |
+| 6 | Grove | <img src="https://placehold.co/16x16/99d086/99d086" width="16" height="16" alt="#99d086"> `#99d086` | <img src="https://placehold.co/16x16/39713a/39713a" width="16" height="16" alt="#39713a"> `#39713a` | 0.061 | 0.040 |
+| Other | Control | <img src="https://placehold.co/16x16/5a717f/5a717f" width="16" height="16" alt="#5a717f"> `#5a717f` | <img src="https://placehold.co/16x16/697e8c/697e8c" width="16" height="16" alt="#697e8c"> `#697e8c` | 0.158 | 0.078 |
+
+- Up to six series take colors in this order. From the seventh on, series are grouped as Other in Control; colors are never repeated or invented.
+- Coral and the accent never color a series. Coral means danger, and the accent marks interaction.
+- When the data encodes a state (pass or fail, added or removed), the semantic colors of [§8](#8-semantic-states) replace the series order, with labels.
+- Every series is also identified by a label, a legend entry next to it, or a marker shape ([rule 6](#11-rules)).
+- The plot area is Canvas, gridlines and axes Edge, tick labels Faint, values and titles Body or Ink. Labels inside filled marks use the chip label of §8, which reaches <!-- fact:series_label -->5.04<!-- /fact -->:1 on every series color.
+- To bring one series forward, draw the others in Control.
+- Continuous scales (heat maps, filled maps) are not defined. Encode magnitude by position or size, or print the values; never interpolate between palette colors.
+
+### 12.5 Limited targets
+
+A target that cannot express the whole system uses a subset of it. It never borrows a color from another role.
+
+| Limitation | Use |
+|---|---|
+| Fewer surfaces | Canvas stays the content surface. Rail folds into Shell. A floating layer without a surface of its own uses Canvas with an Edge outline. |
+| Fewer text levels | A missing level takes the next stronger one: Faint becomes Subtle, Subtle becomes Body. Never a weaker one. |
+| One accent color for text and fills | `accent-text`, with the chip label of §8 on it. Every accent keeps <!-- fact:min.accent_label -->5.46<!-- /fact -->:1 or more, and `accent-text` already meets the code floor of its category on every surface. |
+| Transparency only | [Rule 14](#11-rules): the alpha over Canvas reproduces the solid token. |
+| No borders | The effect is left out (§12.6). |
+| Sixteen terminal colors | The table below. |
+
+| Role | Dark flavors | Light flavors |
+|---|---|---|
+| Background, text | Default background (Canvas) and foreground (Body) | The same |
+| Titles, focus | Bold or bright white (Ink) | Bold |
+| Secondary text | White (Subtle) | Default foreground |
+| Metadata | Bright black (Faint) | Bright black (Faint) |
+| Highlighted row or panel | Black (Edge) as background, with the default foreground or bold | White (Edge) as background, with the default foreground or bold |
+| States and markers | The ANSI slots of §6 | The same |
+| Active item | Bold or reverse video; there is no accent slot | The same |
+
+In light flavors, bright white is Raised, a surface: it never colors text.
+
+### 12.6 Building a theme
+
+1. Classify every region of the target with §12.1 and assign its surface.
 2. Assign a text level to every foreground by function. Use Subtle for icons.
-3. Give every interactive control a Control boundary and an `accent-focus` focus state.
-4. Place the accent only where [section 5](#5-accents) allows.
+3. Give rows and controls the states of §12.3, a Control boundary and an `accent-focus` ring when focused.
+4. Place the accent only where [§5](#5-accents) allows.
 5. Map semantic states and version-control markers.
 6. Map background states, using the solid tokens.
-7. Map code and terminal colors.
+7. Map code and terminal colors, and data series with §12.4.
 8. Ship one theme per flavor and accent, named *Twilight {Flavor} {Accent}*.
 9. Check before shipping:
    - every foreground meets its level on the surface it sits on;
-   - code colors meet the flavor minimum (7:1 Dusk, 4.5:1 Dawn) on Canvas and on diff backgrounds;
+   - code colors meet the category floor (7:1 dark, 4.5:1 light) on Canvas and on diff backgrounds;
    - control boundaries and focus indicators reach 3:1;
    - no `#000000`, no `#ffffff`, nothing outside sRGB;
-   - the accent fills nothing larger than a button or badge.
+   - the accent fills nothing larger than a button or badge;
+   - nothing in §13 appears.
 
-If a tool cannot express a rule, such as a border on the current line, leave the effect out rather than borrowing a color from another role.
+If a target cannot express a rule, such as a border on the current line, the effect is left out rather than drawn with a color from another role.
 
-## 13. Guarantees
+## 13. How not to apply
+
+Each misuse below breaks a role or a guarantee. Ports are checked against this table.
+
+| Misuse | What breaks | Instead |
+|---|---|---|
+| A shade made by lightening, darkening, blending or fading a token (a hover "10 % lighter", a tinted panel) | The value has no derivation, and text levels are not solved on it | The states of §12.3; a new surface by [rule 12](#11-rules) |
+| A code, semantic or series color used as decoration: file-type tags, folder icons, headings, separators, status bar fills | Color stops carrying meaning ([principle 2](#1-principles)) | Neutrals |
+| Coral for anything but danger: a brand mark, a highlight, a harmless removal, a series | An error no longer stands out | Gold, Grove or a neutral, by meaning |
+| `accent` in place of `accent-text` for text, or in place of `accent-focus` for rings | The contrast guarantee belongs to the variant | The variant named in §5 |
+| The accent on content, large fills, semantic states or data series | The accent stops marking interaction | [§5](#where-the-accent-goes) |
+| Tokens from two flavors, or two accents, in one theme | Contrast and separation are solved within one flavor | One flavor and one accent family per theme |
+| Code on Raised | Code colors are solved on code surfaces only | Canvas with an Edge outline ([rule 1](#11-rules)) |
+| A card or group filled with Raised | It reads as hovered | Its parent surface with an Edge outline (§12.2) |
+| Faint or Control text on Edge, or text on any fill not listed in §12.3 | The level falls below its minimum | Body, Ink, or Subtle for icons |
+| Faint for placeholders | A placeholder on Raised must stay readable | Subtle ([§4](#4-text-and-control-levels)) |
+| A fill on the current line | Comments fall below 4.5:1 | Edge borders ([rule 11](#11-rules)) |
+| Bright white for text in a light flavor | It is Raised, about 1.2:1 on Canvas | The default foreground or bold |
+| `#000000` or `#ffffff`, also in shadows and backdrops | [Principle 5](#1-principles) | The shadow colors of rule 13 |
+| A seventh series color, or colors interpolated into a scale | The separation of §12.4 is lost | Other in Control; position, size or labels |
+| State, links or series told apart by color alone | Readers with a color-vision deficiency lose them | Icon, label, underline, marker or position ([rule 6](#11-rules)) |
+| Gradients, glows, washes | [Rule 15](#11-rules) | Tone and Edge |
+| A color borrowed from another role to stand in for one the target lacks | Two meanings share a color | Leave the effect out (§12.5) |
+| A hex value edited by hand | It no longer rebuilds from [construction.md](construction.md) | A change to the method, validated |
+
+## 14. Guarantees
 
 | Guarantee | Dusk | Dawn |
 |---|---|---|
@@ -422,11 +557,15 @@ If a tool cannot express a rule, such as a border on the current line, leave the
 | Subtle on any surface | 7.01:1 | 7.04:1 |
 | Faint on any surface | 4.51:1 | 4.52:1 |
 | Control boundary on any surface | 3.00:1 | 3.01:1 |
+| Subtle on an Edge fill | 5.26:1 | 5.42:1 |
 | Accent focus on any surface, every accent | 5.99:1 | 3.02:1 |
+| Chip label on `accent-text`, every accent | 8.94:1 | 5.46:1 |
 | Code colors on every code surface | 7.00:1 | 4.52:1 |
 | Smallest code-color difference, normal vision | ΔE 0.097 | ΔE 0.088 |
 | Smallest code-color difference, color-vision deficiency | ΔE 0.061 | ΔE 0.040 |
+| Other series from every series, every vision | ΔE 0.158 | ΔE 0.078 |
+| Neutral row and control states, closest pair | 2.6 JND | 1.5 JND |
 | Pure black or white | none | none |
 | Gamut | sRGB | sRGB |
 
-These are the values each flavor reaches today; no change may lower one without the conditions of [construction.md §10.1](construction.md#101-quality-floors), and no flavor, present or future, may fall below the minimums listed there. Contrast is WCAG 2.x relative-luminance contrast on final sRGB values. Color-vision figures are the worst case across simulated deuteranopia, protanopia and tritanopia, over the six code colors (Orchid, Sky, Sea Salt, Grove, Gold, Ember) and the cursor.
+These are the values each flavor reaches today; no change may lower one without the conditions of [construction.md §10.1](construction.md#101-quality-floors), and no flavor, present or future, may fall below the minimums listed there. Contrast is WCAG 2.x relative-luminance contrast on final sRGB values. Color-vision figures are the worst case across simulated deuteranopia, protanopia and tritanopia, over the six code colors (Orchid, Sky, Sea Salt, Grove, Gold, Ember) and the cursor. The six code colors are also the six data series, so the code-color figures hold for any number of series.

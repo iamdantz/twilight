@@ -1,5 +1,50 @@
 # Changelog
 
+## 1.7.0
+
+How to apply Twilight to any target, and how not to. No color changes.
+
+### Added
+- `series` in palette/twilight.json: the order of data series (Sky, Ember, Gold, Sea Salt, Orchid, Grove) and the neutral for any series past the sixth (Control). The order is searched on Dusk and Dawn and shared by every flavor (construction.md §7.1).
+- design-system.md §12, Applying the system: regions by function, nesting and elevation, states of neutral rows and controls, data visualization, and limited targets (fewer surfaces or text levels, one accent color, sixteen terminal colors).
+- design-system.md §13, How not to apply: each misuse, what it breaks, and what to use instead.
+- Category minimums: Subtle on an Edge fill 4.5:1; the chip label on `accent-text` 4.5:1; Other at least ΔE 0.040 from every series in every vision; the closest pair of neutral row and control states at least 1 JND.
+
+### Changed
+- A selected row is no longer Raised. Raised is the hover fill on Rail and Canvas; a selected row takes `selection-inactive` or `selection`. On Shell and Raised, which are less than 1 JND apart in light flavors, hover takes `selection-inactive`.
+- The guarantee table moves from §13 to §14 of design-system.md.
+
+### Tooling
+- `validate.py`: the four new checks with their flavor floors; the published series must equal the decided order, and the search of §7.1 must still return it. Guarantee rows are matched with specific labels first, and a section heading without a flavor name ends the previous flavor's tables.
+- `docs.py`: generates the series table, the new guarantee rows and the facts of §12.
+
+## 1.6.2
+
+Tooling to keep documents and images generated from the palette. No value changes.
+
+### Tooling
+- `scripts/docs.py` regenerates every table, measured number and swatch strip in README.md and design-system.md, and redraws both palette images, from palette/twilight.json. Numbers that appear in prose sit between `<!-- fact:NAME -->` markers. `--check` reports any difference and exits 1.
+- `validate.py`: the consistency step runs the generator in check mode, so a document or image that drifts from the palette fails. Images are checked by sampling each swatch and circle against the JSON.
+- `validate.py --robust`: rebuilds every flavor with 20 optimizer restarts instead of 10 and fails if any token changes, so a shipped solution cannot sit on an optimum that more search would leave.
+- `validate.py` reads the flavor columns of the construction.md hue table from its header, so a new flavor needs no change to the check.
+- Pillow 11.3.0 pinned in requirements.txt.
+
+### Documented
+- README guarantees and design-system.md §4 minimums are rounded to two decimals from the measured values; both images redrawn by the generator.
+
+## 1.6.1
+
+Documentation brought up to date with 1.6. No value changes.
+
+### Fixed
+- design-system.md §3: surface separation is 1.04 to 1.28:1 in Dusk and 1.04 to 1.21:1 in Dawn (it still read 1.13 and 1.17).
+- design-system.md §4: the Ink minimum is 12.8:1 (it still read 13.4).
+- design-system.md §6: Afterglow is computed from the seed; it is not the seed.
+- design-system.md §10 and construction.md §11: of ANSI black and white, the slot that matches the background is Edge; the other is a text level. Both used to be described as 1.4:1 surfaces.
+
+### Documented
+- design-system.md: rules that differ between dark and light themes name the category, not the flavor (principle 6, §2, §5 `accent-text`, §8 chip labels, §10 brights, rule 13 shadows, §12 checklist), so every flavor of a category follows them.
+
 ## 1.6.0
 
 Quality floors in two levels: category minimums, the Twilight standard every dark or light flavor meets, and flavor floors, what Dusk and Dawn reach today. No value changes.

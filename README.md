@@ -143,20 +143,20 @@ Each accent comes with derived variants for text, pressed and focus states, all 
 
 </details>
 
-Machine-readable values for both flavors, all accents, background states and the 16 terminal colors are in [palette/twilight.json](palette/twilight.json).
+Machine-readable values for both flavors, all accents, background states, the 16 terminal colors and the order of data series are in [palette/twilight.json](palette/twilight.json).
 
 ## Guarantees
 
 | | Dusk | Dawn |
 |---|---|---|
-| Body text on any surface | 10.9:1 | 10.9:1 |
-| Faintest text on any surface | 4.5:1 | 4.5:1 |
-| Code colors on every code surface | 7.0:1 | 4.5:1 |
-| Control boundaries and focus | 3.0:1 | 3.0:1 |
+| Body text on any surface | 10.90:1 | 10.90:1 |
+| Faintest text on any surface | 4.51:1 | 4.52:1 |
+| Code colors on every code surface | 7.00:1 | 4.52:1 |
+| Control boundaries and focus | 3.00:1 | 3.01:1 |
 | Smallest code-color difference, color-vision deficiency | ΔE 0.061 | ΔE 0.040 |
 | Pure black or white | none | none |
 
-Contrast is WCAG 2.x, measured on final sRGB values. The color-vision figure is the worst case across simulated deuteranopia, protanopia and tritanopia. Full tables are in the [design system](docs/design-system.md#13-guarantees).
+Contrast is WCAG 2.x, measured on final sRGB values. The color-vision figure is the worst case across simulated deuteranopia, protanopia and tritanopia. Full tables are in the [design system](docs/design-system.md#14-guarantees).
 
 ## How it was built
 
@@ -166,7 +166,7 @@ The full derivation, with every formula and parameter, is in [construction.md](d
 
 ## Using Twilight
 
-Twilight is defined independently of any application. To build a theme for a tool, map its regions to the surface roles and follow the checklist in [Building a theme from this definition](docs/design-system.md#12-building-a-theme-from-this-definition).
+Twilight is defined independently of any application. To build a theme for a tool, map its regions to the surface roles and follow [Applying the system](docs/design-system.md#12-applying-the-system), which also lists what a port must not do.
 
 ## Repository
 

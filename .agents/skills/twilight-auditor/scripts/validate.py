@@ -1,7 +1,7 @@
 """Twilight validator: quality floors, construction reproduction and document consistency.
 
 Usage (from anywhere inside the Twilight repository):
-    <skill>/.venv/bin/python <skill>/scripts/validate.py [palette/twilight.json] [--ref REF] [--compare REF] [--json] [--no-rebuild]
+    <skill>/.venv/bin/python <skill>/scripts/validate.py [palette/twilight.json] [--ref REF] [--compare REF] [--json] [--no-rebuild] [--robust]
 
 The rebuild runs construct.py (both flavors, §6.5 included) once per invocation, about 2 minutes.
 --no-rebuild skips it; use only for changes that cannot touch values (wording, links).
@@ -42,22 +42,26 @@ MINIMUMS = {
              "faint on surfaces": 4.50, "control on surfaces": 3.00, "code on code surfaces": 7.00,
              "on-accent on accent/pressed": 4.50, "accent-text on raised": 7.00, "accent-focus on surfaces": 3.00,
              "ΔE code+cursor, normal": 0.080, "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50,
-             "every state from Canvas (JND)": 2.0, "closest pair of states (JND)": 1.0},
+             "every state from Canvas (JND)": 2.0, "closest pair of states (JND)": 1.0, "subtle on edge": 4.50,
+             "chip label on accent-text": 4.50, "ΔE other series, every vision": 0.040, "neutral states, closest pair (JND)": 1.0},
     "light": {"ink on surfaces": BODY_TARGET, "body on surfaces": BODY_TARGET, "subtle on surfaces": 7.00,
               "faint on surfaces": 4.50, "control on surfaces": 3.00, "code on code surfaces": 4.50,
               "on-accent on accent/pressed": 4.50, "accent-text on raised": 4.50, "accent-focus on surfaces": 3.00,
               "ΔE code+cursor, normal": 0.080, "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50,
-              "every state from Canvas (JND)": 2.0, "closest pair of states (JND)": 1.0},
+              "every state from Canvas (JND)": 2.0, "closest pair of states (JND)": 1.0, "subtle on edge": 4.50,
+              "chip label on accent-text": 4.50, "ΔE other series, every vision": 0.040, "neutral states, closest pair (JND)": 1.0},
 }
 FLOORS = {
     "dusk": {"ink on surfaces": 13.25, "body on surfaces": 10.90, "subtle on surfaces": 7.00, "faint on surfaces": 4.50,
              "control on surfaces": 3.00, "code on code surfaces": 7.00, "on-accent on accent/pressed": 4.50,
              "accent-text on raised": 7.00, "accent-focus on surfaces": 3.00, "ΔE code+cursor, normal": 0.097,
-             "ΔE code+cursor, worst CVD": 0.061, "faint on transient states": 4.50},
+             "ΔE code+cursor, worst CVD": 0.061, "faint on transient states": 4.50, "subtle on edge": 5.26,
+             "chip label on accent-text": 8.94, "ΔE other series, every vision": 0.158},
     "dawn": {"ink on surfaces": 12.84, "body on surfaces": 10.89, "subtle on surfaces": 7.00, "faint on surfaces": 4.50,
              "control on surfaces": 3.00, "code on code surfaces": 4.50, "on-accent on accent/pressed": 4.50,
              "accent-text on raised": 4.50, "accent-focus on surfaces": 3.00, "ΔE code+cursor, normal": 0.088,
-             "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50},
+             "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50, "subtle on edge": 5.42,
+             "chip label on accent-text": 5.46, "ΔE other series, every vision": 0.078},
 }
 CHECKS = list(MINIMUMS["dark"])
 # Known limits (construction.md §11) are measured minimums too.
@@ -99,6 +103,25 @@ def worst_cvd(cols):
                for v in k.VISIONS[1:] for i, a in enumerate(cols) for b in cols[i + 1:])
 
 
+def chip_label(n):
+    """The neutral farthest from Ink: Shell in a dark flavor, Canvas in a light one (design-system.md §8)."""
+    return max(n.values(), key=lambda x: k.contrast(x, n["ink"]))
+
+
+# design-system.md §12.3: on each parent surface, the fills a row or a bounded control can take.
+NEUTRAL_STATES = [(("rail", "canvas"), ("raised", "selection-inactive", "selection")),   # rows
+                  (("shell", "raised"), ("selection-inactive", "selection")),
+                  (("rail", "canvas"), ("raised", "edge")),                               # buttons
+                  (("shell", "raised"), ("edge",))]
+
+
+def neutral_states(n, s):
+    """Smallest distance, in JND, between any two fills of one parent surface in NEUTRAL_STATES (the parent included)."""
+    tone = lambda t: n.get(t) or s[t]
+    return min(k.de_ok(tone(a), tone(b)) for parents, fills in NEUTRAL_STATES for p in parents
+               for a, b in itertools.combinations((p, *fills), 2)) / k.JND
+
+
 def measure(F):
     """Every area-C number for one flavor, plus the tracked known limits."""
     n, c, s, A = F["neutrals"], F["colors"], F["states"], F["accents"]
@@ -119,6 +142,10 @@ def measure(F):
         "faint on transient states": min(cr(n["faint"], s[x]) for x in TRANSIENT),
         "every state from Canvas (JND)": min(k.de_ok(v, n["canvas"]) for v in s.values()) / k.JND,
         "closest pair of states (JND)": min(k.de_ok(a, b) for a, b in itertools.combinations(s.values(), 2)) / k.JND,
+        "subtle on edge": cr(n["subtle"], n["edge"]),
+        "chip label on accent-text": min(cr(chip_label(n), a["accent-text"]) for a in A.values()),
+        "ΔE other series, every vision": min(k.worst_de([c[x], n[k.SERIES_OTHER]]) for x in k.SERIES),
+        "neutral states, closest pair (JND)": neutral_states(n, s),
     }
     limits = {f"JND {x}": k.de_ok(v, n["canvas"]) / 0.02 for x, v in s.items()}
     limits["ANSI black/white on canvas"] = min(cr(F["ansi"][0], n["canvas"]), cr(F["ansi"][7], n["canvas"]))
@@ -187,6 +214,18 @@ def rules(F, flavor):
     return errs
 
 
+def series_rules(raw):
+    """design-system.md §12.4: the published series order is the decided one, and the search of construction.md §7.1
+    on SERIES_BASIS still returns it."""
+    errs, want = [], {"order": list(k.SERIES), "other": k.SERIES_OTHER}
+    if raw.get("series") != want:
+        errs.append(f"series is {raw.get('series')}, construct.py decides {want}")
+    basis = {f: raw["flavors"][f] for f in k.SERIES_BASIS if f in raw["flavors"]}
+    if len(basis) == len(k.SERIES_BASIS) and (got := k.series_order(basis)) != k.SERIES:
+        errs.append(f"series search on {', '.join(k.SERIES_BASIS)} gives {', '.join(got)}, not the decided order")
+    return errs
+
+
 _REBUILD = None
 
 
@@ -196,6 +235,19 @@ def rebuild():
     if _REBUILD is None:
         _REBUILD = k.build_palette()
     return _REBUILD
+
+
+def robustness(P, restarts=20):
+    """§6.5 is a local search. Rebuilt with twice the restarts, every flavor must come out the same; a flavor that
+    changes sits on an optimum that more search can leave (SKILL.md, area D)."""
+    saved = k.OPT_RESTARTS
+    k.OPT_RESTARTS = restarts
+    try:
+        built, _ = k.build_palette()
+    finally:
+        k.OPT_RESTARTS = saved
+    return [f"{f}: with {restarts} optimizer restarts the rebuild differs ({', '.join(t for t in P[f]['colors'] if P[f]['colors'][t] != built[f]['colors'][t]) or 'states or accents'})"
+            for f in P if f in built and built[f] != P[f]]
 
 
 def reproduce(P):
@@ -222,23 +274,29 @@ def construction_checks(snap, P, meta):
     errs = []
     text = snap.read("docs/construction.md")
     rows = {"Coral": "red", "Gold": "yellow", "Grove": "green", "Sea Salt": "cyan", "Sky": "blue", "Orchid": "magenta"}
+    cols = {}                                     # §6.5 hue table: flavor → column, from its header row
     for no, line in enumerate(text.splitlines(), 1):
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if len(cells) == 6 and cells[0] in rows and meta:
+        if cells[:2] == ["Hue", "Anchor"]:
+            cols = {c.lower(): i for i, c in enumerate(cells) if meta and c.lower() in meta}
+            continue
+        if not cols or not meta:
+            continue
+        if cells and cells[0] in rows:
             i = list(k.ANCHORS).index(rows[cells[0]])
-            for col, f in ((2, "dusk"), (4, "dawn")):
+            for f, col in cols.items():
                 want = f"{meta[f]['hues'][i]}°"
                 if cells[col] != want:
                     errs.append(f"docs/construction.md:{no}: {cells[0]} {f} hue shows {cells[col]}, rebuilt {want}")
-        if cells and cells[0] == "Ember" and len(cells) == 6 and meta:
-            for col, f in ((2, "dusk"), (4, "dawn")):
+        elif cells and cells[0] == "Ember":
+            for f, col in cols.items():
                 if cells[col] != f"{meta[f]['ember'][0]}°":
                     errs.append(f"docs/construction.md:{no}: Ember {f} hue shows {cells[col]}, rebuilt {meta[f]['ember'][0]}°")
-        if cells and cells[0].startswith("L₀") and meta:
-            shown = [c for c in cells[1:] if re.fullmatch(r"\d\.\d{3}", c)]
-            want = [f"{meta[f]['L0']:.3f}" for f in ("dusk", "dawn")]
-            if shown and shown != want:
-                errs.append(f"docs/construction.md:{no}: L₀ shows {shown}, rebuilt {want}")
+        elif cells and cells[0].startswith("L₀"):
+            for f, col in cols.items():
+                if cells[col] != f"{meta[f]['L0']:.3f}":
+                    errs.append(f"docs/construction.md:{no}: L₀ {f} shows {cells[col]}, rebuilt {meta[f]['L0']:.3f}")
+            cols = {}
     allhex = {h.lower() for f in P for h in all_hexes(P[f])} | {k.SEED}   # the seed is documented, not a token
     for no, line in enumerate(text.splitlines(), 1):
         if not line.startswith("|"):          # prose may cite historical values; tables state current ones
@@ -271,13 +329,18 @@ def doc_checks(snap, P, M):
                 section = line.lower()
             if m := re.search(rf"(?:^#+ |<b>)({'|'.join(P)})\b", line, re.I):
                 flavor = m.group(1).lower()
+            elif line.startswith("## "):                                        # a new section names no flavor
+                flavor = None
             for a, b, alt in SWATCH.findall(line):
                 if not a.lower() == b.lower() == alt.lower():
                     errs.append(f"{where}: swatch {a}/{b} labelled #{alt}")
             for h in HEX.findall(line):
                 if "#" + h.lower() not in allhex and h.lower() not in ("000000", "ffffff"):
                     errs.append(f"{where}: #{h} is not in palette/twilight.json")
-            if line.startswith("|") and flavor:
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            if line.startswith("|") and "guarantee" in section and len(cells) == 3:
+                errs += guarantee_check(where, cells, M)
+            elif line.startswith("|") and flavor:
                 errs += row_checks(where, line, flavor, section, P, M)
     return errs
 
@@ -324,12 +387,12 @@ def row_checks(where, line, flavor, section, P, M):
                 errs += num_check(where, rest[1], worst, f"{tok} worst code surface")
         if group == "states" and (jnd := re.search(r"(\d+\.\d) JND", line)):
             errs += num_check(where, jnd.group(1), limits[f"JND {tok}"], f"{tok} visibility (JND)")
-    elif "guarantee" in section and len(cells) == 3:
-        errs += guarantee_check(where, cells, M)
     return errs
 
 
-GUARANTEE = [  # (words in the row label, measurement)
+GUARANTEE = [  # (words in the row label, measurement); the first match wins, so specific rows come first
+    (("subtle", "edge"), "subtle on edge"), (("accent-text",), "chip label on accent-text"),
+    (("other series",), "ΔE other series, every vision"), (("neutral", "states"), "neutral states, closest pair (JND)"),
     (("ink",), "ink on surfaces"), (("body",), "body on surfaces"), (("subtle",), "subtle on surfaces"),
     (("faint",), "faint on surfaces"), (("control", "focus"), ("control on surfaces", "accent-focus on surfaces")),
     (("control",), "control on surfaces"), (("focus",), "accent-focus on surfaces"),
@@ -464,11 +527,20 @@ def run(snap, json_path="palette/twilight.json", do_rebuild=True):
     repro_errs, meta = reproduce(P) if do_rebuild else (["skipped (--no-rebuild): values were not reproduced"], None)
     return dict(
         snapshot=snap.label(), floors=floors, limits={f: M[f][1] for f in P},
-        rules=[e for f in P for e in rules(P[f], f)], reproduction=repro_errs,
+        rules=[e for f in P for e in rules(P[f], f)] + series_rules(raw), reproduction=repro_errs,
         consistency=version_checks(snap, raw) + doc_checks(snap, P, M) + construction_checks(snap, P, meta) + link_checks(snap)
-                    + floor_table_checks(P, category),
+                    + floor_table_checks(P, category) + generated_checks(snap, P),
         palette=P, tables=minimum_tables(snap), lower=lower_section(snap),
     )
+
+
+def generated_checks(snap, P):
+    """Tables, measured figures in prose and the palette images must equal what scripts/docs.py renders."""
+    import docs
+    errs = docs.document_errors(snap.read, P)
+    if not snap.ref:                                  # images are read from the working tree
+        errs += docs.image_errors(P)
+    return errs
 
 
 def floor_table_checks(P, category):
@@ -590,8 +662,11 @@ def main():
     ap.add_argument("--compare", metavar="REF", help="also report deltas and regressions against REF (usually main)")
     ap.add_argument("--json", action="store_true", help="print only the JSON summary")
     ap.add_argument("--no-rebuild", action="store_true", help="skip reproduction (wording or link changes only)")
+    ap.add_argument("--robust", action="store_true", help="also rebuild with 20 optimizer restarts (required for a new flavor)")
     a = ap.parse_args()
     r = run(Snap(a.ref), a.path, not a.no_rebuild)
+    if a.robust:
+        r["reproduction"] += robustness(r["palette"])
     summary = {key: r[key] for key in ("snapshot", "floors", "limits", "rules", "reproduction", "consistency")}
     if not a.json:
         report(r)

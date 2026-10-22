@@ -38,7 +38,8 @@ The scripts live in this skill's `scripts/` directory (`<skill>` is the director
 |---|---|
 | `scripts/validate.py` | Measures and cross-checks one snapshot; `--compare REF` adds regressions. Exit 1 on any failure. `--json` for the summary only. |
 | `scripts/construct.py` | Reference implementation of construction.md in three levels (§1.1): system constants, `CATEGORIES` (dark, light) and `FLAVORS`; `PROFILES` merges each flavor with its category. Rebuilds every flavor exactly, each from the system and its own category only; `validate.py` imports it. Import it yourself to recompute a value by hand. |
-| `scripts/requirements.txt` | `coloraide==8.13`, pinned. |
+| `scripts/docs.py` | Regenerates the tables, `<!-- fact -->` numbers and swatch strips of README.md and docs/design-system.md, and redraws `assets/palette-*.png`, from the JSON. `--check` reports differences without writing; `validate.py` runs it. |
+| `scripts/requirements.txt` | `coloraide==8.13` and `pillow==11.3.0`, pinned. |
 
 Setup, once per machine (the venv is git-ignored):
 
@@ -56,13 +57,13 @@ $V --ref <branch> --compare main     # proposal + regressions
 What it checks:
 
 - **Floors**: every row of the area C table, per flavor, against its category minimum and its flavor floor. WCAG thresholds (3.0, 4.5, 7.0) and the Body target (10.89) are compared strictly on unrounded values; other floors (e.g. 13.25, 0.061) are met at their stated precision.
-- **Rules**: no pure black or white; ANSI hue anchors ±25°; Ember 45–70°; Afterglow equals the sRGB cusp of the seed hue; every `accents.X.accent` equals `colors.X`; brights recomputed with the construction's own function.
+- **Rules**: no pure black or white; the JSON `series` equals `construct.SERIES` and the §7.1 search on Dusk and Dawn still returns it; ANSI hue anchors ±25°; Ember 45–70°; Afterglow equals the sRGB cusp of the seed hue; every `accents.X.accent` equals `colors.X`; brights recomputed with the construction's own function.
 - **Reproduction**: rebuilds both flavors from the decided parameters (§6.5 included, about 2 minutes) and compares every token exactly. Tolerance is zero: any difference is a hand edit or an undocumented method change. A flavor with no construction is an error.
 - **Construction table**: the §6.5 hue table, Ember and L₀ in construction.md against the rebuild; every hex in a construction.md table must exist in the JSON.
-- **Consistency**: `_` keys; JSON `version` = latest CHANGELOG heading; every hex, swatch, RGB/OKLCH column and measured number in README.md and docs/design-system.md; relative links and anchors in every `.md`.
+- **Consistency**: `_` keys; `docs.py --check` (generated tables, facts and image pixels); JSON `version` = latest CHANGELOG heading; every hex, swatch, RGB/OKLCH column and measured number in README.md and docs/design-system.md; relative links and anchors in every `.md`.
 - **Regressions** (`--compare`): any value below its category minimum or its flavor floor; any known limit below `LIMIT_FLOORS`; a category minimum lowered; a flavor floor or known limit lowered without its check named, in backticks, under `### Lower` in the latest CHANGELOG entry; a check or table removed; changed neutrals or colors with unchanged images. The base and proposal tables are read from each snapshot's own `validate.py`. Every delta against the baseline is printed for context.
 
-It does not parse construction.md prose, CHANGELOG text or images. `--no-rebuild` skips reproduction and is only for wording or link changes. Exit 0 is necessary, not sufficient: areas A, D and E still need judgment.
+`--robust` rebuilds with 20 optimizer restarts instead of 10 and fails if any token changes. It does not parse construction.md prose or CHANGELOG text. `--no-rebuild` skips reproduction and is only for wording or link changes. Exit 0 is necessary, not sufficient: areas A, D and E still need judgment.
 
 **Separate pre-existing from introduced.** A finding that also appears in the main run is pre-existing: list it under a "Pre-existing on main" note, do not count it against the change, and do not let it block. Only what the proposal introduces or worsens decides the verdict.
 
@@ -129,7 +130,8 @@ The known limits in construction.md §11 (JND of every background state, ANSI bl
 - Produced end to end by the construction method: surfaces, text levels, accents, colors, states and ANSI all solved, never picked. It is a new entry in `scripts/construct.py` `FLAVORS`, in an existing category, that sets only flavor parameters (Canvas, Ink, neutral chroma amplitude), and its committed JSON must equal the generator's output. System and category parameters may not be changed to suit it unless every other flavor still rebuilds exactly.
 - Any new seed or parameter is declared *decided* with written rationale in §12. Seed rule: one seed; Afterglow at the cusp of its hue, neutrals at its exact complement. A second or different seed requires construction.md to be amended first, by a change that itself passes this audit.
 - If the flavor has its own generator test, run it on an exported copy; it does not replace the validator, which checks every floor including ΔE.
-- Its palette image (`assets/palette-<flavor>.png`) exists, or the README states why not.
+- Its palette image (`assets/palette-<flavor>.png`) is drawn by `scripts/docs.py`, or the README states why not.
+- It passes `validate.py --robust`: twice the optimizer restarts rebuild it unchanged.
 - It meets every minimum of its category. It is not held to another flavor's floors: a new flavor neither improves nor degrades the others, it is another flavor. Its measured values, once accepted, become its own `FLOORS` and `LIMIT_FLOORS` entries in the same change. A flavor that only passes after lowering a category minimum is BLOCKING.
 - Every role, rule and naming convention (`Twilight <Flavor> <Accent>`) preserved; the flavor appears in every document and in the JSON.
 - "Nothing is chosen at random" is absolute. A value with no derivation path is BLOCKING.
@@ -139,10 +141,10 @@ The known limits in construction.md §11 (JND of every background state, ANSI bl
 All of these stay in sync with each other and with the recomputed values:
 
 - palette/twilight.json: values, structure, `version`; no `_`-prefixed or debug keys.
-- docs/design-system.md: every hex, contrast number, swatch URL (`placehold.co/<size>/<hex>/<hex>` matches its label) and the §13 guarantee table.
+- docs/design-system.md: every hex, contrast number, swatch URL (`placehold.co/<size>/<hex>/<hex>` matches its label) the §12 application tables and the §14 guarantee table.
 - docs/construction.md: formulas, parameters, worked numbers, §11 limits, §12 table. The validator does not parse its prose: check worked numbers by hand.
 - README.md: palette and accent tables, guarantees, swatches, links, anchors, repository layout.
-- assets/palette-dusk.png, assets/palette-dawn.png: regenerated whenever a shown value changes; otherwise flag as stale.
+- assets/palette-dusk.png, assets/palette-dawn.png: drawn by `scripts/docs.py` whenever a shown value changes; otherwise flag as stale.
 - CHANGELOG.md: a new entry for every change. Versions follow [CONTRIBUTING.md](../../../CONTRIBUTING.md#versions): **patch** for wording or tooling, **minor** for added rules or tokens and for values regenerated by the documented method after a method change, **major** for a removed or renamed token. A value that changed without a method change has no derivation path (area B). JSON `version` equals the latest CHANGELOG heading. A pre-release suffix that does not match the heading is a mismatch.
 - English, sober, no filler, no claim that cannot be measured.
 - No other theme or palette is named or compared in the documents or scripts. The README's history paragraph is the only exception.
