@@ -221,8 +221,8 @@ C_Afterglow = 0.188   C_seed = 0.170   φ = 1.618…   τ = 0.15
 - **Absolute chroma.** Relative chroma (a fixed fraction of the gamut limit) was tested and rejected: green's sRGB gamut is so large that it rendered neon.
 - **C₀ is the base chroma divided by φ.** The golden-ratio division keeps every hue clearly below the accent, so Afterglow always leads.
 - **The base depends on the flavor's polarity, like β.** A dark flavor's code colors sit near the cusp lightness of the seed hue, where no code color reaches the gamut limit, so they take Afterglow's chroma. A light flavor's code colors sit near L 0.46 to meet 4.5:1, where Gold and Sea Salt already reach 0.92 · Cmax with the seed's chroma. A larger base raises only the other four, and the worst color-vision separation falls (Dawn: ΔE 0.040 at C₀ 0.105, 0.033 at 0.116). Light flavors therefore take the seed's chroma.
-- **τ = 0.15 tilts chroma toward warmth**: hues near the seed get up to 15 % more chroma, hues opposite it up to 15 % less, as if lit by the same low sun.
-- **0.92 · Cmax** keeps an 8 % margin inside the sRGB boundary.
+- **τ = 0.15 tilts chroma toward warmth**: hues near the seed get up to 15 % more chroma, hues opposite it up to 15 % less, as if lit by the same low sun. From 0.10 to 0.20, in steps of 0.01, 0.15 is the only value at which Dawn meets every minimum of §10.1; Dusk meets them across the range, and 0.15 is among the values that give its highest color-vision separation (ΔE 0.0606).
+- **0.92 · Cmax** keeps an 8 % margin inside the sRGB boundary. In Dusk only Ember and two brights touch this limit, and none of Dusk's measured guarantees moves from 0.90 to 0.94. Dawn meets every minimum from 0.92 to 0.932, in steps of 0.005; its color-vision separation rises to ΔE 0.0409 at 0.93 and falls to 0.0378 at 0.935, where four minimums fail. 0.92 is kept: 0.93 would gain ΔE 0.0007, under a twentieth of a JND, and sit 0.005 from that drop.
 
 ### 6.4 Ember: the seventh color
 
@@ -452,6 +452,7 @@ Both levels live in the auditor's validator, which reports every value next to i
 | ANSI black (dark flavors) and white (light flavors) are about 1.6:1 on Canvas | Convention: the slot that matches the background is used mostly as a background, so it maps to Edge. The other is a text level, and bright black (Faint) is readable as text. |
 | Closest pairs under color-vision deficiency: Sky–Orchid, Gold–Grove and Sea Salt–Grove in Dusk (ΔE 0.061–0.062); Sea Salt–Grove and Orchid–Sea Salt in Dawn (ΔE 0.040–0.041) | No seven-hue palette separates every pair for every vision type. These are the smallest separations the joint optimization (§6.5) reaches. |
 | Faint is 1.05 JND from Grove under color-vision deficiency in Dawn (Sea Salt 1.17, Orchid 1.21) | In a light flavor the code floor and Faint are both 4.5:1, so they share luminance, the dimension color-vision deficiency keeps. Three ways out were measured and rejected: adding these pairs to the §6.5 objective (code separation falls to ΔE 0.024), raising the code floor to 4.75 or 5.0 (Faint comes closer, to 0.71 and 0.54 JND), and darkening Faint (at best 1.24 JND at 5.5:1, which breaks the 4.5, 7, 10.9 text steps). The six semantic colors span Faint's whole range of lightness. Version-control markers therefore carry a letter or an icon. |
+| Dawn's worst color-vision separation of the code colors is ΔE 0.0402, 0.4 % above its minimum | It is the optimizer's maximum: 40 restarts give the same value. No parameter raises it without breaking another minimum: gamut margin 0.88 to 0.94, τ 0.10 to 0.20, Afterglow's chroma as the base, neutral amplitude 0.03 and 0.04, Canvas L 0.94 and 0.96. At L 0.96 it reaches 0.0417, but the closest pair of states falls to 0.50 JND and Dawn's Canvas would no longer be Dusk's Ink. A system change that lowers it fails validation. |
 | OKLCH hue drift in near-neutrals | Below C 0.002, 8-bit quantization makes hue undefined (Dusk's Ink, Dawn's Canvas). This is invisible by definition. |
 
 ## 12. Parameters: decided vs derived
@@ -465,10 +466,8 @@ Both levels live in the auditor's validator, which reports every value next to i
 | Neutral hue | complement of the seed (232°) | Structural choice |
 | Neutral hue drift | +18° · (1 − L)² | "Shadows lean toward night" |
 | Neutral chroma amplitude (flavor) | 0.035 in Dusk and Dawn | Tint strength |
-| Surface ratio (system) | r = 1.3125 at L_ref = 0.20, as ΔE_OK distances (§3.3) | The smallest r at which both flavors keep every guarantee and every pair of states is 1 JND apart (§3.3) |
 | Surface directions (category) | dark: Shell darker, Raised and Edge lighter; light: all darker | Light interfaces darken their panels (§4) |
 | Anchors (flavor) | Dusk: Canvas L 0.20, Ink L 0.95. Dawn: Canvas L 0.95, Ink L 0.20 | The same two neutrals, roles exchanged |
-| Warm tilt τ | 0.15 | Strength of the shared warm light |
 | Chroma base | C_Afterglow / φ (Dusk), C_seed / φ (Dawn) | Keeps the accent dominant; the light flavor is bounded by the gamut at 4.5:1 (§6.3) |
 | Hue freedom | ±25° from ANSI anchors | Preserves meaning |
 | Ember hue range | 45°–70° | Keeps it in the accent family |
@@ -476,10 +475,19 @@ Both levels live in the auditor's validator, which reports every value next to i
 | Text targets | 4.5, 7.0, 10.89 (7²/4.5); control 3.0 | WCAG thresholds plus one geometric step |
 | JND targets | §9.1 | Visibility per state |
 | State order and separation | §9.4, 1 JND | States that share a hue stay distinguishable |
-| Gamut margin | 0.92 · Cmax | Safety margin |
+| Gamut margin | 0.92 · Cmax | Safety margin; Dawn meets every minimum from 0.92 to 0.932 (§6.3) |
 | Bright step | one third toward Ink | Consistent in both variants |
 | Syntax roles | §8 | Fixed from the token study; one color per category, Coral and Afterglow out of code |
 | Series order | Sky, Ember, Gold, Sea Salt, Orchid, Grove; Other in Control (§7.1) | Searched on Dusk and Dawn and shared, so a series keeps its color in every flavor |
+
+### Resolved (searched against the guarantees)
+
+These were searched over a range, and the published value is the one the guarantees select.
+
+| Parameter | Value | Search |
+|---|---|---|
+| Surface ratio (system) | r = 1.3125 at L_ref = 0.20, as ΔE_OK distances (§3.3) | The smallest r at which both flavors keep every guarantee and every pair of states is 1 JND apart (§3.3) |
+| Warm tilt τ (system) | 0.15 | The only value from 0.10 to 0.20, in steps of 0.01, at which both flavors meet every minimum (§6.3) |
 
 ### Measured (from data)
 

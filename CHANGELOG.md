@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.9.1
+
+Parameters checked against the guarantees. No value changes.
+
+### Documented
+- construction.md §12: a Resolved group for parameters whose value the guarantees select over a searched range. The surface ratio r and the warm tilt τ move there. τ = 0.15 is the only value from 0.10 to 0.20, in steps of 0.01, at which both flavors meet every minimum.
+- construction.md §6.3: the gamut margin 0.92 is searched too. Dawn meets every minimum from 0.92 to 0.932; 0.93 would gain ΔE 0.0007 in color-vision separation and sit 0.005 from a value that breaks four minimums, so 0.92 stays.
+- construction.md §11: Dawn's color-vision separation of the code colors (ΔE 0.0402) is the optimizer's maximum, and no parameter tested raises it without breaking another minimum.
+- Auditor skill: the resolved class of parameters.
+
 ## 1.9.0
 
 Semantic colors outside code, and a measured limit of Faint in light flavors. No value changes.
