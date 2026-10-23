@@ -27,6 +27,7 @@ import construct as k  # noqa: E402  (construct.py beside this file: the referen
 SURF = ("shell", "rail", "canvas", "raised")
 CODE = ("orchid", "sky", "sea-salt", "grove", "gold", "ember", "coral")
 CVD_SET = ("orchid", "sky", "sea-salt", "grove", "gold", "ember")          # + cursor (default accent-focus)
+SEMANTIC = ("coral", "gold", "grove", "sea-salt", "sky", "orchid")                       # design-system.md §8
 TRANSIENT = ("selection", "selection-inactive", "find-match", "find-match-other", "word-highlight", "word-highlight-write")
 ANCHORS = {name: k.oklch_of(k.CORNERS[slot])[2] for name, slot in k.COLOR_KEYS.items() if slot in k.CORNERS}
 WCAG_THRESHOLDS = (3.0, 4.5, 7.0)   # compared strictly: a measured 4.496 does not meet 4.5
@@ -43,25 +44,29 @@ MINIMUMS = {
              "on-accent on accent/pressed": 4.50, "accent-text on raised": 7.00, "accent-focus on surfaces": 3.00,
              "ΔE code+cursor, normal": 0.080, "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50,
              "every state from Canvas (JND)": 2.0, "closest pair of states (JND)": 1.0, "subtle on edge": 4.50,
-             "chip label on accent-text": 4.50, "ΔE other series, every vision": 0.040, "neutral states, closest pair (JND)": 1.0},
+             "chip label on accent-text": 4.50, "ΔE other series, every vision": 0.040, "neutral states, closest pair (JND)": 1.0, "semantic on surfaces and edge": 3.00,
+             "faint from semantic colors (JND)": 1.0},
     "light": {"ink on surfaces": BODY_TARGET, "body on surfaces": BODY_TARGET, "subtle on surfaces": 7.00,
               "faint on surfaces": 4.50, "control on surfaces": 3.00, "code on code surfaces": 4.50,
               "on-accent on accent/pressed": 4.50, "accent-text on raised": 4.50, "accent-focus on surfaces": 3.00,
               "ΔE code+cursor, normal": 0.080, "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50,
               "every state from Canvas (JND)": 2.0, "closest pair of states (JND)": 1.0, "subtle on edge": 4.50,
-              "chip label on accent-text": 4.50, "ΔE other series, every vision": 0.040, "neutral states, closest pair (JND)": 1.0},
+              "chip label on accent-text": 4.50, "ΔE other series, every vision": 0.040, "neutral states, closest pair (JND)": 1.0, "semantic on surfaces and edge": 3.00,
+              "faint from semantic colors (JND)": 1.0},
 }
 FLOORS = {
     "dusk": {"ink on surfaces": 13.25, "body on surfaces": 10.90, "subtle on surfaces": 7.00, "faint on surfaces": 4.50,
              "control on surfaces": 3.00, "code on code surfaces": 7.00, "on-accent on accent/pressed": 4.50,
              "accent-text on raised": 7.00, "accent-focus on surfaces": 3.00, "ΔE code+cursor, normal": 0.097,
              "ΔE code+cursor, worst CVD": 0.061, "faint on transient states": 4.50, "subtle on edge": 5.26,
-             "chip label on accent-text": 8.94, "ΔE other series, every vision": 0.158},
+             "chip label on accent-text": 8.94, "ΔE other series, every vision": 0.158,
+             "semantic on surfaces and edge": 4.50},
     "dawn": {"ink on surfaces": 12.84, "body on surfaces": 10.89, "subtle on surfaces": 7.00, "faint on surfaces": 4.50,
              "control on surfaces": 3.00, "code on code surfaces": 4.50, "on-accent on accent/pressed": 4.50,
              "accent-text on raised": 4.50, "accent-focus on surfaces": 3.00, "ΔE code+cursor, normal": 0.088,
              "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50, "subtle on edge": 5.42,
-             "chip label on accent-text": 5.46, "ΔE other series, every vision": 0.078},
+             "chip label on accent-text": 5.46, "ΔE other series, every vision": 0.078,
+             "semantic on surfaces and edge": 3.19},
 }
 CHECKS = list(MINIMUMS["dark"])
 # Known limits (construction.md §11) are measured minimums too.
@@ -146,6 +151,8 @@ def measure(F):
         "chip label on accent-text": min(cr(chip_label(n), a["accent-text"]) for a in A.values()),
         "ΔE other series, every vision": min(k.worst_de([c[x], n[k.SERIES_OTHER]]) for x in k.SERIES),
         "neutral states, closest pair (JND)": neutral_states(n, s),
+        "semantic on surfaces and edge": min(cr(c[x], n[y]) for x in SEMANTIC for y in (*SURF, "edge")),
+        "faint from semantic colors (JND)": min(k.worst_de([c[x], n["faint"]]) for x in SEMANTIC) / k.JND,
     }
     limits = {f"JND {x}": k.de_ok(v, n["canvas"]) / 0.02 for x, v in s.items()}
     limits["ANSI black/white on canvas"] = min(cr(F["ansi"][0], n["canvas"]), cr(F["ansi"][7], n["canvas"]))
@@ -391,7 +398,8 @@ def row_checks(where, line, flavor, section, P, M):
 
 
 GUARANTEE = [  # (words in the row label, measurement); the first match wins, so specific rows come first
-    (("subtle", "edge"), "subtle on edge"), (("accent-text",), "chip label on accent-text"),
+    (("subtle", "edge"), "subtle on edge"), (("semantic", "surface"), "semantic on surfaces and edge"),
+    (("faint", "semantic"), "faint from semantic colors (JND)"), (("accent-text",), "chip label on accent-text"),
     (("other series",), "ΔE other series, every vision"), (("neutral", "states"), "neutral states, closest pair (JND)"),
     (("ink",), "ink on surfaces"), (("body",), "body on surfaces"), (("subtle",), "subtle on surfaces"),
     (("faint",), "faint on surfaces"), (("control", "focus"), ("control on surfaces", "accent-focus on surfaces")),

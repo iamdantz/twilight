@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.9.0
+
+Semantic colors outside code, and a measured limit of Faint in light flavors. No value changes.
+
+### Added
+- Text in a semantic color uses that color's `accent-text`, which meets the code floor of its category on every surface. The color itself stays for icons, markers and bars. In Dawn, Grove, Gold and Sea Salt are 4.15, 4.32 and 4.39:1 on Raised, below AA for text.
+- Category minimums: semantic colors at least 3:1 on every surface and on Edge; Faint at least 1 JND from every semantic color in every vision.
+- Version-control markers carry a letter or an icon.
+
+### Documented
+- construction.md §11: in Dawn, Faint is 1.05 JND from Grove under color-vision deficiency. The three corrections measured (optimizer objective, a higher code floor, a darker Faint) and why each was rejected.
+- design-system.md §13: a semantic color used directly for text is a misuse.
+
+### Tooling
+- `validate.py` and `docs.py`: the two new checks, their guarantee rows and facts.
+
 ## 1.8.1
 
 Continuous validation. No value changes.

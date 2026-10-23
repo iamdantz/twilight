@@ -1,6 +1,6 @@
 # Twilight design system
 
-Version 1.8 · Flavors: Dusk (dark), Dawn (light)
+Version 1.9 · Flavors: Dusk (dark), Dawn (light)
 
 This document defines Twilight: what each color is, what it means, where it may go, and what it guarantees. It does not describe any particular application. A theme for any tool can be built from it by mapping that tool's regions onto the roles below.
 
@@ -126,7 +126,7 @@ Placeholders use Subtle, never Faint. A placeholder can sit on Raised, and readi
 
 Afterglow is the accent of every Twilight theme, and a theme is named by its flavor alone: *Twilight Dusk*, *Twilight Dawn*.
 
-The other seven colors also have accent families, built and validated by the same rules and published in [palette/twilight.json](../palette/twilight.json). No theme uses them. They are kept so the accent can become a choice without changing any other token; until then, those colors keep only their roles as code, semantic and series colors.
+The other seven colors also have accent families, built and validated by the same rules and published in [palette/twilight.json](../palette/twilight.json). No theme uses them as an accent. Their `accent-text` is the text variant of each semantic color ([§8](#8-semantic-states)); the other tokens are kept so the accent can become a choice without changing any other token.
 
 Each family provides five tokens:
 
@@ -134,7 +134,7 @@ Each family provides five tokens:
 |---|---|---|
 | `accent` | Fills: badges, the main button, progress | The color itself |
 | `on-accent` | Text and icons on `accent` and `accent-pressed` | The extreme neutral with the higher contrast on `accent` |
-| `accent-text` | Links, matched characters in lists | The color itself if it reaches the code floor of its category on Raised (7:1 dark, 4.5:1 light); otherwise moved in lightness until it does |
+| `accent-text` | Links, matched characters in lists; text in a semantic color (§8) | The color itself if it reaches the code floor of its category on Raised (7:1 dark, 4.5:1 light); otherwise moved in lightness until it does |
 | `accent-pressed` | Pressed and hover state of filled controls | `accent` darkened by up to 0.10 L, stopping early if `on-accent` would drop below 4.5:1 |
 | `accent-focus` | Focus rings, active indicators; Afterglow's is also the cursor | The color itself if it reaches 3:1 on every surface; otherwise moved in lightness until it does |
 
@@ -272,9 +272,9 @@ Properties are uncolored on purpose, so code is not colored end to end.
 | Renamed | Sea Salt | Renamed or moved items |
 | Ignored, inactive | Faint | Ignored files, dead code, disabled items |
 
-Version-control markers (gutter bars, file decorations) follow the same mapping: added Grove, modified Gold, removed Coral, renamed Sea Salt, ignored Faint, conflict Orchid.
+Version-control markers (gutter bars, file decorations) follow the same mapping: added Grove, modified Gold, removed Coral, renamed Sea Salt, ignored Faint, conflict Orchid. Every marker also carries a letter or an icon. Under color-vision deficiency, Faint sits only <!-- fact:dawn.faint_semantic -->1.05<!-- /fact --> JND from the nearest semantic color in Dawn (Dusk: <!-- fact:dusk.faint_semantic -->3.30<!-- /fact -->), so color alone cannot separate an ignored item from an added one ([construction.md §11](construction.md#11-known-limits)).
 
-Semantic colors are used as foregrounds: icons, text, 3 px bars. On a filled chip, the label is Shell in dark flavors and Canvas in light ones. Both reach at least <!-- fact:chip -->5.04<!-- /fact -->:1 on every semantic color.
+Icons, markers and 3 px bars use the semantic color itself, which reaches at least <!-- fact:min.semantic_surfaces -->3.19<!-- /fact -->:1 on every surface and on Edge. Text in a semantic color uses that color's `accent-text` ([§5](#5-accents)), which meets the code floor of its category (7:1 dark, 4.5:1 light) on every surface. The colors themselves are not enough for text: in Dawn, Grove, Gold and Sea Salt stay below 4.5:1 on Raised. On a filled chip, the label is Shell in dark flavors and Canvas in light ones. Both reach at least <!-- fact:chip -->5.04<!-- /fact -->:1 on every semantic color.
 
 ## 9. Background states
 
@@ -533,6 +533,7 @@ Each misuse below breaks a role or a guarantee. Ports are checked against this t
 | A shade made by lightening, darkening, blending or fading a token (a hover "10 % lighter", a tinted panel) | The value has no derivation, and text levels are not solved on it | The states of §12.3; a new surface by [rule 12](#11-rules) |
 | A code, semantic or series color used as decoration: file-type tags, folder icons, headings, separators, status bar fills | Color stops carrying meaning ([principle 2](#1-principles)) | Neutrals |
 | Coral for anything but danger: a brand mark, a highlight, a harmless removal, a series | An error no longer stands out | Gold, Grove or a neutral, by meaning |
+| A semantic color itself for text, such as a success or error message | Below 4.5:1 on Raised in light flavors | The color's `accent-text` (§8) |
 | `accent` in place of `accent-text` for text, or in place of `accent-focus` for rings | The contrast guarantee belongs to the variant | The variant named in §5 |
 | The accent on content, large fills, semantic states or data series | The accent stops marking interaction | [§5](#where-the-accent-goes) |
 | An accent family other than Afterglow in a theme | Its color already codes syntax or a semantic state, so focus and active indicators would share a hue with content or meaning | Afterglow |
@@ -559,12 +560,14 @@ Each misuse below breaks a role or a guarantee. Ports are checked against this t
 | Subtle on any surface | 7.01:1 | 7.04:1 |
 | Faint on any surface | 4.51:1 | 4.52:1 |
 | Control boundary on any surface | 3.00:1 | 3.01:1 |
+| Semantic colors on any surface and on Edge | 4.50:1 | 3.19:1 |
 | Subtle on an Edge fill | 5.26:1 | 5.42:1 |
 | Accent focus on any surface, every accent | 5.99:1 | 3.02:1 |
 | Chip label on `accent-text`, every accent | 8.94:1 | 5.46:1 |
 | Code colors on every code surface | 7.00:1 | 4.52:1 |
 | Smallest code-color difference, normal vision | ΔE 0.097 | ΔE 0.088 |
 | Smallest code-color difference, color-vision deficiency | ΔE 0.061 | ΔE 0.040 |
+| Faint from every semantic color, every vision | 3.30 JND | 1.05 JND |
 | Other series from every series, every vision | ΔE 0.158 | ΔE 0.078 |
 | Neutral row and control states, closest pair | 2.6 JND | 1.5 JND |
 | Pure black or white | none | none |
