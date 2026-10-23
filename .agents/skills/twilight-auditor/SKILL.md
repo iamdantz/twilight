@@ -121,7 +121,7 @@ Two levels of floor live in `validate.py`, and every change must meet both (cons
 | Faint on transient background states | ≥ 4.50 | ≥ 4.50 | ≥ 4.50 | ≥ 4.50 |
 | Every background state from Canvas | ≥ 2 JND | ≥ 2 JND | — | — |
 | Closest pair of background states | ≥ 1 JND | ≥ 1 JND | — | — |
-| Bright ANSI = normal moved 1/3 toward Ink, same hue | exact | exact | exact | exact |
+| Bright ANSI = normal moved `BRIGHT_STEP` (0.38) toward Ink, same hue | exact | exact | exact | exact |
 
 Also: no `#000000` or `#ffffff`; everything inside sRGB, gamut-mapped by chroma reduction only; hues within ±25° of their ANSI anchors; Ember hue 45–70°. Contrast is WCAG 2.x on final 8-bit sRGB. Report contrast to two decimals and ΔE to three, each next to its floor.
 

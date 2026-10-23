@@ -365,10 +365,42 @@ def family(N, base, P):
 
 
 # §6.7 Brights ------------------------------------------------------------------------
-def bright(hx, ink):
+BRIGHT_STEP = 0.38   # resolved (§6.7): bright_step() on BRIGHT_BASIS
+
+
+def bright(hx, ink, step=None):
+    """§6.7: the normal moved `step` of the way toward Ink in L, same hue, chroma capped to the gamut."""
     L, C, h = oklch_of(hx)
-    L2 = L + (oklch_of(ink)[0] - L) / 3
+    L2 = L + (oklch_of(ink)[0] - L) * (BRIGHT_STEP if step is None else step)
     return hexof(oklch(L2, min(C, GAMUT * cmax(round(L2, 3), round(h, 1))), h))
+
+
+BRIGHT_BASIS = ("dusk", "dawn")
+ANSI_HUES = ("coral", "grove", "gold", "sky", "orchid", "sea-salt")   # ANSI 1–6
+
+
+def bright_step(palettes, grid=0.005):
+    """§6.7: on a grid from 0 to 1, the steps at which every bright is at least 2 JND from its normal and from Ink,
+    in every flavor given; among them, the one whose closest pair of the twelve chromatic ANSI colors, worst case over
+    every vision and flavor, is largest. Ties go to the smaller step."""
+    def twelve(F, t):
+        ink = F["neutrals"]["ink"]
+        normals = [F["colors"][c] for c in ANSI_HUES]
+        return normals, [bright(x, ink, t) for x in normals], ink
+
+    best = None
+    for i in range(1, int(round(1 / grid))):
+        t = round(i * grid, 6)
+        ok, score = True, float("inf")
+        for F in palettes.values():
+            normals, brights, ink = twelve(F, t)
+            if min(min(de_ok(n, b), de_ok(b, ink)) for n, b in zip(normals, brights)) < 2 * JND:
+                ok = False
+                break
+            score = min(score, worst_de(normals + brights))
+        if ok and (best is None or score > best[1] + 1e-12):
+            best = (t, score)
+    return best[0]
 
 
 # Assembly ------------------------------------------------------------------------------
