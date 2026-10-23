@@ -1,6 +1,6 @@
 # Twilight design system
 
-Version 1.9 · Flavors: Dusk (dark), Dawn (light)
+Version 1.10 · Flavors: Dusk (dark), Dawn (light)
 
 This document defines Twilight: what each color is, what it means, where it may go, and what it guarantees. It does not describe any particular application. A theme for any tool can be built from it by mapping that tool's regions onto the roles below.
 
@@ -323,7 +323,7 @@ Visibility is measured in JND, just-noticeable differences, where 1 JND is ΔE 0
 
 ## 10. Terminal colors
 
-The six chromatic normals are the six ANSI colors above. Each bright moves one third of the way toward Ink, so brights are lighter in dark flavors and deeper in light ones.
+The six chromatic normals are the six ANSI colors above. Each bright moves 0.38 of the way toward Ink, so brights are lighter in dark flavors and deeper in light ones. The step keeps every bright at least 2 JND from its normal and from Ink, and gives the twelve chromatic colors the largest closest pair under color-vision deficiency ([§14](#14-guarantees)).
 
 ### Dusk (background Canvas `#11171b`)
 
@@ -338,12 +338,12 @@ The six chromatic normals are the six ANSI colors above. Each bright moves one t
 | 6 | cyan | <img src="https://placehold.co/16x16/65d5d2/65d5d2" width="16" height="16" alt="#65d5d2"> | `#65d5d2` | Sea Salt | 10.33 |
 | 7 | white | <img src="https://placehold.co/16x16/a5b1b8/a5b1b8" width="16" height="16" alt="#a5b1b8"> | `#a5b1b8` | Subtle | 8.24 |
 | 8 | bright black | <img src="https://placehold.co/16x16/7a8e9a/7a8e9a" width="16" height="16" alt="#7a8e9a"> | `#7a8e9a` | Faint | 5.30 |
-| 9 | bright red | <img src="https://placehold.co/16x16/faa497/faa497" width="16" height="16" alt="#faa497"> | `#faa497` | Coral, brightened | 9.31 |
-| 10 | bright green | <img src="https://placehold.co/16x16/a9e095/a9e095" width="16" height="16" alt="#a9e095"> | `#a9e095` | Grove, brightened | 11.86 |
-| 11 | bright yellow | <img src="https://placehold.co/16x16/ecca61/ecca61" width="16" height="16" alt="#ecca61"> | `#ecca61` | Gold, brightened | 11.35 |
-| 12 | bright blue | <img src="https://placehold.co/16x16/92c5fa/92c5fa" width="16" height="16" alt="#92c5fa"> | `#92c5fa` | Sky, brightened | 9.97 |
-| 13 | bright magenta | <img src="https://placehold.co/16x16/f2a3de/f2a3de" width="16" height="16" alt="#f2a3de"> | `#f2a3de` | Orchid, brightened | 9.52 |
-| 14 | bright cyan | <img src="https://placehold.co/16x16/75e5e1/75e5e1" width="16" height="16" alt="#75e5e1"> | `#75e5e1` | Sea Salt, brightened | 12.09 |
+| 9 | bright red | <img src="https://placehold.co/16x16/fba99d/fba99d" width="16" height="16" alt="#fba99d"> | `#fba99d` | Coral, brightened | 9.69 |
+| 10 | bright green | <img src="https://placehold.co/16x16/abe398/abe398" width="16" height="16" alt="#abe398"> | `#abe398` | Grove, brightened | 12.19 |
+| 11 | bright yellow | <img src="https://placehold.co/16x16/eecd64/eecd64" width="16" height="16" alt="#eecd64"> | `#eecd64` | Gold, brightened | 11.66 |
+| 12 | bright blue | <img src="https://placehold.co/16x16/98c8fa/98c8fa" width="16" height="16" alt="#98c8fa"> | `#98c8fa` | Sky, brightened | 10.31 |
+| 13 | bright magenta | <img src="https://placehold.co/16x16/f6a6e1/f6a6e1" width="16" height="16" alt="#f6a6e1"> | `#f6a6e1` | Orchid, brightened | 9.86 |
+| 14 | bright cyan | <img src="https://placehold.co/16x16/78e7e4/78e7e4" width="16" height="16" alt="#78e7e4"> | `#78e7e4` | Sea Salt, brightened | 12.35 |
 | 15 | bright white | <img src="https://placehold.co/16x16/eeeeef/eeeeef" width="16" height="16" alt="#eeeeef"> | `#eeeeef` | Ink | 15.58 |
 
 ### Dawn (background Canvas `#eeeeef`)
@@ -359,12 +359,12 @@ The six chromatic normals are the six ANSI colors above. Each bright moves one t
 | 6 | cyan | <img src="https://placehold.co/16x16/176a7e/176a7e" width="16" height="16" alt="#176a7e"> | `#176a7e` | Sea Salt | 5.33 |
 | 7 | white | <img src="https://placehold.co/16x16/b8c1c6/b8c1c6" width="16" height="16" alt="#b8c1c6"> | `#b8c1c6` | Edge | 1.58 |
 | 8 | bright black | <img src="https://placehold.co/16x16/4d6271/4d6271" width="16" height="16" alt="#4d6271"> | `#4d6271` | Faint | 5.49 |
-| 9 | bright red | <img src="https://placehold.co/16x16/721e0c/721e0c" width="16" height="16" alt="#721e0c"> | `#721e0c` | Coral, brightened | 9.50 |
-| 10 | bright green | <img src="https://placehold.co/16x16/1c551f/1c551f" width="16" height="16" alt="#1c551f"> | `#1c551f` | Grove, brightened | 7.65 |
-| 11 | bright yellow | <img src="https://placehold.co/16x16/56450c/56450c" width="16" height="16" alt="#56450c"> | `#56450c` | Gold, brightened | 8.04 |
-| 12 | bright blue | <img src="https://placehold.co/16x16/2d346a/2d346a" width="16" height="16" alt="#2d346a"> | `#2d346a` | Sky, brightened | 10.00 |
-| 13 | bright magenta | <img src="https://placehold.co/16x16/66234f/66234f" width="16" height="16" alt="#66234f"> | `#66234f` | Orchid, brightened | 9.44 |
-| 14 | bright cyan | <img src="https://placehold.co/16x16/0e4d5d/0e4d5d" width="16" height="16" alt="#0e4d5d"> | `#0e4d5d` | Sea Salt, brightened | 8.09 |
+| 9 | bright red | <img src="https://placehold.co/16x16/6e1b08/6e1b08" width="16" height="16" alt="#6e1b08"> | `#6e1b08` | Coral, brightened | 9.93 |
+| 10 | bright green | <img src="https://placehold.co/16x16/17511b/17511b" width="16" height="16" alt="#17511b"> | `#17511b` | Grove, brightened | 8.12 |
+| 11 | bright yellow | <img src="https://placehold.co/16x16/52420b/52420b" width="16" height="16" alt="#52420b"> | `#52420b` | Gold, brightened | 8.45 |
+| 12 | bright blue | <img src="https://placehold.co/16x16/2a3167/2a3167" width="16" height="16" alt="#2a3167"> | `#2a3167` | Sky, brightened | 10.45 |
+| 13 | bright magenta | <img src="https://placehold.co/16x16/631f4c/631f4c" width="16" height="16" alt="#631f4c"> | `#631f4c` | Orchid, brightened | 9.89 |
+| 14 | bright cyan | <img src="https://placehold.co/16x16/0d4958/0d4958" width="16" height="16" alt="#0d4958"> | `#0d4958` | Sea Salt, brightened | 8.58 |
 | 15 | bright white | <img src="https://placehold.co/16x16/d6dadc/d6dadc" width="16" height="16" alt="#d6dadc"> | `#d6dadc` | Raised | 1.21 |
 
 | Terminal role | Token |
@@ -568,6 +568,7 @@ Each misuse below breaks a role or a guarantee. Ports are checked against this t
 | Smallest code-color difference, normal vision | ΔE 0.097 | ΔE 0.088 |
 | Smallest code-color difference, color-vision deficiency | ΔE 0.061 | ΔE 0.040 |
 | Faint from every semantic color, every vision | 3.30 JND | 1.05 JND |
+| Twelve chromatic terminal colors, closest pair, every vision | ΔE 0.020 | ΔE 0.020 |
 | Other series from every series, every vision | ΔE 0.158 | ΔE 0.078 |
 | Neutral row and control states, closest pair | 2.6 JND | 1.5 JND |
 | Pure black or white | none | none |

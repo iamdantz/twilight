@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.10.0
+
+The bright step is searched on the twelve chromatic terminal colors.
+
+### Changed
+- Brights move 0.38 of the way toward Ink instead of one third. The step is the one, from 0.29 to 0.89, that keeps every bright 2 JND from its normal and from Ink and gives the twelve chromatic ANSI colors the largest closest pair in every vision (construction.md §6.7). It moves to the Resolved group of §12.
+- ANSI 9 to 14 in both flavors.
+
+### Improved (against 1.9.1)
+- Closest pair of the twelve chromatic terminal colors, worst vision: Dusk 0.0124 → 0.0201, Dawn 0.0117 → 0.0195.
+- Closest pair in normal vision: 0.048 → 0.055.
+- Each bright from its normal: at least 2.39 → 2.73 JND.
+- Lowest bright contrast on Canvas: 7.65 → 8.12:1.
+
+### Costs
+- Brights sit closer to Ink in Dusk (2.69 → 2.38 JND under color-vision deficiency) and closer to each other (0.0217 → 0.0195 in Dawn). Both losses are under 1 JND, and both values are new measurements, not floors.
+
+### Added
+- Category minimum: the closest pair of the twelve chromatic terminal colors, in every vision, at least ΔE 0.010.
+- construction.md §11: the closest pair stays near 1 JND under color-vision deficiency.
+
+### Tooling
+- `construct.py`: `BRIGHT_STEP` and `bright_step()`, the search of §6.7. `validate.py` checks that the search still returns the published step, and the new minimum with its flavor floors.
+
 ## 1.9.1
 
 Parameters checked against the guarantees. No value changes.

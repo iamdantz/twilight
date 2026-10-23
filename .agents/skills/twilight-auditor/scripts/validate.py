@@ -45,14 +45,14 @@ MINIMUMS = {
              "ΔE code+cursor, normal": 0.080, "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50,
              "every state from Canvas (JND)": 2.0, "closest pair of states (JND)": 1.0, "subtle on edge": 4.50,
              "chip label on accent-text": 4.50, "ΔE other series, every vision": 0.040, "neutral states, closest pair (JND)": 1.0, "semantic on surfaces and edge": 3.00,
-             "faint from semantic colors (JND)": 1.0},
+             "faint from semantic colors (JND)": 1.0, "ΔE ANSI colors, every vision": 0.010},
     "light": {"ink on surfaces": BODY_TARGET, "body on surfaces": BODY_TARGET, "subtle on surfaces": 7.00,
               "faint on surfaces": 4.50, "control on surfaces": 3.00, "code on code surfaces": 4.50,
               "on-accent on accent/pressed": 4.50, "accent-text on raised": 4.50, "accent-focus on surfaces": 3.00,
               "ΔE code+cursor, normal": 0.080, "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50,
               "every state from Canvas (JND)": 2.0, "closest pair of states (JND)": 1.0, "subtle on edge": 4.50,
               "chip label on accent-text": 4.50, "ΔE other series, every vision": 0.040, "neutral states, closest pair (JND)": 1.0, "semantic on surfaces and edge": 3.00,
-              "faint from semantic colors (JND)": 1.0},
+              "faint from semantic colors (JND)": 1.0, "ΔE ANSI colors, every vision": 0.010},
 }
 FLOORS = {
     "dusk": {"ink on surfaces": 13.25, "body on surfaces": 10.90, "subtle on surfaces": 7.00, "faint on surfaces": 4.50,
@@ -60,13 +60,13 @@ FLOORS = {
              "accent-text on raised": 7.00, "accent-focus on surfaces": 3.00, "ΔE code+cursor, normal": 0.097,
              "ΔE code+cursor, worst CVD": 0.061, "faint on transient states": 4.50, "subtle on edge": 5.26,
              "chip label on accent-text": 8.94, "ΔE other series, every vision": 0.158,
-             "semantic on surfaces and edge": 4.50},
+             "semantic on surfaces and edge": 4.50, "ΔE ANSI colors, every vision": 0.020},
     "dawn": {"ink on surfaces": 12.84, "body on surfaces": 10.89, "subtle on surfaces": 7.00, "faint on surfaces": 4.50,
              "control on surfaces": 3.00, "code on code surfaces": 4.50, "on-accent on accent/pressed": 4.50,
              "accent-text on raised": 4.50, "accent-focus on surfaces": 3.00, "ΔE code+cursor, normal": 0.088,
              "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50, "subtle on edge": 5.42,
              "chip label on accent-text": 5.46, "ΔE other series, every vision": 0.078,
-             "semantic on surfaces and edge": 3.19},
+             "semantic on surfaces and edge": 3.19, "ΔE ANSI colors, every vision": 0.019},
 }
 CHECKS = list(MINIMUMS["dark"])
 # Known limits (construction.md §11) are measured minimums too.
@@ -153,6 +153,7 @@ def measure(F):
         "neutral states, closest pair (JND)": neutral_states(n, s),
         "semantic on surfaces and edge": min(cr(c[x], n[y]) for x in SEMANTIC for y in (*SURF, "edge")),
         "faint from semantic colors (JND)": min(k.worst_de([c[x], n["faint"]]) for x in SEMANTIC) / k.JND,
+        "ΔE ANSI colors, every vision": k.worst_de(F["ansi"][1:7] + F["ansi"][9:15]),
     }
     limits = {f"JND {x}": k.de_ok(v, n["canvas"]) / 0.02 for x, v in s.items()}
     limits["ANSI black/white on canvas"] = min(cr(F["ansi"][0], n["canvas"]), cr(F["ansi"][7], n["canvas"]))
@@ -213,7 +214,7 @@ def rules(F, flavor):
     brights = [k.bright(x, F["neutrals"]["ink"]) for x in F["ansi"][1:7]]
     for i, (want, got) in enumerate(zip(brights, F["ansi"][9:15]), 9):
         if want != got.lower():
-            errs.append(f"{flavor}: ansi[{i}] is {got}, the 1/3-toward-Ink rule gives {want}")
+            errs.append(f"{flavor}: ansi[{i}] is {got}, the bright rule (§6.7, step {k.BRIGHT_STEP}) gives {want}")
     n = F["neutrals"]
     ink, body = (min(k.contrast(n[x], n[y]) for y in SURF) for x in ("ink", "body"))
     if ink <= body:
@@ -227,6 +228,9 @@ def series_rules(raw):
     errs, want = [], {"order": list(k.SERIES), "other": k.SERIES_OTHER}
     if raw.get("series") != want:
         errs.append(f"series is {raw.get('series')}, construct.py decides {want}")
+    basis = {f: raw["flavors"][f] for f in k.BRIGHT_BASIS if f in raw["flavors"]}
+    if len(basis) == len(k.BRIGHT_BASIS) and (got := k.bright_step(basis)) != k.BRIGHT_STEP:
+        errs.append(f"bright step search on {', '.join(k.BRIGHT_BASIS)} gives {got}, construct.py has {k.BRIGHT_STEP}")
     basis = {f: raw["flavors"][f] for f in k.SERIES_BASIS if f in raw["flavors"]}
     if len(basis) == len(k.SERIES_BASIS) and (got := k.series_order(basis)) != k.SERIES:
         errs.append(f"series search on {', '.join(k.SERIES_BASIS)} gives {', '.join(got)}, not the decided order")
@@ -399,7 +403,8 @@ def row_checks(where, line, flavor, section, P, M):
 
 GUARANTEE = [  # (words in the row label, measurement); the first match wins, so specific rows come first
     (("subtle", "edge"), "subtle on edge"), (("semantic", "surface"), "semantic on surfaces and edge"),
-    (("faint", "semantic"), "faint from semantic colors (JND)"), (("accent-text",), "chip label on accent-text"),
+    (("faint", "semantic"), "faint from semantic colors (JND)"),
+    (("terminal",), "ΔE ANSI colors, every vision"), (("accent-text",), "chip label on accent-text"),
     (("other series",), "ΔE other series, every vision"), (("neutral", "states"), "neutral states, closest pair (JND)"),
     (("ink",), "ink on surfaces"), (("body",), "body on surfaces"), (("subtle",), "subtle on surfaces"),
     (("faint",), "faint on surfaces"), (("control", "focus"), ("control on surfaces", "accent-focus on surfaces")),

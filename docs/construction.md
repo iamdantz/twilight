@@ -299,10 +299,12 @@ diff-removed background was invisible (ΔE 0.014): there was no contrast headroo
 ### 6.7 Brights
 
 ```
-L_bright = L + (L_Ink − L) / 3        (same hue; chroma capped to gamut)
+L_bright = L + 0.38 · (L_Ink − L)        (same hue; chroma capped to gamut)
 ```
 
-Each bright moves one third of the way toward Ink. It is brighter in Dusk and deeper in Dawn, and always gains contrast. Gold, already light in Dusk, barely moves and never washes out.
+Each bright moves 0.38 of the way toward Ink. It is brighter in Dusk and deeper in Dawn, and always gains contrast. Gold, already light in Dusk, barely moves and never washes out.
+
+A terminal shows the six normals and six brights together, so the step is searched on all twelve. On a grid of 0.005, steps from 0.29 to 0.89 keep every bright at least 2 JND from its normal and from Ink in both flavors. Among them, 0.38 gives the largest closest pair, worst case across normal vision and the three dichromacies: ΔE 0.0195, against 0.0117 at one third. Near 0.29 the closest pair falls to 0.0015, Dawn's Sky against bright Grove. Compared with one third, 0.38 also separates each bright further from its normal (2.73 JND at least, from 2.39) and raises the lowest bright contrast on Canvas from 7.65 to 8.12:1; brights sit 0.3 JND closer to Ink in Dusk and 0.1 JND closer to each other under color-vision deficiency.
 
 ---
 
@@ -434,6 +436,7 @@ Twilight holds its flavors to two levels of floor.
 | Closest pair of neutral row and control states | ≥ 1 JND | the same |
 | Semantic colors on every surface and on Edge | ≥ 3:1 (icons and bars; text uses `accent-text`) | the same |
 | Faint from every semantic color, every vision | ≥ 1 JND | the same |
+| Twelve chromatic terminal colors, closest pair, every vision | ≥ 0.010 (½ JND) | the same |
 
 **Flavor floors** are what each flavor reaches today. They keep a change from quietly degrading Dusk or Dawn. A flavor floor may go down only when the new value still meets the category minimum, the version's changelog names the check under Lower with its cause and the benefit it pays for, and the loss is imperceptible or stays well inside the standard: under 1 JND for color and state measures, or a contrast that stays clearly above its minimum. A new flavor is checked against the minimums of its category, not against another flavor's floors; once accepted, its own measured values become its floors.
 
@@ -453,6 +456,7 @@ Both levels live in the auditor's validator, which reports every value next to i
 | Closest pairs under color-vision deficiency: Sky–Orchid, Gold–Grove and Sea Salt–Grove in Dusk (ΔE 0.061–0.062); Sea Salt–Grove and Orchid–Sea Salt in Dawn (ΔE 0.040–0.041) | No seven-hue palette separates every pair for every vision type. These are the smallest separations the joint optimization (§6.5) reaches. |
 | Faint is 1.05 JND from Grove under color-vision deficiency in Dawn (Sea Salt 1.17, Orchid 1.21) | In a light flavor the code floor and Faint are both 4.5:1, so they share luminance, the dimension color-vision deficiency keeps. Three ways out were measured and rejected: adding these pairs to the §6.5 objective (code separation falls to ΔE 0.024), raising the code floor to 4.75 or 5.0 (Faint comes closer, to 0.71 and 0.54 JND), and darkening Faint (at best 1.24 JND at 5.5:1, which breaks the 4.5, 7, 10.9 text steps). The six semantic colors span Faint's whole range of lightness. Version-control markers therefore carry a letter or an icon. |
 | Dawn's worst color-vision separation of the code colors is ΔE 0.0402, 0.4 % above its minimum | It is the optimizer's maximum: 40 restarts give the same value. No parameter raises it without breaking another minimum: gamut margin 0.88 to 0.94, τ 0.10 to 0.20, Afterglow's chroma as the base, neutral amplitude 0.03 and 0.04, Canvas L 0.94 and 0.96. At L 0.96 it reaches 0.0417, but the closest pair of states falls to 0.50 JND and Dawn's Canvas would no longer be Dusk's Ink. A system change that lowers it fails validation. |
+| The twelve chromatic terminal colors are about 1 JND apart at their closest pair under color-vision deficiency (ΔE 0.0201 Dusk, 0.0195 Dawn) | Twelve colors with six shared hues leave each bright near another hue's normal. The bright step is already the one that maximizes this pair (§6.7). Terminal output that must be told apart by color-vision deficient readers relies on more than color, as rule 6 requires everywhere. |
 | OKLCH hue drift in near-neutrals | Below C 0.002, 8-bit quantization makes hue undefined (Dusk's Ink, Dawn's Canvas). This is invisible by definition. |
 
 ## 12. Parameters: decided vs derived
@@ -476,7 +480,6 @@ Both levels live in the auditor's validator, which reports every value next to i
 | JND targets | §9.1 | Visibility per state |
 | State order and separation | §9.4, 1 JND | States that share a hue stay distinguishable |
 | Gamut margin | 0.92 · Cmax | Safety margin; Dawn meets every minimum from 0.92 to 0.932 (§6.3) |
-| Bright step | one third toward Ink | Consistent in both variants |
 | Syntax roles | §8 | Fixed from the token study; one color per category, Coral and Afterglow out of code |
 | Series order | Sky, Ember, Gold, Sea Salt, Orchid, Grove; Other in Control (§7.1) | Searched on Dusk and Dawn and shared, so a series keeps its color in every flavor |
 
@@ -487,6 +490,7 @@ These were searched over a range, and the published value is the one the guarant
 | Parameter | Value | Search |
 |---|---|---|
 | Surface ratio (system) | r = 1.3125 at L_ref = 0.20, as ΔE_OK distances (§3.3) | The smallest r at which both flavors keep every guarantee and every pair of states is 1 JND apart (§3.3) |
+| Bright step (system) | 0.38 toward Ink | The step from 0.29 to 0.89, in steps of 0.005, that keeps every bright 2 JND from its normal and from Ink and gives the twelve chromatic ANSI colors the largest closest pair in every vision (§6.7) |
 | Warm tilt τ (system) | 0.15 | The only value from 0.10 to 0.20, in steps of 0.01, at which both flavors meet every minimum (§6.3) |
 
 ### Measured (from data)
