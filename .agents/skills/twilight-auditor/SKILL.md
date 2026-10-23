@@ -80,7 +80,7 @@ wording · rule or method · palette values · new flavor · tooling. Most chang
 ### A. Method integrity (docs/construction.md)
 
 - Every rule, formula and parameter is explicit, measurable and reproducible from the document alone.
-- Every parameter is classified in §12 as **decided** (design choice with written rationale), **measured** (from data, with source) or **solved** (computed). New or changed parameters must appear there correctly.
+- Every parameter is classified in §12 as **decided** (design choice with written rationale), **resolved** (searched over a stated range, the value the guarantees select), **measured** (from data, with source) or **solved** (computed). A parameter moves from decided to resolved only with the search written down. New or changed parameters must appear there correctly.
 - A rule or method change is acceptable only if it states all five: the problem it fixes; the measurable improvement; the new formula and parameters; validation numbers; its effect on every guarantee.
 - "Looks better", "felt off", "warmer", "rounded for taste" or a constant with no derivation is BLOCKING. Either it is declared *decided* with rationale, or it is rejected.
 - Removing or weakening a rule, check or guarantee is BLOCKING unless replaced by something strictly stronger and measured to be so.
