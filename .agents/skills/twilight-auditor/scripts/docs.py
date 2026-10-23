@@ -66,6 +66,9 @@ def facts(P, M):
     rc = [k.de_ok(F["neutrals"]["rail"], F["neutrals"]["canvas"]) / k.JND for F in P.values()]
     out["rail_canvas"] = f"{min(rc):.2f} to {max(rc):.2f}"
     out["min.subtle_edge"] = f"{min(M[f][0]['subtle on edge'] for f in P):.2f}"
+    out["min.semantic_surfaces"] = f"{min(M[f][0]['semantic on surfaces and edge'] for f in P):.2f}"
+    for f in P:
+        out[f"{f}.faint_semantic"] = f"{M[f][0]['faint from semantic colors (JND)']:.2f}"
     out["min.accent_label"] = f"{min(M[f][0]['chip label on accent-text'] for f in P):.2f}"
     for lvl in ("ink", "body", "subtle", "faint", "control"):
         out[f"min.{lvl}"] = f"{min(M[f][0][lvl + ' on surfaces'] for f in P):.2f}"
@@ -97,10 +100,12 @@ GUARANTEE_ROWS = {  # design-system guarantee row label → (measurement, unit)
     "Code colors on every code surface": ("code on code surfaces", "ratio"),
     "Smallest code-color difference, normal vision": ("ΔE code+cursor, normal", "de"),
     "Smallest code-color difference, color-vision deficiency": ("ΔE code+cursor, worst CVD", "de"),
+    "Semantic colors on any surface and on Edge": ("semantic on surfaces and edge", "ratio"),
+    "Faint from every semantic color, every vision": ("faint from semantic colors (JND)", "jnd2"),
     "Other series from every series, every vision": ("ΔE other series, every vision", "de"),
     "Neutral row and control states, closest pair": ("neutral states, closest pair (JND)", "jnd"),
 }
-UNITS = {"ratio": lambda v: f"{v:.2f}:1", "de": lambda v: f"ΔE {v:.3f}", "jnd": lambda v: f"{v:.1f} JND"}
+UNITS = {"ratio": lambda v: f"{v:.2f}:1", "de": lambda v: f"ΔE {v:.3f}", "jnd": lambda v: f"{v:.1f} JND", "jnd2": lambda v: f"{v:.2f} JND"}
 README_GUARANTEES = {  # README row label → (measurements, decimals); the shown value is the lower one
     "Body text on any surface": (("body on surfaces",), 2), "Faintest text on any surface": (("faint on surfaces",), 2),
     "Code colors on every code surface": (("code on code surfaces",), 2),
