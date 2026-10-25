@@ -41,8 +41,11 @@ FREEDOM = 25                          # §6.1
 EMBER_HUE = (45, 70)                  # §6.4
 OPT_SEED, OPT_RESTARTS, OPT_JITTER, OPT_STEPS = 1, 10, 20, (8, 4, 2, 1)     # §6.5
 JND = 0.02
-STATE_JND = {"selection": 4, "selection-inactive": 2, "find-match": 5, "find-match-other": 2.5,
-             "word-highlight": 2, "word-highlight-write": 3, "diff-inserted": 2, "diff-removed": 2}
+# §9.1: strong states take the most visible color the bounds allow; weak states the visibility minimum, 2 JND.
+STATE_ROLE = {"selection": "strong", "selection-inactive": "weak", "find-match": "strong", "find-match-other": "weak",
+              "word-highlight": "weak", "word-highlight-write": "strong", "diff-inserted": "weak", "diff-removed": "weak"}
+WEAK_JND = 2
+STATE_JND = {name: (None if role == "strong" else WEAK_JND) for name, role in STATE_ROLE.items()}
 CORNERS = dict(red="#ff0000", yellow="#ffff00", green="#00ff00", cyan="#00ffff", blue="#0000ff", magenta="#ff00ff")
 VISIONS = (None, "deutan", "protan", "tritan")
 
@@ -294,7 +297,7 @@ def state(N, hue, jnd, P, built=()):
     (earliest on ties). If no candidate exists, the most visible color found.
     §9.4: among those, a color at least 1 JND from every state in `built` is preferred; visibility comes first."""
     bg = N["content"]
-    target = jnd * JND
+    target = float("inf") if jnd is None else jnd * JND      # None: a strong state, the most visible color
     L0 = oklch_of(bg)[0]
     Lmin, Lmax = state_bounds(N, P)
     best, most, best_sep, most_sep = None, None, None, None

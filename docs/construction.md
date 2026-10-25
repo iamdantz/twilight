@@ -26,7 +26,7 @@ Every parameter belongs to one level, and a flavor reads only the system and its
 
 | Level | Parameters |
 |---|---|
-| System | Seed and Afterglow (§2); the neutral curve (§3.1–3.2); the surface distances from r and L_ref (§3.3); Rail as a half step (§3.4); text targets (§3.5); accent families (§5); ANSI anchors, τ, gamut margin, φ, Ember's hue range and the optimizer (§6); syntax roles (§8); JND targets and state rules (§9) |
+| System | Seed and Afterglow (§2); the neutral curve (§3.1–3.2); the surface distances from r and L_ref (§3.3); Rail as a half step (§3.4); text targets (§3.5); accent families (§5); ANSI anchors, τ, gamut margin, φ, Ember's hue range and the optimizer (§6); syntax roles (§8); state visibility rules (§9) |
 | Category (dark, light) | Direction of each surface from Canvas; direction of the text search; code floor; β; chroma base; L₀ and Ember lightness ranges; state bounds (§4) |
 | Flavor (Dusk, Dawn) | Its category; Canvas and Ink lightness; neutral chroma amplitude |
 
@@ -91,7 +91,7 @@ Placement: a 50-step bisection between Canvas and L 0.02 (darker) or L 0.999 (li
 | 1.325 | the same | the same |
 | 1.3375–1.40 | the same, Ink keeps falling | worst color-vision ΔE below 0.040 |
 
-r is the smallest value, on a 0.0125 grid, at which both flavors keep every guarantee, every pair of background states is at least 1 JND apart, and Dusk's write highlight reaches its target. Dawn's results were the same with 10 and with 20 optimizer restarts, so the window is a property of the geometry, not of the search. Larger r moves Raised further from Canvas, which lowers Ink on Raised (Dusk 13.76 → 13.25:1, Dawn 13.36 → 12.84:1); the Ink color itself does not change. Code colors do not depend on r: they are solved against Canvas, which r does not move.
+r is the smallest value, on a 0.0125 grid, at which both flavors keep every guarantee and every pair of background states is at least 1 JND apart. The sweep was made with the fixed state targets used until 1.10; rebuilt with the strong and weak states of §9.1, Dawn still has a pair 0.61 JND apart at 1.30 and none at 1.3125, so r does not change. Dawn's results were the same with 10 and with 20 optimizer restarts, so the window is a property of the geometry, not of the search. Larger r moves Raised further from Canvas, which lowers Ink on Raised (Dusk 13.76 → 13.25:1, Dawn 13.36 → 12.84:1); the Ink color itself does not change. Code colors do not depend on r: they are solved against Canvas, which r does not move.
 
 ### 3.4 Rail: a half step
 
@@ -362,20 +362,26 @@ Every code color meets the flavor floor on every code surface (§6.6), and the s
 
 1 JND = ΔE_OK 0.02 against Canvas (≈ the threshold of a just-noticeable color difference in OKLab).
 
-| State | Target |
-|---|---|
-| `selection` | 4 JND |
-| `find-match` | 5 JND |
-| `word-highlight-write` | 3 JND |
-| `find-match-other` | 2.5 JND |
-| `selection-inactive`, `word-highlight`, diff lines | 2 JND |
+States come in pairs that share a hue. In each pair, the **strong** state marks what the reader is acting on, and the **weak** one marks what accompanies it:
+
+| Pair | Strong | Weak |
+|---|---|---|
+| Selection | `selection` | `selection-inactive` |
+| Search | `find-match` (the current match) | `find-match-other` |
+| Word highlight | `word-highlight-write` | `word-highlight` (read) |
+| Diff lines | none | `diff-inserted`, `diff-removed` |
+
+- A **strong** state takes the most visible color the bounds of §9.2 allow.
+- A **weak** state takes 2 JND, the visibility minimum of §10.1. Diff lines are weak because they are code surfaces and cover whole lines.
+
+No visibility is chosen by hand: the bounds set the strong states and the minimum sets the weak ones. Until 1.10 each state had a fixed target (4, 5, 3, 2.5 and 2 JND). Three were out of reach in some flavor, and Dusk's current match ended below its selection. With the rule above, Dusk's selection goes from 4.09 to 4.61 JND and the write highlight from 3.05 to 3.25 (Dusk) and 3.79 (Dawn); other matches go from about 2.6 to 2.0 JND. The mean visibility of the eight states stays within 0.03 JND, while every strong state ends at least as far from its weak partner as before.
 
 ### 9.2 Bounds
 
 - **Transient states** may move in lightness, but Faint text must keep 4.5:1 on them, which also keeps every higher text level above its guarantee.
 - **Persistent states (diff lines) are code surfaces.** The code floor is solved including them (§6.6).
 - **Lightness bounded by the surfaces.** Toward the text, the only limit is Faint at 4.5:1. Away from the text, the lightness scan stops at the outermost surface: L_Shell in Dusk, L_Canvas in Dawn. The bound applies in OKLCH before gamut mapping and 8-bit rounding, so a rendered state can sit up to ΔL 0.001 beyond it (Dawn `diff-inserted` L 0.950 against Canvas 0.949). Minimum chroma 0.010 so the hue is recognizable.
-- **If a target is unreachable** inside those bounds, the state takes the maximum visibility the bounds allow and keeps its hue. It never falls back to a neutral. Dusk `find-match` reaches 4.1 of 5 JND; Dawn `selection` reaches 3.5 of 4 and Dawn `find-match` 4.7 of 5. All are documented as limits (§11).
+- **Strong states stop at these bounds** and keep their hue; they never fall back to a neutral. Every weak state reaches 2 JND inside them in both flavors.
 
 ### 9.3 Search
 
@@ -384,22 +390,22 @@ scanned outward from Canvas in both directions in steps of 0.001. A scan stops a
 bounds (Dusk: L_Shell to 1.0; Dawn: 0 to L_Canvas), at the first out-of-gamut color, or at the first
 color on which Faint falls below 4.5:1.
 
-The first step in each direction that reaches the target is a candidate, with cost
-1000 · |ΔL| + 100 · C. The lowest cost wins. If no candidate reaches the target, the state takes
-the most visible color found (§9.2).
+For a weak state, the first step in each direction that reaches 2 JND is a candidate, with cost
+1000 · |ΔL| + 100 · C. The lowest cost wins. A strong state has no target: it takes the most
+visible color found (§9.2).
 
 The selection hue is Afterglow's hue.
 
 ### 9.4 Separation between states
 
-Two states that share a hue differ only in visibility, so when a bound stops the stronger one short of its target, the two can land on nearly the same color. Each state is therefore built after the ones before it, in a fixed order, and kept at least 1 JND (ΔE_OK 0.02) from every state already built:
+Two states that share a hue differ only in visibility, so when a bound stops the stronger one, the two can land on nearly the same color. Each state is therefore built after the ones before it, in a fixed order, and kept at least 1 JND (ΔE_OK 0.02) from every state already built:
 
 ```
 diff-inserted, diff-removed, selection, selection-inactive,
 find-match, find-match-other, word-highlight, word-highlight-write
 ```
 
-Visibility comes first. Among the colors that reach the state's target, the lowest-cost one that is 1 JND from every earlier state wins; if none is, the lowest-cost one wins, as in §9.3. If no color reaches the target, the most visible color that keeps the separation is taken, or the most visible color found when none keeps it.
+Visibility comes first. For a weak state, among the colors that reach 2 JND, the lowest-cost one that is 1 JND from every earlier state wins; if none is, the lowest-cost one wins, as in §9.3. A strong state takes the most visible color that keeps the separation, or the most visible color found when none keeps it.
 
 In Dusk this moves two states. `selection-inactive` goes from 2.1 to 2.9 JND, and `word-highlight-write` from 2.7 to 2.5 JND with half the chroma. The two word highlights were 0.80 JND apart, so a read and a write of the same variable looked the same; they are now 1.23 JND apart. The inactive selection and the removed diff go from 0.54 to 1.08 JND. With the surface distances of 1.4, Dawn had no color for the inactive selection that reached its target 1 JND from the selection; with those of §3.3, every pair of states in both flavors is at least 1 JND apart.
 
@@ -432,7 +438,7 @@ Twilight holds its flavors to two levels of floor.
 | `accent-focus`, `on-accent`, `accent-text` | 3, 4.5, 7 | 3, 4.5, 4.5 |
 | Code colors plus cursor, ΔE OKLab, normal vision | ≥ 0.080 (4 JND) | the same |
 | The same, worst color-vision deficiency | ≥ 0.040 (2 JND) | the same |
-| Every background state from Canvas | ≥ 2 JND, the lowest target of §9.1 | the same |
+| Every background state from Canvas | ≥ 2 JND, the visibility of weak states (§9.1) | the same |
 | Every pair of background states | ≥ 1 JND (§9.4) | the same |
 | Faint on transient states | 4.5:1 (§9.2) | the same |
 | Subtle on an Edge fill | 4.5:1 | the same |
@@ -482,7 +488,6 @@ Both levels live in the auditor's validator, which reports every value next to i
 | Ember hue range | 45°–70° | Keeps it in the accent family; Afterglow ± 25° and the hues nearest Afterglow among the anchors were measured and give lower separation (§6.4) |
 | Floors | 7:1 Dusk, 4.5:1 Dawn | AAA / AA |
 | Text targets | 4.5, 7.0, 10.89 (7²/4.5); control 3.0 | WCAG thresholds plus one geometric step |
-| JND targets | §9.1 | Visibility per state |
 | State order and separation | §9.4, 1 JND | States that share a hue stay distinguishable |
 | Gamut margin | 0.92 · Cmax | Safety margin; Dawn meets every minimum from 0.92 to 0.932 (§6.3) |
 | Syntax roles | §8 | Fixed from the token study; one color per category, Coral and Afterglow out of code |
@@ -497,6 +502,7 @@ These were searched over a range, and the published value is the one the guarant
 | Surface ratio (system) | r = 1.3125 at L_ref = 0.20, as ΔE_OK distances (§3.3) | The smallest r at which both flavors keep every guarantee and every pair of states is 1 JND apart (§3.3) |
 | Bright step (system) | 0.38 toward Ink | The step from 0.29 to 0.89, in steps of 0.005, that keeps every bright 2 JND from its normal and from Ink and gives the twelve chromatic ANSI colors the largest closest pair in every vision (§6.7) |
 | Neutral chroma amplitude (flavor, the same in every flavor) | 0.035 | The largest value at which Dusk reaches its best code-color separation, within the range where Dawn meets every minimum (0.020 to 0.0375), searched in steps of 0.0025 (§3.2) |
+| State visibility | strong states at the bound of §9.2; weak states at 2 JND | Set by the bounds and by the minimum of §10.1, with no number of its own (§9.1) |
 | Warm tilt τ (system) | 0.15 | The only value from 0.10 to 0.20, in steps of 0.01, at which both flavors meet every minimum (§6.3) |
 
 ### Measured (from data)
@@ -541,7 +547,7 @@ for variant in (Dusk, Dawn):
     hues      ← optimize(§6.5) against the worst of {canvas, diff bgs}
     accents   ← for each of the 8 colors, the five tokens of §5
     brights   ← L + (L_ink − L)/3
-    states    ← JND targets under transient / persistent bounds (§9.3), 1 JND apart in order (§9.4)
+    states    ← strong at the bound, weak at 2 JND (§9.1–9.3), 1 JND apart in order (§9.4)
     validate  ← every pairing in §10
 ```
 

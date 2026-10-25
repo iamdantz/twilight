@@ -1,6 +1,6 @@
 {
   "name": "Twilight",
-  "version": "1.10.2",
+  "version": "1.11.0",
   "series": {
     "order": ["sky", "ember", "gold", "sea-salt", "orchid", "grove"],
     "other": "control"
@@ -88,12 +88,12 @@
         }
       },
       "states": {
-        "selection": "#351a08",
+        "selection": "#391e0c",
         "selection-inactive": "#260f02",
         "find-match": "#2c240b",
-        "find-match-other": "#1d1500",
+        "find-match-other": "#1b1606",
         "word-highlight": "#062221",
-        "word-highlight-write": "#0b2827",
+        "word-highlight-write": "#0f2929",
         "diff-inserted": "#0e1a09",
         "diff-removed": "#22110e"
       },
@@ -201,9 +201,9 @@
         "selection": "#ead5c9",
         "selection-inactive": "#f5e0d4",
         "find-match": "#ead8a6",
-        "find-match-other": "#faeec9",
+        "find-match-other": "#f8eed1",
         "word-highlight": "#ceeef8",
-        "word-highlight-write": "#c5e4ee",
+        "word-highlight-write": "#c0dee8",
         "diff-inserted": "#e0f6dd",
         "diff-removed": "#f4dde0"
       },

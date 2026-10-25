@@ -288,12 +288,12 @@ Visibility is measured in JND, just-noticeable differences, where 1 JND is ΔE 0
 
 | | Token | Hex | Hue from | Visibility | Kind |
 |:-:|---|---|---|---|---|
-| <img src="https://placehold.co/16x16/351a08/351a08" width="16" height="16" alt="#351a08"> | `selection` | `#351a08` | Afterglow | 4.1 JND | transient |
+| <img src="https://placehold.co/16x16/391e0c/391e0c" width="16" height="16" alt="#391e0c"> | `selection` | `#391e0c` | Afterglow | 4.6 JND | transient |
 | <img src="https://placehold.co/16x16/260f02/260f02" width="16" height="16" alt="#260f02"> | `selection-inactive` | `#260f02` | Afterglow | 2.9 JND | transient |
 | <img src="https://placehold.co/16x16/2c240b/2c240b" width="16" height="16" alt="#2c240b"> | `find-match` | `#2c240b` | Gold | 4.1 JND | transient |
-| <img src="https://placehold.co/16x16/1d1500/1d1500" width="16" height="16" alt="#1d1500"> | `find-match-other` | `#1d1500` | Gold | 2.6 JND | transient |
+| <img src="https://placehold.co/16x16/1b1606/1b1606" width="16" height="16" alt="#1b1606"> | `find-match-other` | `#1b1606` | Gold | 2.0 JND | transient |
 | <img src="https://placehold.co/16x16/062221/062221" width="16" height="16" alt="#062221"> | `word-highlight` | `#062221` | Sea Salt | 2.0 JND | transient |
-| <img src="https://placehold.co/16x16/0b2827/0b2827" width="16" height="16" alt="#0b2827"> | `word-highlight-write` | `#0b2827` | Sea Salt | 3.0 JND | transient |
+| <img src="https://placehold.co/16x16/0f2929/0f2929" width="16" height="16" alt="#0f2929"> | `word-highlight-write` | `#0f2929` | Sea Salt | 3.3 JND | transient |
 | <img src="https://placehold.co/16x16/0e1a09/0e1a09" width="16" height="16" alt="#0e1a09"> | `diff-inserted` | `#0e1a09` | Grove | 2.0 JND | persistent |
 | <img src="https://placehold.co/16x16/22110e/22110e" width="16" height="16" alt="#22110e"> | `diff-removed` | `#22110e` | Coral | 2.0 JND | persistent |
 
@@ -304,9 +304,9 @@ Visibility is measured in JND, just-noticeable differences, where 1 JND is ΔE 0
 | <img src="https://placehold.co/16x16/ead5c9/ead5c9" width="16" height="16" alt="#ead5c9"> | `selection` | `#ead5c9` | Afterglow | 3.5 JND | transient |
 | <img src="https://placehold.co/16x16/f5e0d4/f5e0d4" width="16" height="16" alt="#f5e0d4"> | `selection-inactive` | `#f5e0d4` | Afterglow | 2.1 JND | transient |
 | <img src="https://placehold.co/16x16/ead8a6/ead8a6" width="16" height="16" alt="#ead8a6"> | `find-match` | `#ead8a6` | Gold | 4.7 JND | transient |
-| <img src="https://placehold.co/16x16/faeec9/faeec9" width="16" height="16" alt="#faeec9"> | `find-match-other` | `#faeec9` | Gold | 2.6 JND | transient |
+| <img src="https://placehold.co/16x16/f8eed1/f8eed1" width="16" height="16" alt="#f8eed1"> | `find-match-other` | `#f8eed1` | Gold | 2.0 JND | transient |
 | <img src="https://placehold.co/16x16/ceeef8/ceeef8" width="16" height="16" alt="#ceeef8"> | `word-highlight` | `#ceeef8` | Sea Salt | 2.0 JND | transient |
-| <img src="https://placehold.co/16x16/c5e4ee/c5e4ee" width="16" height="16" alt="#c5e4ee"> | `word-highlight-write` | `#c5e4ee` | Sea Salt | 3.0 JND | transient |
+| <img src="https://placehold.co/16x16/c0dee8/c0dee8" width="16" height="16" alt="#c0dee8"> | `word-highlight-write` | `#c0dee8` | Sea Salt | 3.8 JND | transient |
 | <img src="https://placehold.co/16x16/e0f6dd/e0f6dd" width="16" height="16" alt="#e0f6dd"> | `diff-inserted` | `#e0f6dd` | Grove | 2.1 JND | persistent |
 | <img src="https://placehold.co/16x16/f4dde0/f4dde0" width="16" height="16" alt="#f4dde0"> | `diff-removed` | `#f4dde0` | Coral | 2.1 JND | persistent |
 
@@ -571,7 +571,7 @@ Each misuse below breaks a role or a guarantee. Ports are checked against this t
 | Twelve chromatic terminal colors, closest pair, every vision | ΔE 0.020 | ΔE 0.020 |
 | Ember from Afterglow, normal vision | ΔE 0.216 | ΔE 0.360 |
 | Other series from every series, every vision | ΔE 0.158 | ΔE 0.078 |
-| Neutral row and control states, closest pair | 2.6 JND | 1.5 JND |
+| Neutral row and control states, closest pair | 2.9 JND | 1.5 JND |
 | Pure black or white | none | none |
 | Gamut | sRGB | sRGB |
 

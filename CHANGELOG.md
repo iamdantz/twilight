@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.11.0
+
+State visibility follows from the bounds and the minimum, with no fixed targets.
+
+### Changed
+- Background states come in strong and weak pairs (construction.md §9.1). A strong state (`selection`, `find-match`, `word-highlight-write`) takes the most visible color the bounds of §9.2 allow; a weak state (`selection-inactive`, `find-match-other`, `word-highlight`, diff lines) takes 2 JND, the visibility minimum. The fixed targets 4, 5, 3, 2.5 and 2 JND are removed from §12.
+- Dusk `selection`, `find-match-other`, `word-highlight-write`; Dawn `find-match-other`, `word-highlight-write`.
+
+### Improved (against 1.10.2)
+- Dusk `selection` 4.09 → 4.61 JND; `word-highlight-write` 3.05 → 3.25 (Dusk) and 3.05 → 3.79 JND (Dawn).
+- Strong state from its weak partner: selection 2.58 → 3.36 JND (Dusk); current match 3.35 → 3.53 (Dawn); write from read 1.21 → 1.50 (Dusk) and 1.48 → 2.37 JND (Dawn).
+- Mean visibility of the eight states stays within 0.03 JND.
+
+### Lower
+- `JND find-match-other`: Dusk 2.57 → 2.01, Dawn 2.56 → 2.04 JND. Other matches move to the weak-state minimum, 0.5 JND less visible; they stay at least 3.1 JND from the current match. The fixed 2.5 JND target had no derivation.
+
+### Documented
+- construction.md §3.3: r rechecked under the new rule; Dawn still has a pair of states 0.61 JND apart at 1.30, so r stays 1.3125.
+
+### Tooling
+- `construct.py`: `STATE_ROLE` and `WEAK_JND` replace the per-state targets; a strong state has no target in the §9.3 search. `validate.py`: `LIMIT_FLOORS` current as of 1.11.0.
+
 ## 1.10.2
 
 Ember's constraints checked against the guarantees. No value changes.

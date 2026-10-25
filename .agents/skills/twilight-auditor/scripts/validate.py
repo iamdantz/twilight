@@ -74,13 +74,13 @@ CHECKS = list(MINIMUMS["dark"])
 # Known limits (construction.md §11) are measured minimums too.
 LIMITS = ("JND " + s for s in (*TRANSIENT, "diff-inserted", "diff-removed"))
 LIMITS = (*LIMITS, "ANSI black/white on canvas", "min ΔE between background states")
-LIMIT_FLOORS = {  # the measured minimum of each limit per flavor (truncated to 4 decimals), current as of 1.5.0
-    "dusk": {"JND selection": 4.0869, "JND selection-inactive": 2.9143, "JND find-match": 4.0626,
-             "JND find-match-other": 2.5739, "JND word-highlight": 2.0129, "JND word-highlight-write": 3.0469,
+LIMIT_FLOORS = {  # the measured minimum of each limit per flavor (truncated to 4 decimals), current as of 1.11.0
+    "dusk": {"JND selection": 4.61, "JND selection-inactive": 2.9143, "JND find-match": 4.0626,
+             "JND find-match-other": 2.0054, "JND word-highlight": 2.0129, "JND word-highlight-write": 3.2519,
              "JND diff-inserted": 2.021, "JND diff-removed": 2.0341, "ANSI black/white on canvas": 1.5669,
              "min ΔE between background states": 0.0215},
     "dawn": {"JND selection": 3.45, "JND selection-inactive": 2.0513, "JND find-match": 4.7366,
-             "JND find-match-other": 2.5588, "JND word-highlight": 2.0486, "JND word-highlight-write": 3.0465,
+             "JND find-match-other": 2.04, "JND word-highlight": 2.0486, "JND word-highlight-write": 3.7854,
              "JND diff-inserted": 2.0762, "JND diff-removed": 2.0586, "ANSI black/white on canvas": 1.5774,
              "min ΔE between background states": 0.0202},
 }
