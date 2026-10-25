@@ -64,6 +64,8 @@ C(L) = 0.035 · sin²(π · L)
 
 Chroma peaks at mid-lightness (≈ 0.035) and approaches zero at both ends, so dark surfaces and light text (Dusk), and light surfaces and dark text (Dawn), read as clean, not muddy or tinted. At L 0.95 chroma is ≈ 0.001, below what 8-bit sRGB can express, so Dusk's Ink and Dawn's Canvas are effectively neutral: a cool silver, never paper white.
 
+The amplitude is searched from 0.020 to 0.050 in steps of 0.0025, rebuilding both flavors. Both use the same value, since they share one neutral curve (§1). Dawn meets every minimum up to 0.0375; from 0.040, Faint comes within 1 JND of a semantic color under color-vision deficiency (0.89 JND at 0.040). Dawn's code colors do not move across the range. Dusk meets every minimum across the range, and its code colors reach their best separation at 0.0325 and 0.035 (ΔE 0.0606 in color-vision deficiency, 0.0968 in normal vision, 0.0201 for the twelve terminal colors), with identical code colors at both. Of the two, 0.035 tints the neutrals more, which is what the amplitude is for. Lowering it to 0.0275 would move Faint 0.13 JND further from the semantic colors in Dawn, an imperceptible gain, at the cost of a lighter tint and a slightly lower separation in Dusk.
+
 ### 3.3 Surfaces: one perceptual scale
 
 The system defines how far each surface sits from Canvas. The distances come from a geometric progression in lightness, measured as ΔE OKLab from its middle step:
@@ -469,7 +471,6 @@ Both levels live in the auditor's validator, which reports every value next to i
 | Afterglow | the sRGB cusp of the seed hue (§2) | The most chromatic color at the seed's hue |
 | Neutral hue | complement of the seed (232°) | Structural choice |
 | Neutral hue drift | +18° · (1 − L)² | "Shadows lean toward night" |
-| Neutral chroma amplitude (flavor) | 0.035 in Dusk and Dawn | Tint strength |
 | Surface directions (category) | dark: Shell darker, Raised and Edge lighter; light: all darker | Light interfaces darken their panels (§4) |
 | Anchors (flavor) | Dusk: Canvas L 0.20, Ink L 0.95. Dawn: Canvas L 0.95, Ink L 0.20 | The same two neutrals, roles exchanged |
 | Chroma base | C_Afterglow / φ (Dusk), C_seed / φ (Dawn) | Keeps the accent dominant; the light flavor is bounded by the gamut at 4.5:1 (§6.3) |
@@ -491,6 +492,7 @@ These were searched over a range, and the published value is the one the guarant
 |---|---|---|
 | Surface ratio (system) | r = 1.3125 at L_ref = 0.20, as ΔE_OK distances (§3.3) | The smallest r at which both flavors keep every guarantee and every pair of states is 1 JND apart (§3.3) |
 | Bright step (system) | 0.38 toward Ink | The step from 0.29 to 0.89, in steps of 0.005, that keeps every bright 2 JND from its normal and from Ink and gives the twelve chromatic ANSI colors the largest closest pair in every vision (§6.7) |
+| Neutral chroma amplitude (flavor, the same in every flavor) | 0.035 | The largest value at which Dusk reaches its best code-color separation, within the range where Dawn meets every minimum (0.020 to 0.0375), searched in steps of 0.0025 (§3.2) |
 | Warm tilt τ (system) | 0.15 | The only value from 0.10 to 0.20, in steps of 0.01, at which both flavors meet every minimum (§6.3) |
 
 ### Measured (from data)

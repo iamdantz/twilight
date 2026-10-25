@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.10.1
+
+The neutral chroma amplitude is searched against the guarantees. No value changes.
+
+### Documented
+- construction.md §3.2 and §12: the amplitude 0.035 moves to the Resolved group. From 0.020 to 0.050, in steps of 0.0025, it is the largest value at which Dusk reaches its best code-color separation, inside the range where Dawn meets every minimum (up to 0.0375; from 0.040 Faint comes within 1 JND of a semantic color in Dawn).
+
 ## 1.10.0
 
 The bright step is searched on the twelve chromatic terminal colors.
