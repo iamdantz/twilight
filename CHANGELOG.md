@@ -1,5 +1,84 @@
 # Changelog
 
+## 1.12.1
+
+The syntax roles become reproducible. No value changes.
+
+### Documented
+- construction.md §8: keyword, string, function, type and constant follow the ANSI convention. The choice the convention leaves open, which of parameter and property stays uncolored, comes from a reproducible corpus study: distinctness does not separate the two (0.1200 and 0.1206), and properties cover more of the screen (6.37 % against 3.67 %, in every leave-one-out and bootstrap resample), so property stays uncolored. The ranking of all 5,040 assignments by distinctness alone is reported; the published one is 1,392nd, and the leaders break the convention without standing out from each other.
+- The earlier study, whose corpus and scoring were never in the repository, is no longer cited.
+
+### Tooling
+- `syntax_study.py` and `syntax/manifest.json`: 34 packages pinned by version and SHA-256, under licenses that ask for no attribution (0BSD, MIT-0, Unlicense, CC0-1.0), verified in the registry and in each archive. The corpus is not stored; `fetch` downloads and verifies it and `measure` rebuilds `syntax/stats.json` byte for byte. Tree-sitter versions are pinned in `requirements-study.txt`.
+- `syntax_roles.py`: the uncolored category and the distinctness ranking from `syntax/stats.json`. `validate.py` checks the published roles (`construct.SYNTAX`) against it and every package of the manifest against the accepted licenses.
+
+## 1.12.0
+
+Continuous scales for data.
+
+### Added
+- `scales` in every flavor of palette/twilight.json: a sequential scale of five Ember steps from Canvas, and a diverging scale of two Sky steps, Canvas, and two Gold steps (design-system.md §12.4).
+- construction.md §7.2: each scale is a path at the color's hue from Canvas, with steps at equal ΔE. Steps keep the code colors' separation (ΔE 0.080 in normal vision, 0.040 under color-vision deficiency) from their neighbors, and the diverging steps from their counterparts; every colored step takes a label at AA. The series color and pair with the most steps passing in both flavors are chosen; ties go to the higher label contrast and the larger worst-case separation.
+- Category minimums for the separation of scale steps and for their labels.
+
+### Documented
+- design-system.md §12.4: continuous scales replace the rule that left them undefined. §13 points interpolation to the scales.
+- construction.md §11: the diverging scale holds two steps per side.
+
+### Tooling
+- `construct.py`: `SEQUENTIAL`, `DIVERGING` and `scale_search()`; every flavor builds its scales. `validate.py` reproduces them, checks that the search still returns them, measures the new minimums, and skips checks a base snapshot predates. `docs.py` generates the scale table and guarantee rows.
+
+## 1.11.1
+
+The ceilings of the strong states, verified. No value changes.
+
+### Documented
+- construction.md §9.2: a state's chroma never exceeds what sRGB holds at Canvas's lightness for its hue. The §9.3 search already applied this bound, since every scan starts at Canvas and stops at the first out-of-gamut color; without it the strongest states become saturated fills (Dawn's current match would reach 8.7 JND in `#ffd545`).
+- A search over every sRGB color confirms the six strong states at their ceiling within 0.02 JND.
+- construction.md §11: the three rows for state targets out of reach are replaced by one: Dawn's selection is the least visible strong state, and why.
+
+### Tooling
+- `validate.py`: a rule checks every state's chroma against the bound (0.002 tolerance for 8-bit rounding).
+- `validate.py --compare`: a lowered floor or limit may be declared under Lower in any CHANGELOG entry newer than the base, so a pull request that spans several versions is checked against each entry, not only the latest.
+
+## 1.11.0
+
+State visibility follows from the bounds and the minimum, with no fixed targets.
+
+### Changed
+- Background states come in strong and weak pairs (construction.md §9.1). A strong state (`selection`, `find-match`, `word-highlight-write`) takes the most visible color the bounds of §9.2 allow; a weak state (`selection-inactive`, `find-match-other`, `word-highlight`, diff lines) takes 2 JND, the visibility minimum. The fixed targets 4, 5, 3, 2.5 and 2 JND are removed from §12.
+- Dusk `selection`, `find-match-other`, `word-highlight-write`; Dawn `find-match-other`, `word-highlight-write`.
+
+### Improved (against 1.10.2)
+- Dusk `selection` 4.09 → 4.61 JND; `word-highlight-write` 3.05 → 3.25 (Dusk) and 3.05 → 3.79 JND (Dawn).
+- Strong state from its weak partner: selection 2.58 → 3.36 JND (Dusk); current match 3.35 → 3.53 (Dawn); write from read 1.21 → 1.50 (Dusk) and 1.48 → 2.37 JND (Dawn).
+- Mean visibility of the eight states stays within 0.03 JND.
+
+### Lower
+- `JND find-match-other`: Dusk 2.57 → 2.01, Dawn 2.56 → 2.04 JND. Other matches move to the weak-state minimum, 0.5 JND less visible; they stay at least 3.1 JND from the current match. The fixed 2.5 JND target had no derivation.
+
+### Documented
+- construction.md §3.3: r rechecked under the new rule; Dawn still has a pair of states 0.61 JND apart at 1.30, so r stays 1.3125.
+
+### Tooling
+- `construct.py`: `STATE_ROLE` and `WEAK_JND` replace the per-state targets; a strong state has no target in the §9.3 search. `validate.py`: `LIMIT_FLOORS` current as of 1.11.0.
+
+## 1.10.2
+
+Ember's constraints checked against the guarantees. No value changes.
+
+### Changed
+- The §6.5 objective no longer penalizes an Ember closer than ΔE 0.06 to Afterglow. The penalty never acted (Ember is ΔE 0.216 from Afterglow in Dusk and 0.360 in Dawn), and both flavors rebuild identically without it, also with 40 restarts.
+
+### Added
+- Category minimum: Ember at least ΔE 0.080 from Afterglow in normal vision, the normal-vision minimum of the code colors.
+
+### Documented
+- construction.md §6.4: Ember's hue range searched against Afterglow ± 25° and against the hues nearest Afterglow among the anchors. Both lower the separation, so 45°–70° stays decided.
+
+### Tooling
+- `construct.py`: `EMBER_VS_AFTERGLOW` removed. `validate.py` and `docs.py`: the new check, its floors and guarantee row.
+
 ## 1.10.1
 
 The neutral chroma amplitude is searched against the guarantees. No value changes.

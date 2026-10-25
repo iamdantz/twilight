@@ -1,6 +1,6 @@
 # Twilight design system
 
-Version 1.10 · Flavors: Dusk (dark), Dawn (light)
+Version 1.12 · Flavors: Dusk (dark), Dawn (light)
 
 This document defines Twilight: what each color is, what it means, where it may go, and what it guarantees. It does not describe any particular application. A theme for any tool can be built from it by mapping that tool's regions onto the roles below.
 
@@ -257,7 +257,7 @@ The mapping is fixed by [construction.md, section 8](construction.md#8-syntax-ro
 
 Only comments, parameters and `this`/`self` are italic.
 
-Properties are uncolored on purpose, so code is not colored end to end.
+Properties are uncolored on purpose: they cover more of the screen than any other category the convention leaves open, so code is not colored end to end ([construction.md §8](construction.md#8-syntax-roles)).
 
 ## 8. Semantic states
 
@@ -288,12 +288,12 @@ Visibility is measured in JND, just-noticeable differences, where 1 JND is ΔE 0
 
 | | Token | Hex | Hue from | Visibility | Kind |
 |:-:|---|---|---|---|---|
-| <img src="https://placehold.co/16x16/351a08/351a08" width="16" height="16" alt="#351a08"> | `selection` | `#351a08` | Afterglow | 4.1 JND | transient |
+| <img src="https://placehold.co/16x16/391e0c/391e0c" width="16" height="16" alt="#391e0c"> | `selection` | `#391e0c` | Afterglow | 4.6 JND | transient |
 | <img src="https://placehold.co/16x16/260f02/260f02" width="16" height="16" alt="#260f02"> | `selection-inactive` | `#260f02` | Afterglow | 2.9 JND | transient |
 | <img src="https://placehold.co/16x16/2c240b/2c240b" width="16" height="16" alt="#2c240b"> | `find-match` | `#2c240b` | Gold | 4.1 JND | transient |
-| <img src="https://placehold.co/16x16/1d1500/1d1500" width="16" height="16" alt="#1d1500"> | `find-match-other` | `#1d1500` | Gold | 2.6 JND | transient |
+| <img src="https://placehold.co/16x16/1b1606/1b1606" width="16" height="16" alt="#1b1606"> | `find-match-other` | `#1b1606` | Gold | 2.0 JND | transient |
 | <img src="https://placehold.co/16x16/062221/062221" width="16" height="16" alt="#062221"> | `word-highlight` | `#062221` | Sea Salt | 2.0 JND | transient |
-| <img src="https://placehold.co/16x16/0b2827/0b2827" width="16" height="16" alt="#0b2827"> | `word-highlight-write` | `#0b2827` | Sea Salt | 3.0 JND | transient |
+| <img src="https://placehold.co/16x16/0f2929/0f2929" width="16" height="16" alt="#0f2929"> | `word-highlight-write` | `#0f2929` | Sea Salt | 3.3 JND | transient |
 | <img src="https://placehold.co/16x16/0e1a09/0e1a09" width="16" height="16" alt="#0e1a09"> | `diff-inserted` | `#0e1a09` | Grove | 2.0 JND | persistent |
 | <img src="https://placehold.co/16x16/22110e/22110e" width="16" height="16" alt="#22110e"> | `diff-removed` | `#22110e` | Coral | 2.0 JND | persistent |
 
@@ -304,9 +304,9 @@ Visibility is measured in JND, just-noticeable differences, where 1 JND is ΔE 0
 | <img src="https://placehold.co/16x16/ead5c9/ead5c9" width="16" height="16" alt="#ead5c9"> | `selection` | `#ead5c9` | Afterglow | 3.5 JND | transient |
 | <img src="https://placehold.co/16x16/f5e0d4/f5e0d4" width="16" height="16" alt="#f5e0d4"> | `selection-inactive` | `#f5e0d4` | Afterglow | 2.1 JND | transient |
 | <img src="https://placehold.co/16x16/ead8a6/ead8a6" width="16" height="16" alt="#ead8a6"> | `find-match` | `#ead8a6` | Gold | 4.7 JND | transient |
-| <img src="https://placehold.co/16x16/faeec9/faeec9" width="16" height="16" alt="#faeec9"> | `find-match-other` | `#faeec9` | Gold | 2.6 JND | transient |
+| <img src="https://placehold.co/16x16/f8eed1/f8eed1" width="16" height="16" alt="#f8eed1"> | `find-match-other` | `#f8eed1` | Gold | 2.0 JND | transient |
 | <img src="https://placehold.co/16x16/ceeef8/ceeef8" width="16" height="16" alt="#ceeef8"> | `word-highlight` | `#ceeef8` | Sea Salt | 2.0 JND | transient |
-| <img src="https://placehold.co/16x16/c5e4ee/c5e4ee" width="16" height="16" alt="#c5e4ee"> | `word-highlight-write` | `#c5e4ee` | Sea Salt | 3.0 JND | transient |
+| <img src="https://placehold.co/16x16/c0dee8/c0dee8" width="16" height="16" alt="#c0dee8"> | `word-highlight-write` | `#c0dee8` | Sea Salt | 3.8 JND | transient |
 | <img src="https://placehold.co/16x16/e0f6dd/e0f6dd" width="16" height="16" alt="#e0f6dd"> | `diff-inserted` | `#e0f6dd` | Grove | 2.1 JND | persistent |
 | <img src="https://placehold.co/16x16/f4dde0/f4dde0" width="16" height="16" alt="#f4dde0"> | `diff-removed` | `#f4dde0` | Coral | 2.1 JND | persistent |
 
@@ -477,7 +477,25 @@ Data series take the code colors in a fixed order, the same in every flavor, so 
 - Every series is also identified by a label, a legend entry next to it, or a marker shape ([rule 6](#11-rules)).
 - The plot area is Canvas, gridlines and axes Edge, tick labels Faint, values and titles Body or Ink. Labels inside filled marks use the chip label of §8, which reaches <!-- fact:series_label -->5.04<!-- /fact -->:1 on every series color.
 - To bring one series forward, draw the others in Control.
-- Continuous scales (heat maps, filled maps) are not defined. Encode magnitude by position or size, or print the values; never interpolate between palette colors.
+- Magnitude is shown with the two scales below, never by interpolating between palette colors.
+
+**Sequential** (one quantity, low to high): five steps of Ember from Canvas. **Diverging** (deviation from a middle value): two steps of Sky below, Canvas at the middle, two steps of Gold above. Every step is at least as far from its neighbors as the code colors must be from each other (4 JND in normal vision, 2 JND under color-vision deficiency), and so are the two diverging steps at the same distance from the middle. Every colored cell takes a label at 4.5:1 or more, in Ink or in the chip label of §8, whichever contrasts more. The method is in [construction.md §7.2](construction.md#72-continuous-scales).
+
+| Scale | Step | Dusk | Dawn |
+|---|---|---|---|
+| Sequential | 1 | <img src="https://placehold.co/16x16/3a3530/3a3530" width="16" height="16" alt="#3a3530"> `#3a3530` | <img src="https://placehold.co/16x16/d4c7bf/d4c7bf" width="16" height="16" alt="#d4c7bf"> `#d4c7bf` |
+| Sequential | 2 | <img src="https://placehold.co/16x16/66594f/66594f" width="16" height="16" alt="#66594f"> `#66594f` | <img src="https://placehold.co/16x16/b9a092/b9a092" width="16" height="16" alt="#b9a092"> `#b9a092` |
+| Sequential | 3 | <img src="https://placehold.co/16x16/958070/958070" width="16" height="16" alt="#958070"> `#958070` | <img src="https://placehold.co/16x16/9e7b66/9e7b66" width="16" height="16" alt="#9e7b66"> `#9e7b66` |
+| Sequential | 4 | <img src="https://placehold.co/16x16/c7aa93/c7aa93" width="16" height="16" alt="#c7aa93"> `#c7aa93` | <img src="https://placehold.co/16x16/83563b/83563b" width="16" height="16" alt="#83563b"> `#83563b` |
+| Sequential | 5 | <img src="https://placehold.co/16x16/fcd6b7/fcd6b7" width="16" height="16" alt="#fcd6b7"> `#fcd6b7` | <img src="https://placehold.co/16x16/67320a/67320a" width="16" height="16" alt="#67320a"> `#67320a` |
+| Diverging | −2 | <img src="https://placehold.co/16x16/74a7dd/74a7dd" width="16" height="16" alt="#74a7dd"> `#74a7dd` | <img src="https://placehold.co/16x16/475186/475186" width="16" height="16" alt="#475186"> `#475186` |
+| Diverging | −1 | <img src="https://placehold.co/16x16/41576d/41576d" width="16" height="16" alt="#41576d"> `#41576d` | <img src="https://placehold.co/16x16/959cba/959cba" width="16" height="16" alt="#959cba"> `#959cba` |
+| Diverging | 0 | <img src="https://placehold.co/16x16/11171b/11171b" width="16" height="16" alt="#11171b"> `#11171b` | <img src="https://placehold.co/16x16/eeeeef/eeeeef" width="16" height="16" alt="#eeeeef"> `#eeeeef` |
+| Diverging | +1 | <img src="https://placehold.co/16x16/6d6035/6d6035" width="16" height="16" alt="#6d6035"> `#6d6035` | <img src="https://placehold.co/16x16/b1a686/b1a686" width="16" height="16" alt="#b1a686"> `#b1a686` |
+| Diverging | +2 | <img src="https://placehold.co/16x16/dbba50/dbba50" width="16" height="16" alt="#dbba50"> `#dbba50` | <img src="https://placehold.co/16x16/766014/766014" width="16" height="16" alt="#766014"> `#766014` |
+
+- Values are binned into these steps. A scale with more bins repeats no step and borrows no other color; it uses fewer bins.
+- A scale is not a state: when the data encodes pass or fail, the semantic colors of [§8](#8-semantic-states) apply.
 
 ### 12.5 Limited targets
 
@@ -545,7 +563,7 @@ Each misuse below breaks a role or a guarantee. Ports are checked against this t
 | A fill on the current line | Comments fall below 4.5:1 | Edge borders ([rule 11](#11-rules)) |
 | Bright white for text in a light flavor | It is Raised, about 1.2:1 on Canvas | The default foreground or bold |
 | `#000000` or `#ffffff`, also in shadows and backdrops | [Principle 5](#1-principles) | The shadow colors of rule 13 |
-| A seventh series color, or colors interpolated into a scale | The separation of §12.4 is lost | Other in Control; position, size or labels |
+| A seventh series color, or colors interpolated into a scale | The separation of §12.4 is lost | Other in Control; the sequential or diverging steps of §12.4 |
 | State, links or series told apart by color alone | Readers with a color-vision deficiency lose them | Icon, label, underline, marker or position ([rule 6](#11-rules)) |
 | Gradients, glows, washes | [Rule 15](#11-rules) | Tone and Edge |
 | A color borrowed from another role to stand in for one the target lacks | Two meanings share a color | Leave the effect out (§12.5) |
@@ -569,8 +587,12 @@ Each misuse below breaks a role or a guarantee. Ports are checked against this t
 | Smallest code-color difference, color-vision deficiency | ΔE 0.061 | ΔE 0.040 |
 | Faint from every semantic color, every vision | 3.30 JND | 1.05 JND |
 | Twelve chromatic terminal colors, closest pair, every vision | ΔE 0.020 | ΔE 0.020 |
+| Ember from Afterglow, normal vision | ΔE 0.216 | ΔE 0.360 |
+| Scale steps, closest pair, normal vision | ΔE 0.115 | ΔE 0.095 |
+| Scale steps, closest pair, color-vision deficiency | ΔE 0.079 | ΔE 0.052 |
+| Scale cell labels, lowest | 5.23:1 | 4.71:1 |
 | Other series from every series, every vision | ΔE 0.158 | ΔE 0.078 |
-| Neutral row and control states, closest pair | 2.6 JND | 1.5 JND |
+| Neutral row and control states, closest pair | 2.9 JND | 1.5 JND |
 | Pure black or white | none | none |
 | Gamut | sRGB | sRGB |
 

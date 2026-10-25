@@ -1,6 +1,6 @@
 {
   "name": "Twilight",
-  "version": "1.10.1",
+  "version": "1.12.1",
   "series": {
     "order": ["sky", "ember", "gold", "sea-salt", "orchid", "grove"],
     "other": "control"
@@ -88,12 +88,12 @@
         }
       },
       "states": {
-        "selection": "#351a08",
+        "selection": "#391e0c",
         "selection-inactive": "#260f02",
         "find-match": "#2c240b",
-        "find-match-other": "#1d1500",
+        "find-match-other": "#1b1606",
         "word-highlight": "#062221",
-        "word-highlight-write": "#0b2827",
+        "word-highlight-write": "#0f2929",
         "diff-inserted": "#0e1a09",
         "diff-removed": "#22110e"
       },
@@ -114,7 +114,11 @@
         "#f6a6e1",
         "#78e7e4",
         "#eeeeef"
-      ]
+      ],
+      "scales": {
+        "sequential": ["#3a3530", "#66594f", "#958070", "#c7aa93", "#fcd6b7"],
+        "diverging": ["#74a7dd", "#41576d", "#11171b", "#6d6035", "#dbba50"]
+      }
     },
     "dawn": {
       "neutrals": {
@@ -201,9 +205,9 @@
         "selection": "#ead5c9",
         "selection-inactive": "#f5e0d4",
         "find-match": "#ead8a6",
-        "find-match-other": "#faeec9",
+        "find-match-other": "#f8eed1",
         "word-highlight": "#ceeef8",
-        "word-highlight-write": "#c5e4ee",
+        "word-highlight-write": "#c0dee8",
         "diff-inserted": "#e0f6dd",
         "diff-removed": "#f4dde0"
       },
@@ -224,7 +228,11 @@
         "#631f4c",
         "#0d4958",
         "#d6dadc"
-      ]
+      ],
+      "scales": {
+        "sequential": ["#d4c7bf", "#b9a092", "#9e7b66", "#83563b", "#67320a"],
+        "diverging": ["#475186", "#959cba", "#eeeeef", "#b1a686", "#766014"]
+      }
     }
   }
 }

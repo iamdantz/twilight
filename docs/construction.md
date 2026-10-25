@@ -26,7 +26,7 @@ Every parameter belongs to one level, and a flavor reads only the system and its
 
 | Level | Parameters |
 |---|---|
-| System | Seed and Afterglow (§2); the neutral curve (§3.1–3.2); the surface distances from r and L_ref (§3.3); Rail as a half step (§3.4); text targets (§3.5); accent families (§5); ANSI anchors, τ, gamut margin, φ, Ember's hue range and the optimizer (§6); syntax roles (§8); JND targets and state rules (§9) |
+| System | Seed and Afterglow (§2); the neutral curve (§3.1–3.2); the surface distances from r and L_ref (§3.3); Rail as a half step (§3.4); text targets (§3.5); accent families (§5); ANSI anchors, τ, gamut margin, φ, Ember's hue range and the optimizer (§6); syntax roles (§8); state visibility rules (§9) |
 | Category (dark, light) | Direction of each surface from Canvas; direction of the text search; code floor; β; chroma base; L₀ and Ember lightness ranges; state bounds (§4) |
 | Flavor (Dusk, Dawn) | Its category; Canvas and Ink lightness; neutral chroma amplitude |
 
@@ -91,7 +91,7 @@ Placement: a 50-step bisection between Canvas and L 0.02 (darker) or L 0.999 (li
 | 1.325 | the same | the same |
 | 1.3375–1.40 | the same, Ink keeps falling | worst color-vision ΔE below 0.040 |
 
-r is the smallest value, on a 0.0125 grid, at which both flavors keep every guarantee, every pair of background states is at least 1 JND apart, and Dusk's write highlight reaches its target. Dawn's results were the same with 10 and with 20 optimizer restarts, so the window is a property of the geometry, not of the search. Larger r moves Raised further from Canvas, which lowers Ink on Raised (Dusk 13.76 → 13.25:1, Dawn 13.36 → 12.84:1); the Ink color itself does not change. Code colors do not depend on r: they are solved against Canvas, which r does not move.
+r is the smallest value, on a 0.0125 grid, at which both flavors keep every guarantee and every pair of background states is at least 1 JND apart. The sweep was made with the fixed state targets used until 1.10; rebuilt with the strong and weak states of §9.1, Dawn still has a pair 0.61 JND apart at 1.30 and none at 1.3125, so r does not change. Dawn's results were the same with 10 and with 20 optimizer restarts, so the window is a property of the geometry, not of the search. Larger r moves Raised further from Canvas, which lowers Ink on Raised (Dusk 13.76 → 13.25:1, Dawn 13.36 → 12.84:1); the Ink color itself does not change. Code colors do not depend on r: they are solved against Canvas, which r does not move.
 
 ### 3.4 Rail: a half step
 
@@ -236,6 +236,10 @@ Code needs seven distinguishable colors (keyword, function, type, string, consta
 
 The optimizer placed Ember at the light edge of its range in Dusk, `#fcd6b7` (L 0.900, h 61°), and near the dark edge in Dawn, `#67320a` (L 0.381, h 52°). Ember separates from Gold by lightness, which is the only dimension that survives every type of color-vision deficiency.
 
+**The hue range was searched against two rules.** The tolerance the six other hues use, Afterglow ± 25° (27°–77°), lowers Dusk's color-vision separation from ΔE 0.0606 to 0.0565 (0.0596 with 40 restarts) and sends Dawn's Ember to 41°, where the closest pair of states falls below 1 JND. Hues closer to Afterglow than to the red and yellow anchors (41°–80°) lower Dusk to 0.0550 and break three of Dawn's minimums. The coordinate descent of §6.5 is a local search: a wider range changes where restarts begin and which optimum they reach, not only what they may reach. Both published Embers lie inside 45°–70°, not at its edges, and the range stays decided.
+
+**Distance from Afterglow.** Ember is ΔE 0.216 from Afterglow in Dusk and 0.360 in Dawn. In Dusk the cursor is Afterglow itself, so the pair is already in the objective of §6.5. A category minimum of ΔE 0.080, the normal-vision minimum of the code colors, keeps any flavor's Ember from approaching Afterglow (§10.1).
+
 ### 6.5 Joint optimization
 
 ```
@@ -243,8 +247,7 @@ maximize   min over vision ∈ {normal, deuteranopia, protanopia, tritanopia} an
                every pair (i, j) of the seven colors, and every code color i against the cursor:
                ΔE_OK( sim_vision(cᵢ), sim_vision(cⱼ) )
 subject to |hᵢ − anchorᵢ| ≤ 25°,  Ember constraints above,
-           every color ≥ floor on every code surface,
-           ΔE_OK(Ember, Afterglow) ≥ 0.06 (normal vision)
+           every color ≥ floor on every code surface
 ```
 
 Simulations are full-severity dichromacy (ColorAide implementation).
@@ -263,7 +266,7 @@ The search is deterministic:
 - For every candidate, L₀ is re-solved (§6.2): 18-step bisection over 0.50–0.95 (Dusk, returns
   the upper bound) or 0.20–0.70 (Dawn, returns the lower bound), so the weakest of the six hues
   meets the floor.
-- Score = min ΔE over the pairs above × four visions − 2 · max(0, 0.06 − ΔE(Ember, Afterglow)).
+- Score = min ΔE over the pairs above × four visions.
   A candidate whose Ember is below the floor scores −1. A candidate whose rendered hue leaves ±25°
   of its exact anchor (§6.1) scores −2, so it is never accepted.
 
@@ -327,11 +330,34 @@ The result is Sky, Ember, Gold, Sea Salt, Orchid, Grove. A shared order costs Da
 
 Series past the sixth are grouped as Other in Control. Faint was rejected for that role: under color-vision deficiency it sits 1.05 JND from Dawn's Grove, while Control is at least ΔE 0.078 from every series in both flavors.
 
+
+### 7.2 Continuous scales
+
+A continuous scale is a path from Canvas to a series color: at the color's hue, lightness moves from Canvas's to the color's while chroma grows from zero to the color's, so the first steps are tints of the hue and never pass through gray. Steps are placed at equal ΔE OKLab along the path, the last one on the color itself. A diverging scale runs two such paths from Canvas in opposite directions, both cut at the length of the shorter one, so a step on either side is as far from the middle as its counterpart.
+
+A scale is accepted when, in every flavor:
+
+- adjacent steps, and Canvas against the first step, are at least ΔE 0.080 apart in normal vision and 0.040 under every color-vision deficiency, the separation the code colors keep (§10.1);
+- in a diverging scale, the two steps at the same distance from the middle meet the same separation, so the sign of a value survives color-vision deficiency;
+- every colored step takes a label at 4.5:1 or more, in Ink or in the chip label.
+
+The search tries every series color, and every pair of series colors, from 1 to 15 steps, and keeps the most steps that pass in Dusk and Dawn.
+
+| Sequential, steps passing in both flavors | Lowest label |
+|---|---|
+| **Ember, 5** | **5.23 Dusk, 4.71 Dawn** |
+| Sky, 5 | 4.85, 4.65 |
+| Gold, Sea Salt, Orchid, Grove | fewer, or a step below 4.5:1 for every label |
+
+Ember and Sky tie at five steps; Ember has the higher lowest label. Ember holds eight steps in Dusk and seven in Dawn by separation alone, but with seven a middle step in Dawn reaches only 4.34:1 for any label.
+
+Every pair of series colors reaches one step per side, and Sky–Gold and Orchid–Grove reach two. Two tints of different hues near Canvas are hard to tell apart under color-vision deficiency, which is what limits the pairs. Sky–Gold keeps the larger worst-case separation over every pair of steps (ΔE 0.079 Dusk, 0.052 Dawn), so the diverging scale is Sky below the middle and Gold above it.
+
 ---
 
 ## 8. Syntax roles
 
-Each code category gets one color, the same in both flavors. The assignment comes from a study of 207,361 tokens of real TypeScript, JavaScript and Python: the share of the screen each category occupies, which categories sit next to each other, and 5,040 candidate assignments scored in 36 scenarios. The corpus is not part of this repository. The assignment it produced is fixed here as a decided parameter (§12), so both flavors rebuild from it without the study:
+Each code category gets one color, the same in both flavors.
 
 | Category | Color | Reason |
 |---|---|---|
@@ -341,7 +367,7 @@ Each code category gets one color, the same in both flavors. The assignment come
 | Type | Sea Salt | The cyan slot, between Grove and Sky. |
 | Constant | Gold | The yellow slot. |
 | Parameter | Ember | Afterglow's family, separated from it by lightness (§6.4). |
-| Property | uncolored (Body) | One category stays uncolored, so code is not colored end to end. |
+| Property | uncolored (Body) | It covers more of the screen than parameters, so leaving it uncolored colors the least code. |
 
 Three rules hold the assignment in place:
 
@@ -349,7 +375,13 @@ Three rules hold the assignment in place:
 - Afterglow never colors code. It is the accent, and the accent never colors content.
 - No two categories share a color.
 
-Every code color meets the flavor floor on every code surface (§6.6), and the seven are optimized together for distinctness (§6.5), so the assignment cannot make two categories hard to tell apart.
+**The first five follow the ANSI convention.** Terminals and editors already give keywords magenta, strings green, functions blue, types cyan and constants yellow, and the six colors are anchored to those slots (§6.1). Following the convention costs no guaranteed legibility: every pair of code colors keeps the separation of §10.1 whichever category it colors.
+
+**The corpus study.** The auditor's `syntax_study.py` measures how much of the screen each category covers and which categories sit next to each other, on the source of 34 packages pinned in `syntax/manifest.json` by version and SHA-256: 23 with JavaScript, 22 with TypeScript and 6 with Python, about 11.9 million characters in 3,134 files. Only packages whose license asks for no attribution are used (0BSD, MIT-0, Unlicense, CC0-1.0), checked in the registry and in the license files of each archive; bundled third-party code, generated and minified files, tests and documentation are left out. Tree-sitter classifies every token. Each package weighs the same, so no single project dominates a language. The corpus is not stored here: `fetch` downloads it and verifies every hash and license, and `measure` rebuilds `syntax/stats.json` byte for byte.
+
+**What the study decides.** The convention leaves one choice open: of parameter and property, which takes Ember and which stays uncolored. Distinctness does not separate the two options: weighted by how often categories sit side by side, across three languages, two flavors and four visions, they score 0.1200 and 0.1206 in their worst scenario, and each wins about half of the resamplings of the corpus. Screen share does: properties cover 6.37 % of the screen and parameters 3.67 % (mean of the three languages), and properties cover more with any single package left out and in every one of 500 bootstrap resamplings. Property stays uncolored, so the least code is colored.
+
+**What distinctness alone would choose.** Ranked by that same distinctness score, every one of the 5,040 assignments of the six colors and Body to the seven categories, the published one is 1,392nd (0.74 of the best possible in its worst scenario; the best reaches 0.84). The leaders leave strings uncolored or color keywords gold, and the first three lie within 0.01 of each other, so no assignment stands out. The convention is kept; `syntax_roles.py` reproduces the ranking.
 
 ---
 
@@ -359,20 +391,27 @@ Every code color meets the flavor floor on every code surface (§6.6), and the s
 
 1 JND = ΔE_OK 0.02 against Canvas (≈ the threshold of a just-noticeable color difference in OKLab).
 
-| State | Target |
-|---|---|
-| `selection` | 4 JND |
-| `find-match` | 5 JND |
-| `word-highlight-write` | 3 JND |
-| `find-match-other` | 2.5 JND |
-| `selection-inactive`, `word-highlight`, diff lines | 2 JND |
+States come in pairs that share a hue. In each pair, the **strong** state marks what the reader is acting on, and the **weak** one marks what accompanies it:
+
+| Pair | Strong | Weak |
+|---|---|---|
+| Selection | `selection` | `selection-inactive` |
+| Search | `find-match` (the current match) | `find-match-other` |
+| Word highlight | `word-highlight-write` | `word-highlight` (read) |
+| Diff lines | none | `diff-inserted`, `diff-removed` |
+
+- A **strong** state takes the most visible color the bounds of §9.2 allow.
+- A **weak** state takes 2 JND, the visibility minimum of §10.1. Diff lines are weak because they are code surfaces and cover whole lines.
+
+No visibility is chosen by hand: the bounds set the strong states and the minimum sets the weak ones. Until 1.10 each state had a fixed target (4, 5, 3, 2.5 and 2 JND). Three were out of reach in some flavor, and Dusk's current match ended below its selection. With the rule above, Dusk's selection goes from 4.09 to 4.61 JND and the write highlight from 3.05 to 3.25 (Dusk) and 3.79 (Dawn); other matches go from about 2.6 to 2.0 JND. The mean visibility of the eight states stays within 0.03 JND, while every strong state ends at least as far from its weak partner as before.
 
 ### 9.2 Bounds
 
 - **Transient states** may move in lightness, but Faint text must keep 4.5:1 on them, which also keeps every higher text level above its guarantee.
 - **Persistent states (diff lines) are code surfaces.** The code floor is solved including them (§6.6).
 - **Lightness bounded by the surfaces.** Toward the text, the only limit is Faint at 4.5:1. Away from the text, the lightness scan stops at the outermost surface: L_Shell in Dusk, L_Canvas in Dawn. The bound applies in OKLCH before gamut mapping and 8-bit rounding, so a rendered state can sit up to ΔL 0.001 beyond it (Dawn `diff-inserted` L 0.950 against Canvas 0.949). Minimum chroma 0.010 so the hue is recognizable.
-- **If a target is unreachable** inside those bounds, the state takes the maximum visibility the bounds allow and keeps its hue. It never falls back to a neutral. Dusk `find-match` reaches 4.1 of 5 JND; Dawn `selection` reaches 3.5 of 4 and Dawn `find-match` 4.7 of 5. All are documented as limits (§11).
+- **Chroma bounded by Canvas.** A state's chroma never exceeds what sRGB holds at Canvas's lightness for its hue. A state is a tint that the background's own lightness can carry: without this bound the strongest states turn into saturated fills, such as Dawn's current match at 8.7 JND in a vivid yellow (`#ffd545`, chroma 0.160) instead of 4.74 JND (chroma 0.068).
+- **Strong states stop at these bounds** and keep their hue; they never fall back to a neutral. Every weak state reaches 2 JND inside them in both flavors.
 
 ### 9.3 Search
 
@@ -381,22 +420,24 @@ scanned outward from Canvas in both directions in steps of 0.001. A scan stops a
 bounds (Dusk: L_Shell to 1.0; Dawn: 0 to L_Canvas), at the first out-of-gamut color, or at the first
 color on which Faint falls below 4.5:1.
 
-The first step in each direction that reaches the target is a candidate, with cost
-1000 · |ΔL| + 100 · C. The lowest cost wins. If no candidate reaches the target, the state takes
-the most visible color found (§9.2).
+Because every scan starts at Canvas and stops at the first out-of-gamut color, a chroma that sRGB cannot hold at Canvas's lightness stops at its first step: the scan applies the chroma bound of §9.2.
+
+For a weak state, the first step in each direction that reaches 2 JND is a candidate, with cost
+1000 · |ΔL| + 100 · C. The lowest cost wins. A strong state has no target: it takes the most
+visible color found (§9.2).
 
 The selection hue is Afterglow's hue.
 
 ### 9.4 Separation between states
 
-Two states that share a hue differ only in visibility, so when a bound stops the stronger one short of its target, the two can land on nearly the same color. Each state is therefore built after the ones before it, in a fixed order, and kept at least 1 JND (ΔE_OK 0.02) from every state already built:
+Two states that share a hue differ only in visibility, so when a bound stops the stronger one, the two can land on nearly the same color. Each state is therefore built after the ones before it, in a fixed order, and kept at least 1 JND (ΔE_OK 0.02) from every state already built:
 
 ```
 diff-inserted, diff-removed, selection, selection-inactive,
 find-match, find-match-other, word-highlight, word-highlight-write
 ```
 
-Visibility comes first. Among the colors that reach the state's target, the lowest-cost one that is 1 JND from every earlier state wins; if none is, the lowest-cost one wins, as in §9.3. If no color reaches the target, the most visible color that keeps the separation is taken, or the most visible color found when none keeps it.
+Visibility comes first. For a weak state, among the colors that reach 2 JND, the lowest-cost one that is 1 JND from every earlier state wins; if none is, the lowest-cost one wins, as in §9.3. A strong state takes the most visible color that keeps the separation, or the most visible color found when none keeps it.
 
 In Dusk this moves two states. `selection-inactive` goes from 2.1 to 2.9 JND, and `word-highlight-write` from 2.7 to 2.5 JND with half the chroma. The two word highlights were 0.80 JND apart, so a read and a write of the same variable looked the same; they are now 1.23 JND apart. The inactive selection and the removed diff go from 0.54 to 1.08 JND. With the surface distances of 1.4, Dawn had no color for the inactive selection that reached its target 1 JND from the selection; with those of §3.3, every pair of states in both flavors is at least 1 JND apart.
 
@@ -429,7 +470,7 @@ Twilight holds its flavors to two levels of floor.
 | `accent-focus`, `on-accent`, `accent-text` | 3, 4.5, 7 | 3, 4.5, 4.5 |
 | Code colors plus cursor, ΔE OKLab, normal vision | ≥ 0.080 (4 JND) | the same |
 | The same, worst color-vision deficiency | ≥ 0.040 (2 JND) | the same |
-| Every background state from Canvas | ≥ 2 JND, the lowest target of §9.1 | the same |
+| Every background state from Canvas | ≥ 2 JND, the visibility of weak states (§9.1) | the same |
 | Every pair of background states | ≥ 1 JND (§9.4) | the same |
 | Faint on transient states | 4.5:1 (§9.2) | the same |
 | Subtle on an Edge fill | 4.5:1 | the same |
@@ -439,6 +480,9 @@ Twilight holds its flavors to two levels of floor.
 | Semantic colors on every surface and on Edge | ≥ 3:1 (icons and bars; text uses `accent-text`) | the same |
 | Faint from every semantic color, every vision | ≥ 1 JND | the same |
 | Twelve chromatic terminal colors, closest pair, every vision | ≥ 0.010 (½ JND) | the same |
+| Ember from Afterglow, normal vision | ≥ 0.080 (4 JND) | the same |
+| Steps of each continuous scale, normal vision / every color-vision deficiency | ≥ 0.080 / ≥ 0.040 (§7.2) | the same |
+| Label on every colored step of a scale | 4.5:1 | the same |
 
 **Flavor floors** are what each flavor reaches today. They keep a change from quietly degrading Dusk or Dawn. A flavor floor may go down only when the new value still meets the category minimum, the version's changelog names the check under Lower with its cause and the benefit it pays for, and the loss is imperceptible or stays well inside the standard: under 1 JND for color and state measures, or a contrast that stays clearly above its minimum. A new flavor is checked against the minimums of its category, not against another flavor's floors; once accepted, its own measured values become its floors.
 
@@ -451,14 +495,13 @@ Both levels live in the auditor's validator, which reports every value next to i
 | Limit | Reason |
 |---|---|
 | Dawn code colors are AA (4.5:1), not AAA | Tested with the full optimizer at 7:1: the worst color-vision separation falls from ΔE 0.040 to 0.023 and normal-vision separation from 0.088 to 0.056, with yellow turning olive and blue turning navy. AA keeps the code colors as distinct as Dusk's. |
-| Dawn `selection` is 3.5 JND (target 4) | A stronger tint would push Faint text below 4.5:1. Near L 0.9 the sRGB gamut of orange is narrow (Cmax ≈ 0.06), so chroma cannot make up the difference. |
-| Dawn `find-match` is 4.7 JND (target 5) | Same bound. |
-| Dusk `find-match` is 4.1 JND (target 5) | Same bound. |
+| Dawn `selection` is the least visible strong state (3.45 JND; Dusk's is 4.61) | Strong states stop at the bounds of §9.2. At Canvas's lightness, L 0.95, sRGB holds orange only up to chroma 0.029, and a darker tint would push Faint below 4.5:1. A search over every sRGB color confirms all six strong states at their ceiling within 0.02 JND (rendered hue within 1° to 2° of the state hue). |
 | ANSI black (dark flavors) and white (light flavors) are about 1.6:1 on Canvas | Convention: the slot that matches the background is used mostly as a background, so it maps to Edge. The other is a text level, and bright black (Faint) is readable as text. |
 | Closest pairs under color-vision deficiency: Sky–Orchid, Gold–Grove and Sea Salt–Grove in Dusk (ΔE 0.061–0.062); Sea Salt–Grove and Orchid–Sea Salt in Dawn (ΔE 0.040–0.041) | No seven-hue palette separates every pair for every vision type. These are the smallest separations the joint optimization (§6.5) reaches. |
 | Faint is 1.05 JND from Grove under color-vision deficiency in Dawn (Sea Salt 1.17, Orchid 1.21) | In a light flavor the code floor and Faint are both 4.5:1, so they share luminance, the dimension color-vision deficiency keeps. Three ways out were measured and rejected: adding these pairs to the §6.5 objective (code separation falls to ΔE 0.024), raising the code floor to 4.75 or 5.0 (Faint comes closer, to 0.71 and 0.54 JND), and darkening Faint (at best 1.24 JND at 5.5:1, which breaks the 4.5, 7, 10.9 text steps). The six semantic colors span Faint's whole range of lightness. Version-control markers therefore carry a letter or an icon. |
 | Dawn's worst color-vision separation of the code colors is ΔE 0.0402, 0.4 % above its minimum | It is the optimizer's maximum: 40 restarts give the same value. No parameter raises it without breaking another minimum: gamut margin 0.88 to 0.94, τ 0.10 to 0.20, Afterglow's chroma as the base, neutral amplitude 0.03 and 0.04, Canvas L 0.94 and 0.96. At L 0.96 it reaches 0.0417, but the closest pair of states falls to 0.50 JND and Dawn's Canvas would no longer be Dusk's Ink. A system change that lowers it fails validation. |
 | The twelve chromatic terminal colors are about 1 JND apart at their closest pair under color-vision deficiency (ΔE 0.0201 Dusk, 0.0195 Dawn) | Twelve colors with six shared hues leave each bright near another hue's normal. The bright step is already the one that maximizes this pair (§6.7). Terminal output that must be told apart by color-vision deficient readers relies on more than color, as rule 6 requires everywhere. |
+| The diverging scale has two steps per side | Near Canvas, tints of two hues fall close together under color-vision deficiency. No pair of series colors keeps three steps per side at the code colors' separation (§7.2). |
 | OKLCH hue drift in near-neutrals | Below C 0.002, 8-bit quantization makes hue undefined (Dusk's Ink, Dawn's Canvas). This is invisible by definition. |
 
 ## 12. Parameters: decided vs derived
@@ -475,13 +518,12 @@ Both levels live in the auditor's validator, which reports every value next to i
 | Anchors (flavor) | Dusk: Canvas L 0.20, Ink L 0.95. Dawn: Canvas L 0.95, Ink L 0.20 | The same two neutrals, roles exchanged |
 | Chroma base | C_Afterglow / φ (Dusk), C_seed / φ (Dawn) | Keeps the accent dominant; the light flavor is bounded by the gamut at 4.5:1 (§6.3) |
 | Hue freedom | ±25° from ANSI anchors | Preserves meaning |
-| Ember hue range | 45°–70° | Keeps it in the accent family |
+| Ember hue range | 45°–70° | Keeps it in the accent family; Afterglow ± 25° and the hues nearest Afterglow among the anchors were measured and give lower separation (§6.4) |
 | Floors | 7:1 Dusk, 4.5:1 Dawn | AAA / AA |
 | Text targets | 4.5, 7.0, 10.89 (7²/4.5); control 3.0 | WCAG thresholds plus one geometric step |
-| JND targets | §9.1 | Visibility per state |
 | State order and separation | §9.4, 1 JND | States that share a hue stay distinguishable |
 | Gamut margin | 0.92 · Cmax | Safety margin; Dawn meets every minimum from 0.92 to 0.932 (§6.3) |
-| Syntax roles | §8 | Fixed from the token study; one color per category, Coral and Afterglow out of code |
+| Syntax roles | §8 | Keyword, string, function, type and constant by the ANSI convention; Coral and Afterglow out of code |
 | Series order | Sky, Ember, Gold, Sea Salt, Orchid, Grove; Other in Control (§7.1) | Searched on Dusk and Dawn and shared, so a series keeps its color in every flavor |
 
 ### Resolved (searched against the guarantees)
@@ -493,6 +535,9 @@ These were searched over a range, and the published value is the one the guarant
 | Surface ratio (system) | r = 1.3125 at L_ref = 0.20, as ΔE_OK distances (§3.3) | The smallest r at which both flavors keep every guarantee and every pair of states is 1 JND apart (§3.3) |
 | Bright step (system) | 0.38 toward Ink | The step from 0.29 to 0.89, in steps of 0.005, that keeps every bright 2 JND from its normal and from Ink and gives the twelve chromatic ANSI colors the largest closest pair in every vision (§6.7) |
 | Neutral chroma amplitude (flavor, the same in every flavor) | 0.035 | The largest value at which Dusk reaches its best code-color separation, within the range where Dawn meets every minimum (0.020 to 0.0375), searched in steps of 0.0025 (§3.2) |
+| State visibility | strong states at the bound of §9.2; weak states at 2 JND | Set by the bounds and by the minimum of §10.1, with no number of its own (§9.1) |
+| Continuous scales | sequential: Ember, 5 steps; diverging: Sky and Gold, 2 steps each | The series color and pair with the most steps that keep the code colors' separation and an AA label in both flavors (§7.2) |
+| Uncolored code category | property (parameter takes Ember) | The free category with the larger screen share in the corpus study (§8) |
 | Warm tilt τ (system) | 0.15 | The only value from 0.10 to 0.20, in steps of 0.01, at which both flavors meet every minimum (§6.3) |
 
 ### Measured (from data)
@@ -537,7 +582,7 @@ for variant in (Dusk, Dawn):
     hues      ← optimize(§6.5) against the worst of {canvas, diff bgs}
     accents   ← for each of the 8 colors, the five tokens of §5
     brights   ← L + (L_ink − L)/3
-    states    ← JND targets under transient / persistent bounds (§9.3), 1 JND apart in order (§9.4)
+    states    ← strong at the bound, weak at 2 JND (§9.1–9.3), 1 JND apart in order (§9.4)
     validate  ← every pairing in §10
 ```
 

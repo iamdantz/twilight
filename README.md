@@ -130,7 +130,7 @@ A theme is named by its flavor: **Twilight Dusk**, **Twilight Dawn**.
 
 </details>
 
-Machine-readable values for both flavors, the accent families, background states, the 16 terminal colors and the order of data series are in [palette/twilight.json](palette/twilight.json).
+Machine-readable values for both flavors, the accent families, background states, the 16 terminal colors, the order of data series and the continuous scales are in [palette/twilight.json](palette/twilight.json).
 
 ## Guarantees
 
