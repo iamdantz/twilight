@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.11.1
+
+The ceilings of the strong states, verified. No value changes.
+
+### Documented
+- construction.md §9.2: a state's chroma never exceeds what sRGB holds at Canvas's lightness for its hue. The §9.3 search already applied this bound, since every scan starts at Canvas and stops at the first out-of-gamut color; without it the strongest states become saturated fills (Dawn's current match would reach 8.7 JND in `#ffd545`).
+- A search over every sRGB color confirms the six strong states at their ceiling within 0.02 JND.
+- construction.md §11: the three rows for state targets out of reach are replaced by one: Dawn's selection is the least visible strong state, and why.
+
+### Tooling
+- `validate.py`: a rule checks every state's chroma against the bound (0.002 tolerance for 8-bit rounding).
+- `validate.py --compare`: a lowered floor or limit may be declared under Lower in any CHANGELOG entry newer than the base, so a pull request that spans several versions is checked against each entry, not only the latest.
+
 ## 1.11.0
 
 State visibility follows from the bounds and the minimum, with no fixed targets.

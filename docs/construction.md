@@ -381,6 +381,7 @@ No visibility is chosen by hand: the bounds set the strong states and the minimu
 - **Transient states** may move in lightness, but Faint text must keep 4.5:1 on them, which also keeps every higher text level above its guarantee.
 - **Persistent states (diff lines) are code surfaces.** The code floor is solved including them (§6.6).
 - **Lightness bounded by the surfaces.** Toward the text, the only limit is Faint at 4.5:1. Away from the text, the lightness scan stops at the outermost surface: L_Shell in Dusk, L_Canvas in Dawn. The bound applies in OKLCH before gamut mapping and 8-bit rounding, so a rendered state can sit up to ΔL 0.001 beyond it (Dawn `diff-inserted` L 0.950 against Canvas 0.949). Minimum chroma 0.010 so the hue is recognizable.
+- **Chroma bounded by Canvas.** A state's chroma never exceeds what sRGB holds at Canvas's lightness for its hue. A state is a tint that the background's own lightness can carry: without this bound the strongest states turn into saturated fills, such as Dawn's current match at 8.7 JND in a vivid yellow (`#ffd545`, chroma 0.160) instead of 4.74 JND (chroma 0.068).
 - **Strong states stop at these bounds** and keep their hue; they never fall back to a neutral. Every weak state reaches 2 JND inside them in both flavors.
 
 ### 9.3 Search
@@ -389,6 +390,8 @@ For each hue, chroma rises from 0.010 to 0.140 in steps of 0.001. For each chrom
 scanned outward from Canvas in both directions in steps of 0.001. A scan stops at the lightness
 bounds (Dusk: L_Shell to 1.0; Dawn: 0 to L_Canvas), at the first out-of-gamut color, or at the first
 color on which Faint falls below 4.5:1.
+
+Because every scan starts at Canvas and stops at the first out-of-gamut color, a chroma that sRGB cannot hold at Canvas's lightness stops at its first step: the scan applies the chroma bound of §9.2.
 
 For a weak state, the first step in each direction that reaches 2 JND is a candidate, with cost
 1000 · |ΔL| + 100 · C. The lowest cost wins. A strong state has no target: it takes the most
@@ -461,9 +464,7 @@ Both levels live in the auditor's validator, which reports every value next to i
 | Limit | Reason |
 |---|---|
 | Dawn code colors are AA (4.5:1), not AAA | Tested with the full optimizer at 7:1: the worst color-vision separation falls from ΔE 0.040 to 0.023 and normal-vision separation from 0.088 to 0.056, with yellow turning olive and blue turning navy. AA keeps the code colors as distinct as Dusk's. |
-| Dawn `selection` is 3.5 JND (target 4) | A stronger tint would push Faint text below 4.5:1. Near L 0.9 the sRGB gamut of orange is narrow (Cmax ≈ 0.06), so chroma cannot make up the difference. |
-| Dawn `find-match` is 4.7 JND (target 5) | Same bound. |
-| Dusk `find-match` is 4.1 JND (target 5) | Same bound. |
+| Dawn `selection` is the least visible strong state (3.45 JND; Dusk's is 4.61) | Strong states stop at the bounds of §9.2. At Canvas's lightness, L 0.95, sRGB holds orange only up to chroma 0.029, and a darker tint would push Faint below 4.5:1. A search over every sRGB color confirms all six strong states at their ceiling within 0.02 JND (rendered hue within 1° to 2° of the state hue). |
 | ANSI black (dark flavors) and white (light flavors) are about 1.6:1 on Canvas | Convention: the slot that matches the background is used mostly as a background, so it maps to Edge. The other is a text level, and bright black (Faint) is readable as text. |
 | Closest pairs under color-vision deficiency: Sky–Orchid, Gold–Grove and Sea Salt–Grove in Dusk (ΔE 0.061–0.062); Sea Salt–Grove and Orchid–Sea Salt in Dawn (ΔE 0.040–0.041) | No seven-hue palette separates every pair for every vision type. These are the smallest separations the joint optimization (§6.5) reaches. |
 | Faint is 1.05 JND from Grove under color-vision deficiency in Dawn (Sea Salt 1.17, Orchid 1.21) | In a light flavor the code floor and Faint are both 4.5:1, so they share luminance, the dimension color-vision deficiency keeps. Three ways out were measured and rejected: adding these pairs to the §6.5 objective (code separation falls to ΔE 0.024), raising the code floor to 4.75 or 5.0 (Faint comes closer, to 0.71 and 0.54 JND), and darkening Faint (at best 1.24 JND at 5.5:1, which breaks the 4.5, 7, 10.9 text steps). The six semantic colors span Faint's whole range of lightness. Version-control markers therefore carry a letter or an icon. |

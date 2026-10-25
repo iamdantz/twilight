@@ -219,6 +219,11 @@ def rules(F, flavor):
         if want != got.lower():
             errs.append(f"{flavor}: ansi[{i}] is {got}, the bright rule (§6.7, step {k.BRIGHT_STEP}) gives {want}")
     n = F["neutrals"]
+    Lc = k.oklch_of(n["canvas"])[0]
+    for name, hx in F["states"].items():          # construction.md §9.2: chroma bounded by Canvas's lightness
+        _, C, h = k.oklch_of(hx)
+        if C > k.cmax(round(Lc, 3), round(h, 1)) + 0.002:
+            errs.append(f"{flavor}: state {name} chroma {C:.4f} exceeds what sRGB holds at Canvas's lightness")
     ink, body = (min(k.contrast(n[x], n[y]) for y in SURF) for x in ("ink", "body"))
     if ink <= body:
         errs.append(f"{flavor}: Ink ({ink:.2f}:1) must contrast more than Body ({body:.2f}:1) on every surface")
@@ -504,13 +509,19 @@ def minimum_tables(snap):
     return F, found.get("LIMIT_FLOORS"), found.get("MINIMUMS")
 
 
-def lower_section(snap):
-    """The '### Lower' section of the latest CHANGELOG entry, or "" when there is none."""
-    text = snap.read("CHANGELOG.md")
-    entries = re.split(r"^## (?=\d+\.\d+\.\d+)", text, flags=re.M)
-    if len(entries) < 2 or not (m := re.search(r"^### Lower\b.*?(?=^### |\Z)", entries[1], flags=re.M | re.S)):
-        return ""
-    return m.group(0)
+def lower_section(text, since=None):
+    """The '### Lower' sections of the CHANGELOG entries newer than version `since` (only the latest entry when
+    `since` is None), joined; "" when there is none. A change spanning several versions declares each lowering in
+    the entry of the version that made it."""
+    vkey = lambda v: tuple(int(x) for x in v.split("."))
+    out = []
+    for i, entry in enumerate(re.split(r"^## (?=\d+\.\d+\.\d+)", text, flags=re.M)[1:]):
+        version = entry.split(None, 1)[0]
+        if (since is None and i > 0) or (since is not None and vkey(version) <= vkey(since)):
+            break
+        if m := re.search(r"^### Lower\b.*?(?=^### |\Z)", entry, flags=re.M | re.S):
+            out.append(m.group(0))
+    return "\n".join(out)
 
 
 def declared(lower, name):
@@ -546,7 +557,7 @@ def run(snap, json_path="palette/twilight.json", do_rebuild=True):
         rules=[e for f in P for e in rules(P[f], f)] + series_rules(raw), reproduction=repro_errs,
         consistency=version_checks(snap, raw) + doc_checks(snap, P, M) + construction_checks(snap, P, meta) + link_checks(snap)
                     + floor_table_checks(P, category) + generated_checks(snap, P),
-        palette=P, tables=minimum_tables(snap), lower=lower_section(snap),
+        palette=P, tables=minimum_tables(snap), changelog=snap.read("CHANGELOG.md"), version=raw.get("version"),
     )
 
 
@@ -596,8 +607,8 @@ def failed(r):
 
 def minimum_changes(base, prop, lines):
     """Changes to the floor tables themselves, base against proposal.
-    A category minimum may never go down. A flavor floor or known limit may go down only when the latest CHANGELOG
-    entry names its check, in backticks, under '### Lower' (the new floor must still meet the minimum; see
+    A category minimum may never go down. A flavor floor or known limit may go down only when a CHANGELOG entry newer
+    than the base names its check, in backticks, under '### Lower' (the new floor must still meet the minimum; see
     floor_table_checks). A removed check or table is a regression."""
     out = []
     (bF, bL, bM), (pF, pL, pM) = base["tables"], prop["tables"]
@@ -645,6 +656,7 @@ def compare(base, prop):
     A floor fails when it is below its FLOORS entry; a known limit fails when it is below LIMIT_FLOORS.
     The baseline snapshot is reported for context only: a value may move as long as it stays above its minimum."""
     lines, regressions = [], []
+    prop["lower"] = lower_section(prop["changelog"], base["version"])
     old = {(x["flavor"], x["check"]): x for x in base["floors"]}
     for p in prop["floors"]:
         if (b := old.get((p["flavor"], p["check"]))) and abs(d := p["value"] - b["value"]) > 1e-9:
