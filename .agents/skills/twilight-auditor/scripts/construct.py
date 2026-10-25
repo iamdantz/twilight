@@ -37,7 +37,7 @@ R, L_REF = 1.3125, 0.20                 # §3.3: surface ratio and the lightness
 TEXT_TARGETS = dict(control=3.0, muted=4.5, secondary=7.0, body=49 / 4.5)  # §3.5 (10.9 = 7² / 4.5)
 PHI = (1 + 5 ** 0.5) / 2
 TAU, GAMUT = 0.15, 0.92               # §6.3
-FREEDOM = 25                          # §6.1
+FREEDOM = 24                          # §6.1: the smallest that keeps every minimum in both flavors
 EMBER_HUE = (45, 70)                  # §6.4
 OPT_SEED, OPT_RESTARTS, OPT_JITTER, OPT_STEPS = 1, 10, 20, (8, 4, 2, 1)     # §6.5
 JND = 0.02
@@ -186,7 +186,7 @@ def neutrals(flavor):
 
 # §6 Hues -------------------------------------------------------------------------
 ANCHORS = {k: round(oklch_of(v)[2]) for k, v in CORNERS.items()}                            # whole degrees
-EXACT_ANCHORS = {k: oklch_of(v)[2] for k, v in CORNERS.items()}                             # for the ±25° rule
+EXACT_ANCHORS = {k: oklch_of(v)[2] for k, v in CORNERS.items()}                             # for the hue-freedom rule
 SIX = list(ANCHORS)
 CUSP_MEAN = sum(cusp(h) for h in ANCHORS.values()) / 6
 
@@ -410,6 +410,16 @@ NAMES = dict(shell="frame", rail="rail", canvas="content", raised="elevated", ed
 COLOR_KEYS = dict(coral="red", gold="yellow", grove="green", **{"sea-salt": "cyan"}, sky="blue", orchid="magenta", ember="ember")
 
 
+def transient_states(N, P, sources, diffs, order=None):
+    """§9.4: transient states built one after another, each kept ≥ 1 JND from every state built before it (the diff
+    lines first). The order is fixed for determinism; every order gives the same states (§9.4)."""
+    states, built = {}, list(diffs)
+    for name in (order or list(sources)):
+        states[name] = state(N, sources[name], STATE_JND[name], P, built)
+        built.append(states[name])
+    return states
+
+
 def build_flavor(flavor):
     P = PROFILES[flavor]
     dark = P["dark"]
@@ -424,14 +434,10 @@ def build_flavor(flavor):
     # Pass 2: hues against the worst code surface. Diff backgrounds are not recomputed.
     hues, ember, S, L0 = optimize(worst, P, cursor)
     sh = hue(AFTERGLOW)
-    # §9.4: transient states are built in this order, each kept ≥ 1 JND from every state built before it.
     sources = {"selection": sh, "selection-inactive": sh, "find-match": hue(S["yellow"]),
                "find-match-other": hue(S["yellow"]), "word-highlight": hue(S["cyan"]),
                "word-highlight-write": hue(S["cyan"])}
-    states, built = {}, [d_ins, d_rem]
-    for name, h in sources.items():
-        states[name] = state(N, h, STATE_JND[name], P, built)
-        built.append(states[name])
+    states = transient_states(N, P, sources, [d_ins, d_rem])
     states.update({"diff-inserted": d_ins, "diff-removed": d_rem})
     colors = {"afterglow": AFTERGLOW, **{k: S[v] for k, v in COLOR_KEYS.items()}}
     order = ["red", "green", "yellow", "blue", "magenta", "cyan"]

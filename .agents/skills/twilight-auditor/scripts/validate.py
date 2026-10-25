@@ -224,8 +224,8 @@ def rules(F, flavor):
         errs.append(f"{flavor}: pure black/white {sorted(bad)}")
     for c, anchor in ANCHORS.items():
         d = abs((k.oklch_of(F["colors"][c])[2] - anchor + 180) % 360 - 180)
-        if d > 25:
-            errs.append(f"{flavor}: {c} hue {d:.1f}° from its ANSI anchor (max 25°)")
+        if d > k.FREEDOM:
+            errs.append(f"{flavor}: {c} hue {d:.1f}° from its ANSI anchor (max {k.FREEDOM}°)")
     eh = k.oklch_of(F["colors"]["ember"])[2]
     if not k.EMBER_HUE[0] <= eh <= k.EMBER_HUE[1]:
         errs.append(f"{flavor}: ember hue {eh:.1f}° outside {k.EMBER_HUE[0]}–{k.EMBER_HUE[1]}°")
@@ -300,10 +300,26 @@ def robustness(P, restarts=20):
             for f in P if f in built and built[f] != P[f]]
 
 
+def order_check(P):
+    """construction.md §9.4: the transient states do not depend on their build order. Rebuilt in reverse order from the
+    published colors and diff lines, every flavor must give its published states."""
+    errs = []
+    for f in P:
+        if f not in k.FLAVORS:
+            continue
+        N, Pr, c, s = k.neutrals(f), k.PROFILES[f], P[f]["colors"], P[f]["states"]
+        h = lambda x: k.oklch_of(x)[2]
+        sources = {"selection": h(k.AFTERGLOW), "selection-inactive": h(k.AFTERGLOW), "find-match": h(c["gold"]),
+                   "find-match-other": h(c["gold"]), "word-highlight": h(c["sea-salt"]), "word-highlight-write": h(c["sea-salt"])}
+        rev = k.transient_states(N, Pr, sources, [s["diff-inserted"], s["diff-removed"]], order=list(reversed(sources)))
+        errs += [f"{f} {n}: built in reverse order it is {x}, published {s[n]} (the order of §9.4 matters)" for n, x in rev.items() if x != s[n]]
+    return errs
+
+
 def reproduce(P):
     """Every published value must equal the rebuild exactly. Any difference is a hand edit or an undocumented method change."""
     built, meta = rebuild()
-    errs = []
+    errs = order_check(P)
     for f in P:
         if f not in built:
             errs.append(f"{f}: flavor has no construction in construct.py (a new flavor must be built, not typed)")

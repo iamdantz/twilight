@@ -56,6 +56,8 @@ h(L) = 232° + 18° · (1 − L)²
 
 The darker a neutral, the further its hue drifts toward indigo (≈ 245° at L 0.16), the way shadows cool at dusk. At text lightness the drift vanishes (≈ 232°).
 
+The 18° amount was searched from 0° to 36° in steps of 6°, rebuilding both flavors. From 12° to 24° every minimum and every flavor floor holds, and the guarantees barely move (under 0.07 JND for states, the same color-vision separation). Below 12°, Faint comes within 1 JND of a semantic color in Dawn; at 30°, Dusk's normal-vision separation of the code colors (0.0945) and Dawn's terminal colors (0.0179) fall below their flavor floors. Since the guarantees select no value inside 12°–24°, the drift stays a design choice: how far shadows lean toward night.
+
 ### 3.2 Chroma: tinted in the middle, clean at the ends
 
 ```
@@ -194,7 +196,7 @@ The six ANSI chromatic colors are defined by the corners of the RGB cube. Measur
 | blue | 264.1° | 0.45 |
 | magenta | 328.4° | 0.70 |
 
-Every hue may move at most ±25° from its anchor, so red stays red and blue stays blue. The bound is checked on the rendered color: the hue of the final hex against the exact anchor above, not the optimizer's whole-degree parameter against the rounded anchor.
+Every hue may move at most ±24° from its anchor, so red stays red and blue stays blue. 24° is the smallest freedom, on a 1° grid, at which both flavors meet every minimum: Dawn's Sea Salt needs 23.7° from the cyan anchor, and from 15° to 23° Dawn breaks two or three minimums (color-vision separation 0.037–0.038, Faint 0.56–0.71 JND from a semantic color). Dusk never moves a hue more than 17.9°. The palette is the same at 24°, 25° and 26°; from 28° Dawn's neutral states fall to 0.88 JND. The bound is checked on the rendered color: the hue of the final hex against the exact anchor above, not the optimizer's whole-degree parameter against the rounded anchor.
 
 An earlier version placed six hues at equal 60° steps from the accent. That was mathematically tidy but semantically wrong: it had no true red, merged cyan and blue, and used one lightness for all hues. It was discarded.
 
@@ -236,7 +238,7 @@ Code needs seven distinguishable colors (keyword, function, type, string, consta
 
 The optimizer placed Ember at the light edge of its range in Dusk, `#fcd6b7` (L 0.900, h 61°), and near the dark edge in Dawn, `#67320a` (L 0.381, h 52°). Ember separates from Gold by lightness, which is the only dimension that survives every type of color-vision deficiency.
 
-**The hue range was searched against two rules.** The tolerance the six other hues use, Afterglow ± 25° (27°–77°), lowers Dusk's color-vision separation from ΔE 0.0606 to 0.0565 (0.0596 with 40 restarts) and sends Dawn's Ember to 41°, where the closest pair of states falls below 1 JND. Hues closer to Afterglow than to the red and yellow anchors (41°–80°) lower Dusk to 0.0550 and break three of Dawn's minimums. The coordinate descent of §6.5 is a local search: a wider range changes where restarts begin and which optimum they reach, not only what they may reach. Both published Embers lie inside 45°–70°, not at its edges, and the range stays decided.
+**The hue range was searched against two rules.** A tolerance like the six other hues', Afterglow ± 25° (27°–77°), lowers Dusk's color-vision separation from ΔE 0.0606 to 0.0565 (0.0596 with 40 restarts) and sends Dawn's Ember to 41°, where the closest pair of states falls below 1 JND. Hues closer to Afterglow than to the red and yellow anchors (41°–80°) lower Dusk to 0.0550 and break three of Dawn's minimums. The coordinate descent of §6.5 is a local search: a wider range changes where restarts begin and which optimum they reach, not only what they may reach. Both published Embers lie inside 45°–70°, not at its edges, and the range stays decided.
 
 **Distance from Afterglow.** Ember is ΔE 0.216 from Afterglow in Dusk and 0.360 in Dawn. In Dusk the cursor is Afterglow itself, so the pair is already in the objective of §6.5. A category minimum of ΔE 0.080, the normal-vision minimum of the code colors, keeps any flavor's Ember from approaching Afterglow (§10.1).
 
@@ -246,7 +248,7 @@ The optimizer placed Ember at the light edge of its range in Dusk, `#fcd6b7` (L 
 maximize   min over vision ∈ {normal, deuteranopia, protanopia, tritanopia} and over
                every pair (i, j) of the seven colors, and every code color i against the cursor:
                ΔE_OK( sim_vision(cᵢ), sim_vision(cⱼ) )
-subject to |hᵢ − anchorᵢ| ≤ 25°,  Ember constraints above,
+subject to |hᵢ − anchorᵢ| ≤ 24°,  Ember constraints above,
            every color ≥ floor on every code surface
 ```
 
@@ -267,7 +269,7 @@ The search is deterministic:
   the upper bound) or 0.20–0.70 (Dawn, returns the lower bound), so the weakest of the six hues
   meets the floor.
 - Score = min ΔE over the pairs above × four visions.
-  A candidate whose Ember is below the floor scores −1. A candidate whose rendered hue leaves ±25°
+  A candidate whose Ember is below the floor scores −1. A candidate whose rendered hue leaves ±24°
   of its exact anchor (§6.1) scores −2, so it is never accepted.
 
 | Hue | Anchor | Dusk | Shift | Dawn | Shift |
@@ -430,7 +432,7 @@ The selection hue is Afterglow's hue.
 
 ### 9.4 Separation between states
 
-Two states that share a hue differ only in visibility, so when a bound stops the stronger one, the two can land on nearly the same color. Each state is therefore built after the ones before it, in a fixed order, and kept at least 1 JND (ΔE_OK 0.02) from every state already built:
+Two states that share a hue differ only in visibility, so when a bound stops the stronger one, the two can land on nearly the same color. Each state is therefore built after the ones before it and kept at least 1 JND (ΔE_OK 0.02) from every state already built. The order below is fixed only so the build is deterministic: every one of the 720 orders of the six transient states, and both orders of the diff lines, gives the same states in both flavors, and the validator rebuilds them in reverse order to keep it so. The diff lines come first because the hues are solved against them (§6.6).
 
 ```
 diff-inserted, diff-removed, selection, selection-inactive,
@@ -513,18 +515,16 @@ Both levels live in the auditor's validator, which reports every value next to i
 | Seed | `#ee7a1f` | Origin of the system |
 | Afterglow | the sRGB cusp of the seed hue (§2) | The most chromatic color at the seed's hue |
 | Neutral hue | complement of the seed (232°) | Structural choice |
-| Neutral hue drift | +18° · (1 − L)² | "Shadows lean toward night" |
+| Neutral hue drift | +18° · (1 − L)² | "Shadows lean toward night"; every guarantee holds from 12° to 24° (§3.1) |
 | Surface directions (category) | dark: Shell darker, Raised and Edge lighter; light: all darker | Light interfaces darken their panels (§4) |
 | Anchors (flavor) | Dusk: Canvas L 0.20, Ink L 0.95. Dawn: Canvas L 0.95, Ink L 0.20 | The same two neutrals, roles exchanged |
 | Chroma base | C_Afterglow / φ (Dusk), C_seed / φ (Dawn) | Keeps the accent dominant; the light flavor is bounded by the gamut at 4.5:1 (§6.3) |
-| Hue freedom | ±25° from ANSI anchors | Preserves meaning |
 | Ember hue range | 45°–70° | Keeps it in the accent family; Afterglow ± 25° and the hues nearest Afterglow among the anchors were measured and give lower separation (§6.4) |
 | Floors | 7:1 Dusk, 4.5:1 Dawn | AAA / AA |
 | Text targets | 4.5, 7.0, 10.89 (7²/4.5); control 3.0 | WCAG thresholds plus one geometric step |
-| State order and separation | §9.4, 1 JND | States that share a hue stay distinguishable |
+| State separation | 1 JND (§9.4) | States that share a hue stay distinguishable; the build order does not change any state |
 | Gamut margin | 0.92 · Cmax | Safety margin; Dawn meets every minimum from 0.92 to 0.932 (§6.3) |
 | Syntax roles | §8 | Keyword, string, function, type and constant by the ANSI convention; Coral and Afterglow out of code |
-| Series order | Sky, Ember, Gold, Sea Salt, Orchid, Grove; Other in Control (§7.1) | Searched on Dusk and Dawn and shared, so a series keeps its color in every flavor |
 
 ### Resolved (searched against the guarantees)
 
@@ -538,6 +538,8 @@ These were searched over a range, and the published value is the one the guarant
 | State visibility | strong states at the bound of §9.2; weak states at 2 JND | Set by the bounds and by the minimum of §10.1, with no number of its own (§9.1) |
 | Continuous scales | sequential: Ember, 5 steps; diverging: Sky and Gold, 2 steps each | The series color and pair with the most steps that keep the code colors' separation and an AA label in both flavors (§7.2) |
 | Uncolored code category | property (parameter takes Ember) | The free category with the larger screen share in the corpus study (§8) |
+| Hue freedom | ±24° from the ANSI anchors | The smallest, on a 1° grid, at which both flavors meet every minimum (§6.1) |
+| Series order | Sky, Ember, Gold, Sea Salt, Orchid, Grove; Other in Control | The order whose every prefix keeps the largest share of the best separation in both flavors (§7.1) |
 | Warm tilt τ (system) | 0.15 | The only value from 0.10 to 0.20, in steps of 0.01, at which both flavors meet every minimum (§6.3) |
 
 ### Measured (from data)
@@ -561,7 +563,7 @@ different hexes.
 - Cusp(h): the L of maximum Cmax on a 0.002 grid over L 0.300–0.998.
 - Afterglow: the seed hue rounded to 0.1° (51.9°), at L = Cusp(h) and C = Cmax(L, h), then to hex.
 - Anchors: the RGB cube corners in OKLCH, rounded to whole degrees (29, 110, 142, 195, 264, 328).
-  The cusp mean in §6.2 is taken over these six anchors. The ±25° bound (§6.1) uses the exact anchors
+  The cusp mean in §6.2 is taken over these six anchors. The ±24° bound (§6.1) uses the exact anchors
   and the hue of the rendered hex.
 - Hue lightness: L = round(L₀ + β · (cusp(h) − mean), 3), with β = 0.30 (Dusk) or 0.19 (Dawn).
 - Neutral hue: the seed hue rounded to 52°, plus 180° = 232°.

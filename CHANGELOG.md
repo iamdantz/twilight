@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.12.2
+
+The last parameters checked against the guarantees. No value changes.
+
+### Changed
+- Hue freedom is ±24° from the ANSI anchors instead of ±25°: the smallest, on a 1° grid, at which both flavors meet every minimum. The palette is the same from 24° to 26°.
+
+### Documented
+- construction.md §3.1: the neutral hue drift searched from 0° to 36°. Every guarantee holds from 12° to 24°, and none selects a value inside that range, so 18° stays a design choice.
+- construction.md §9.4: the build order of the states does not change any state; all 720 orders of the transient states and both orders of the diff lines give the same colors in both flavors.
+- construction.md §12: hue freedom and the series order move to the Resolved group; the state order is no longer listed as a parameter.
+
+### Tooling
+- `construct.py`: `FREEDOM = 24`; `transient_states()` builds the states in a given order. `validate.py` rebuilds them in reverse order and checks the hue rule against `FREEDOM`.
+
 ## 1.12.1
 
 The syntax roles become reproducible. No value changes.
