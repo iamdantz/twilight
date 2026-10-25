@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.10.2
+
+Ember's constraints checked against the guarantees. No value changes.
+
+### Changed
+- The §6.5 objective no longer penalizes an Ember closer than ΔE 0.06 to Afterglow. The penalty never acted (Ember is ΔE 0.216 from Afterglow in Dusk and 0.360 in Dawn), and both flavors rebuild identically without it, also with 40 restarts.
+
+### Added
+- Category minimum: Ember at least ΔE 0.080 from Afterglow in normal vision, the normal-vision minimum of the code colors.
+
+### Documented
+- construction.md §6.4: Ember's hue range searched against Afterglow ± 25° and against the hues nearest Afterglow among the anchors. Both lower the separation, so 45°–70° stays decided.
+
+### Tooling
+- `construct.py`: `EMBER_VS_AFTERGLOW` removed. `validate.py` and `docs.py`: the new check, its floors and guarantee row.
+
 ## 1.10.1
 
 The neutral chroma amplitude is searched against the guarantees. No value changes.

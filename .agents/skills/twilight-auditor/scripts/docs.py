@@ -103,6 +103,7 @@ GUARANTEE_ROWS = {  # design-system guarantee row label → (measurement, unit)
     "Semantic colors on any surface and on Edge": ("semantic on surfaces and edge", "ratio"),
     "Faint from every semantic color, every vision": ("faint from semantic colors (JND)", "jnd2"),
     "Twelve chromatic terminal colors, closest pair, every vision": ("ΔE ANSI colors, every vision", "de"),
+    "Ember from Afterglow, normal vision": ("ΔE Ember from Afterglow", "de"),
     "Other series from every series, every vision": ("ΔE other series, every vision", "de"),
     "Neutral row and control states, closest pair": ("neutral states, closest pair (JND)", "jnd"),
 }

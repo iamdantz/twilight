@@ -236,6 +236,10 @@ Code needs seven distinguishable colors (keyword, function, type, string, consta
 
 The optimizer placed Ember at the light edge of its range in Dusk, `#fcd6b7` (L 0.900, h 61°), and near the dark edge in Dawn, `#67320a` (L 0.381, h 52°). Ember separates from Gold by lightness, which is the only dimension that survives every type of color-vision deficiency.
 
+**The hue range was searched against two rules.** The tolerance the six other hues use, Afterglow ± 25° (27°–77°), lowers Dusk's color-vision separation from ΔE 0.0606 to 0.0565 (0.0596 with 40 restarts) and sends Dawn's Ember to 41°, where the closest pair of states falls below 1 JND. Hues closer to Afterglow than to the red and yellow anchors (41°–80°) lower Dusk to 0.0550 and break three of Dawn's minimums. The coordinate descent of §6.5 is a local search: a wider range changes where restarts begin and which optimum they reach, not only what they may reach. Both published Embers lie inside 45°–70°, not at its edges, and the range stays decided.
+
+**Distance from Afterglow.** Ember is ΔE 0.216 from Afterglow in Dusk and 0.360 in Dawn. In Dusk the cursor is Afterglow itself, so the pair is already in the objective of §6.5. A category minimum of ΔE 0.080, the normal-vision minimum of the code colors, keeps any flavor's Ember from approaching Afterglow (§10.1).
+
 ### 6.5 Joint optimization
 
 ```
@@ -243,8 +247,7 @@ maximize   min over vision ∈ {normal, deuteranopia, protanopia, tritanopia} an
                every pair (i, j) of the seven colors, and every code color i against the cursor:
                ΔE_OK( sim_vision(cᵢ), sim_vision(cⱼ) )
 subject to |hᵢ − anchorᵢ| ≤ 25°,  Ember constraints above,
-           every color ≥ floor on every code surface,
-           ΔE_OK(Ember, Afterglow) ≥ 0.06 (normal vision)
+           every color ≥ floor on every code surface
 ```
 
 Simulations are full-severity dichromacy (ColorAide implementation).
@@ -263,7 +266,7 @@ The search is deterministic:
 - For every candidate, L₀ is re-solved (§6.2): 18-step bisection over 0.50–0.95 (Dusk, returns
   the upper bound) or 0.20–0.70 (Dawn, returns the lower bound), so the weakest of the six hues
   meets the floor.
-- Score = min ΔE over the pairs above × four visions − 2 · max(0, 0.06 − ΔE(Ember, Afterglow)).
+- Score = min ΔE over the pairs above × four visions.
   A candidate whose Ember is below the floor scores −1. A candidate whose rendered hue leaves ±25°
   of its exact anchor (§6.1) scores −2, so it is never accepted.
 
@@ -439,6 +442,7 @@ Twilight holds its flavors to two levels of floor.
 | Semantic colors on every surface and on Edge | ≥ 3:1 (icons and bars; text uses `accent-text`) | the same |
 | Faint from every semantic color, every vision | ≥ 1 JND | the same |
 | Twelve chromatic terminal colors, closest pair, every vision | ≥ 0.010 (½ JND) | the same |
+| Ember from Afterglow, normal vision | ≥ 0.080 (4 JND) | the same |
 
 **Flavor floors** are what each flavor reaches today. They keep a change from quietly degrading Dusk or Dawn. A flavor floor may go down only when the new value still meets the category minimum, the version's changelog names the check under Lower with its cause and the benefit it pays for, and the loss is imperceptible or stays well inside the standard: under 1 JND for color and state measures, or a contrast that stays clearly above its minimum. A new flavor is checked against the minimums of its category, not against another flavor's floors; once accepted, its own measured values become its floors.
 
@@ -475,7 +479,7 @@ Both levels live in the auditor's validator, which reports every value next to i
 | Anchors (flavor) | Dusk: Canvas L 0.20, Ink L 0.95. Dawn: Canvas L 0.95, Ink L 0.20 | The same two neutrals, roles exchanged |
 | Chroma base | C_Afterglow / φ (Dusk), C_seed / φ (Dawn) | Keeps the accent dominant; the light flavor is bounded by the gamut at 4.5:1 (§6.3) |
 | Hue freedom | ±25° from ANSI anchors | Preserves meaning |
-| Ember hue range | 45°–70° | Keeps it in the accent family |
+| Ember hue range | 45°–70° | Keeps it in the accent family; Afterglow ± 25° and the hues nearest Afterglow among the anchors were measured and give lower separation (§6.4) |
 | Floors | 7:1 Dusk, 4.5:1 Dawn | AAA / AA |
 | Text targets | 4.5, 7.0, 10.89 (7²/4.5); control 3.0 | WCAG thresholds plus one geometric step |
 | JND targets | §9.1 | Visibility per state |

@@ -569,6 +569,7 @@ Each misuse below breaks a role or a guarantee. Ports are checked against this t
 | Smallest code-color difference, color-vision deficiency | ΔE 0.061 | ΔE 0.040 |
 | Faint from every semantic color, every vision | 3.30 JND | 1.05 JND |
 | Twelve chromatic terminal colors, closest pair, every vision | ΔE 0.020 | ΔE 0.020 |
+| Ember from Afterglow, normal vision | ΔE 0.216 | ΔE 0.360 |
 | Other series from every series, every vision | ΔE 0.158 | ΔE 0.078 |
 | Neutral row and control states, closest pair | 2.6 JND | 1.5 JND |
 | Pure black or white | none | none |

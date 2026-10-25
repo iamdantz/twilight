@@ -39,7 +39,6 @@ PHI = (1 + 5 ** 0.5) / 2
 TAU, GAMUT = 0.15, 0.92               # §6.3
 FREEDOM = 25                          # §6.1
 EMBER_HUE = (45, 70)                  # §6.4
-EMBER_VS_AFTERGLOW = 0.06
 OPT_SEED, OPT_RESTARTS, OPT_JITTER, OPT_STEPS = 1, 10, 20, (8, 4, 2, 1)     # §6.5
 JND = 0.02
 STATE_JND = {"selection": 4, "selection-inactive": 2, "find-match": 5, "find-match-other": 2.5,
@@ -229,12 +228,11 @@ def solve_L0(hues, ember, surface, P):
 
 def distinctness(cols, cursor):
     """§6.5 objective: min ΔE OKLab × 4 visions over every pair of the 7 hue colors and every code color against
-    the cursor (Coral excluded, as in the guarantee), minus the Ember–Afterglow penalty."""
+    the cursor (Coral excluded, as in the guarantee)."""
     vals = list(cols.values())
     pairs = [(a, b) for i, a in enumerate(vals) for b in vals[i + 1:]]
     pairs += [(cols[n], cursor) for n in cols if n != "red"]
-    worst = min(sim(a, v).delta_e(sim(b, v), method="ok") for v in VISIONS for a, b in pairs)
-    return worst - 2 * max(0.0, EMBER_VS_AFTERGLOW - de_ok(cols["ember"], AFTERGLOW))
+    return min(sim(a, v).delta_e(sim(b, v), method="ok") for v in VISIONS for a, b in pairs)
 
 
 def optimize(surface, P, cursor):
