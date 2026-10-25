@@ -1,6 +1,6 @@
 {
   "name": "Twilight",
-  "version": "1.12.1",
+  "version": "1.12.2",
   "series": {
     "order": ["sky", "ember", "gold", "sea-salt", "orchid", "grove"],
     "other": "control"

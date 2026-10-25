@@ -59,8 +59,8 @@ $V --ref <branch> --compare main     # proposal + regressions
 What it checks:
 
 - **Floors**: every row of the area C table, per flavor, against its category minimum and its flavor floor. WCAG thresholds (3.0, 4.5, 7.0) and the Body target (10.89) are compared strictly on unrounded values; other floors (e.g. 13.25, 0.061) are met at their stated precision.
-- **Rules**: no pure black or white; every state's chroma within what sRGB holds at Canvas's lightness (§9.2); the JSON `series` equals `construct.SERIES` and the §7.1 search on Dusk and Dawn still returns it; ANSI hue anchors ±25°; Ember 45–70°; Afterglow equals the sRGB cusp of the seed hue; every `accents.X.accent` equals `colors.X`; brights recomputed with the construction's own function.
-- **Reproduction**: rebuilds both flavors from the decided parameters (§6.5 included, about 2 minutes) and compares every token exactly. Tolerance is zero: any difference is a hand edit or an undocumented method change. A flavor with no construction is an error.
+- **Rules**: no pure black or white; every state's chroma within what sRGB holds at Canvas's lightness (§9.2); the JSON `series` equals `construct.SERIES` and the §7.1 search on Dusk and Dawn still returns it; ANSI hue anchors ±24°; Ember 45–70°; Afterglow equals the sRGB cusp of the seed hue; every `accents.X.accent` equals `colors.X`; brights recomputed with the construction's own function.
+- **Reproduction**: the transient states rebuilt in reverse order equal the published ones (§9.4); rebuilds both flavors from the decided parameters (§6.5 included, about 2 minutes) and compares every token exactly. Tolerance is zero: any difference is a hand edit or an undocumented method change. A flavor with no construction is an error.
 - **Construction table**: the §6.5 hue table, Ember and L₀ in construction.md against the rebuild; every hex in a construction.md table must exist in the JSON.
 - **Consistency**: `_` keys; `docs.py --check` (generated tables, facts and image pixels); JSON `version` = latest CHANGELOG heading; every hex, swatch, RGB/OKLCH column and measured number in README.md and docs/design-system.md; relative links and anchors in every `.md`.
 - **Regressions** (`--compare`): any value below its category minimum or its flavor floor; any known limit below `LIMIT_FLOORS`; a category minimum lowered; a flavor floor or known limit lowered without its check named, in backticks, under `### Lower` in a CHANGELOG entry newer than the base (a change spanning several versions declares each lowering in its own entry); a check or table removed; changed neutrals or colors with unchanged images. The base and proposal tables are read from each snapshot's own `validate.py`. Every delta against the baseline is printed for context.
@@ -125,7 +125,7 @@ Two levels of floor live in `validate.py`, and every change must meet both (cons
 | Closest pair of background states | ≥ 1 JND | ≥ 1 JND | — | — |
 | Bright ANSI = normal moved `BRIGHT_STEP` (0.38) toward Ink, same hue | exact | exact | exact | exact |
 
-Also: no `#000000` or `#ffffff`; everything inside sRGB, gamut-mapped by chroma reduction only; hues within ±25° of their ANSI anchors; Ember hue 45–70°. Contrast is WCAG 2.x on final 8-bit sRGB. Report contrast to two decimals and ΔE to three, each next to its floor.
+Also: no `#000000` or `#ffffff`; everything inside sRGB, gamut-mapped by chroma reduction only; hues within ±24° of their ANSI anchors; Ember hue 45–70°. Contrast is WCAG 2.x on final 8-bit sRGB. Report contrast to two decimals and ΔE to three, each next to its floor.
 
 The known limits in construction.md §11 (JND of every background state, ANSI black/white contrast, background-state separation) are the minimums in `LIMIT_FLOORS` of `validate.py`. A limit below its minimum, or lowered without a Lower entry, is BLOCKING. Closest CVD pairs are reported in §11 and are covered by the CVD floor.
 
