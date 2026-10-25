@@ -476,6 +476,11 @@ def series_order(palettes):
     return max(itertools.permutations(six), key=key)
 
 
+# Syntax roles (§8): five by the ANSI convention; parameter and property resolved by syntax_roles.uncolored()
+SYNTAX = {"keyword": "orchid", "string": "grove", "function": "sky", "type": "sea-salt", "constant": "gold",
+          "parameter": "ember", "property": "body"}
+
+
 # Continuous scales (§7.2) -----------------------------------------------------------------
 SEQUENTIAL = ("ember", 5)              # decided by scale_search() on SCALE_BASIS: color, steps
 DIVERGING = (("sky", "gold"), 2)       # the two arms (negative, positive) and steps per arm; Canvas is the middle

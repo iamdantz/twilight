@@ -39,6 +39,8 @@ The scripts live in this skill's `scripts/` directory (`<skill>` is the director
 | `scripts/validate.py` | Measures and cross-checks one snapshot; `--compare REF` adds regressions. Exit 1 on any failure. `--json` for the summary only. |
 | `scripts/construct.py` | Reference implementation of construction.md in three levels (§1.1): system constants, `CATEGORIES` (dark, light) and `FLAVORS`; `PROFILES` merges each flavor with its category. Rebuilds every flavor exactly, each from the system and its own category only; `validate.py` imports it. Import it yourself to recompute a value by hand. |
 | `scripts/docs.py` | Regenerates the tables, `<!-- fact -->` numbers and swatch strips of README.md and docs/design-system.md, and redraws `assets/palette-*.png`, from the JSON. `--check` reports differences without writing; `validate.py` runs it. |
+| `scripts/syntax_study.py`, `scripts/syntax/` | The reproducible corpus study of construction.md §8: `manifest.json` pins every package by version, SHA-256 and verified license; `fetch` downloads and verifies, `measure` rebuilds `stats.json`, `check` does both and compares. Needs `scripts/requirements-study.txt`; the validator does not. |
+| `scripts/syntax_roles.py` | Reads `syntax/stats.json`: the uncolored category and the distinctness ranking of §8. `validate.py` checks the published roles against it. |
 | `scripts/requirements.txt` | `coloraide==8.13` and `pillow==11.3.0`, pinned. |
 
 Setup, once per machine (the venv is git-ignored):

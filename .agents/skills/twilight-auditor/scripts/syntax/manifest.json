@@ -1,0 +1,355 @@
+{
+ "accepted_licenses": [
+  "0BSD",
+  "MIT-0",
+  "Unlicense",
+  "CC0-1.0"
+ ],
+ "packages": [
+  {
+   "registry": "npm",
+   "name": "@apeleghq/crypto-oids",
+   "version": "20250325.0.0",
+   "license": "CC0-1.0",
+   "license_files": {
+    "LICENSE.txt": "CC0-1.0"
+   },
+   "sha256": "b13b11750ba7282d92a92161551b79a472594538af94e9e2925c4512e18ccb6c"
+  },
+  {
+   "registry": "npm",
+   "name": "@atcute/crypto",
+   "version": "2.4.4",
+   "license": "0BSD",
+   "license_files": {
+    "LICENSE": "0BSD"
+   },
+   "sha256": "1d43943eea876db58ab1046102a98fb8779abaa67fab41331a07b5d6dbe91955"
+  },
+  {
+   "registry": "npm",
+   "name": "@atcute/oauth-crypto",
+   "version": "1.0.1",
+   "license": "0BSD",
+   "license_files": {
+    "LICENSE": "0BSD"
+   },
+   "sha256": "29800ebe250327b5e8aeec9f3a5ef5e2aadec1150edb1dafce5a6c6629fdb195"
+  },
+  {
+   "registry": "npm",
+   "name": "@atcute/oauth-types",
+   "version": "1.0.1",
+   "license": "0BSD",
+   "license_files": {
+    "LICENSE": "0BSD"
+   },
+   "sha256": "9876edacaf2946ff03c40026f9b9c8f00720161fe0318c97c921dd921343a6f8"
+  },
+  {
+   "registry": "npm",
+   "name": "@atcute/util-fetch",
+   "version": "2.1.0",
+   "license": "0BSD",
+   "license_files": {
+    "LICENSE": "0BSD"
+   },
+   "sha256": "3642d7b0b8df29cfcc819697e02b3d3e9a8fc7d6b33ab6ada2978abdd262c012"
+  },
+  {
+   "registry": "npm",
+   "name": "big-integer",
+   "version": "1.6.52",
+   "license": "Unlicense",
+   "license_files": {
+    "LICENSE": "Unlicense"
+   },
+   "sha256": "5440c67085b1e873a083b873d49ab639591402120858bc4ab4dd9b40bafe1f87"
+  },
+  {
+   "registry": "npm",
+   "name": "check-node-version",
+   "version": "4.2.1",
+   "license": "Unlicense",
+   "license_files": {
+    "LICENSE": "Unlicense"
+   },
+   "sha256": "bd206da556c6910d47019910f664bf5c45faef19344dff5ba7a9f7326ebba18d"
+  },
+  {
+   "registry": "npm",
+   "name": "cli-vir",
+   "version": "1.1.1",
+   "license": "(MIT OR CC0-1.0)",
+   "license_files": {
+    "LICENSE-CC0": "CC0-1.0",
+    "LICENSE-MIT": "MIT"
+   },
+   "sha256": "b0a147331bf624fdeced622b9376c1c6a13b3ea71006fc4a3c4dd36fcea234e7"
+  },
+  {
+   "registry": "npm",
+   "name": "crypto-promise",
+   "version": "2.1.0",
+   "license": "Unlicense",
+   "license_files": {
+    "UNLICENSE": "Unlicense"
+   },
+   "sha256": "a001d822967d356d6235d6ca16f766f02a224d3be7126e40b5ffc219d45fd54b"
+  },
+  {
+   "registry": "npm",
+   "name": "@csstools/postcss-normalize-display-values",
+   "version": "5.0.1",
+   "license": "MIT-0",
+   "license_files": {
+    "LICENSE.md": "MIT-0"
+   },
+   "sha256": "365acd5e16b4c744559bdc7e70451f2b1be1b0be78830fd951c715ab5b9b0071"
+  },
+  {
+   "registry": "npm",
+   "name": "@csstools/selector-specificity",
+   "version": "6.0.1",
+   "license": "MIT-0",
+   "license_files": {
+    "LICENSE.md": "MIT-0"
+   },
+   "sha256": "49ad805e5071d72662b756cbcb6f01888842ccd33bd708f26fbd81f18d2e2475"
+  },
+  {
+   "registry": "npm",
+   "name": "@metamask/7715-permission-types",
+   "version": "2.0.0",
+   "license": "(MIT-0 OR Apache-2.0)",
+   "license_files": {
+    "LICENSE.APACHE2": "Apache",
+    "LICENSE.MIT0": "MIT-0"
+   },
+   "sha256": "633727973768b593cbc5ad376865903d138cb062d785d80bdbb459ce744182a7"
+  },
+  {
+   "registry": "npm",
+   "name": "@metamask/lifecycle-hooks-example-snap",
+   "version": "2.3.0",
+   "license": "(MIT-0 OR Apache-2.0)",
+   "license_files": {
+    "LICENSE.APACHE2": "Apache",
+    "LICENSE.MIT0": "MIT-0"
+   },
+   "sha256": "4ec4d64026d29a655b1ff4912b35b9e9df20d7a63796fadcdff1bcdb5bc3d6e0"
+  },
+  {
+   "registry": "npm",
+   "name": "postal-mime",
+   "version": "4.1.4",
+   "license": "MIT-0",
+   "license_files": {
+    "LICENSE.txt": "MIT-0"
+   },
+   "sha256": "14cf31e49728bd8c94ab9cd1eb190c05bd2197b32b76d2ec30d9ef73709f1134"
+  },
+  {
+   "registry": "npm",
+   "name": "@prebuilt-tdlib/types",
+   "version": "0.1008069.0",
+   "license": "0BSD",
+   "license_files": {
+    "LICENSE": "0BSD"
+   },
+   "sha256": "8f2c54dcd3c793c666fb3af412990b5d5f60cb9ee35598e7c75bf15f175ae984"
+  },
+  {
+   "registry": "npm",
+   "name": "react-text-mask",
+   "version": "5.5.0",
+   "license": "Unlicense",
+   "license_files": {
+    "LICENSE": "Unlicense"
+   },
+   "sha256": "0a4c59f0a1cb6f161584e4c35bb4eb5e007ee44cab119550b62d8815a2687726"
+  },
+  {
+   "registry": "npm",
+   "name": "react-use",
+   "version": "17.6.1",
+   "license": "Unlicense",
+   "license_files": {
+    "LICENSE": "Unlicense"
+   },
+   "sha256": "b75018ed50f512917d2418d363a35e3b057dc4b38c5396e60e8ed1a6896e60d6"
+  },
+  {
+   "registry": "npm",
+   "name": "@reactuses/core",
+   "version": "6.6.0",
+   "license": "Unlicense",
+   "license_files": {
+    "LICENSE": "Unlicense"
+   },
+   "sha256": "2af77ff3c7b343c86b64644c8a9b0660843ce9315bcbd138c5321d689026cf0c"
+  },
+  {
+   "registry": "npm",
+   "name": "@speed-highlight/core",
+   "version": "2.1.0",
+   "license": "CC0-1.0",
+   "license_files": {
+    "LICENSE": "CC0-1.0"
+   },
+   "sha256": "f0892da27f2496742f2bc91cea84a0914512812c22110693d532e55904b13f36"
+  },
+  {
+   "registry": "npm",
+   "name": "stacktracey",
+   "version": "2.2.0",
+   "license": "Unlicense",
+   "license_files": {
+    "LICENSE": "Unlicense"
+   },
+   "sha256": "2d5a40e876ed91a6858b9afee1cf3ef9d01ff61d2e4141280a37fb248eb8b940"
+  },
+  {
+   "registry": "npm",
+   "name": "styled-hooks",
+   "version": "2.1.1",
+   "license": "Unlicense",
+   "license_files": {
+    "LICENSE": "Unlicense"
+   },
+   "sha256": "a031ba31b4537e5527819618994293918e90aa5078f3e32dd7466cd6dee29ebf"
+  },
+  {
+   "registry": "npm",
+   "name": "ts-easing",
+   "version": "0.2.0",
+   "license": "Unlicense",
+   "license_files": {
+    "LICENSE": "Unlicense"
+   },
+   "sha256": "895563d0fe04b004f673f804d36e2b8949ebc9b776e4fd06318a3e59b8fbd171"
+  },
+  {
+   "registry": "npm",
+   "name": "tslib",
+   "version": "2.8.1",
+   "license": "0BSD",
+   "license_files": {
+    "LICENSE.txt": "0BSD"
+   },
+   "sha256": "66f635d5eeabae44807534976913a102cf615b9a045368359c9f79ae6ee2119e"
+  },
+  {
+   "registry": "npm",
+   "name": "tweetnacl",
+   "version": "1.0.3",
+   "license": "Unlicense",
+   "license_files": {
+    "LICENSE": "Unlicense"
+   },
+   "sha256": "5f8dc49cb4483e206ba3ebb22abbccfc0218c59b60fc78cce24197ced5b9e102"
+  },
+  {
+   "registry": "npm",
+   "name": "tweetnacl-util",
+   "version": "0.15.1",
+   "license": "Unlicense",
+   "license_files": {
+    "LICENSE": "Unlicense"
+   },
+   "sha256": "dc023ec410a2c0072f2ff5c01800e6dbce22f2297d0529627b5c835808e86c12"
+  },
+  {
+   "registry": "npm",
+   "name": "type-fest",
+   "version": "5.10.0",
+   "license": "(MIT OR CC0-1.0)",
+   "license_files": {
+    "license-cc0": "CC0-1.0",
+    "license-mit": "MIT"
+   },
+   "sha256": "fa6130ea2af09b313a1d1636ed1bbfb62af88177a315d12043c2f728b4242acb"
+  },
+  {
+   "registry": "npm",
+   "name": "webvtt-parser",
+   "version": "2.2.0",
+   "license": "CC0-1.0",
+   "license_files": {
+    "LICENSE.md": "CC0-1.0"
+   },
+   "sha256": "b92a5e96153d9d38dbf57763dbba40cad9d3a9030af99366473f7a6bd1b97448"
+  },
+  {
+   "registry": "npm",
+   "name": "wolfy87-eventemitter",
+   "version": "5.2.9",
+   "license": "Unlicense",
+   "license_files": {
+    "UNLICENSE": "Unlicense"
+   },
+   "sha256": "9a8445b049b63ff7b89effc1b4f27f48d330065d34e94dde014b7edf28637314"
+  },
+  {
+   "registry": "pypi",
+   "name": "yt-dlp",
+   "version": "2026.10.21",
+   "license": "Unlicense",
+   "license_files": {
+    "LICENSE": "Unlicense"
+   },
+   "sha256": "cbf748d7d17cd37647c4b9f07b6c25f24384bfd4361407ee5ec519e753d22539"
+  },
+  {
+   "registry": "pypi",
+   "name": "cffi",
+   "version": "2.1.1",
+   "license": "MIT-0",
+   "license_files": {
+    "LICENSE": "MIT-0"
+   },
+   "sha256": "dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be"
+  },
+  {
+   "registry": "pypi",
+   "name": "chardet",
+   "version": "7.7.0",
+   "license": "0BSD",
+   "license_files": {
+    "LICENSE": "0BSD"
+   },
+   "sha256": "0ba38a05201b0abf7570c12d8af45c30b2af835bd5cc52bfc7105082eda82c1e"
+  },
+  {
+   "registry": "pypi",
+   "name": "email-validator",
+   "version": "2.3.0",
+   "license": "Unlicense",
+   "license_files": {
+    "LICENSE": "Unlicense"
+   },
+   "sha256": "9fc05c37f2f6cf439ff414f8fc46d917929974a82244c20eb10231ba60c54426"
+  },
+  {
+   "registry": "pypi",
+   "name": "pdoc",
+   "version": "16.0.0",
+   "license": "MIT-0",
+   "license_files": {
+    "LICENSE": "MIT-0"
+   },
+   "sha256": "fdadc40cc717ec53919e3cd720390d4e3bcd40405cb51c4918c119447f913514"
+  },
+  {
+   "registry": "pypi",
+   "name": "pyelftools",
+   "version": "0.33",
+   "license": "Unlicense",
+   "license_files": {
+    "LICENSE": "Unlicense"
+   },
+   "sha256": "660d82dcbeb8e83d1702bd97f223f761625da06111c0cc988eac6b8ab0c1b61f",
+   "exclude": "elftools/construct/"
+  }
+ ]
+}

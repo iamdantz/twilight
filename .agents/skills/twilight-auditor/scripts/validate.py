@@ -259,6 +259,14 @@ def series_rules(raw):
     basis = {f: raw["flavors"][f] for f in k.BRIGHT_BASIS if f in raw["flavors"]}
     if len(basis) == len(k.BRIGHT_BASIS) and (got := k.bright_step(basis)) != k.BRIGHT_STEP:
         errs.append(f"bright step search on {', '.join(k.BRIGHT_BASIS)} gives {got}, construct.py has {k.BRIGHT_STEP}")
+    import syntax_roles
+    if (got := syntax_roles.assignment()) != k.SYNTAX:
+        errs.append(f"syntax roles from syntax/stats.json give {got}, construct.py has {k.SYNTAX}")
+    manifest = json.loads((Path(syntax_roles.STATS).parent / "manifest.json").read_text())
+    for p in manifest["packages"]:
+        ok = set(manifest["accepted_licenses"])
+        if not (set(p["license_files"].values()) <= ok or (" OR " in p["license"] and set(p["license_files"].values()) & ok)):
+            errs.append(f"syntax corpus: {p['name']} is not under an accepted license")
     basis = {f: raw["flavors"][f] for f in k.SCALE_BASIS if f in raw["flavors"]}
     if len(basis) == len(k.SCALE_BASIS) and (got := k.scale_search(basis)) != (k.SEQUENTIAL, k.DIVERGING):
         errs.append(f"scale search on {', '.join(k.SCALE_BASIS)} gives {got}, construct.py has {(k.SEQUENTIAL, k.DIVERGING)}")

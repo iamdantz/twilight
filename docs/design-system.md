@@ -257,7 +257,7 @@ The mapping is fixed by [construction.md, section 8](construction.md#8-syntax-ro
 
 Only comments, parameters and `this`/`self` are italic.
 
-Properties are uncolored on purpose, so code is not colored end to end.
+Properties are uncolored on purpose: they cover more of the screen than any other category the convention leaves open, so code is not colored end to end ([construction.md §8](construction.md#8-syntax-roles)).
 
 ## 8. Semantic states
 

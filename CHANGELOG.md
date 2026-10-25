@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.12.1
+
+The syntax roles become reproducible. No value changes.
+
+### Documented
+- construction.md §8: keyword, string, function, type and constant follow the ANSI convention. The choice the convention leaves open, which of parameter and property stays uncolored, comes from a reproducible corpus study: distinctness does not separate the two (0.1200 and 0.1206), and properties cover more of the screen (6.37 % against 3.67 %, in every leave-one-out and bootstrap resample), so property stays uncolored. The ranking of all 5,040 assignments by distinctness alone is reported; the published one is 1,392nd, and the leaders break the convention without standing out from each other.
+- The earlier study, whose corpus and scoring were never in the repository, is no longer cited.
+
+### Tooling
+- `syntax_study.py` and `syntax/manifest.json`: 34 packages pinned by version and SHA-256, under licenses that ask for no attribution (0BSD, MIT-0, Unlicense, CC0-1.0), verified in the registry and in each archive. The corpus is not stored; `fetch` downloads and verifies it and `measure` rebuilds `syntax/stats.json` byte for byte. Tree-sitter versions are pinned in `requirements-study.txt`.
+- `syntax_roles.py`: the uncolored category and the distinctness ranking from `syntax/stats.json`. `validate.py` checks the published roles (`construct.SYNTAX`) against it and every package of the manifest against the accepted licenses.
+
 ## 1.12.0
 
 Continuous scales for data.

@@ -357,7 +357,7 @@ Every pair of series colors reaches one step per side, and Sky–Gold and Orchid
 
 ## 8. Syntax roles
 
-Each code category gets one color, the same in both flavors. The assignment comes from a study of 207,361 tokens of real TypeScript, JavaScript and Python: the share of the screen each category occupies, which categories sit next to each other, and 5,040 candidate assignments scored in 36 scenarios. The corpus is not part of this repository. The assignment it produced is fixed here as a decided parameter (§12), so both flavors rebuild from it without the study:
+Each code category gets one color, the same in both flavors.
 
 | Category | Color | Reason |
 |---|---|---|
@@ -367,7 +367,7 @@ Each code category gets one color, the same in both flavors. The assignment come
 | Type | Sea Salt | The cyan slot, between Grove and Sky. |
 | Constant | Gold | The yellow slot. |
 | Parameter | Ember | Afterglow's family, separated from it by lightness (§6.4). |
-| Property | uncolored (Body) | One category stays uncolored, so code is not colored end to end. |
+| Property | uncolored (Body) | It covers more of the screen than parameters, so leaving it uncolored colors the least code. |
 
 Three rules hold the assignment in place:
 
@@ -375,7 +375,13 @@ Three rules hold the assignment in place:
 - Afterglow never colors code. It is the accent, and the accent never colors content.
 - No two categories share a color.
 
-Every code color meets the flavor floor on every code surface (§6.6), and the seven are optimized together for distinctness (§6.5), so the assignment cannot make two categories hard to tell apart.
+**The first five follow the ANSI convention.** Terminals and editors already give keywords magenta, strings green, functions blue, types cyan and constants yellow, and the six colors are anchored to those slots (§6.1). Following the convention costs no guaranteed legibility: every pair of code colors keeps the separation of §10.1 whichever category it colors.
+
+**The corpus study.** The auditor's `syntax_study.py` measures how much of the screen each category covers and which categories sit next to each other, on the source of 34 packages pinned in `syntax/manifest.json` by version and SHA-256: 23 with JavaScript, 22 with TypeScript and 6 with Python, about 11.9 million characters in 3,134 files. Only packages whose license asks for no attribution are used (0BSD, MIT-0, Unlicense, CC0-1.0), checked in the registry and in the license files of each archive; bundled third-party code, generated and minified files, tests and documentation are left out. Tree-sitter classifies every token. Each package weighs the same, so no single project dominates a language. The corpus is not stored here: `fetch` downloads it and verifies every hash and license, and `measure` rebuilds `syntax/stats.json` byte for byte.
+
+**What the study decides.** The convention leaves one choice open: of parameter and property, which takes Ember and which stays uncolored. Distinctness does not separate the two options: weighted by how often categories sit side by side, across three languages, two flavors and four visions, they score 0.1200 and 0.1206 in their worst scenario, and each wins about half of the resamplings of the corpus. Screen share does: properties cover 6.37 % of the screen and parameters 3.67 % (mean of the three languages), and properties cover more with any single package left out and in every one of 500 bootstrap resamplings. Property stays uncolored, so the least code is colored.
+
+**What distinctness alone would choose.** Ranked by that same distinctness score, every one of the 5,040 assignments of the six colors and Body to the seven categories, the published one is 1,392nd (0.74 of the best possible in its worst scenario; the best reaches 0.84). The leaders leave strings uncolored or color keywords gold, and the first three lie within 0.01 of each other, so no assignment stands out. The convention is kept; `syntax_roles.py` reproduces the ranking.
 
 ---
 
@@ -517,7 +523,7 @@ Both levels live in the auditor's validator, which reports every value next to i
 | Text targets | 4.5, 7.0, 10.89 (7²/4.5); control 3.0 | WCAG thresholds plus one geometric step |
 | State order and separation | §9.4, 1 JND | States that share a hue stay distinguishable |
 | Gamut margin | 0.92 · Cmax | Safety margin; Dawn meets every minimum from 0.92 to 0.932 (§6.3) |
-| Syntax roles | §8 | Fixed from the token study; one color per category, Coral and Afterglow out of code |
+| Syntax roles | §8 | Keyword, string, function, type and constant by the ANSI convention; Coral and Afterglow out of code |
 | Series order | Sky, Ember, Gold, Sea Salt, Orchid, Grove; Other in Control (§7.1) | Searched on Dusk and Dawn and shared, so a series keeps its color in every flavor |
 
 ### Resolved (searched against the guarantees)
@@ -531,6 +537,7 @@ These were searched over a range, and the published value is the one the guarant
 | Neutral chroma amplitude (flavor, the same in every flavor) | 0.035 | The largest value at which Dusk reaches its best code-color separation, within the range where Dawn meets every minimum (0.020 to 0.0375), searched in steps of 0.0025 (§3.2) |
 | State visibility | strong states at the bound of §9.2; weak states at 2 JND | Set by the bounds and by the minimum of §10.1, with no number of its own (§9.1) |
 | Continuous scales | sequential: Ember, 5 steps; diverging: Sky and Gold, 2 steps each | The series color and pair with the most steps that keep the code colors' separation and an AA label in both flavors (§7.2) |
+| Uncolored code category | property (parameter takes Ember) | The free category with the larger screen share in the corpus study (§8) |
 | Warm tilt τ (system) | 0.15 | The only value from 0.10 to 0.20, in steps of 0.01, at which both flavors meet every minimum (§6.3) |
 
 ### Measured (from data)
