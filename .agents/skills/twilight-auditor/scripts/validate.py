@@ -45,14 +45,16 @@ MINIMUMS = {
              "ΔE code+cursor, normal": 0.080, "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50,
              "every state from Canvas (JND)": 2.0, "closest pair of states (JND)": 1.0, "subtle on edge": 4.50,
              "chip label on accent-text": 4.50, "ΔE other series, every vision": 0.040, "neutral states, closest pair (JND)": 1.0, "semantic on surfaces and edge": 3.00,
-             "faint from semantic colors (JND)": 1.0, "ΔE ANSI colors, every vision": 0.010, "ΔE Ember from Afterglow": 0.080},
+             "faint from semantic colors (JND)": 1.0, "ΔE ANSI colors, every vision": 0.010, "ΔE Ember from Afterglow": 0.080,
+             "ΔE scale steps, normal": 0.080, "ΔE scale steps, worst CVD": 0.040, "scale cell labels": 4.50},
     "light": {"ink on surfaces": BODY_TARGET, "body on surfaces": BODY_TARGET, "subtle on surfaces": 7.00,
               "faint on surfaces": 4.50, "control on surfaces": 3.00, "code on code surfaces": 4.50,
               "on-accent on accent/pressed": 4.50, "accent-text on raised": 4.50, "accent-focus on surfaces": 3.00,
               "ΔE code+cursor, normal": 0.080, "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50,
               "every state from Canvas (JND)": 2.0, "closest pair of states (JND)": 1.0, "subtle on edge": 4.50,
               "chip label on accent-text": 4.50, "ΔE other series, every vision": 0.040, "neutral states, closest pair (JND)": 1.0, "semantic on surfaces and edge": 3.00,
-              "faint from semantic colors (JND)": 1.0, "ΔE ANSI colors, every vision": 0.010, "ΔE Ember from Afterglow": 0.080},
+              "faint from semantic colors (JND)": 1.0, "ΔE ANSI colors, every vision": 0.010, "ΔE Ember from Afterglow": 0.080,
+              "ΔE scale steps, normal": 0.080, "ΔE scale steps, worst CVD": 0.040, "scale cell labels": 4.50},
 }
 FLOORS = {
     "dusk": {"ink on surfaces": 13.25, "body on surfaces": 10.90, "subtle on surfaces": 7.00, "faint on surfaces": 4.50,
@@ -61,14 +63,16 @@ FLOORS = {
              "ΔE code+cursor, worst CVD": 0.061, "faint on transient states": 4.50, "subtle on edge": 5.26,
              "chip label on accent-text": 8.94, "ΔE other series, every vision": 0.158,
              "semantic on surfaces and edge": 4.50, "ΔE ANSI colors, every vision": 0.020,
-             "ΔE Ember from Afterglow": 0.216},
+             "ΔE Ember from Afterglow": 0.216, "ΔE scale steps, normal": 0.114, "ΔE scale steps, worst CVD": 0.078,
+             "scale cell labels": 5.22},
     "dawn": {"ink on surfaces": 12.84, "body on surfaces": 10.89, "subtle on surfaces": 7.00, "faint on surfaces": 4.50,
              "control on surfaces": 3.00, "code on code surfaces": 4.50, "on-accent on accent/pressed": 4.50,
              "accent-text on raised": 4.50, "accent-focus on surfaces": 3.00, "ΔE code+cursor, normal": 0.088,
              "ΔE code+cursor, worst CVD": 0.040, "faint on transient states": 4.50, "subtle on edge": 5.42,
              "chip label on accent-text": 5.46, "ΔE other series, every vision": 0.078,
              "semantic on surfaces and edge": 3.19, "ΔE ANSI colors, every vision": 0.019,
-             "ΔE Ember from Afterglow": 0.360},
+             "ΔE Ember from Afterglow": 0.360, "ΔE scale steps, normal": 0.095, "ΔE scale steps, worst CVD": 0.052,
+             "scale cell labels": 4.71},
 }
 CHECKS = list(MINIMUMS["dark"])
 # Known limits (construction.md §11) are measured minimums too.
@@ -129,6 +133,20 @@ def neutral_states(n, s):
                for a, b in itertools.combinations((p, *fills), 2)) / k.JND
 
 
+def scale_measures(F):
+    """design-system.md §12.4: adjacent cells of both scales, and the two cells at the same distance from a diverging
+    scale's middle, against the code colors' separation; the best label (Ink or the chip label) on every colored cell."""
+    if "scales" not in F:                         # snapshots before 1.12 have no scales
+        return {}
+    n, (seq, div) = F["neutrals"], (F["scales"]["sequential"], F["scales"]["diverging"])
+    bg, h = n["canvas"], len(div) // 2
+    pairs = list(zip([bg] + seq, seq)) + list(zip(div, div[1:])) + [(div[h - 1 - i], div[h + 1 + i]) for i in range(h)]
+    labels = (n["ink"], chip_label(n))
+    return {"ΔE scale steps, normal": min(k.de_ok(a, b) for a, b in pairs),
+            "ΔE scale steps, worst CVD": min(k.sim(a, v).delta_e(k.sim(b, v), method="ok") for v in k.VISIONS[1:] for a, b in pairs),
+            "scale cell labels": min(max(k.contrast(x, y) for y in labels) for x in seq + div[:h] + div[h + 1:])}
+
+
 def measure(F):
     """Every area-C number for one flavor, plus the tracked known limits."""
     n, c, s, A = F["neutrals"], F["colors"], F["states"], F["accents"]
@@ -157,6 +175,7 @@ def measure(F):
         "faint from semantic colors (JND)": min(k.worst_de([c[x], n["faint"]]) for x in SEMANTIC) / k.JND,
         "ΔE ANSI colors, every vision": k.worst_de(F["ansi"][1:7] + F["ansi"][9:15]),
         "ΔE Ember from Afterglow": k.de_ok(c["ember"], c["afterglow"]),
+        **scale_measures(F),
     }
     limits = {f"JND {x}": k.de_ok(v, n["canvas"]) / 0.02 for x, v in s.items()}
     limits["ANSI black/white on canvas"] = min(cr(F["ansi"][0], n["canvas"]), cr(F["ansi"][7], n["canvas"]))
@@ -187,6 +206,7 @@ def fmt(x, floor=None):
 # Structural rules -------------------------------------------------------------
 def all_hexes(F):
     out = [*F["neutrals"].values(), *F["colors"].values(), *F["states"].values(), *F["ansi"]]
+    out += [v for s in F.get("scales", {}).values() for v in s]
     return out + [v for a in F["accents"].values() for v in a.values() if isinstance(v, str)]
 
 
@@ -239,6 +259,9 @@ def series_rules(raw):
     basis = {f: raw["flavors"][f] for f in k.BRIGHT_BASIS if f in raw["flavors"]}
     if len(basis) == len(k.BRIGHT_BASIS) and (got := k.bright_step(basis)) != k.BRIGHT_STEP:
         errs.append(f"bright step search on {', '.join(k.BRIGHT_BASIS)} gives {got}, construct.py has {k.BRIGHT_STEP}")
+    basis = {f: raw["flavors"][f] for f in k.SCALE_BASIS if f in raw["flavors"]}
+    if len(basis) == len(k.SCALE_BASIS) and (got := k.scale_search(basis)) != (k.SEQUENTIAL, k.DIVERGING):
+        errs.append(f"scale search on {', '.join(k.SCALE_BASIS)} gives {got}, construct.py has {(k.SEQUENTIAL, k.DIVERGING)}")
     basis = {f: raw["flavors"][f] for f in k.SERIES_BASIS if f in raw["flavors"]}
     if len(basis) == len(k.SERIES_BASIS) and (got := k.series_order(basis)) != k.SERIES:
         errs.append(f"series search on {', '.join(k.SERIES_BASIS)} gives {', '.join(got)}, not the decided order")
@@ -282,6 +305,9 @@ def reproduce(P):
         pairs += [(f"accents.{a}.{t}", pub["accents"].get(a, {}).get(t), b["accents"].get(a, {}).get(t))
                   for a in set(pub["accents"]) | set(b["accents"]) for t in ("accent", "accent-text", "accent-pressed", "accent-focus", "on-accent")]
         pairs += [(f"ansi.{i}", pub["ansi"][i] if i < len(pub["ansi"]) else None, b["ansi"][i]) for i in range(16)]
+        for name, cells in b["scales"].items():
+            got = pub.get("scales", {}).get(name, [])
+            pairs += [(f"scales.{name}[{i}]", got[i] if i < len(got) else None, x) for i, x in enumerate(cells)]
         for tok, p, q in pairs:
             if (p or "").lower() != (q or "").lower():
                 errs.append(f"{f} {tok}: published {p}, rebuilt {q}")
@@ -412,7 +438,9 @@ def row_checks(where, line, flavor, section, P, M):
 GUARANTEE = [  # (words in the row label, measurement); the first match wins, so specific rows come first
     (("subtle", "edge"), "subtle on edge"), (("semantic", "surface"), "semantic on surfaces and edge"),
     (("faint", "semantic"), "faint from semantic colors (JND)"),
-    (("terminal",), "ΔE ANSI colors, every vision"), (("ember", "afterglow"), "ΔE Ember from Afterglow"), (("accent-text",), "chip label on accent-text"),
+    (("terminal",), "ΔE ANSI colors, every vision"), (("ember", "afterglow"), "ΔE Ember from Afterglow"),
+    (("scale", "normal"), "ΔE scale steps, normal"), (("scale", "deficiency"), "ΔE scale steps, worst CVD"),
+    (("scale", "label"), "scale cell labels"), (("accent-text",), "chip label on accent-text"),
     (("other series",), "ΔE other series, every vision"), (("neutral", "states"), "neutral states, closest pair (JND)"),
     (("ink",), "ink on surfaces"), (("body",), "body on surfaces"), (("subtle",), "subtle on surfaces"),
     (("faint",), "faint on surfaces"), (("control", "focus"), ("control on surfaces", "accent-focus on surfaces")),
@@ -547,6 +575,8 @@ def run(snap, json_path="palette/twilight.json", do_rebuild=True):
     floors = []
     for c in CHECKS:
         for f in P:
+            if c not in M[f][0]:                       # a check the snapshot predates
+                continue
             v, mn, fl = M[f][0][c], MINIMUMS[category[f]][c], FLOORS.get(f, {}).get(c)
             ok_min, ok_fl = passes(v, mn), fl is None or passes(v, fl)
             floors.append(dict(flavor=f, check=c, value=v, minimum=mn, floor=fl, ok=ok_min and ok_fl,

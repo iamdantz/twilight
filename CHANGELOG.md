@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.12.0
+
+Continuous scales for data.
+
+### Added
+- `scales` in every flavor of palette/twilight.json: a sequential scale of five Ember steps from Canvas, and a diverging scale of two Sky steps, Canvas, and two Gold steps (design-system.md §12.4).
+- construction.md §7.2: each scale is a path at the color's hue from Canvas, with steps at equal ΔE. Steps keep the code colors' separation (ΔE 0.080 in normal vision, 0.040 under color-vision deficiency) from their neighbors, and the diverging steps from their counterparts; every colored step takes a label at AA. The series color and pair with the most steps passing in both flavors are chosen; ties go to the higher label contrast and the larger worst-case separation.
+- Category minimums for the separation of scale steps and for their labels.
+
+### Documented
+- design-system.md §12.4: continuous scales replace the rule that left them undefined. §13 points interpolation to the scales.
+- construction.md §11: the diverging scale holds two steps per side.
+
+### Tooling
+- `construct.py`: `SEQUENTIAL`, `DIVERGING` and `scale_search()`; every flavor builds its scales. `validate.py` reproduces them, checks that the search still returns them, measures the new minimums, and skips checks a base snapshot predates. `docs.py` generates the scale table and guarantee rows.
+
 ## 1.11.1
 
 The ceilings of the strong states, verified. No value changes.

@@ -1,6 +1,6 @@
 # Twilight design system
 
-Version 1.10 · Flavors: Dusk (dark), Dawn (light)
+Version 1.12 · Flavors: Dusk (dark), Dawn (light)
 
 This document defines Twilight: what each color is, what it means, where it may go, and what it guarantees. It does not describe any particular application. A theme for any tool can be built from it by mapping that tool's regions onto the roles below.
 
@@ -477,7 +477,25 @@ Data series take the code colors in a fixed order, the same in every flavor, so 
 - Every series is also identified by a label, a legend entry next to it, or a marker shape ([rule 6](#11-rules)).
 - The plot area is Canvas, gridlines and axes Edge, tick labels Faint, values and titles Body or Ink. Labels inside filled marks use the chip label of §8, which reaches <!-- fact:series_label -->5.04<!-- /fact -->:1 on every series color.
 - To bring one series forward, draw the others in Control.
-- Continuous scales (heat maps, filled maps) are not defined. Encode magnitude by position or size, or print the values; never interpolate between palette colors.
+- Magnitude is shown with the two scales below, never by interpolating between palette colors.
+
+**Sequential** (one quantity, low to high): five steps of Ember from Canvas. **Diverging** (deviation from a middle value): two steps of Sky below, Canvas at the middle, two steps of Gold above. Every step is at least as far from its neighbors as the code colors must be from each other (4 JND in normal vision, 2 JND under color-vision deficiency), and so are the two diverging steps at the same distance from the middle. Every colored cell takes a label at 4.5:1 or more, in Ink or in the chip label of §8, whichever contrasts more. The method is in [construction.md §7.2](construction.md#72-continuous-scales).
+
+| Scale | Step | Dusk | Dawn |
+|---|---|---|---|
+| Sequential | 1 | <img src="https://placehold.co/16x16/3a3530/3a3530" width="16" height="16" alt="#3a3530"> `#3a3530` | <img src="https://placehold.co/16x16/d4c7bf/d4c7bf" width="16" height="16" alt="#d4c7bf"> `#d4c7bf` |
+| Sequential | 2 | <img src="https://placehold.co/16x16/66594f/66594f" width="16" height="16" alt="#66594f"> `#66594f` | <img src="https://placehold.co/16x16/b9a092/b9a092" width="16" height="16" alt="#b9a092"> `#b9a092` |
+| Sequential | 3 | <img src="https://placehold.co/16x16/958070/958070" width="16" height="16" alt="#958070"> `#958070` | <img src="https://placehold.co/16x16/9e7b66/9e7b66" width="16" height="16" alt="#9e7b66"> `#9e7b66` |
+| Sequential | 4 | <img src="https://placehold.co/16x16/c7aa93/c7aa93" width="16" height="16" alt="#c7aa93"> `#c7aa93` | <img src="https://placehold.co/16x16/83563b/83563b" width="16" height="16" alt="#83563b"> `#83563b` |
+| Sequential | 5 | <img src="https://placehold.co/16x16/fcd6b7/fcd6b7" width="16" height="16" alt="#fcd6b7"> `#fcd6b7` | <img src="https://placehold.co/16x16/67320a/67320a" width="16" height="16" alt="#67320a"> `#67320a` |
+| Diverging | −2 | <img src="https://placehold.co/16x16/74a7dd/74a7dd" width="16" height="16" alt="#74a7dd"> `#74a7dd` | <img src="https://placehold.co/16x16/475186/475186" width="16" height="16" alt="#475186"> `#475186` |
+| Diverging | −1 | <img src="https://placehold.co/16x16/41576d/41576d" width="16" height="16" alt="#41576d"> `#41576d` | <img src="https://placehold.co/16x16/959cba/959cba" width="16" height="16" alt="#959cba"> `#959cba` |
+| Diverging | 0 | <img src="https://placehold.co/16x16/11171b/11171b" width="16" height="16" alt="#11171b"> `#11171b` | <img src="https://placehold.co/16x16/eeeeef/eeeeef" width="16" height="16" alt="#eeeeef"> `#eeeeef` |
+| Diverging | +1 | <img src="https://placehold.co/16x16/6d6035/6d6035" width="16" height="16" alt="#6d6035"> `#6d6035` | <img src="https://placehold.co/16x16/b1a686/b1a686" width="16" height="16" alt="#b1a686"> `#b1a686` |
+| Diverging | +2 | <img src="https://placehold.co/16x16/dbba50/dbba50" width="16" height="16" alt="#dbba50"> `#dbba50` | <img src="https://placehold.co/16x16/766014/766014" width="16" height="16" alt="#766014"> `#766014` |
+
+- Values are binned into these steps. A scale with more bins repeats no step and borrows no other color; it uses fewer bins.
+- A scale is not a state: when the data encodes pass or fail, the semantic colors of [§8](#8-semantic-states) apply.
 
 ### 12.5 Limited targets
 
@@ -545,7 +563,7 @@ Each misuse below breaks a role or a guarantee. Ports are checked against this t
 | A fill on the current line | Comments fall below 4.5:1 | Edge borders ([rule 11](#11-rules)) |
 | Bright white for text in a light flavor | It is Raised, about 1.2:1 on Canvas | The default foreground or bold |
 | `#000000` or `#ffffff`, also in shadows and backdrops | [Principle 5](#1-principles) | The shadow colors of rule 13 |
-| A seventh series color, or colors interpolated into a scale | The separation of §12.4 is lost | Other in Control; position, size or labels |
+| A seventh series color, or colors interpolated into a scale | The separation of §12.4 is lost | Other in Control; the sequential or diverging steps of §12.4 |
 | State, links or series told apart by color alone | Readers with a color-vision deficiency lose them | Icon, label, underline, marker or position ([rule 6](#11-rules)) |
 | Gradients, glows, washes | [Rule 15](#11-rules) | Tone and Edge |
 | A color borrowed from another role to stand in for one the target lacks | Two meanings share a color | Leave the effect out (§12.5) |
@@ -570,6 +588,9 @@ Each misuse below breaks a role or a guarantee. Ports are checked against this t
 | Faint from every semantic color, every vision | 3.30 JND | 1.05 JND |
 | Twelve chromatic terminal colors, closest pair, every vision | ΔE 0.020 | ΔE 0.020 |
 | Ember from Afterglow, normal vision | ΔE 0.216 | ΔE 0.360 |
+| Scale steps, closest pair, normal vision | ΔE 0.115 | ΔE 0.095 |
+| Scale steps, closest pair, color-vision deficiency | ΔE 0.079 | ΔE 0.052 |
+| Scale cell labels, lowest | 5.23:1 | 4.71:1 |
 | Other series from every series, every vision | ΔE 0.158 | ΔE 0.078 |
 | Neutral row and control states, closest pair | 2.9 JND | 1.5 JND |
 | Pure black or white | none | none |

@@ -104,6 +104,9 @@ GUARANTEE_ROWS = {  # design-system guarantee row label → (measurement, unit)
     "Faint from every semantic color, every vision": ("faint from semantic colors (JND)", "jnd2"),
     "Twelve chromatic terminal colors, closest pair, every vision": ("ΔE ANSI colors, every vision", "de"),
     "Ember from Afterglow, normal vision": ("ΔE Ember from Afterglow", "de"),
+    "Scale steps, closest pair, normal vision": ("ΔE scale steps, normal", "de"),
+    "Scale steps, closest pair, color-vision deficiency": ("ΔE scale steps, worst CVD", "de"),
+    "Scale cell labels, lowest": ("scale cell labels", "ratio"),
     "Other series from every series, every vision": ("ΔE other series, every vision", "de"),
     "Neutral row and control states, closest pair": ("neutral states, closest pair (JND)", "jnd"),
 }
@@ -192,6 +195,14 @@ def render(text, P, M, F_):
                 keys, d = README_GUARANTEES[label]
                 vals = [min(M[f][0][x] for x in keys) for f in (h.lower() for h in H[1:])]
                 new = [cs[0]] + [f" {('ΔE ' + format(v, '.3f')) if d == 3 else format(v, f'.{d}f') + ':1'} " for v in vals]
+        elif H[:2] == ["Scale", "Step"]:                                                        # design-system scales
+            name, step = cs[0].strip().lower(), cs[1].strip().replace("−", "-")
+            cells = [cs[0], cs[1]]
+            for h in H[2:]:
+                sc = P[h.lower()]["scales"][name]
+                hx = sc[int(step) - 1] if name == "sequential" else sc[len(sc) // 2 + int(step)]
+                cells.append(f" {img(hx, 16)} `{hx}` ")
+            new = cells
         elif H[:2] == ["Series", "Color"]:                                                      # design-system data series
             new = series_row(cs, H, P)
         elif H[0] == "Level" and H[1].startswith("Minimum"):                                     # design-system §4

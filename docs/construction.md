@@ -330,6 +330,29 @@ The result is Sky, Ember, Gold, Sea Salt, Orchid, Grove. A shared order costs Da
 
 Series past the sixth are grouped as Other in Control. Faint was rejected for that role: under color-vision deficiency it sits 1.05 JND from Dawn's Grove, while Control is at least ΔE 0.078 from every series in both flavors.
 
+
+### 7.2 Continuous scales
+
+A continuous scale is a path from Canvas to a series color: at the color's hue, lightness moves from Canvas's to the color's while chroma grows from zero to the color's, so the first steps are tints of the hue and never pass through gray. Steps are placed at equal ΔE OKLab along the path, the last one on the color itself. A diverging scale runs two such paths from Canvas in opposite directions, both cut at the length of the shorter one, so a step on either side is as far from the middle as its counterpart.
+
+A scale is accepted when, in every flavor:
+
+- adjacent steps, and Canvas against the first step, are at least ΔE 0.080 apart in normal vision and 0.040 under every color-vision deficiency, the separation the code colors keep (§10.1);
+- in a diverging scale, the two steps at the same distance from the middle meet the same separation, so the sign of a value survives color-vision deficiency;
+- every colored step takes a label at 4.5:1 or more, in Ink or in the chip label.
+
+The search tries every series color, and every pair of series colors, from 1 to 15 steps, and keeps the most steps that pass in Dusk and Dawn.
+
+| Sequential, steps passing in both flavors | Lowest label |
+|---|---|
+| **Ember, 5** | **5.23 Dusk, 4.71 Dawn** |
+| Sky, 5 | 4.85, 4.65 |
+| Gold, Sea Salt, Orchid, Grove | fewer, or a step below 4.5:1 for every label |
+
+Ember and Sky tie at five steps; Ember has the higher lowest label. Ember holds eight steps in Dusk and seven in Dawn by separation alone, but with seven a middle step in Dawn reaches only 4.34:1 for any label.
+
+Every pair of series colors reaches one step per side, and Sky–Gold and Orchid–Grove reach two. Two tints of different hues near Canvas are hard to tell apart under color-vision deficiency, which is what limits the pairs. Sky–Gold keeps the larger worst-case separation over every pair of steps (ΔE 0.079 Dusk, 0.052 Dawn), so the diverging scale is Sky below the middle and Gold above it.
+
 ---
 
 ## 8. Syntax roles
@@ -452,6 +475,8 @@ Twilight holds its flavors to two levels of floor.
 | Faint from every semantic color, every vision | ≥ 1 JND | the same |
 | Twelve chromatic terminal colors, closest pair, every vision | ≥ 0.010 (½ JND) | the same |
 | Ember from Afterglow, normal vision | ≥ 0.080 (4 JND) | the same |
+| Steps of each continuous scale, normal vision / every color-vision deficiency | ≥ 0.080 / ≥ 0.040 (§7.2) | the same |
+| Label on every colored step of a scale | 4.5:1 | the same |
 
 **Flavor floors** are what each flavor reaches today. They keep a change from quietly degrading Dusk or Dawn. A flavor floor may go down only when the new value still meets the category minimum, the version's changelog names the check under Lower with its cause and the benefit it pays for, and the loss is imperceptible or stays well inside the standard: under 1 JND for color and state measures, or a contrast that stays clearly above its minimum. A new flavor is checked against the minimums of its category, not against another flavor's floors; once accepted, its own measured values become its floors.
 
@@ -470,6 +495,7 @@ Both levels live in the auditor's validator, which reports every value next to i
 | Faint is 1.05 JND from Grove under color-vision deficiency in Dawn (Sea Salt 1.17, Orchid 1.21) | In a light flavor the code floor and Faint are both 4.5:1, so they share luminance, the dimension color-vision deficiency keeps. Three ways out were measured and rejected: adding these pairs to the §6.5 objective (code separation falls to ΔE 0.024), raising the code floor to 4.75 or 5.0 (Faint comes closer, to 0.71 and 0.54 JND), and darkening Faint (at best 1.24 JND at 5.5:1, which breaks the 4.5, 7, 10.9 text steps). The six semantic colors span Faint's whole range of lightness. Version-control markers therefore carry a letter or an icon. |
 | Dawn's worst color-vision separation of the code colors is ΔE 0.0402, 0.4 % above its minimum | It is the optimizer's maximum: 40 restarts give the same value. No parameter raises it without breaking another minimum: gamut margin 0.88 to 0.94, τ 0.10 to 0.20, Afterglow's chroma as the base, neutral amplitude 0.03 and 0.04, Canvas L 0.94 and 0.96. At L 0.96 it reaches 0.0417, but the closest pair of states falls to 0.50 JND and Dawn's Canvas would no longer be Dusk's Ink. A system change that lowers it fails validation. |
 | The twelve chromatic terminal colors are about 1 JND apart at their closest pair under color-vision deficiency (ΔE 0.0201 Dusk, 0.0195 Dawn) | Twelve colors with six shared hues leave each bright near another hue's normal. The bright step is already the one that maximizes this pair (§6.7). Terminal output that must be told apart by color-vision deficient readers relies on more than color, as rule 6 requires everywhere. |
+| The diverging scale has two steps per side | Near Canvas, tints of two hues fall close together under color-vision deficiency. No pair of series colors keeps three steps per side at the code colors' separation (§7.2). |
 | OKLCH hue drift in near-neutrals | Below C 0.002, 8-bit quantization makes hue undefined (Dusk's Ink, Dawn's Canvas). This is invisible by definition. |
 
 ## 12. Parameters: decided vs derived
@@ -504,6 +530,7 @@ These were searched over a range, and the published value is the one the guarant
 | Bright step (system) | 0.38 toward Ink | The step from 0.29 to 0.89, in steps of 0.005, that keeps every bright 2 JND from its normal and from Ink and gives the twelve chromatic ANSI colors the largest closest pair in every vision (§6.7) |
 | Neutral chroma amplitude (flavor, the same in every flavor) | 0.035 | The largest value at which Dusk reaches its best code-color separation, within the range where Dawn meets every minimum (0.020 to 0.0375), searched in steps of 0.0025 (§3.2) |
 | State visibility | strong states at the bound of §9.2; weak states at 2 JND | Set by the bounds and by the minimum of §10.1, with no number of its own (§9.1) |
+| Continuous scales | sequential: Ember, 5 steps; diverging: Sky and Gold, 2 steps each | The series color and pair with the most steps that keep the code colors' separation and an AA label in both flavors (§7.2) |
 | Warm tilt τ (system) | 0.15 | The only value from 0.10 to 0.20, in steps of 0.01, at which both flavors meet every minimum (§6.3) |
 
 ### Measured (from data)

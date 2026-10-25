@@ -437,8 +437,11 @@ def build_flavor(flavor):
     order = ["red", "green", "yellow", "blue", "magenta", "cyan"]
     ansi = ([N["border"] if dark else N["body"]] + [S[k] for k in order] + [N["secondary"] if dark else N["border"]]
             + [N["muted"]] + [bright(S[k], N["primary"]) for k in order] + [N["primary"] if dark else N["elevated"]])
+    labels = scale_labels(N)
+    scales = {"sequential": sequential(N["content"], colors, labels), "diverging": diverging(N["content"], colors, labels)}
     out = {"neutrals": {k: N[v] for k, v in NAMES.items()}, "colors": colors,
-           "accents": {k: family(N, v, P) for k, v in colors.items()}, "states": states, "ansi": ansi}
+           "accents": {k: family(N, v, P) for k, v in colors.items()}, "states": states, "ansi": ansi,
+           "scales": scales}
     meta = {"hues": hues, "ember": ember, "L0": L0, "pass1_hues": {k: round(hue(first[k])) for k in ("green", "red")}}
     return out, meta, N
 
@@ -471,6 +474,101 @@ def series_order(palettes):
     glow = lambda c: min(worst_de([palettes[f]["colors"][c], AFTERGLOW]) for f in palettes)
     key = lambda o: (*(min(w(f, o[:n]) / best[f][n] for f in palettes) for n in range(2, 7)), glow(o[0]))
     return max(itertools.permutations(six), key=key)
+
+
+# Continuous scales (§7.2) -----------------------------------------------------------------
+SEQUENTIAL = ("ember", 5)              # decided by scale_search() on SCALE_BASIS: color, steps
+DIVERGING = (("sky", "gold"), 2)       # the two arms (negative, positive) and steps per arm; Canvas is the middle
+SCALE_BASIS = ("dusk", "dawn")
+SCALE_NORMAL, SCALE_CVD, SCALE_LABEL = 4 * JND, 2 * JND, 4.5   # the code colors' separation; AA for labels in cells
+
+
+def scale_arc(bg, col, samples=1500):
+    """§7.2: from Canvas's lightness at zero chroma to the color, at the color's hue; L and C grow together.
+    Returns the rendered samples and their cumulative ΔE OKLab from Canvas."""
+    Lb = oklch_of(bg)[0]
+    L, C, h = oklch_of(col)
+    hx = [hexof(oklch(Lb + (L - Lb) * i / samples, C * i / samples, h)) for i in range(samples + 1)]
+    d = [de_ok(bg, hx[0])]
+    for a, b in zip(hx, hx[1:]):
+        d.append(d[-1] + de_ok(a, b))
+    return hx, d
+
+
+def scale_steps(arc, total, n):
+    """n steps at equal ΔE along the arc, up to `total` (the nearest sample to each)."""
+    hx, d = arc
+    return [hx[min(range(len(d)), key=lambda j: abs(d[j] - total * i / n))] for i in range(1, n + 1)]
+
+
+def scale_labels(N):
+    """The labels a cell may carry: Ink, and the neutral farthest from it (the chip label of design-system §8)."""
+    return N["primary"], max(N.values(), key=lambda x: contrast(x, N["primary"]))
+
+
+def _apart(a, b):
+    return de_ok(a, b) >= SCALE_NORMAL and min(de_ok(sim(a, v), sim(b, v)) for v in VISIONS[1:]) >= SCALE_CVD
+
+
+def _labelled(cells, labels):
+    return min(max(contrast(c, x) for x in labels) for c in cells)
+
+
+def sequential(bg, colors, labels, color=None, n=None):
+    color, n = color or SEQUENTIAL[0], n or SEQUENTIAL[1]
+    arc = scale_arc(bg, colors[color])
+    return scale_steps(arc, arc[1][-1], n)
+
+
+def diverging(bg, colors, labels, pair=None, n=None):
+    (a, b), n = pair or DIVERGING[0], n or DIVERGING[1]
+    arcs = scale_arc(bg, colors[a]), scale_arc(bg, colors[b])
+    total = min(arcs[0][1][-1], arcs[1][1][-1])
+    neg, pos = (scale_steps(x, total, n) for x in arcs)
+    return list(reversed(neg)) + [bg] + pos
+
+
+def scale_ok(cells, bg, labels, kind):
+    """§7.2: adjacent cells (and, for a diverging scale, the two cells at the same distance from the middle) are
+    as far apart as the code colors must be, and every colored cell takes a label at AA."""
+    chain = [bg] + cells if kind == "sequential" else cells
+    pairs = list(zip(chain, chain[1:]))
+    if kind == "diverging":
+        n = len(cells) // 2
+        pairs += [(cells[n - 1 - i], cells[n + 1 + i]) for i in range(n)]
+    colored = [c for c in cells if c != bg]
+    return all(_apart(a, b) for a, b in pairs) and _labelled(colored, labels) >= SCALE_LABEL
+
+
+def scale_search(palettes):
+    """§7.2: the series color, and the pair of series colors, with the most steps that pass scale_ok() in every flavor
+    given. Ties: the larger lowest label contrast (sequential); the larger worst-vision separation over every pair of
+    cells (diverging). Returns ((color, n), ((a, b), n))."""
+    def ctx(F):
+        N = {NAMES[t]: v for t, v in F["neutrals"].items()}
+        return F["neutrals"]["canvas"], F["colors"], scale_labels(N)
+
+    def largest(build, kind):
+        best = 0
+        for n in range(1, 16):
+            if all(scale_ok(build(*ctx(F), n), ctx(F)[0], ctx(F)[2], kind) for F in palettes.values()):
+                best = n
+        return best
+
+    seq = []
+    for c in SERIES:
+        n = largest(lambda bg, cols, lab, n, c=c: sequential(bg, cols, lab, c, n), "sequential")
+        if n:
+            tie = min(_labelled(sequential(*ctx(F), c, n), ctx(F)[2]) for F in palettes.values())
+            seq.append((n, tie, c))
+    div = []
+    for a, b in itertools.combinations(SERIES, 2):
+        n = largest(lambda bg, cols, lab, n, a=a, b=b: diverging(bg, cols, lab, (a, b), n), "diverging")
+        if n:
+            tie = min(worst_de([x for x in diverging(*ctx(F), (a, b), n) if x != ctx(F)[0]]) for F in palettes.values())
+            div.append((n, tie, (a, b)))
+    s, d = max(seq), max(div)
+    return (s[2], s[0]), (d[2], d[0])
 
 
 def build_palette():
