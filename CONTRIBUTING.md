@@ -22,7 +22,7 @@ Every pull request to `main` also runs the [Validate workflow](.github/workflows
 - **robust** rebuilds with twice the optimizer restarts when the change touches `construct.py`, `validate.py`, `requirements.txt` or the palette.
 - When the change edits the validator, the base branch's copy also runs on it. That step never blocks; a difference there needs a reviewer to confirm that no check was loosened.
 
-The same checks run locally with `python .agents/skills/twilight-auditor/scripts/validate.py --compare main`, adding `--robust` for construction changes. The workflow does not replace the audit: the validator's exit 0 is necessary, not sufficient.
+The same checks run locally with `python .agents/skills/twilight-auditor/scripts/validate.py --compare main`, adding `--robust` for construction changes. The workflow does not replace the audit. A passing validator is necessary but not sufficient.
 
 Pull requests are merged with a merge commit or a rebase, so each version stays its own commit.
 

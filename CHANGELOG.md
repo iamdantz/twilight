@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.12.3
+
+Documentation reviewed for clarity. No value changes.
+
+### Fixed
+- construction.md: version line (1.12), the bright step (0.38) and the scales in §13, "flavor" where the text said "variant", and state separation described by bounds rather than targets.
+
+### Documented
+- construction.md §6.3: the chroma ceiling of the code colors stated as numbers (0.133 Dusk, 0.121 Dawn, against Afterglow's 0.188).
+- Colon reveals and a binary contrast rewritten as plain sentences in construction.md, design-system.md and CONTRIBUTING; headings capitalized after the colon.
+- README: the workflows directory in the repository layout.
+
 ## 1.12.2
 
 The last parameters checked against the guarantees. No value changes.

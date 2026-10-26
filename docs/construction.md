@@ -1,6 +1,6 @@
 # Twilight construction
 
-Version 1.6. How every value was derived, optimized and validated.
+Version 1.12. How every value was derived, optimized and validated.
 
 The companion document, [design-system.md](design-system.md), defines the system and how to apply it. This one explains why each value is what it is. It is written so the full palette can be rebuilt from one seed and the rules below.
 
@@ -13,12 +13,12 @@ The companion document, [design-system.md](design-system.md), defines the system
 3. **Out-of-gamut colors are mapped by reducing chroma**, which preserves L and h, never by clipping RGB channels.
 4. **Neutral surfaces sit at fixed perceptual distances from Canvas**, taken from one geometric progression; each category sets their direction, and text levels are solved by contrast targets against the hardest surface.
 5. **The six hues are anchored to the ANSI standard** (RGB cube corners), lit by one shared "sunset" chroma law, and optimized jointly with a seventh hue (Ember) for distinguishability, including under color-vision deficiency.
-6. **The variant floor is solved**: the base lightness is raised (Dusk) or lowered (Dawn) until the weakest code color meets exactly 7:1 or 4.5:1 on the most demanding code surface.
+6. **The code floor is solved**: the base lightness is raised (Dusk) or lowered (Dawn) until the weakest code color meets exactly 7:1 or 4.5:1 on the most demanding code surface.
 7. **Syntax roles are fixed per category**: one color each, the same in both flavors, with Coral and Afterglow kept out of code.
-8. **Background states are measured in just-noticeable differences**, bounded so no text level loses its guarantee, and kept 1 JND apart from each other wherever their targets allow.
+8. **Background states are measured in just-noticeable differences**, bounded so no text level loses its guarantee, and kept 1 JND apart from each other wherever the bounds allow.
 9. **Dawn is the light end of the same system**: one neutral curve, the same perceptual surface distances, the same text targets and rules, and the light category's β and chroma base.
 
-Designer decisions are listed explicitly in §12; everything else follows from them.
+Designer decisions are listed in §12; everything else follows from them.
 
 ### 1.1 Three levels
 
@@ -42,13 +42,13 @@ Every parameter belongs to one level, and a flavor reads only the system and its
 
 The seed contributes its hue to Afterglow, the neutrals, the warm tilt (§6.3) and Ember's range (§6.4), and its chroma to the light chroma base (§6.3). Afterglow is computed, so it cannot drift away from the seed's hue or lose its chroma. Both flavors use the same seed and the same Afterglow.
 
-The original hand-picked neutral scale was kept too: its surface lightnesses (0.16, 0.20, 0.25, 0.31) turned out to be a geometric progression, which became the formal rule in §3.
+The original hand-picked neutral scale was kept too. Its surface lightnesses (0.16, 0.20, 0.25, 0.31) form a geometric progression, which became the formal rule in §3.
 
 ---
 
 ## 3. Neutrals
 
-### 3.1 Hue: shadows lean toward night
+### 3.1 Hue: Shadows lean toward night
 
 ```
 h(L) = 232° + 18° · (1 − L)²
@@ -58,7 +58,7 @@ The darker a neutral, the further its hue drifts toward indigo (≈ 245° at L 0
 
 The 18° amount was searched from 0° to 36° in steps of 6°, rebuilding both flavors. From 12° to 24° every minimum and every flavor floor holds, and the guarantees barely move (under 0.07 JND for states, the same color-vision separation). Below 12°, Faint comes within 1 JND of a semantic color in Dawn; at 30°, Dusk's normal-vision separation of the code colors (0.0945) and Dawn's terminal colors (0.0179) fall below their flavor floors. Since the guarantees select no value inside 12°–24°, the drift stays a design choice: how far shadows lean toward night.
 
-### 3.2 Chroma: tinted in the middle, clean at the ends
+### 3.2 Chroma: Tinted in the middle, clean at the ends
 
 ```
 C(L) = 0.035 · sin²(π · L)
@@ -68,7 +68,7 @@ Chroma peaks at mid-lightness (≈ 0.035) and approaches zero at both ends, so d
 
 The amplitude is searched from 0.020 to 0.050 in steps of 0.0025, rebuilding both flavors. Both use the same value, since they share one neutral curve (§1). Dawn meets every minimum up to 0.0375; from 0.040, Faint comes within 1 JND of a semantic color under color-vision deficiency (0.89 JND at 0.040). Dawn's code colors do not move across the range. Dusk meets every minimum across the range, and its code colors reach their best separation at 0.0325 and 0.035 (ΔE 0.0606 in color-vision deficiency, 0.0968 in normal vision, 0.0201 for the twelve terminal colors), with identical code colors at both. Of the two, 0.035 tints the neutrals more, which is what the amplitude is for. Lowering it to 0.0275 would move Faint 0.13 JND further from the semantic colors in Dawn, an imperceptible gain, at the cost of a lighter tint and a slightly lower separation in Dusk.
 
-### 3.3 Surfaces: one perceptual scale
+### 3.3 Surfaces: One perceptual scale
 
 The system defines how far each surface sits from Canvas. The distances come from a geometric progression in lightness, measured as ΔE OKLab from its middle step:
 
@@ -95,7 +95,7 @@ Placement: a 50-step bisection between Canvas and L 0.02 (darker) or L 0.999 (li
 
 r is the smallest value, on a 0.0125 grid, at which both flavors keep every guarantee and every pair of background states is at least 1 JND apart. The sweep was made with the fixed state targets used until 1.10; rebuilt with the strong and weak states of §9.1, Dawn still has a pair 0.61 JND apart at 1.30 and none at 1.3125, so r does not change. Dawn's results were the same with 10 and with 20 optimizer restarts, so the window is a property of the geometry, not of the search. Larger r moves Raised further from Canvas, which lowers Ink on Raised (Dusk 13.76 → 13.25:1, Dawn 13.36 → 12.84:1); the Ink color itself does not change. Code colors do not depend on r: they are solved against Canvas, which r does not move.
 
-### 3.4 Rail: a half step
+### 3.4 Rail: A half step
 
 Rail is placed so its contrast to Shell equals its contrast to Canvas:
 
@@ -105,7 +105,7 @@ contrast(Rail, Canvas) = contrast(Rail, Shell) = √ contrast(Shell, Canvas)
 
 Dusk: `#0e1215` (1.041:1 to Canvas, 1.042:1 to Shell). Dawn: `#e5e6e7` (1.078:1 to Canvas, 1.079:1 to Shell).
 
-### 3.5 Text and control levels: solved by contrast
+### 3.5 Text and control levels: Solved by contrast
 
 Each level is the lightness, on the neutral curve, that meets an exact contrast target against Raised. Raised is the hardest surface for text (it is the lightest surface in Dusk and the darkest in Dawn), so meeting the target there guarantees it on every surface.
 
@@ -127,7 +127,7 @@ This replaced an earlier hand-tuned scale in which the faint level reached only 
 
 ---
 
-## 4. Dawn: the light end
+## 4. Dawn: The light end
 
 Dawn is the same system read from the other end of the neutral curve. Every formula in §3 and §5–§9 is shared; the table lists what the light category and the Dawn flavor set.
 
@@ -175,7 +175,7 @@ below 4.5:1, a 50-step bisection finds the 4.5:1 boundary instead.
 
 For Afterglow this gives, in Dusk: text `#ff944d` (7.02:1 on Raised), pressed `#d26600` (label 5.27:1), focus `#ff7d00` (5.99:1 or more). In Dawn: text `#994900` (4.51:1), pressed `#d26600` (label 4.85:1), focus `#c45e00` (3.02:1 or more). Every other accent passes the same checks; the full table is in [design-system.md](design-system.md#5-accents).
 
-An earlier hand-made accent ramp used arbitrary hue drifts (−6°, +8°, +12°) and chromas. It was replaced: a constant hue is the safe choice in OKLCH, and the targets make each variant's lightness necessary.
+An earlier hand-made accent ramp used arbitrary hue drifts (−6°, +8°, +12°) and chromas. It was replaced by a constant hue and relative chroma, with each variant's lightness set by its contrast target.
 
 ### Why selection does not follow the accent
 
@@ -183,7 +183,7 @@ Letting the selection background take the accent's hue was tested and rejected. 
 
 ## 6. Hues
 
-### 6.1 Anchors: the ANSI standard
+### 6.1 Anchors: The ANSI standard
 
 The six ANSI chromatic colors are defined by the corners of the RGB cube. Measured in OKLCH:
 
@@ -198,9 +198,9 @@ The six ANSI chromatic colors are defined by the corners of the RGB cube. Measur
 
 Every hue may move at most ±24° from its anchor, so red stays red and blue stays blue. 24° is the smallest freedom, on a 1° grid, at which both flavors meet every minimum: Dawn's Sea Salt needs 23.7° from the cyan anchor, and from 15° to 23° Dawn breaks two or three minimums (color-vision separation 0.037–0.038, Faint 0.56–0.71 JND from a semantic color). Dusk never moves a hue more than 17.9°. The palette is the same at 24°, 25° and 26°; from 28° Dawn's neutral states fall to 0.88 JND. The bound is checked on the rendered color: the hue of the final hex against the exact anchor above, not the optimizer's whole-degree parameter against the rounded anchor.
 
-An earlier version placed six hues at equal 60° steps from the accent. That was mathematically tidy but semantically wrong: it had no true red, merged cyan and blue, and used one lightness for all hues. It was discarded.
+An earlier version placed six hues at equal 60° steps from the accent. It had no true red, merged cyan and blue, and used one lightness for all hues, so it was discarded.
 
-### 6.2 Lightness: each hue at its natural height
+### 6.2 Lightness: Each hue at its natural height
 
 ```
 L = L₀ + β · (L_cusp(h) − mean L_cusp)        β = 0.30 (Dusk), 0.19 (Dawn)
@@ -212,9 +212,9 @@ Yellow is naturally light and blue naturally dark. Forcing equal lightness (β =
 
 The formula is the same in both flavors; β is an input, like Canvas, Ink and the floor.
 
-L₀ is solved by bisection so that the weakest of the six hues meets exactly the variant floor (7:1 Dusk, 4.5:1 Dawn) on the most demanding code surface (§6.6).
+L₀ is solved by bisection so that the weakest of the six hues meets exactly the code floor of its category (7:1 Dusk, 4.5:1 Dawn) on the most demanding code surface (§6.6).
 
-### 6.3 Chroma: one shared warm light
+### 6.3 Chroma: One shared warm light
 
 ```
 C = min( C₀ · (1 + τ · cos(h − 52°)),  0.92 · Cmax(L, h) )
@@ -223,12 +223,12 @@ C_Afterglow = 0.188   C_seed = 0.170   φ = 1.618…   τ = 0.15
 ```
 
 - **Absolute chroma.** Relative chroma (a fixed fraction of the gamut limit) was tested and rejected: green's sRGB gamut is so large that it rendered neon.
-- **C₀ is the base chroma divided by φ.** The golden-ratio division keeps every hue clearly below the accent, so Afterglow always leads.
+- **C₀ is the base chroma divided by φ.** The golden-ratio division keeps every code color's chroma below Afterglow's: at most C₀ · (1 + τ), 0.133 in Dusk and 0.121 in Dawn, against 0.188.
 - **The base depends on the flavor's polarity, like β.** A dark flavor's code colors sit near the cusp lightness of the seed hue, where no code color reaches the gamut limit, so they take Afterglow's chroma. A light flavor's code colors sit near L 0.46 to meet 4.5:1, where Gold and Sea Salt already reach 0.92 · Cmax with the seed's chroma. A larger base raises only the other four, and the worst color-vision separation falls (Dawn: ΔE 0.040 at C₀ 0.105, 0.033 at 0.116). Light flavors therefore take the seed's chroma.
 - **τ = 0.15 tilts chroma toward warmth**: hues near the seed get up to 15 % more chroma, hues opposite it up to 15 % less, as if lit by the same low sun. From 0.10 to 0.20, in steps of 0.01, 0.15 is the only value at which Dawn meets every minimum of §10.1; Dusk meets them across the range, and 0.15 is among the values that give its highest color-vision separation (ΔE 0.0606).
 - **0.92 · Cmax** keeps an 8 % margin inside the sRGB boundary. In Dusk only Ember and two brights touch this limit, and none of Dusk's measured guarantees moves from 0.90 to 0.94. Dawn meets every minimum from 0.92 to 0.932, in steps of 0.005; its color-vision separation rises to ΔE 0.0409 at 0.93 and falls to 0.0378 at 0.935, where four minimums fail. 0.92 is kept: 0.93 would gain ΔE 0.0007, under a twentieth of a JND, and sit 0.005 from that drop.
 
-### 6.4 Ember: the seventh color
+### 6.4 Ember: The seventh color
 
 Code needs seven distinguishable colors (keyword, function, type, string, constant, parameter, plus error). Using a lighter Afterglow for parameters collided with Gold: ΔE 0.016 under deuteranopia, effectively identical. Ember was therefore added as a seventh hue optimized together with the other six, constrained to the accent family:
 
@@ -286,7 +286,7 @@ The search is deterministic:
 Hues and L₀ are the optimizer's parameters. Hues measured from the published hex can differ by up
 to 1° after gamut mapping and 8-bit rounding.
 
-Gold moved toward a warmer, metallic yellow in both variants. That is the shift that separates it from Grove under red-green deficiencies. In Dawn, Sea Salt moves 24° toward blue and Sky moves toward violet, which keeps the three cool hues apart at the low lightness the 4.5:1 floor requires.
+Gold moved toward a warmer, metallic yellow in both flavors, which separates it from Grove under red-green deficiencies. In Dawn, Sea Salt moves 24° toward blue and Sky moves toward violet, which keeps the three cool hues apart at the low lightness the 4.5:1 floor requires.
 
 ### 6.6 Floors are validated on every code surface
 
@@ -506,7 +506,7 @@ Both levels live in the auditor's validator, which reports every value next to i
 | The diverging scale has two steps per side | Near Canvas, tints of two hues fall close together under color-vision deficiency. No pair of series colors keeps three steps per side at the code colors' separation (§7.2). |
 | OKLCH hue drift in near-neutrals | Below C 0.002, 8-bit quantization makes hue undefined (Dusk's Ink, Dawn's Canvas). This is invisible by definition. |
 
-## 12. Parameters: decided vs derived
+## 12. Parameters: Decided vs derived
 
 ### Decided (design choices)
 
@@ -575,7 +575,7 @@ different hexes.
 ## 13. Reproducing the palette
 
 ```
-for variant in (Dusk, Dawn):
+for flavor in (Dusk, Dawn):
     surfaces  ← the §3.3 distances from the flavor's Canvas, in the category's direction
     rail      ← half-step contrast between shell and canvas
     levels    ← bisect L on neutral curve until contrast(level, raised) = target
@@ -583,11 +583,12 @@ for variant in (Dusk, Dawn):
     diff bg   ← state(grove₁), state(coral₁) at 2 JND
     hues      ← optimize(§6.5) against the worst of {canvas, diff bgs}
     accents   ← for each of the 8 colors, the five tokens of §5
-    brights   ← L + (L_ink − L)/3
-    states    ← strong at the bound, weak at 2 JND (§9.1–9.3), 1 JND apart in order (§9.4)
+    brights   ← L + 0.38 · (L_ink − L) (§6.7)
+    states    ← strong at the bound, weak at 2 JND (§9.1–9.3), 1 JND apart (§9.4)
+    scales    ← sequential and diverging steps from Canvas (§7.2)
     validate  ← every pairing in §10
 ```
 
 The reference implementation ships with the `twilight-auditor` skill. It rebuilds every token
-of both variants exactly, and the skill checks this on every change.
+of both flavors exactly, and the skill checks this on every change.
 
