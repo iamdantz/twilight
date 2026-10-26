@@ -1,6 +1,6 @@
 # Twilight design system
 
-Version 1.12 · Flavors: Dusk (dark), Dawn (light)
+Version 1.13 · Flavors: Dusk (dark), Dawn (light)
 
 This document defines Twilight: what each color is, what it means, where it may go, and what it guarantees. It does not describe any particular application. A theme for any tool can be built from it by mapping that tool's regions onto the roles below.
 
@@ -206,7 +206,18 @@ Every variant keeps the hue and relative chroma of its color. Only lightness cha
 - Data series ([§12.4](#124-data-visualization))
 - Gradients or washes
 
-A view should contain one accent element besides focus and cursor indicators.
+### How much accent a view carries
+
+Every use of the accent is a mark or a fill.
+
+| Kind | Includes | Limit |
+|---|---|---|
+| **Mark** | An element whose shorter side is 4 px or less (focus ring, cursor, active indicator line, progress fill), a badge or counter, a small emblem, link text in `accent-text` | One active mark per container: a tab strip, a list, a navigation strip or a panel header marks only its active item |
+| **Fill** | Any larger accent area: the main action's button | One per view, on its single main action. A view without a main action has no accent fill |
+
+A **view** is a window, a full screen or a modal dialog. A floating layer with a main action of its own, such as a dialog or a notification with a button, is a view of its own; panels and side bars are containers inside a view. The 4 px bound is the thickest indicator the system already draws: the active line is 2 px and semantic bars are 3 px.
+
+A music player shows how the two kinds combine. The play button of the open playlist is the view's one fill. The playback progress, a 4 px track, is a mark and takes `accent`. The pause button in the player bar is another control, so it stays neutral.
 
 ### What the accent does not change
 
@@ -388,7 +399,7 @@ Of black and white, the one that matches the background's polarity is a surface:
 5. **Every interactive control has a Control boundary** (3:1 or more on all surfaces) and an `accent-focus` ring when focused.
 6. **Semantic states never rely on color alone.** Pair them with an icon, label or position. Links in running text follow the same principle: they are underlined or marked by an icon ([§5](#where-the-accent-goes)).
 7. **Coral only means danger.** Regular expressions use the string color; only invalid code is Coral.
-8. **The accent marks focus, activity, the main action and links,** and nothing else.
+8. **The accent marks focus, activity, the main action and links,** and nothing else: one fill per view and one active mark per container ([§5](#how-much-accent-a-view-carries)).
 9. **No color without a role.** Status bars, labels and file-type tags use neutrals.
 10. **Terminals use only the sixteen ANSI colors.** Prompts and tools must not depend on others.
 11. **The current line uses a border, not a fill.**
@@ -537,7 +548,7 @@ In light flavors, bright white is Raised, a surface, so it never colors text.
    - code colors meet the category floor (7:1 dark, 4.5:1 light) on Canvas and on diff backgrounds;
    - control boundaries and focus indicators reach 3:1;
    - no `#000000`, no `#ffffff`, nothing outside sRGB;
-   - the accent fills nothing larger than a button or badge;
+   - one accent fill per view, on the main action, and one active accent mark per container;
    - nothing in §13 appears.
 
 If a target cannot express a rule, such as a border on the current line, the effect is left out rather than drawn with a color from another role.
@@ -554,6 +565,8 @@ Each misuse below breaks a role or a guarantee. Ports are checked against this t
 | A semantic color itself for text, such as a success or error message | Below 4.5:1 on Raised in light flavors | The color's `accent-text` (§8) |
 | `accent` in place of `accent-text` for text, or in place of `accent-focus` for rings | The contrast guarantee belongs to the variant | The variant named in §5 |
 | The accent on content, large fills, semantic states or data series | The accent stops marking interaction | [§5](#where-the-accent-goes) |
+| Two accent fills in one view | Neither reads as the main action | One fill on the main action; the other control stays neutral ([§5](#how-much-accent-a-view-carries)) |
+| Accent marks on two items of one container | The active item is no longer clear | Only the active item carries the mark |
 | An accent family other than Afterglow in a theme | Its color already codes syntax or a semantic state, so focus and active indicators would share a hue with content or meaning | Afterglow |
 | Tokens from two flavors, or two accent families, in one theme | Contrast and separation are solved within one flavor | One flavor and one accent family per theme |
 | Code on Raised | Code colors are solved on code surfaces only | Canvas with an Edge outline ([rule 1](#11-rules)) |

@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.13.0
+
+How much accent a view carries. No value changes.
+
+### Changed
+- design-system.md §5: the rule "one accent element per view besides focus and cursor" is replaced by two kinds of use. A mark (an element 4 px or thinner, a badge or counter, a small emblem, link text) is limited to one active mark per container. A fill (any larger accent area) is limited to one per view, on its single main action. Active indicators, badges and progress fills are now explicitly allowed alongside the main action.
+- A view is a window, a full screen or a modal dialog; a floating layer with its own main action is a view of its own.
+
+### Documented
+- design-system.md §11 rule 8, the §12.6 checklist and two §13 misuses follow the rule.
+
 ## 1.12.3
 
 Documentation reviewed for clarity. No value changes.
