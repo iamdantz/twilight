@@ -1,2 +1,2 @@
 coloraide==8.13
-pillow==11.3.0
+pillow==13.0.0
