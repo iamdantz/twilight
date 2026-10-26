@@ -257,7 +257,7 @@ The mapping is fixed by [construction.md, section 8](construction.md#8-syntax-ro
 
 Only comments, parameters and `this`/`self` are italic.
 
-Properties are uncolored on purpose: they cover more of the screen than any other category the convention leaves open, so code is not colored end to end ([construction.md §8](construction.md#8-syntax-roles)).
+Properties are uncolored because they cover more of the screen than any other category the convention leaves open, so code is not colored end to end ([construction.md §8](construction.md#8-syntax-roles)).
 
 ## 8. Semantic states
 
@@ -520,7 +520,7 @@ A target that cannot express the whole system uses a subset of it. It never borr
 | States and markers | The ANSI slots of §6 | The same |
 | Active item | Bold or reverse video; there is no accent slot | The same |
 
-In light flavors, bright white is Raised, a surface: it never colors text.
+In light flavors, bright white is Raised, a surface, so it never colors text.
 
 ### 12.6 Building a theme
 
