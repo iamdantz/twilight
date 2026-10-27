@@ -13,8 +13,10 @@ every named instance, so an unintended difference cannot pass unnoticed:
 - shaping of every mapped character and of a kerning sample, with the default features and
   with each optional feature on: glyphs, advances and offsets, exactly.
 
-Differences an earlier version declared on purpose are listed in fonts/changes.json and
-reported as expected; any other difference fails.
+Changes made on purpose are declared in fonts/changes.json, per font file: "added" lists the
+code point ranges of new characters (their glyphs join the glyph set and character map, and
+nothing else may), "differences" lists the reported differences that are expected, by prefix.
+Anything else fails.
 
     python fonts/scripts/upstream.py reference /tmp/reference
     python fonts/scripts/check.py /tmp/reference
@@ -86,7 +88,15 @@ def shape(path, location, text, feats):
     return list(zip(names, pos))
 
 
-def compare(ours_path, ref_path):
+def codepoints(ranges):
+    result = set()
+    for r in ranges:
+        lo, _, hi = r.partition("-")
+        result |= set(range(int(lo, 16), int(hi or lo, 16) + 1))
+    return result
+
+
+def compare(ours_path, ref_path, added=frozenset()):
     ours, ref = TTFont(ours_path), TTFont(ref_path)
     found = []
     worst = 0.0
@@ -95,8 +105,13 @@ def compare(ours_path, ref_path):
         if a != b:
             found.append(key)
 
-    diff("glyph set", ours.getGlyphOrder(), ref.getGlyphOrder())
-    diff("character map", ours.getBestCmap(), ref.getBestCmap())
+    cmap, ref_cmap = ours.getBestCmap(), ref.getBestCmap()
+    new = {cp: g for cp, g in cmap.items() if cp in added and cp not in ref_cmap}
+    undeclared = sorted(set(cmap) - set(ref_cmap) - set(new))
+    if undeclared:
+        found.append("character map adds " + " ".join(f"U+{cp:04X}" for cp in undeclared[:8]))
+    diff("character map", {cp: g for cp, g in cmap.items() if cp not in new}, ref_cmap)
+    diff("glyph set", [g for g in ours.getGlyphOrder() if g not in set(new.values())], ref.getGlyphOrder())
     diff("features", features(ours), features(ref))
     axes = lambda f: [(a.axisTag, a.minValue, a.defaultValue, a.maxValue) for a in f["fvar"].axes]
     diff("axes", axes(ours), axes(ref))
@@ -149,12 +164,13 @@ def main():
                 print(f"FAIL {ours_path.relative_to(ROOT)}: not built")
                 failed = True
                 continue
-            allowed = expected.get(ours_path.name, [])
-            found, worst = compare(ours_path, ref_path)
+            declared = expected.get(ours_path.name, {})
+            allowed = declared.get("differences", [])
+            found, worst = compare(ours_path, ref_path, codepoints(declared.get("added", [])))
             unexpected = [f for f in found if not any(f.startswith(a) for a in allowed)]
             status = "FAIL" if unexpected else "ok"
             print(f"{status:4} {ours_path.name} against {ref_path.name}: "
-                  f"{len(found) - len(unexpected)} expected, {len(unexpected)} unexpected differences, "
+                  f"{len(codepoints(declared.get('added', [])))} added characters, {len(found) - len(unexpected)} expected, {len(unexpected)} unexpected differences, "
                   f"largest point shift {worst:.2f} units")
             for line in unexpected:
                 print(f"     {line}")

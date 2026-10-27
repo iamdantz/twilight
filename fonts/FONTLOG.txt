@@ -30,7 +30,15 @@ Twilight Text and Twilight Code are licensed under the SIL Open Font License 1.1
 ChangeLog
 ---------
 
-1.000 (Twilight 1.14.0)
+Twilight Code 1.001 (Twilight 1.15.0)
+- Added the box drawing characters (U+2500–257F), the block elements (U+2580–259F) and the
+  Powerline separators (U+E0B0–E0B3), computed by fonts/scripts/boxdraw.py from each master's
+  advance width, typographic line box and hyphen thickness. Lines reach the cell edges;
+  fonts/scripts/boxcheck.py verifies the joins at every named instance.
+- No other change: fonts/scripts/check.py finds no difference from the upstream fonts beyond
+  the added characters, declared in fonts/changes.json.
+
+Twilight Text and Twilight Code 1.000 (Twilight 1.14.0)
 - Family names changed to Twilight Text and Twilight Code; file names to TwilightText and
   TwilightCode.
 - Copyright notice extended with the Twilight copyright line; manufacturer and manufacturer

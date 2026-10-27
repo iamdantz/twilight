@@ -17,9 +17,10 @@ from pathlib import Path
 
 import glyphsLib
 import yaml
-from glyphsLib.classes import GSFontInfoValue
+from glyphsLib.classes import GSFontInfoValue, GSGlyph, GSLayer, GSNode, GSPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import boxdraw  # noqa: E402
 import upstream  # noqa: E402
 
 ROOT = upstream.ROOT
@@ -55,8 +56,47 @@ def prop(font, key, value=None):
         font.properties.append(GSFontInfoValue(key, value))
 
 
+def master_cell(font, master):
+    """The cell of one master: advance, typographic line box and hyphen thickness."""
+    params = {p.name: p.value for p in master.customParameters}
+    hyphen = next(l for l in font.glyphs["hyphen"].layers if l.layerId == master.id)
+    ys = [n.position.y for p in hyphen.paths for n in p.nodes]
+    width = next(l for l in font.glyphs["bar"].layers if l.layerId == master.id).width
+    return boxdraw.Cell(width, params["typoDescender"], params["typoAscender"], max(ys) - min(ys))
+
+
+def add_box_drawing(font):
+    """Box drawing, block elements and Powerline separators (fonts/scripts/boxdraw.py)."""
+    cells = {m.id: master_cell(font, m) for m in font.masters}
+    for cp in boxdraw.CODEPOINTS:
+        name = boxdraw.glyph_name(cp)
+        if font.glyphs[name] is not None:
+            raise SystemExit(f"{name} already exists in {font.familyName}")
+        glyph = GSGlyph(name)
+        glyph.unicode = f"{cp:04X}"
+        font.glyphs.append(glyph)
+        for master in font.masters:
+            layer = GSLayer()
+            layer.layerId = layer.associatedMasterId = master.id
+            cell = cells[master.id]
+            layer.width = cell.w
+            for contour in boxdraw.contours(cell, cp):
+                path = GSPath()
+                path.closed = True
+                for x, y, kind in contour:
+                    path.nodes.append(GSNode((round(x), round(y)), kind))
+                layer.paths.append(path)
+            glyph.layers.append(layer)
+
+
+# Changes beyond the rename, per family, in the order they apply.
+STEPS = {"TwilightCode": [add_box_drawing]}
+
+
 def rename(src, dst, family):
     font = glyphsLib.GSFont(str(src))
+    for step in STEPS.get(family["file"], []):
+        step(font)
     meta = metadata(family)
     font.familyName = family["family"]
     prop(font, "copyrights", meta["copyright"].format(original=prop(font, "copyrights").rstrip(".") + "."))

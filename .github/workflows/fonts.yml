@@ -54,6 +54,11 @@ jobs:
           set -o pipefail
           .venv-build/bin/python "$SCRIPTS/check.py" "$RUNNER_TEMP/reference" | tee check.txt
 
+      - name: Box drawing joins
+        run: |
+          set -o pipefail
+          .venv-build/bin/python "$SCRIPTS/boxcheck.py" | tee boxcheck.txt
+
       - name: Font Bakery against upstream
         run: |
           set -o pipefail
@@ -62,7 +67,7 @@ jobs:
       - name: Report
         if: always()
         run: |
-          for f in check.txt bakery.txt; do
+          for f in check.txt boxcheck.txt bakery.txt; do
             [ -f "$f" ] || continue
             { echo '```'; cat "$f"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
           done

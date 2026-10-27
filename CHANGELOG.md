@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.15.0
+
+Twilight Code draws terminal interfaces: box drawing, block elements and Powerline separators. No palette changes.
+
+### Added
+- Twilight Code 1.001: the 128 box drawing characters (U+2500–257F), the 32 block elements (U+2580–259F) and the four Powerline separators (U+E0B0–E0B3), in both styles and across the weight axis. They are computed from each master: the cell is the advance width and the typographic line box, light lines take the thickness of the hyphen, heavy lines twice that, and double lines are two light lines one line apart. Every line reaches the cell edge, so tables, trees, progress bars and prompts join across cells and rows. Twilight Text is unchanged.
+
+### Tooling
+- `fonts/scripts/boxdraw.py`: the geometry, read from the Unicode character names.
+- `fonts/scripts/boxcheck.py`: at every named instance, each arm covers the band of the matching reference line on the cell edge, within half a unit, and the full block fills the cell; in the hinted static fonts at 12 to 24 px, lines laid out on a whole-pixel cell grid show no gap. Built today: no failures.
+- `fonts/changes.json`: the code points a font adds on purpose; `check.py` accepts new glyphs only for them and still compares everything else with the upstream fonts. Built today: 164 added characters, no other differences.
+- Fonts workflow: runs the box drawing check.
+
 ## 1.14.0
 
 Twilight Text and Twilight Code, the typefaces of Twilight. No palette changes.

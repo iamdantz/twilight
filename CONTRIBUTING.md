@@ -37,10 +37,11 @@ python fonts/scripts/upstream.py verify
 .venv-build/bin/python fonts/scripts/build.py
 python fonts/scripts/upstream.py reference /tmp/reference
 .venv-build/bin/python fonts/scripts/check.py /tmp/reference
+.venv-build/bin/python fonts/scripts/boxcheck.py
 .venv-bakery/bin/python fonts/scripts/bakery.py /tmp/reference
 ```
 
-`check.py` fails on any difference from the upstream fonts that `fonts/changes.json` does not declare, and `bakery.py` on any Font Bakery failure the upstream fonts do not have.
+`check.py` fails on any difference from the upstream fonts that `fonts/changes.json` does not declare, `boxcheck.py` on a box drawing line that stops short of its cell edge or breaks between cells, and `bakery.py` on any Font Bakery failure the upstream fonts do not have. A step that adds characters declares their code points in `fonts/changes.json`.
 
 ## Versions
 
