@@ -26,6 +26,22 @@ The same checks run locally with `python .agents/skills/twilight-auditor/scripts
 
 Pull requests are merged with a merge commit or a rebase, so each version stays its own commit.
 
+## Fonts
+
+Twilight Text and Twilight Code are built from the upstream sources in `fonts/upstream/`, which are never edited: every change is a step in `fonts/scripts/build.py`, recorded in [FONTLOG.txt](fonts/FONTLOG.txt). A pull request that touches `fonts/` runs the [Fonts workflow](.github/workflows/fonts.yml). The same steps run locally:
+
+```
+python -m venv .venv-build && .venv-build/bin/pip install -r fonts/scripts/requirements.txt
+python -m venv .venv-bakery && .venv-bakery/bin/pip install -r fonts/scripts/requirements-bakery.txt
+python fonts/scripts/upstream.py verify
+.venv-build/bin/python fonts/scripts/build.py
+python fonts/scripts/upstream.py reference /tmp/reference
+.venv-build/bin/python fonts/scripts/check.py /tmp/reference
+.venv-bakery/bin/python fonts/scripts/bakery.py /tmp/reference
+```
+
+`check.py` fails on any difference from the upstream fonts that `fonts/changes.json` does not declare, and `bakery.py` on any Font Bakery failure the upstream fonts do not have.
+
 ## Versions
 
 - **Patch**: wording, documentation fixes, tooling.

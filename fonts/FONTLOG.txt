@@ -1,0 +1,54 @@
+FONTLOG for Twilight Text and Twilight Code
+===========================================
+
+This file records the changes made to the Font Software and the people who made it, as the
+SIL Open Font License recommends for Modified Versions.
+
+
+Basic font information
+----------------------
+
+Twilight Text is the sans-serif typeface of Twilight, for interfaces, documentation and the
+web. Twilight Code is its monospaced typeface, for code editors and terminals.
+
+Both are Modified Versions of fonts released under the SIL Open Font License 1.1, with no
+Reserved Font Name:
+
+- Twilight Text derives from Atkinson Hyperlegible Next 2.001.
+  https://github.com/googlefonts/atkinson-hyperlegible-next
+- Twilight Code derives from Atkinson Hyperlegible Mono 2.001.
+  https://github.com/googlefonts/atkinson-hyperlegible-next-mono
+
+The upstream design sources and license files are kept unmodified in fonts/upstream/, pinned
+to one commit and verified by SHA-256 (fonts/upstream.json). Every change below is applied by
+fonts/scripts/build.py when the fonts are built; nothing is edited by hand.
+
+Twilight Text and Twilight Code are licensed under the SIL Open Font License 1.1
+(fonts/OFL.txt). The rest of the Twilight repository is licensed under the MIT License.
+
+
+ChangeLog
+---------
+
+1.000 (Twilight 1.14.0)
+- Family names changed to Twilight Text and Twilight Code; file names to TwilightText and
+  TwilightCode.
+- Copyright notice extended with the Twilight copyright line; manufacturer and manufacturer
+  URL set to Twilight; a description crediting the upstream family and its designers added.
+- Font version set to 1.000.
+- No outline, spacing, kerning or feature changes. fonts/scripts/check.py compares every
+  named instance with the upstream fonts at the pinned commit: same glyphs, character map,
+  axes, metrics, advance widths and shaping; outlines within 0.5 font units, the tolerance
+  of variable-font delta optimization.
+
+
+Acknowledgements
+----------------
+
+Atkinson Hyperlegible was created for the Braille Institute of America by Applied Design
+Works (Elliott Scott, Megan Eiswerth, Linus Boman, Theodore Petrosky). Atkinson Hyperlegible
+Next and Atkinson Hyperlegible Mono extend it with Letters from Sweden; Emma Marichal
+contributed to both. Their AUTHORS.txt and CONTRIBUTORS.txt are kept in fonts/upstream/.
+
+Twilight Text and Twilight Code are maintained by José D. Gutiérrez as part of Twilight.
+https://github.com/iamdantz/twilight

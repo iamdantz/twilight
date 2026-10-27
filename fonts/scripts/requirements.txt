@@ -1,0 +1,10 @@
+# Build and comparison (build.py, check.py). Font Bakery has its own file: its pinned
+# protobuf conflicts with gftools.
+gftools==0.10.6
+fontmake==3.12.2
+glyphsLib==6.16.2
+ufo2ft==3.9.1
+fonttools==4.68.0
+skia-pathops==0.9.2
+uharfbuzz==0.57.0
+PyYAML==6.0.3

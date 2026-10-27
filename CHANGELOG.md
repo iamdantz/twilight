@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.14.0
+
+Twilight Text and Twilight Code, the typefaces of Twilight. No palette changes.
+
+### Added
+- fonts/: Twilight Text (sans-serif) and Twilight Code (monospaced), Modified Versions of Atkinson Hyperlegible Next 2.001 and Atkinson Hyperlegible Mono 2.001 under the SIL Open Font License 1.1, which reserves no font name. This version renames them; outlines, spacing, kerning and features are the upstream ones.
+- fonts/upstream/: the upstream design sources and license files, unmodified, pinned to one commit per family and verified by SHA-256 in fonts/upstream.json.
+- fonts/OFL.txt and fonts/FONTLOG.txt: the license with the added copyright line, and the record of changes and credits.
+
+### Documented
+- README: the fonts in the repository layout and their license; CONTRIBUTING: how fonts are built and checked.
+
+### Tooling
+- `fonts/scripts/upstream.py`: copies the pinned upstream files, verifies them, and fetches the upstream's compiled variable fonts for comparison.
+- `fonts/scripts/build.py`: renames copies of the sources and compiles them with gftools builder and the upstream configuration into variable TTF, static TTF and WOFF2.
+- `fonts/scripts/check.py`: compares every named instance with the upstream fonts (glyphs, character map, axes, metrics, advance widths, shaping with every optional feature, outlines within 0.5 font units, the delta-optimization tolerance of variable fonts) and fails on any undeclared difference. Built today: no differences; the largest point shift is 0.50 units.
+- `fonts/scripts/bakery.py`: Font Bakery's Google Fonts profile on the built and upstream fonts; fails on a new failure. Built today: none new, and the shorter family name clears `name/family_and_style_max_length`, which the upstream fonts fail.
+- Fonts workflow: builds, compares and runs Font Bakery on every pull request that touches fonts/, and uploads the built fonts.
+
 ## 1.13.0
 
 How much accent a view carries. No value changes.

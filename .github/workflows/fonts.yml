@@ -1,0 +1,77 @@
+name: Fonts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "fonts/**"
+      - ".github/workflows/fonts.yml"
+  push:
+    branches: [main]
+    paths:
+      - "fonts/**"
+      - ".github/workflows/fonts.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fonts-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SCRIPTS: fonts/scripts
+
+jobs:
+  fonts:
+    name: build and compare
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: "3.13"
+
+      # Font Bakery pins a protobuf that gftools rejects, so it gets its own environment.
+      - name: Environments
+        run: |
+          python -m venv .venv-build && .venv-build/bin/pip install -r "$SCRIPTS/requirements.txt"
+          python -m venv .venv-bakery && .venv-bakery/bin/pip install -r "$SCRIPTS/requirements-bakery.txt"
+
+      - name: Upstream files unchanged
+        run: python "$SCRIPTS/upstream.py" verify
+
+      - name: Build
+        run: .venv-build/bin/python "$SCRIPTS/build.py"
+
+      - name: Upstream reference fonts
+        run: python "$SCRIPTS/upstream.py" reference "$RUNNER_TEMP/reference"
+
+      - name: Compare with upstream
+        run: |
+          set -o pipefail
+          .venv-build/bin/python "$SCRIPTS/check.py" "$RUNNER_TEMP/reference" | tee check.txt
+
+      - name: Font Bakery against upstream
+        run: |
+          set -o pipefail
+          .venv-bakery/bin/python "$SCRIPTS/bakery.py" "$RUNNER_TEMP/reference" | tee bakery.txt
+
+      - name: Report
+        if: always()
+        run: |
+          for f in check.txt bakery.txt; do
+            [ -f "$f" ] || continue
+            { echo '```'; cat "$f"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          done
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        if: success()
+        with:
+          name: twilight-fonts
+          path: |
+            fonts/build/*/fonts/
+            fonts/OFL.txt
+            fonts/FONTLOG.txt

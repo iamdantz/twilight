@@ -1,0 +1,2 @@
+# Font Bakery (bakery.py), in its own environment.
+fontbakery[googlefonts]==1.1.0

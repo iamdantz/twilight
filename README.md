@@ -162,11 +162,17 @@ Twilight is defined independently of any application. To build a theme for a too
 ├── README.md
 ├── .agents/skills/
 │   └── twilight-auditor/    audit skill: floors, reproduction, consistency
-├── .github/workflows/       validation on every pull request
+├── .github/workflows/       validation and font builds on every pull request
 ├── assets/                  palette images
 ├── docs/
 │   ├── design-system.md     roles, rules and application
 │   └── construction.md      derivation, optimization and validation
+├── fonts/
+│   ├── upstream/            pinned upstream sources and licenses, unmodified
+│   ├── scripts/             build, comparison with upstream, Font Bakery
+│   ├── upstream.json        upstream repositories, commits and SHA-256
+│   ├── OFL.txt              license of Twilight Text and Twilight Code
+│   └── FONTLOG.txt          changes from upstream and credits
 ├── palette/
 │   └── twilight.json        all values, machine-readable
 ├── CONTRIBUTING.md
@@ -176,4 +182,6 @@ Twilight is defined independently of any application. To build a theme for a too
 
 ## License
 
-[MIT](LICENSE) © José D. Gutiérrez
+[MIT](LICENSE) © José D. Gutiérrez, except the fonts.
+
+Twilight Text and Twilight Code are licensed under the [SIL Open Font License 1.1](fonts/OFL.txt). They derive from Atkinson Hyperlegible Next and Atkinson Hyperlegible Mono, by Applied Design Works and Letters from Sweden for the Braille Institute; [FONTLOG.txt](fonts/FONTLOG.txt) records every change and credit.
