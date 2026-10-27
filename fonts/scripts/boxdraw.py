@@ -13,6 +13,14 @@ right) is none, light, heavy or double. Arms reach the cell edges exactly, so a 
 into the next cell and the next row without a gap; at a junction each arm stops where the
 perpendicular lines need it to (corners closed, crossings open where a double line passes).
 
+Ink stays inside the cell: no line overshoots the advance width or the line box. A terminal
+that rounds the cell up to whole pixels (632 units is 17.7 px at 28 px, drawn in an 18 px
+cell) leaves a seam between cells of up to half a pixel, at about half the sizes from 11 to 32
+px, and faint, since the edge pixel keeps more than half its coverage. Overshooting by the ~20
+units that would close it everywhere would instead put ink in the neighboring cell at every
+size: under a selection, a cursor, or a Powerline segment of another color. A seam of a
+fraction of a pixel is the lesser fault; most terminals also draw these characters themselves.
+
 Contours are counter-clockwise for ink and clockwise for holes, as in the design sources, and
 the same for every master, so the masters stay compatible.
 """
