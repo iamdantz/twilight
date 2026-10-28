@@ -18,13 +18,14 @@ from pathlib import Path
 import glyphsLib
 import yaml
 from fontTools.ttLib import TTFont
-from glyphsLib.classes import GSFontInfoValue, GSGlyph, GSLayer, GSNode, GSPath
+from glyphsLib.classes import GSFeature, GSFontInfoValue, GSGlyph, GSLayer, GSNode, GSPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import arrows  # noqa: E402
 import boxdraw  # noqa: E402
 import braille  # noqa: E402
 import cellhint  # noqa: E402
+import ligatures  # noqa: E402
 import symbols  # noqa: E402
 import upstream  # noqa: E402
 
@@ -189,9 +190,53 @@ def hint_cells(fonts):
 AFTER = {"TwilightCode": [hint_cells]}
 
 
+def add_ligatures(font):
+    """Optional code ligatures in stylistic set 1 (fonts/scripts/ligatures.py): a spacer glyph,
+    one glyph per sequence that the style draws in every master, and the feature."""
+    on_curve = arrows_on_curve(font)
+    masters = {m.id: ligatures.Master(lambda name, m=m: resolved(font, m, name),
+                                      arrows.Metrics(on_curve("plus", m), on_curve("equal", m), m.italicAngle,
+                                                     ligatures.CELL))
+               for m in font.masters}
+    drawn = {}
+    for seq in ligatures.SEQUENCES:
+        shapes = {mid: ligatures.contours(master, seq) for mid, master in masters.items()}
+        if all(shapes.values()):  # a sequence that joins at some weights only stays plain at all
+            drawn[seq] = shapes
+    for name, shapes in [(ligatures.SPACER, {m.id: [] for m in font.masters})] + \
+            [(ligatures.glyph_name(seq), shapes) for seq, shapes in drawn.items()]:
+        if font.glyphs[name] is not None:
+            raise SystemExit(f"{name} already exists in {font.familyName}")
+        glyph = GSGlyph(name)
+        glyph.category, glyph.subCategory = "Symbol", None
+        font.glyphs.append(glyph)
+        for master in font.masters:
+            new = GSLayer()
+            new.layerId = new.associatedMasterId = master.id
+            new.width = ligatures.CELL
+            for contour in shapes[master.id]:
+                path = GSPath()
+                path.closed = True
+                for x, y, kind in contour:
+                    path.nodes.append(GSNode((round(x), round(y)), kind))
+                new.paths.append(path)
+            glyph.layers.append(new)
+    code = ligatures.feature(drawn)
+    feature = GSFeature("ss01", code.split("\n\n", 1)[1])
+    feature.notes = ""
+    font.features.append(feature)
+    prefix = next(p for p in font.featurePrefixes)
+    prefix.code += "\n" + code.split("\n\n", 1)[0] + "\n"
+
+
+def arrows_on_curve(font):
+    return lambda glyph, master: [(n.position.x, n.position.y) for p in layer(font, glyph, master).paths
+                                  for n in p.nodes if n.type != "offcurve"]
+
+
 # Changes beyond the rename, per family, in the order they apply.
 STEPS = {"TwilightText": [add_arrows, add_symbols],
-         "TwilightCode": [add_box_drawing, add_arrows, add_symbols, add_braille]}
+         "TwilightCode": [add_box_drawing, add_arrows, add_symbols, add_braille, add_ligatures]}
 
 
 def rename(src, dst, family):
