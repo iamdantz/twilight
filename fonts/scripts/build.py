@@ -18,6 +18,7 @@ from pathlib import Path
 import glyphsLib
 import yaml
 from glyphsLib.classes import GSFontInfoValue, GSGlyph, GSLayer, GSNode, GSPath
+from glyphsLib.types import Point
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import arrows  # noqa: E402
@@ -117,8 +118,30 @@ def add_arrows(font):
                lambda master, cp: arrows.glyph(metrics[master.id], cp))
 
 
+# Units added to each side of every glyph of Twilight Text: the smallest whole value that brings
+# the gray step against Twilight Code to 14 % or less at every named instance with a margin for
+# rounding (24 reaches 14.0 % at ExtraLight). fonts/scripts/texture.py measures it.
+TRACKING = 25
+
+
+def open_spacing(font):
+    """Letter-space every glyph by TRACKING units on each side, in every layer.
+
+    Outlines and anchors move right by TRACKING and the advance grows by twice that. Every
+    glyph moves alike, so components keep their offsets, marks still meet their anchors and
+    kerning keeps its values; the spacing opens evenly, as letter-spacing does."""
+    for glyph in font.glyphs:
+        for layer in glyph.layers:
+            for path in layer.paths:
+                for node in path.nodes:
+                    node.position = Point(node.position.x + TRACKING, node.position.y)
+            for anchor in layer.anchors:
+                anchor.position = Point(anchor.position.x + TRACKING, anchor.position.y)
+            layer.width += 2 * TRACKING
+
+
 # Changes beyond the rename, per family, in the order they apply.
-STEPS = {"TwilightText": [add_arrows], "TwilightCode": [add_box_drawing, add_arrows]}
+STEPS = {"TwilightText": [add_arrows, open_spacing], "TwilightCode": [add_box_drawing, add_arrows]}
 
 
 def rename(src, dst, family):

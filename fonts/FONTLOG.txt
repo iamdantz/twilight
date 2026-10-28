@@ -30,6 +30,14 @@ Twilight Text and Twilight Code are licensed under the SIL Open Font License 1.1
 ChangeLog
 ---------
 
+Twilight Text 1.002 (Twilight 1.17.0)
+- Letter-spaced: 25 units added to each side of every glyph in every master (outlines and
+  anchors moved right, advance widths increased by 50). Kerning is unchanged. The value is
+  the smallest that brings the gray of Twilight Text within 14 % of Twilight Code at every
+  named instance; fonts/scripts/texture.py measures it.
+- No other change: fonts/scripts/check.py compares the font with the upstream font
+  letter-spaced the same way and finds no difference beyond the added characters.
+
 Twilight Text 1.001 and Twilight Code 1.002 (Twilight 1.16.0)
 - Added arrows: U+2190–2199, U+21A9–21AA, U+21B5 and U+21D0–21D3 in both families, and
   U+21D4–21D5 in Twilight Text only. They are computed by fonts/scripts/arrows.py from each
