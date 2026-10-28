@@ -1,18 +1,5 @@
 # Changelog
 
-## 1.17.0
-
-Twilight Text opens its spacing so prose and inline code share one gray. No palette changes.
-
-### Changed
-- Twilight Text 1.002: 25 units added to each side of every glyph, in every master; outlines, kerning and mark positions move with them, so spacing opens evenly, as letter-spacing does. Set beside Twilight Code at the same x-height, Text was 20 to 25 % darker from ExtraLight to Regular; it is now at most 13.3 % darker at any named instance, against a limit of 14 %. A paragraph is 11 to 13 % longer.
-- Distinction at 6 to 8 px x-height: rn against m rises from 0.33–0.47 to 0.52–0.59; no confusable pair falls below the upstream font. Twilight Code is unchanged.
-
-### Tooling
-- `fonts/scripts/texture.py`: at every named instance of Text, the gray step against Code (limit 14 %), the confusable pairs against the upstream font (none may fall more than 0.01), and how much longer a paragraph becomes.
-- `fonts/scripts/check.py`: `fonts/changes.json` can declare letter-spacing; the upstream font is letter-spaced the same way before the comparison, so every outline, advance, kerning pair and mark position must still match. Outlines are compared at each instance without rounding; a letter-spaced font is compared within one unit, since curve conversion can round a shifted half unit the other way.
-- Fonts workflow: runs the texture check.
-
 ## 1.16.0
 
 Arrows in Twilight Text and Twilight Code. No palette changes.

@@ -7,7 +7,7 @@ every named instance, so an unintended difference cannot pass unnoticed:
 - glyph set, character map, axes, named instances, axis mapping and STAT values;
 - vertical metrics;
 - per glyph: advance width exactly; outline with the same commands and points, each point
-  within 0.5 font units, interpolated at the instance without rounding. A variable font stores the other masters as deltas, and every build
+  within 0.5 font units. A variable font stores the other masters as deltas, and every build
   drops the deltas that interpolation recovers within 0.5 units (the IUP optimization of
   fontTools); two builds of the same source can differ by up to that much, and no more;
 - shaping of every mapped character and of a kerning sample, with the default features and
@@ -15,10 +15,8 @@ every named instance, so an unintended difference cannot pass unnoticed:
 
 Changes made on purpose are declared in fonts/changes.json, per font file: "added" lists the
 code point ranges of new characters (their glyphs join the glyph set and character map, and
-nothing else may); "tracking" is letter-spacing in units per side, applied to the upstream
-font before comparing (every outline and anchor moves right by it, every advance grows by
-twice it), so everything else must still match exactly; "differences" lists the reported
-differences that are expected, by prefix. Anything else fails.
+nothing else may), "differences" lists the reported differences that are expected, by prefix.
+Anything else fails.
 
     python fonts/scripts/upstream.py reference /tmp/reference
     python fonts/scripts/check.py /tmp/reference
@@ -26,12 +24,12 @@ differences that are expected, by prefix. Anything else fails.
 import argparse
 import json
 import sys
-import tempfile
 from pathlib import Path
 
 import uharfbuzz as hb
 from fontTools.pens.recordingPen import DecomposingRecordingPen
 from fontTools.ttLib import TTFont
+from fontTools.varLib import instancer
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import upstream  # noqa: E402
@@ -56,20 +54,16 @@ def features(font):
 
 
 TOLERANCE = 0.5
-# A letter-spaced font is compiled from shifted sources. Converting curves to quadratics puts
-# some points on half units, and after a shift floating-point error can round them the other
-# way: up to one more unit, on whole-unit coordinates.
-TRACKED_TOLERANCE = 1.0
 
 
-def outlines(font, location):
-    """Advance and outline of every glyph at a location, interpolated without rounding."""
-    glyphs = font.getGlyphSet(location=location)
+def outlines(font):
+    glyphs = font.getGlyphSet()
+    hmtx = font["hmtx"].metrics
     result = {}
     for name in font.getGlyphOrder():
         pen = DecomposingRecordingPen(glyphs)
         glyphs[name].draw(pen)
-        result[name] = (round(glyphs[name].width), pen.value)
+        result[name] = (hmtx[name][0], pen.value)
     return result
 
 
@@ -94,36 +88,6 @@ def shape(path, location, text, feats):
     return list(zip(names, pos))
 
 
-def letterspace(path, tracking, out):
-    """A copy of a font letter-spaced by `tracking` units on each side of every glyph."""
-    font = TTFont(path)
-    glyf, hmtx = font["glyf"], font["hmtx"]
-    for name in font.getGlyphOrder():
-        glyph = glyf[name]
-        if glyph.numberOfContours > 0:
-            glyph.coordinates.translate((tracking, 0))
-            glyph.recalcBounds(glyf)
-        advance, lsb = hmtx[name]
-        hmtx[name] = (advance + 2 * tracking if advance else 0, lsb + tracking)
-    for name in font.getGlyphOrder():
-        if glyf[name].isComposite():
-            glyf[name].recalcBounds(glyf)
-    seen = set()
-
-    def walk(obj):
-        if id(obj) in seen or obj is None or isinstance(obj, (int, float, str, bytes)):
-            return
-        seen.add(id(obj))
-        if type(obj).__name__ == "Anchor":
-            obj.XCoordinate += tracking
-            return
-        for value in (obj if isinstance(obj, list) else getattr(obj, "__dict__", {}).values()):
-            walk(value)
-    walk(font["GPOS"].table)
-    font.save(out)
-    return out
-
-
 def codepoints(ranges):
     result = set()
     for r in ranges:
@@ -132,7 +96,7 @@ def codepoints(ranges):
     return result
 
 
-def compare(ours_path, ref_path, added=frozenset(), tolerance=TOLERANCE):
+def compare(ours_path, ref_path, added=frozenset()):
     ours, ref = TTFont(ours_path), TTFont(ref_path)
     found = []
     worst = 0.0
@@ -166,13 +130,13 @@ def compare(ours_path, ref_path, added=frozenset(), tolerance=TOLERANCE):
     optional = [t for t in features(ref) if t not in ("kern", "mark", "mkmk", "ccmp", "locl", "calt", "liga", "rlig")]
     for location in named(ref):
         label = ", ".join(f"{k} {v:g}" for k, v in location.items())
-        a = outlines(ours, location)
-        b = outlines(ref, location)
+        a = outlines(instancer.instantiateVariableFont(TTFont(ours_path), location))
+        b = outlines(instancer.instantiateVariableFont(TTFont(ref_path), location))
         widths = sorted(g for g in b if g in a and a[g][0] != b[g][0])
         shapes = []
         for g in sorted(set(a) & set(b)):
             d = deviation(a[g][1], b[g][1])
-            if d is None or d > tolerance:
+            if d is None or d > TOLERANCE:
                 shapes.append(g)
             else:
                 worst = max(worst, d)
@@ -192,7 +156,6 @@ def main():
     args = parser.parse_args()
     expected = json.loads(CHANGES.read_text(encoding="utf-8")) if CHANGES.exists() else {}
     failed = False
-    tmp = tempfile.mkdtemp()
     for family in upstream.load()["families"]:
         old, new = family["upstream"]["file"], family["file"]
         for ref_path in sorted((Path(args.reference) / new).glob("*.ttf")):
@@ -203,10 +166,7 @@ def main():
                 continue
             declared = expected.get(ours_path.name, {})
             allowed = declared.get("differences", [])
-            if declared.get("tracking"):
-                ref_path = letterspace(ref_path, declared["tracking"], Path(tmp) / ref_path.name)
-            found, worst = compare(ours_path, ref_path, codepoints(declared.get("added", [])),
-                                   TRACKED_TOLERANCE if declared.get("tracking") else TOLERANCE)
+            found, worst = compare(ours_path, ref_path, codepoints(declared.get("added", [])))
             unexpected = [f for f in found if not any(f.startswith(a) for a in allowed)]
             status = "FAIL" if unexpected else "ok"
             print(f"{status:4} {ours_path.name} against {ref_path.name}: "
