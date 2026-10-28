@@ -1,8 +1,8 @@
-# Twilight design system
+# Twilight Theme design system
 
 Version 1.13 · Flavors: Dusk (dark), Dawn (light)
 
-This document defines Twilight: what each color is, what it means, where it may go, and what it guarantees. It does not describe any particular application. A theme for any tool can be built from it by mapping that tool's regions onto the roles below.
+This document defines Twilight Theme: what each color is, what it means, where it may go, and what it guarantees. It does not describe any particular application. A theme for any tool can be built from it by mapping that tool's regions onto the roles below.
 
 How the values were derived is in [construction.md](construction.md). All values in machine-readable form are in [palette/twilight.json](../palette/twilight.json).
 
@@ -124,7 +124,7 @@ Placeholders use Subtle, never Faint. A placeholder can sit on Raised, and readi
 
 ## 5. Accents
 
-Afterglow is the accent of every Twilight theme, and a theme is named by its flavor alone: *Twilight Dusk*, *Twilight Dawn*.
+Afterglow is the accent of every theme built from Twilight Theme, and a theme is named by its flavor alone: *Twilight Dusk*, *Twilight Dawn*.
 
 The other seven colors also have accent families, built and validated by the same rules and published in [palette/twilight.json](../palette/twilight.json). No theme uses them as an accent. Their `accent-text` is the text variant of each semantic color ([§8](#8-semantic-states)); the other tokens are kept so the accent can become a choice without changing any other token.
 
@@ -543,13 +543,14 @@ In light flavors, bright white is Raised, a surface, so it never colors text.
 6. Map background states, using the solid tokens.
 7. Map code and terminal colors, and data series with §12.4.
 8. Ship one theme per flavor, named *Twilight {Flavor}*, with Afterglow as the accent.
-9. Check before shipping:
-   - every foreground meets its level on the surface it sits on;
-   - code colors meet the category floor (7:1 dark, 4.5:1 light) on Canvas and on diff backgrounds;
-   - control boundaries and focus indicators reach 3:1;
-   - no `#000000`, no `#ffffff`, nothing outside sRGB;
-   - one accent fill per view, on the main action, and one active accent mark per container;
-   - nothing in §13 appears.
+9. Set text in Twilight Crystal and code in Twilight Crystal Mono where the target lets the theme choose a font, with the alternatives of [typography.md](typography.md). A port that ships the font files includes `OFL.txt` and `FONTLOG.txt` with them, and never sells them on their own.
+10. Check before shipping:
+    - every foreground meets its level on the surface it sits on;
+    - code colors meet the category floor (7:1 dark, 4.5:1 light) on Canvas and on diff backgrounds;
+    - control boundaries and focus indicators reach 3:1;
+    - no `#000000`, no `#ffffff`, nothing outside sRGB;
+    - one accent fill per view, on the main action, and one active accent mark per container;
+    - nothing in §13 appears.
 
 If a target cannot express a rule, such as a border on the current line, the effect is left out rather than drawn with a color from another role.
 

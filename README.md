@@ -1,4 +1,4 @@
-<h1 align="center">Twilight</h1>
+<h1 align="center">Twilight Theme</h1>
 
 <p align="center"><i>Calm by design, legible by proof.</i></p>
 
@@ -14,7 +14,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/palette-dusk.png">
     <source media="(prefers-color-scheme: light)" srcset="assets/palette-dawn.png">
-    <img src="assets/palette-dusk.png" alt="Twilight palette" width="800">
+    <img src="assets/palette-dusk.png" alt="Twilight Theme palette" width="800">
   </picture>
 </p>
 
@@ -26,7 +26,7 @@
 
 <br>
 
-Twilight is a color theme specification: two flavors, ten neutrals, eight colors and the rules that connect them. None of the palette colors were picked by eye. One value was chosen as a seed; every color was calculated from it, and every pairing was checked for contrast and for color-vision deficiency.
+Twilight Theme is a color theme specification: two flavors, ten neutrals, eight colors and the rules that connect them. None of the palette colors were picked by eye. One value was chosen as a seed; every color was calculated from it, and every pairing was checked for contrast and for color-vision deficiency.
 
 ## Why
 
@@ -52,7 +52,7 @@ Both flavors share every role, every rule and one neutral curve. Dawn's Canvas i
 
 ## Accent
 
-Afterglow, the most chromatic orange sRGB holds at the seed's hue, is the accent of every Twilight theme. It marks focus, the cursor, active items, badges, links and the main action; it never colors content. Its variants for text, pressed and focus states are solved to the same contrast rules as everything else. See [Accent in the design system](docs/design-system.md#5-accents).
+Afterglow, the most chromatic orange sRGB holds at the seed's hue, is the accent of every theme built from Twilight Theme. It marks focus, the cursor, active items, badges, links and the main action; it never colors content. Its variants for text, pressed and focus states are solved to the same contrast rules as everything else. See [Accent in the design system](docs/design-system.md#5-accents).
 
 A theme is named by its flavor: **Twilight Dusk**, **Twilight Dawn**.
 
@@ -151,9 +151,11 @@ All math is done in OKLCH and checked in sRGB. Afterglow is the most chromatic o
 
 The full derivation, with every formula and parameter, is in [construction.md](docs/construction.md).
 
-## Using Twilight
+## Using Twilight Theme
 
-Twilight is defined independently of any application. To build a theme for a tool, map its regions to the surface roles and follow [Applying the system](docs/design-system.md#12-applying-the-system), which also lists what a port must not do.
+Twilight Theme is defined independently of any application. To build a theme for a tool, map its regions to the surface roles and follow [Applying the system](docs/design-system.md#12-applying-the-system), which also lists what a port must not do.
+
+Twilight Theme recommends its typefaces, Twilight Crystal and Twilight Crystal Mono, published with every release. Atkinson Hyperlegible Next and Mono, on Google Fonts, are the alternative they derive from; the system's own fonts come last, and the user's taste always has the last word. [typography.md](docs/typography.md) covers which font to use, what Twilight Crystal adds, the optional ligatures and the closest system fonts.
 
 ## Repository
 
@@ -162,13 +164,24 @@ Twilight is defined independently of any application. To build a theme for a too
 ├── README.md
 ├── .agents/skills/
 │   └── twilight-auditor/    audit skill: floors, reproduction, consistency
-├── .github/workflows/       validation on every pull request
+├── .github/workflows/       validation and font builds on every pull request; releases
 ├── assets/                  palette images
 ├── docs/
 │   ├── design-system.md     roles, rules and application
-│   └── construction.md      derivation, optimization and validation
+│   ├── construction.md      derivation, optimization and validation
+│   └── typography.md        typefaces, alternatives and ligatures
+├── fonts/
+│   ├── upstream/            pinned upstream sources and licenses, unmodified
+│   ├── scripts/             build, additions, hinting, checks, Font Bakery, packaging
+│   ├── ligatures.json       which Fira Code ligatures Twilight Crystal Mono takes
+│   ├── upstream.json        upstream repositories, commits and SHA-256
+│   ├── changes.json         characters added to the upstream fonts
+│   ├── OFL.txt              license of Twilight Crystal and Twilight Crystal Mono
+│   └── FONTLOG.txt          changes from upstream and credits
 ├── palette/
 │   └── twilight.json        all values, machine-readable
+├── tools/
+│   └── ligaturizer/         Fira Code ligatures for monospaced fonts (GPL-3.0)
 ├── CONTRIBUTING.md
 ├── CHANGELOG.md
 └── LICENSE
@@ -176,4 +189,15 @@ Twilight is defined independently of any application. To build a theme for a too
 
 ## License
 
-[MIT](LICENSE) © José D. Gutiérrez
+Each part of the repository has the license that fits what it is:
+
+| Part | License | Holder |
+| --- | --- | --- |
+| Palette, documents, images, workflows, build scripts (`palette/`, `docs/`, `assets/`, `fonts/scripts/`, the JSON files in `fonts/`) and future ports | [MIT](LICENSE) | José D. Gutiérrez |
+| Twilight Crystal and Twilight Crystal Mono: the fonts in every release, [fonts/OFL.txt](fonts/OFL.txt), [fonts/FONTLOG.txt](fonts/FONTLOG.txt) | [SIL Open Font License 1.1](fonts/OFL.txt) | The Atkinson Hyperlegible Next and Mono Project Authors, the Fira Code Project Authors (Twilight Crystal Mono) and José D. Gutiérrez |
+| Upstream fonts kept unmodified in `fonts/upstream/` | Each one's own `OFL.txt` | Their authors |
+| [tools/ligaturizer](tools/ligaturizer), a fork of [Ligaturizer](https://github.com/ToxicFrog/Ligaturizer) | [GNU General Public License 3](tools/ligaturizer/LICENSE) | The Ligaturizer contributors and José D. Gutiérrez |
+
+Twilight Crystal and Twilight Crystal Mono derive from Atkinson Hyperlegible Next and Atkinson Hyperlegible Mono, by Applied Design Works and Letters from Sweden for the Braille Institute; the optional ligatures of Twilight Crystal Mono come from [Fira Code](https://github.com/tonsky/FiraCode), by Nikita Prokopov. Fira Mono is a trademark of The Mozilla Corporation. [FONTLOG.txt](fonts/FONTLOG.txt) records every change and credit. The build runs the Ligaturizer fork as a separate program; its license does not extend to the fonts it helps build.
+
+Each license disclaims all warranty: Twilight Theme, its fonts and its tools are provided as is.

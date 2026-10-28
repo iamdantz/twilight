@@ -1,11 +1,11 @@
 # Contributing
 
-Twilight is at the definition stage. The palette, the rules and the documents in this repository are what is being built. There are no application themes yet.
+Twilight Theme is at the definition stage. The palette, the rules and the documents in this repository are what is being built. There are no application themes yet.
 
 ## What is useful right now
 
 - **Errors in the numbers.** If a value in [design-system.md](docs/design-system.md) or [palette/twilight.json](palette/twilight.json) does not meet the contrast it claims, open an issue with the two colors and the ratio you measured.
-- **Gaps in the rules.** If you tried to map Twilight onto a tool and a region had no clear role, describe the region and the tool.
+- **Gaps in the rules.** If you tried to map Twilight Theme onto a tool and a region had no clear role, describe the region and the tool.
 - **Questions about the method.** If a step in [construction.md](docs/construction.md) is unclear or looks wrong, ask.
 
 ## Proposing a change to a color
@@ -26,6 +26,29 @@ The same checks run locally with `python .agents/skills/twilight-auditor/scripts
 
 Pull requests are merged with a merge commit or a rebase, so each version stays its own commit.
 
+## Fonts
+
+Twilight Crystal and Twilight Crystal Mono are built from the upstream sources in `fonts/upstream/`, which are never edited: every change is a step in `fonts/scripts/build.py`, recorded in [FONTLOG.txt](fonts/FONTLOG.txt). A pull request that touches `fonts/` runs the [Fonts workflow](.github/workflows/fonts.yml). The same steps run locally:
+
+```
+python -m venv .venv-build && .venv-build/bin/pip install -r fonts/scripts/requirements.txt
+python -m venv .venv-bakery && .venv-bakery/bin/pip install -r fonts/scripts/requirements-bakery.txt
+python fonts/scripts/upstream.py verify
+.venv-build/bin/python fonts/scripts/build.py
+python fonts/scripts/upstream.py reference /tmp/reference
+.venv-build/bin/python fonts/scripts/check.py /tmp/reference
+.venv-build/bin/python fonts/scripts/boxcheck.py
+.venv-build/bin/python fonts/scripts/arrowcheck.py
+.venv-build/bin/python fonts/scripts/symbolcheck.py
+.venv-build/bin/python fonts/scripts/ligacheck.py
+.venv-build/bin/python fonts/scripts/hintcheck.py /tmp/reference
+.venv-bakery/bin/python fonts/scripts/bakery.py /tmp/reference
+```
+
+`check.py` fails on any difference from the upstream fonts that `fonts/changes.json` does not declare, `boxcheck.py` on a box drawing line that stops short of its cell edge or breaks between cells, `arrowcheck.py` on an arrow whose stroke, axis or spacing departs from the plus and equal signs, `symbolcheck.py` on a shape, derived sign or braille pattern that breaks its rule, `ligacheck.py` on an optional ligature that shapes unlike Fira Code, leaves the grid or departs from the hyphen's weight and axis, `hintcheck.py` on hinting worse than upstream's or box drawing that leaves its cell, and `bakery.py` on any Font Bakery failure the upstream fonts do not have. A step that adds characters declares their code points in `fonts/changes.json`, and one that adds an optional feature declares its tag there.
+
+Twilight Crystal Mono's ligatures are added by [tools/ligaturizer](tools/ligaturizer), under the GNU GPL 3, which the build runs as a separate program; `fonts/ligatures.json` chooses which of Fira Code's rules it takes. Code that changes the tool stays in its directory and under its license; Twilight Theme's own scripts must not import it.
+
 ## Versions
 
 - **Patch**: wording, documentation fixes, tooling.
@@ -37,6 +60,10 @@ Pull requests are merged with a merge commit or a rebase, so each version stays 
 ## Building a theme for a tool
 
 Not accepted yet. When ports open, they will follow [Applying the system](docs/design-system.md#12-applying-the-system) and use the naming *Twilight {Flavor}*, with Afterglow as the accent.
+
+## Licensing of contributions
+
+A contribution is licensed as the part of the repository it changes: the fonts and their design data under the SIL Open Font License 1.1, `tools/ligaturizer` under the GNU General Public License 3, everything else under the MIT License (see the [README](README.md#license)). By opening a pull request you agree to license your change that way.
 
 ## Writing
 

@@ -1,0 +1,77 @@
+{
+  "families": [
+    {
+      "family": "Twilight Crystal",
+      "file": "TwilightCrystal",
+      "version": "1.003",
+      "upstream": {
+        "family": "Atkinson Hyperlegible Next",
+        "file": "AtkinsonHyperlegibleNext",
+        "repository": "https://github.com/googlefonts/atkinson-hyperlegible-next",
+        "commit": "16d9515c933216b238289718ac7a3b3599b4d990",
+        "version": "2.001",
+        "license": "OFL-1.1"
+      },
+      "directory": "fonts/upstream/atkinson-hyperlegible-next",
+      "vendored": {
+        "AUTHORS.txt": "9c0280f1393df94e4bebc255a4826ff7bc90289c467a21fa298492c6f2a76055",
+        "CONTRIBUTORS.txt": "837d2520faf7e121617146ba849e45052301a524c7b138f6ecc449123c1f2345",
+        "OFL.txt": "aca6a428580965d2297d1b718042dd427c2a9443ece3b0d02d758e161e0c4030",
+        "sources/AtkinsonHyperlegibleNext-Italic.glyphs": "804694d3edca9ef1b456d0975aaa35e42abe266aafba2101c3c19228f56e278a",
+        "sources/AtkinsonHyperlegibleNext.glyphs": "ddf54acf72c41905e327270abf66a0d6eb479455be103cff4511746f43e628d0",
+        "sources/config.yaml": "aa9f4b4a8ed6d06cc0898399d4934d498399edb8b95a3424ee262d198fe776e3"
+      },
+      "reference": {
+        "fonts/variable/AtkinsonHyperlegibleNext-Italic[wght].ttf": "ce9cffed32742ad2d9238c561a93220385e5934cdc02b8eb4097a50efa957dc6",
+        "fonts/variable/AtkinsonHyperlegibleNext[wght].ttf": "5a455d1cfa099b601ab70751bb9673e8fe1854dc4500c80e1a220d0d75e31745"
+      }
+    },
+    {
+      "family": "Twilight Crystal Mono",
+      "file": "TwilightCrystalMono",
+      "version": "1.006",
+      "upstream": {
+        "family": "Atkinson Hyperlegible Mono",
+        "file": "AtkinsonHyperlegibleMono",
+        "repository": "https://github.com/googlefonts/atkinson-hyperlegible-next-mono",
+        "commit": "154d50362016cc3e873eb21d242cd0772384c8f9",
+        "version": "2.001",
+        "license": "OFL-1.1"
+      },
+      "directory": "fonts/upstream/atkinson-hyperlegible-next-mono",
+      "vendored": {
+        "AUTHORS.txt": "9c0280f1393df94e4bebc255a4826ff7bc90289c467a21fa298492c6f2a76055",
+        "CONTRIBUTORS.txt": "837d2520faf7e121617146ba849e45052301a524c7b138f6ecc449123c1f2345",
+        "OFL.txt": "1ebb31cf7393164f20d10c1d48406cddb5314feff8465531cf1e4ba37e9dd740",
+        "sources/AtkinsonHyperlegibleMono-Italic.glyphs": "17e53647bdde040b8f97414fb601e3acbc4e933ef577066cd6a94ba8c1a0ab0f",
+        "sources/AtkinsonHyperlegibleMono.glyphs": "1a2fb708e40410532f2d679ce058e16ed5e2f51769327cb7ab1193d672fc1131",
+        "sources/config.yaml": "ce6dd5efa8a556f0a77faee1b9a642f169def415c8b6f28983d12d4f2484e310"
+      },
+      "reference": {
+        "fonts/variable/AtkinsonHyperlegibleMono-Italic[wght].ttf": "e18f523877530e4abe229df6a36d394326254da488a7f5abb9b7b5ea8f780cd4",
+        "fonts/variable/AtkinsonHyperlegibleMono[wght].ttf": "5ce8b1698d1ded7dff2178c1a3ad159470085a58ea239e8b2cb88f4fb4a6f646"
+      }
+    }
+  ],
+  "ligatures": {
+    "family": "Fira Code",
+    "repository": "https://github.com/tonsky/FiraCode",
+    "tag": "6.2",
+    "commit": "eee6db993696aba61ff4eef03698e2987d79910c",
+    "license": "OFL-1.1",
+    "directory": "fonts/upstream/firacode",
+    "vendored": {
+      "AUTHORS.txt": "bce848bf648020ae5c7cbcafe938d796e318afed3945ea009c3300bb08911220",
+      "FiraCode-VF.ttf": "04149681350f161aca538858b88d17443c586cacca83c165939a13423fe91a26",
+      "NotSpace.txt": "861f810e2254ff335ad16904ee6685640d0af62642b8dfd789e3ff3b0007ec0d",
+      "OFL.txt": "1d41e10031ab125302780a05ec4c91d218e47db0c7e37cf315cce5e608cdc25c",
+      "calt.fea": "8b10f625969f6de7925cd77ae23af89c9623efae2fdc66b9777ee4c2db11120e"
+    },
+    "notes": {
+      "FiraCode-VF.ttf": "variable_ttf/FiraCode-VF.ttf from the 6.2 release archive",
+      "calt.fea": "the calt feature code of FiraCode.glyphs at the tag",
+      "NotSpace.txt": "the NotSpace glyph class of FiraCode.glyphs at the tag, one name per line",
+      "AUTHORS.txt": "AUTHORS at the tag"
+    }
+  }
+}
