@@ -30,6 +30,13 @@ Twilight Text and Twilight Code are licensed under the SIL Open Font License 1.1
 ChangeLog
 ---------
 
+Twilight Code 1.004 (Twilight 1.18.0)
+- Static fonts only: the TrueType instructions of box drawing, block elements and Powerline
+  separators replaced by fonts/scripts/cellhint.py, which rounds the cell's edges to pixel rows
+  and keeps every horizontal line on whole pixels, at least one thick. The rest of the font
+  keeps the autohinter's instructions; outlines and the variable fonts are unchanged.
+  fonts/scripts/hintcheck.py measures the hinting of every static font against upstream.
+
 Twilight Text 1.002 and Twilight Code 1.003 (Twilight 1.17.0)
 - Added, in both families: geometric shapes (U+25A0–25A1, 25AA–25AB, 25B2–25B9, 25BC–25C3,
   25C6–25C7, 25CB, 25CF, 25E6), U+2205–2206 and U+27E8–27E9, computed by

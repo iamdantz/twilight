@@ -17,12 +17,14 @@ from pathlib import Path
 
 import glyphsLib
 import yaml
+from fontTools.ttLib import TTFont
 from glyphsLib.classes import GSFontInfoValue, GSGlyph, GSLayer, GSNode, GSPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import arrows  # noqa: E402
 import boxdraw  # noqa: E402
 import braille  # noqa: E402
+import cellhint  # noqa: E402
 import symbols  # noqa: E402
 import upstream  # noqa: E402
 
@@ -157,6 +159,36 @@ def add_braille(font):
     add_glyphs(font, braille.CODEPOINTS, braille.glyph_name, draw)
 
 
+def hint_cells(fonts):
+    """Replace the autohinter's instructions on the glyphs drawn on the cell (box drawing,
+    blocks, Powerline separators) in the static fonts with instructions made for the cell
+    (fonts/scripts/cellhint.py), and compress their web fonts again. The autohinter hints them
+    as letters and moves their ends off the cell edges, in every weight past the Windows
+    clipping box at five to eight sizes between 9 and 25 ppem. Braille keeps the autohinter's
+    instructions: its dots sit inside the cell and stay there."""
+    cells = set(boxdraw.CODEPOINTS)
+    for path in sorted((fonts / "ttf").glob("*.ttf")):
+        font = TTFont(path)
+        cmap, os2 = font.getBestCmap(), font["OS/2"]
+        hyphen = font["glyf"][cmap[ord("-")]].getCoordinates(font["glyf"])[0]
+        light = max(y for _, y in hyphen) - min(y for _, y in hyphen)
+        longest = 0
+        for cp in sorted(cells & set(cmap)):
+            name = cmap[cp]
+            font["glyf"][name].program = cellhint.program(font, name, os2.sTypoAscender, os2.sTypoDescender, light)
+            longest = max(longest, len(font["glyf"][name].program.getBytecode()))
+        font["maxp"].maxSizeOfInstructions = max(font["maxp"].maxSizeOfInstructions, longest)
+        font.save(path)
+        web = fonts / "webfonts" / path.with_suffix(".woff2").name
+        if web.exists():
+            font.flavor = "woff2"
+            font.save(web)
+
+
+# Steps on the compiled fonts, per family.
+AFTER = {"TwilightCode": [hint_cells]}
+
+
 # Changes beyond the rename, per family, in the order they apply.
 STEPS = {"TwilightText": [add_arrows, add_symbols],
          "TwilightCode": [add_box_drawing, add_arrows, add_symbols, add_braille]}
@@ -202,6 +234,8 @@ def build(family):
     env = dict(os.environ, PATH=str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""))
     subprocess.run([str(Path(sys.executable).parent / "gftools"), "builder", "config.yaml"],
                    cwd=sources_dir, env=env, check=True)
+    for step in AFTER.get(family["file"], []):
+        step(out / "fonts")
     fonts = sorted((out / "fonts").rglob("*.*"))
     print(f"{family['family']}: {len(fonts)} files in {(out / 'fonts').relative_to(ROOT)}")
 

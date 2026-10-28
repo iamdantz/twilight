@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.18.0
+
+Hinting measured, and box drawing hinted for the cell. No palette changes.
+
+### Changed
+- Twilight Code 1.004: in the static fonts, box drawing, blocks and Powerline separators carry instructions made for the cell instead of the autohinter's. The autohinter treated them as letters: in Regular, from 9 to 24 ppem, a third of their renderings put ink outside the rows of the cell, and in every weight some went past the Windows clipping box, where GDI cuts it off (at five to eight sizes); only 57 % of the rows their horizontal lines cover were fully covered. Now the cell's edges round to pixel rows, each line keeps its lower edge on a row and a whole number of pixels of thickness, at least one, and the same line lands on the same rows in every glyph: no ink outside the cell, 94 % of line rows fully covered. Outlines, letters and the variable fonts are unchanged.
+
+### Documented
+- The hinting of every static font measured against the upstream font hinted the same way, from 9 to 50 ppem: the same alignment of x-height, capitals and baseline (at most 0.4 % of renderings off the common row from 9 to 20 ppem, against 8 to 12 % unhinted), crisp horizontal edges (0.76 to 1.00, against 0.60 to 0.80 unhinted), the same distinction of confusable pairs, and no clipping that upstream does not have (upstream clips Ő and Ű by one pixel at 9 ppem).
+
+### Tooling
+- `fonts/scripts/cellhint.py`: the cell instructions; `build.py` applies them to the static fonts and compresses their web fonts again.
+- `fonts/scripts/hintcheck.py`: per static font, instruction coverage, clipping, alignment, crispness and distinction against upstream, and for Code the cell properties above. Built today: no failures.
+- Fonts workflow: runs the hinting check.
+
 ## 1.17.0
 
 Shapes, symbols and braille in Twilight Text and Twilight Code. No palette changes.
