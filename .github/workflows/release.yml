@@ -1,0 +1,70 @@
+name: Release
+
+# A tag v<version> on main, matching palette/twilight.json, publishes that version: the fonts are
+# built and checked exactly as in the Fonts workflow, packaged with their license, and attached
+# to a GitHub release whose notes are the version's CHANGELOG section.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  SCRIPTS: fonts/scripts
+
+jobs:
+  release:
+    name: build, check and publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Tag is on main
+        run: |
+          git fetch origin main
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: "3.13"
+
+      - name: Environments
+        run: |
+          python -m venv .venv-build && .venv-build/bin/pip install -r "$SCRIPTS/requirements.txt"
+          python -m venv .venv-bakery && .venv-bakery/bin/pip install -r "$SCRIPTS/requirements-bakery.txt"
+
+      - name: Upstream files unchanged
+        run: python "$SCRIPTS/upstream.py" verify
+
+      - name: Build
+        run: .venv-build/bin/python "$SCRIPTS/build.py"
+
+      - name: Checks
+        run: |
+          set -e
+          python "$SCRIPTS/upstream.py" reference "$RUNNER_TEMP/reference"
+          .venv-build/bin/python "$SCRIPTS/check.py" "$RUNNER_TEMP/reference"
+          .venv-build/bin/python "$SCRIPTS/boxcheck.py"
+          .venv-build/bin/python "$SCRIPTS/arrowcheck.py"
+          .venv-build/bin/python "$SCRIPTS/symbolcheck.py"
+          .venv-build/bin/python "$SCRIPTS/ligacheck.py"
+          .venv-build/bin/python "$SCRIPTS/hintcheck.py" "$RUNNER_TEMP/reference"
+          .venv-bakery/bin/python "$SCRIPTS/bakery.py" "$RUNNER_TEMP/reference"
+
+      - name: Package
+        run: .venv-build/bin/python "$SCRIPTS/package.py" "$GITHUB_REF_NAME" dist
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --title "Twilight Theme ${GITHUB_REF_NAME#v}" \
+            --notes-file dist/notes.md dist/*.zip dist/SHA256SUMS.txt

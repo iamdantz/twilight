@@ -39,6 +39,12 @@ The rest of the Twilight Theme repository is licensed under the MIT License.
 ChangeLog
 ---------
 
+Twilight Crystal 1.003 and Twilight Crystal Mono 1.006 (Twilight Theme 1.20.0)
+- Metadata only: the manufacturer URL and the copyright line point to the renamed repository,
+  https://github.com/iamdantz/twilight-theme. Twilight Crystal Mono's designer string (name ID
+  9) adds Fira Code's designers after Atkinson Hyperlegible's. Outlines, spacing and features
+  are unchanged.
+
 Twilight Crystal Mono 1.005 (Twilight Theme 1.19.0)
 - Added optional programming ligatures, in stylistic set 1 ("Programming ligatures"), off by
   default: Fira Code 6.2's contextual rules (calt), unchanged but for one added rule, with the
@@ -127,4 +133,4 @@ https://github.com/ToxicFrog/Ligaturizer
 
 Twilight Crystal and Twilight Crystal Mono are maintained by José D. Gutiérrez as part of
 Twilight Theme.
-https://github.com/iamdantz/twilight
+https://github.com/iamdantz/twilight-theme

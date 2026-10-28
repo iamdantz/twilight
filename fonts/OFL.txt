@@ -1,7 +1,7 @@
 Copyright 2020-2024 The Atkinson Hyperlegible Next Project Authors (https://github.com/googlefonts/atkinson-hyperlegible-next)
 Copyright 2020-2024 The Atkinson Hyperlegible Mono Project Authors (https://github.com/googlefonts/atkinson-hyperlegible-next-mono)
 Copyright 2014-2021 The Fira Code Project Authors (https://github.com/tonsky/FiraCode)
-Copyright 2026 José D. Gutiérrez (https://github.com/iamdantz/twilight)
+Copyright 2026 José D. Gutiérrez (https://github.com/iamdantz/twilight-theme)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

@@ -543,13 +543,14 @@ In light flavors, bright white is Raised, a surface, so it never colors text.
 6. Map background states, using the solid tokens.
 7. Map code and terminal colors, and data series with §12.4.
 8. Ship one theme per flavor, named *Twilight {Flavor}*, with Afterglow as the accent.
-9. Check before shipping:
-   - every foreground meets its level on the surface it sits on;
-   - code colors meet the category floor (7:1 dark, 4.5:1 light) on Canvas and on diff backgrounds;
-   - control boundaries and focus indicators reach 3:1;
-   - no `#000000`, no `#ffffff`, nothing outside sRGB;
-   - one accent fill per view, on the main action, and one active accent mark per container;
-   - nothing in §13 appears.
+9. Set text in Twilight Crystal and code in Twilight Crystal Mono where the target lets the theme choose a font, with the alternatives of [typography.md](typography.md). A port that ships the font files includes `OFL.txt` and `FONTLOG.txt` with them, and never sells them on their own.
+10. Check before shipping:
+    - every foreground meets its level on the surface it sits on;
+    - code colors meet the category floor (7:1 dark, 4.5:1 light) on Canvas and on diff backgrounds;
+    - control boundaries and focus indicators reach 3:1;
+    - no `#000000`, no `#ffffff`, nothing outside sRGB;
+    - one accent fill per view, on the main action, and one active accent mark per container;
+    - nothing in §13 appears.
 
 If a target cannot express a rule, such as a border on the current line, the effect is left out rather than drawn with a color from another role.
 

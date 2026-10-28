@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.20.0
+
+Typography documented, fonts ready to release. No palette changes.
+
+### Added
+- `docs/typography.md`: the typefaces, what Twilight Crystal adds, how to turn on the optional ligatures in editors, terminals, web pages and design applications, and which font to use. Twilight Theme recommends Twilight Crystal and Twilight Crystal Mono. Atkinson Hyperlegible Next and Mono, on Google Fonts, are the alternative they derive from, for an error in Twilight Crystal or for convenience. The system's own fonts come last, and the user's taste has the last word.
+- The closest system fonts, measured, with the size that matches Twilight Crystal's x-height:
+  - Windows: Tahoma and Cascadia Mono;
+  - macOS: Verdana and Menlo;
+  - Linux: Noto Sans or Adwaita Sans, with Hack, Adwaita Mono or DejaVu Sans Mono.
+- The rule that the original letters are kept, with what Twilight Crystal changes and what it does not.
+- Releases: a tag `v<version>` on main builds the fonts and runs every check. It publishes one archive per family with variable, static and web fonts, `OFL.txt` and `FONTLOG.txt`, plus `SHA256SUMS.txt` (`fonts/scripts/package.py`, `.github/workflows/release.yml`).
+
+### Licensing
+- README: the license of each part of the repository, in one table.
+- CONTRIBUTING: a contribution takes the license of the part it changes.
+- Design system, building a theme: a port that ships the font files includes `OFL.txt` and `FONTLOG.txt` and never sells them on their own.
+- Twilight Crystal Mono 1.006 credits Fira Code's designers beside Atkinson Hyperlegible's (name ID 9); `tools/ligaturizer` adds them as it adds Fira Code's copyright and trademark notices.
+- `fonts/upstream/firacode/README.txt` says where each Fira Code file comes from.
+- Twilight Crystal 1.003 and Twilight Crystal Mono 1.006 point to the renamed repository, `iamdantz/twilight-theme`.
+
 ## 1.19.0
 
 Optional programming ligatures in Twilight Crystal Mono, from Fira Code. No palette changes.

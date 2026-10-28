@@ -61,6 +61,10 @@ Twilight Crystal Mono's ligatures are added by [tools/ligaturizer](tools/ligatur
 
 Not accepted yet. When ports open, they will follow [Applying the system](docs/design-system.md#12-applying-the-system) and use the naming *Twilight {Flavor}*, with Afterglow as the accent.
 
+## Licensing of contributions
+
+A contribution is licensed as the part of the repository it changes: the fonts and their design data under the SIL Open Font License 1.1, `tools/ligaturizer` under the GNU General Public License 3, everything else under the MIT License (see the [README](README.md#license)). By opening a pull request you agree to license your change that way.
+
 ## Writing
 
 Documents are in English. Keep sentences short and claims measurable.

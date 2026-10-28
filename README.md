@@ -155,6 +155,8 @@ The full derivation, with every formula and parameter, is in [construction.md](d
 
 Twilight Theme is defined independently of any application. To build a theme for a tool, map its regions to the surface roles and follow [Applying the system](docs/design-system.md#12-applying-the-system), which also lists what a port must not do.
 
+Twilight Theme recommends its typefaces, Twilight Crystal and Twilight Crystal Mono, published with every release. Atkinson Hyperlegible Next and Mono, on Google Fonts, are the alternative they derive from; the system's own fonts come last, and the user's taste always has the last word. [typography.md](docs/typography.md) covers which font to use, what Twilight Crystal adds, the optional ligatures and the closest system fonts.
+
 ## Repository
 
 ```
@@ -162,14 +164,15 @@ Twilight Theme is defined independently of any application. To build a theme for
 ├── README.md
 ├── .agents/skills/
 │   └── twilight-auditor/    audit skill: floors, reproduction, consistency
-├── .github/workflows/       validation and font builds on every pull request
+├── .github/workflows/       validation and font builds on every pull request; releases
 ├── assets/                  palette images
 ├── docs/
 │   ├── design-system.md     roles, rules and application
-│   └── construction.md      derivation, optimization and validation
+│   ├── construction.md      derivation, optimization and validation
+│   └── typography.md        typefaces, alternatives and ligatures
 ├── fonts/
 │   ├── upstream/            pinned upstream sources and licenses, unmodified
-│   ├── scripts/             build, box drawing, arrows, symbols, hinting, checks, Font Bakery
+│   ├── scripts/             build, additions, hinting, checks, Font Bakery, packaging
 │   ├── ligatures.json       which Fira Code ligatures Twilight Crystal Mono takes
 │   ├── upstream.json        upstream repositories, commits and SHA-256
 │   ├── changes.json         characters added to the upstream fonts
@@ -186,10 +189,15 @@ Twilight Theme is defined independently of any application. To build a theme for
 
 ## License
 
-[MIT](LICENSE) © José D. Gutiérrez, except the fonts and the Ligaturizer tool.
+Each part of the repository has the license that fits what it is:
 
-Twilight Crystal and Twilight Crystal Mono are licensed under the [SIL Open Font License 1.1](fonts/OFL.txt). They derive from Atkinson Hyperlegible Next and Atkinson Hyperlegible Mono, by Applied Design Works and Letters from Sweden for the Braille Institute; the optional ligatures of Twilight Crystal Mono come from [Fira Code](https://github.com/tonsky/FiraCode), by Nikita Prokopov. Fira Mono is a trademark of The Mozilla Corporation. [FONTLOG.txt](fonts/FONTLOG.txt) records every change and credit.
+| Part | License | Holder |
+| --- | --- | --- |
+| Palette, documents, images, workflows, build scripts (`palette/`, `docs/`, `assets/`, `fonts/scripts/`, the JSON files in `fonts/`) and future ports | [MIT](LICENSE) | José D. Gutiérrez |
+| Twilight Crystal and Twilight Crystal Mono: the fonts in every release, [fonts/OFL.txt](fonts/OFL.txt), [fonts/FONTLOG.txt](fonts/FONTLOG.txt) | [SIL Open Font License 1.1](fonts/OFL.txt) | The Atkinson Hyperlegible Next and Mono Project Authors, the Fira Code Project Authors (Twilight Crystal Mono) and José D. Gutiérrez |
+| Upstream fonts kept unmodified in `fonts/upstream/` | Each one's own `OFL.txt` | Their authors |
+| [tools/ligaturizer](tools/ligaturizer), a fork of [Ligaturizer](https://github.com/ToxicFrog/Ligaturizer) | [GNU General Public License 3](tools/ligaturizer/LICENSE) | The Ligaturizer contributors and José D. Gutiérrez |
 
-[tools/ligaturizer](tools/ligaturizer) is a fork of [Ligaturizer](https://github.com/ToxicFrog/Ligaturizer) and is licensed, like it, under the [GNU General Public License 3](tools/ligaturizer/LICENSE). The build runs it as a separate program; its license does not extend to the fonts it helps build.
+Twilight Crystal and Twilight Crystal Mono derive from Atkinson Hyperlegible Next and Atkinson Hyperlegible Mono, by Applied Design Works and Letters from Sweden for the Braille Institute; the optional ligatures of Twilight Crystal Mono come from [Fira Code](https://github.com/tonsky/FiraCode), by Nikita Prokopov. Fira Mono is a trademark of The Mozilla Corporation. [FONTLOG.txt](fonts/FONTLOG.txt) records every change and credit. The build runs the Ligaturizer fork as a separate program; its license does not extend to the fonts it helps build.
 
 Each license disclaims all warranty: Twilight Theme, its fonts and its tools are provided as is.

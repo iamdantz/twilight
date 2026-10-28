@@ -30,7 +30,7 @@ import upstream  # noqa: E402
 
 ROOT = upstream.ROOT
 BUILD = ROOT / "fonts" / "build"
-PROJECT = "https://github.com/iamdantz/twilight"
+PROJECT = "https://github.com/iamdantz/twilight-theme"
 HOLDER = "José D. Gutiérrez"
 YEAR = 2026
 

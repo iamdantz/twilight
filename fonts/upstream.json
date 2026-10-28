@@ -3,7 +3,7 @@
     {
       "family": "Twilight Crystal",
       "file": "TwilightCrystal",
-      "version": "1.002",
+      "version": "1.003",
       "upstream": {
         "family": "Atkinson Hyperlegible Next",
         "file": "AtkinsonHyperlegibleNext",
@@ -29,7 +29,7 @@
     {
       "family": "Twilight Crystal Mono",
       "file": "TwilightCrystalMono",
-      "version": "1.005",
+      "version": "1.006",
       "upstream": {
         "family": "Atkinson Hyperlegible Mono",
         "file": "AtkinsonHyperlegibleMono",
