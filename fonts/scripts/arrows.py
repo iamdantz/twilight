@@ -1,4 +1,4 @@
-"""Arrows for Twilight Text and Twilight Code.
+"""Arrows for Twilight Crystal and Twilight Crystal Mono.
 
 Every arrow is computed from two glyphs of each master and its italic angle, so it interpolates
 with the rest of the font and reads as part of it:
@@ -10,11 +10,11 @@ with the rest of the font and reads as part of it:
 
 An arrow is a monoline shaft with an open head: two arms at 45 degrees, mitred at the tip, of
 the same stroke as the shaft. The shaft ends inside the head, so no two contours share an
-edge. In Twilight Text a horizontal arrow is 1.4 times as long as the plus sign is wide, about
-the width of a capital M, and is spaced with the plus sign's side bearings; in Twilight Code it
+edge. In Twilight Crystal a horizontal arrow is 1.4 times as long as the plus sign is wide, about
+the width of a capital M, and is spaced with the plus sign's side bearings; in Twilight Crystal Mono it
 fills the 632-unit cell but for 40 units on each side. Vertical and diagonal arrows have the
 same length, turned. An arrow with a head at each end grows until some shaft shows between the
-heads; in Code it stops at the cell, and its heads shrink instead. Code leaves out ⇔ and ⇕,
+heads; in Crystal Mono it stops at the cell, and its heads shrink instead. Crystal Mono leaves out ⇔ and ⇕,
 and shortens an italic arrow whose slant would carry it out of the cell (↵).
 
 Contours are counter-clockwise for ink, as in the design sources, and have the same points in
@@ -42,7 +42,7 @@ CODEPOINTS = sorted(ARROWS)
 
 
 def codepoints(cell):
-    """The arrows a font gets. Twilight Code leaves out ⇔ and ⇕: at its heaviest weight a
+    """The arrows a font gets. Twilight Crystal Mono leaves out ⇔ and ⇕: at its heaviest weight a
     double line with a head at each end does not fit the cell with heads that still reach past
     both lines."""
     return [cp for cp in CODEPOINTS if not (cell and ARROWS[cp][0] == "double both")]
@@ -68,7 +68,7 @@ class Metrics:
         upright = [(x - self.slant * (y - self.cy), y) for x, y in plus]
         bar_x = [x for x, y in upright if y in bar]
         self.sb = min(x for x, _ in upright)
-        # Code: the cell less two side bearings of CODE_SB; Text: the plus sign's width, x1.4
+        # Crystal Mono: the cell less two side bearings of CODE_SB; Crystal: the plus sign's width, x1.4
         self.length = cell - 2 * CODE_SB if cell else 1.4 * (max(bar_x) - min(bar_x))
         eys = sorted({y for _, y in equal})
         self.e = ((eys[-1] + eys[-2]) - (eys[0] + eys[1])) / 4  # half the distance between bar centers
@@ -79,7 +79,7 @@ class Metrics:
         """Length of an arrow with a head at each end, and the reach of its heads.
 
         The heads keep the reach of one-headed arrows and the arrow grows until a stretch of
-        shaft shows between them (half a stroke and a tenth of the length). In Twilight Code
+        shaft shows between them (half a stroke and a tenth of the length). In Twilight Crystal Mono
         it may grow to the cell less two 20-unit side bearings; past that the heads shrink."""
         a = self.t / ROOT2
         gap = self.t / 2 + 0.1 * self.length
@@ -206,14 +206,14 @@ def glyph(m, cp):
         x0, _, x1, _ = bounds(contours)
         if not m.cell or x1 - x0 <= m.cell - 2 * MIN_SB:
             break
-        # Code italic: a slanted corner can outgrow the cell; shorten the arrow to fit
+        # Crystal Mono italic: a slanted corner can outgrow the cell; shorten the arrow to fit
         length -= (x1 - x0) - (m.cell - 2 * MIN_SB)
     else:
         raise ValueError(f"U+{cp:04X} does not fit the cell")
     if m.cell:
         advance, dx = m.cell, (m.cell - (x1 + x0)) / 2
     else:
-        # Text: spaced on the upright ink, then slanted about the axis, as the plus sign is
+        # Crystal: spaced on the upright ink, then slanted about the axis, as the plus sign is
         x0u, _, x1u, _ = bounds(place(m, kind, direction, length, slant=False))
         advance, dx = x1u - x0u + 2 * m.sb, m.sb - x0u
     return advance, [ink(c) for c in (shift(c, dx, 0) for c in contours)]

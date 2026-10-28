@@ -28,7 +28,7 @@ Pull requests are merged with a merge commit or a rebase, so each version stays 
 
 ## Fonts
 
-Twilight Text and Twilight Code are built from the upstream sources in `fonts/upstream/`, which are never edited: every change is a step in `fonts/scripts/build.py`, recorded in [FONTLOG.txt](fonts/FONTLOG.txt). A pull request that touches `fonts/` runs the [Fonts workflow](.github/workflows/fonts.yml). The same steps run locally:
+Twilight Crystal and Twilight Crystal Mono are built from the upstream sources in `fonts/upstream/`, which are never edited: every change is a step in `fonts/scripts/build.py`, recorded in [FONTLOG.txt](fonts/FONTLOG.txt). A pull request that touches `fonts/` runs the [Fonts workflow](.github/workflows/fonts.yml). The same steps run locally:
 
 ```
 python -m venv .venv-build && .venv-build/bin/pip install -r fonts/scripts/requirements.txt
@@ -47,7 +47,7 @@ python fonts/scripts/upstream.py reference /tmp/reference
 
 `check.py` fails on any difference from the upstream fonts that `fonts/changes.json` does not declare, `boxcheck.py` on a box drawing line that stops short of its cell edge or breaks between cells, `arrowcheck.py` on an arrow whose stroke, axis or spacing departs from the plus and equal signs, `symbolcheck.py` on a shape, derived sign or braille pattern that breaks its rule, `ligacheck.py` on an optional ligature that shapes unlike Fira Code, leaves the grid or departs from the hyphen's weight and axis, `hintcheck.py` on hinting worse than upstream's or box drawing that leaves its cell, and `bakery.py` on any Font Bakery failure the upstream fonts do not have. A step that adds characters declares their code points in `fonts/changes.json`, and one that adds an optional feature declares its tag there.
 
-Twilight Code's ligatures are added by [tools/ligaturizer](tools/ligaturizer), under the GNU GPL 3, which the build runs as a separate program; `fonts/ligatures.json` chooses which of Fira Code's rules it takes. Code that changes the tool stays in its directory and under its license; Twilight's own scripts must not import it.
+Twilight Crystal Mono's ligatures are added by [tools/ligaturizer](tools/ligaturizer), under the GNU GPL 3, which the build runs as a separate program; `fonts/ligatures.json` chooses which of Fira Code's rules it takes. Code that changes the tool stays in its directory and under its license; Twilight's own scripts must not import it.
 
 ## Versions
 

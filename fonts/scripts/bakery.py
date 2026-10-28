@@ -52,7 +52,11 @@ def main():
     failed = False
     for family in json.loads(MANIFEST.read_text(encoding="utf-8"))["families"]:
         old, new = family["upstream"]["file"], family["file"]
-        for ref in sorted((Path(args.reference) / new).glob("*.ttf")):
+        refs = sorted((Path(args.reference) / new).glob("*.ttf"))
+        if not refs:
+            print(f"FAIL {family['family']}: no reference fonts in {Path(args.reference) / new}")
+            failed = True
+        for ref in refs:
             ours = BUILD / new / "fonts" / "variable" / ref.name.replace(old, new)
             a, b = run(ours), run(ref)
             new_fails = sorted(k for k, v in a.items() if v in ("FAIL", "FATAL") and b.get(k) not in ("FAIL", "FATAL"))

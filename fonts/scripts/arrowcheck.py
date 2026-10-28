@@ -1,4 +1,4 @@
-"""Arrows in Twilight Text and Twilight Code: same stroke, axis and spacing as the font.
+"""Arrows in Twilight Crystal and Twilight Crystal Mono: same stroke, axis and spacing as the font.
 
 At every named instance of every variable font, measured on the outlines:
 
@@ -11,7 +11,7 @@ At every named instance of every variable font, measured on the outlines:
 3. Mirrors. Each arrow and its opposite (← →, ↑ ↓, ↖ ↘, ↗ ↙, ⇐ ⇒, ⇑ ⇓, ↩ ↪) have the same
    advance width and ink height, and in upright fonts the same ink width.
 4. Contours. No contour crosses itself, so the outline is the same in every renderer.
-5. Cell. In Twilight Code every arrow is 632 units wide and its ink stays inside the cell.
+5. Cell. In Twilight Crystal Mono every arrow is 632 units wide and its ink stays inside the cell.
 
     python fonts/scripts/arrowcheck.py
 """

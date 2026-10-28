@@ -1,27 +1,27 @@
-"""Symbols in Twilight Text and Twilight Code: each one follows its rule in symbols.py,
+"""Symbols in Twilight Crystal and Twilight Crystal Mono: each one follows its rule in symbols.py,
 braille.py and boxdraw.py.
 
 At every named instance of every variable font, on the outlines, with the italic slant taken
 out about the math axis before measuring:
 
 1. Shapes (■ □ ▪ ▫ ▲ △ … ○ ● ◦). Centered on the plus sign's bar (the math axis). Small filled
-   shapes have the bullet's area; large filled shapes all have one area, in Text that of a
+   shapes have the bullet's area; large filled shapes all have one area, in Crystal that of a
    circle as tall as the cap height. Every point of an outlined shape's inner edge lies one
    stroke from its outer edge, and that stroke is one fixed fraction of the plus sign's bar
    at every instance: the whole bar, or less only where at the heaviest instance the hole has
    come down to the width of the stroke. Opposite triangles match. Within 3 % for areas and
    2.5 units for distances (the rounding of points and deltas to whole units).
-2. ∆ stands on the baseline and reaches the cap height (in Code, as high as fits the cell
+2. ∆ stands on the baseline and reaches the cap height (in Crystal Mono, as high as fits the cell
    once slanted), with the same stroke rule; ∅ is centered on the O; ⟨ ⟩ are as tall as the
    parentheses; ‖ is two lines as thick as the bar, as far apart as the equal sign's.
 3. ⅓ ⅔ ⁴ ₁ ₂ ₃ ₄: every digit has the size of the digit it was taken from; numerators and
    denominators stand on the baselines of ½, superiors on that of ¹, subscripts on the font's
    declared subscript offset (OS/2 ySubscriptYOffset). µ reaches the descender of p.
-4. Braille (Code): each pattern has as many dots as bits set, each the size of the period, each
+4. Braille (Crystal Mono): each pattern has as many dots as bits set, each the size of the period, each
    centered on its point of the 2 × 4 grid spread over the cell.
-5. Rounded Powerline separators (Code): the flat side covers the whole left (or right) edge of
+5. Rounded Powerline separators (Crystal Mono): the flat side covers the whole left (or right) edge of
    the cell and the curve reaches the opposite edge.
-6. Code: every new glyph is 632 units wide and its ink stays inside the cell.
+6. Crystal Mono: every new glyph is 632 units wide and its ink stays inside the cell.
 
     python fonts/scripts/symbolcheck.py
 """

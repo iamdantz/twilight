@@ -1,8 +1,8 @@
 {
   "families": [
     {
-      "family": "Twilight Text",
-      "file": "TwilightText",
+      "family": "Twilight Crystal",
+      "file": "TwilightCrystal",
       "version": "1.002",
       "upstream": {
         "family": "Atkinson Hyperlegible Next",
@@ -27,8 +27,8 @@
       }
     },
     {
-      "family": "Twilight Code",
-      "file": "TwilightCode",
+      "family": "Twilight Crystal Mono",
+      "file": "TwilightCrystalMono",
       "version": "1.005",
       "upstream": {
         "family": "Atkinson Hyperlegible Mono",

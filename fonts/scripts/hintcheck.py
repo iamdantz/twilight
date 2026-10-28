@@ -19,7 +19,7 @@ font through ttfautohint with the builder's defaults):
    cl-d (pixel difference over the union of ink, best of three one-pixel alignments): no lower
    than upstream's, less 0.01.
 
-6. Cell (Twilight Code, whose box drawing, blocks and Powerline separators carry the
+6. Cell (Twilight Crystal Mono, whose box drawing, blocks and Powerline separators carry the
    instructions of fonts/scripts/cellhint.py), 9 to 24 ppem, on ─ ━ ═ ┼ ╋ ╬ ┬ ┴ ├ ┤ ╪ ╫ ▀ ▄ █:
    no ink beyond the rows of the cell (its top and bottom rounded to pixels); at least 90 % of
    the rows a horizontal line covers are fully covered (crisp); the light line falls on the
@@ -190,7 +190,7 @@ def main():
             ref = upstream_static(ref_var, weight, tmp / f"ref-{path.name}")
             problems = coverage(path)
             lines = ""
-            if new == "TwilightCode":
+            if new == "TwilightCrystalMono":
                 found, crisp = cell(path)
                 problems += found
                 lines = f", box lines crisp {crisp:.2f}"

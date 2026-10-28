@@ -1,4 +1,4 @@
-"""Twilight Code's optional ligatures (stylistic set 1): Fira Code's, fitted to the font.
+"""Twilight Crystal Mono's optional ligatures (stylistic set 1): Fira Code's, fitted to the font.
 
 Measured on the variable fonts, at every named instance:
 
@@ -10,7 +10,7 @@ Measured on the variable fonts, at every named instance:
 2. Grid. Every glyph of the shaped corpus is one cell (632 units) wide: a sequence of n
    characters still takes n cells.
 3. Fit. The double hyphen (hyphen_hyphen.liga, drawn in Fira Code as thick as its hyphen) is
-   as thick as Twilight Code's hyphen, within two units, and centered on the hyphen's center
+   as thick as Twilight Crystal Mono's hyphen, within two units, and centered on the hyphen's center
    (the math axis), within one: the weight and the axis the build matched. Other glyphs keep
    Fira Code's proportions to its hyphen (its arrow lines are a little heavier, up to 5 %). No ligature glyph has ink beyond the Windows clipping box
    (usWinAscent, usWinDescent).
@@ -30,7 +30,7 @@ from fontTools.pens.boundsPen import BoundsPen
 from fontTools.ttLib import TTFont
 
 ROOT = Path(__file__).resolve().parents[2]
-BUILD = ROOT / "fonts" / "build" / "TwilightCode" / "fonts" / "variable"
+BUILD = ROOT / "fonts" / "build" / "TwilightCrystalMono" / "fonts" / "variable"
 FIRA = ROOT / json.loads((ROOT / "fonts" / "upstream.json").read_text(encoding="utf-8"))["ligatures"]["directory"]
 CELL = 632
 CORPUS = (

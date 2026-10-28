@@ -1,6 +1,6 @@
 """Compare the built Twilight fonts with the upstream fonts they derive from.
 
-Every change made to Twilight Text and Twilight Code is meant to be deliberate. This check
+Every change made to Twilight Crystal and Twilight Crystal Mono is meant to be deliberate. This check
 lists everything that differs between a built variable font and its upstream counterpart, at
 every named instance, so an unintended difference cannot pass unnoticed:
 
@@ -185,7 +185,11 @@ def main():
     failed = False
     for family in upstream.load()["families"]:
         old, new = family["upstream"]["file"], family["file"]
-        for ref_path in sorted((Path(args.reference) / new).glob("*.ttf")):
+        refs = sorted((Path(args.reference) / new).glob("*.ttf"))
+        if not refs:
+            print(f"FAIL {family['family']}: no reference fonts in {Path(args.reference) / new}")
+            failed = True
+        for ref_path in refs:
             ours_path = BUILD / new / "fonts" / "variable" / ref_path.name.replace(old, new)
             if not ours_path.exists():
                 print(f"FAIL {ours_path.relative_to(ROOT)}: not built")

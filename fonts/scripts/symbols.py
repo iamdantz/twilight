@@ -1,4 +1,4 @@
-"""Symbols for Twilight Text and Twilight Code: shapes, primes, brackets and a few derived signs.
+"""Symbols for Twilight Crystal and Twilight Crystal Mono: shapes, primes, brackets and a few derived signs.
 
 Two kinds of glyph, both new; no existing glyph changes.
 
@@ -11,12 +11,12 @@ Computed, from measures of each master, as the arrows are (fonts/scripts/arrows.
   mitred) by one fixed fraction of the plus sign's stroke in every master, so the stroke
   interpolates with the font: the whole stroke, or less where in some master the hole would
   be narrower than the stroke (small shapes in heavy weights), so ▫ still reads apart from ▪.
-  In Twilight Code the large shapes shrink together until the widest, slanted in italic, fits
+  In Twilight Crystal Mono the large shapes shrink together until the widest, slanted in italic, fits
   the cell less two 40-unit side bearings.
 - ∆ (increment), an outlined equilateral triangle from the baseline to the cap height (in
-  Code, as high as fits the cell), with the same stroke rule, and ∅ (empty set), a ring as
-  tall as the O (in Code, as large as fits) crossed by a stroke at the angle and thickness of
-  the slash; ⟨ ⟩, open brackets as tall and as wide as the parentheses, with the plus sign's
+  Crystal Mono, as high as fits the cell), with the same stroke rule, and ∅ (empty set), a
+  ring as tall as the O (in Crystal Mono, as large as fits) crossed by a stroke at the angle
+  and thickness of the slash; ⟨ ⟩, open brackets as tall and as wide as the parentheses, with the plus sign's
   stroke.
 
 Derived, from the designers' own outlines, moved and never redrawn:
@@ -28,7 +28,7 @@ Derived, from the designers' own outlines, moved and never redrawn:
   standing on the superiors' baseline; ₁ ₂ ₃ ₄ the superiors moved down so their baseline is
   the font's declared subscript offset (OS/2 ySubscriptYOffset, where applications place
   synthesized subscripts);
-- № the N followed by º (Twilight Text only: in Code it does not fit one cell);
+- № the N followed by º (Twilight Crystal only: in Crystal Mono it does not fit one cell);
 - µ the u with its left stem carried down to the descender of p.
 
 Italic: computed glyphs are drawn upright and slanted about the math axis, as the plus sign is;
@@ -160,7 +160,7 @@ class Master:
         self.small = math.pi * ((y1 - y0) / 2) ** 2
         self.large = math.pi * (cap / 2) ** 2
         self.large_scale = 1.0
-        if self.cell:  # Code: the large shapes shrink together until the widest, slanted, fits
+        if self.cell:  # Crystal Mono: the large shapes shrink together until the widest, slanted, fits
             widest = max(self.width_of(self.shape_contours(cp)) for cp, s in SHAPES.items() if s[1] == "large")
             self.large_scale = min(1.0, self.fit / widest)
 
@@ -189,7 +189,7 @@ class Master:
         return math.sqrt(area / math.pi) if shape == "circle" else regular(shape, area)[1]
 
     def delta_height(self):
-        """∆ reaches the cap height; in Code, as high as fits the cell once slanted."""
+        """∆ reaches the cap height; in Crystal Mono, as high as fits the cell once slanted."""
         h = self.cap
         if self.cell:
             h = min(h, self.fit / (2 / math.sqrt(3) + self.m.slant))
@@ -224,9 +224,9 @@ class Master:
         return x1 - x0 + lsb + rsb, [shift(c, lsb, 0) for c in self.slanted(contours)]
 
     def keep(self, contours, lsb, rsb):
-        """Derived glyphs, already slanted: Text spaces the upright ink with the given side
+        """Derived glyphs, already slanted: Crystal spaces the upright ink with the given side
         bearings (italic side bearings are measured upright, so a digit moved down to the
-        subscript line keeps its spacing along the slant); Code centers the ink in the cell."""
+        subscript line keeps its spacing along the slant); Crystal Mono centers the ink in the cell."""
         if self.cell:
             x0, _, x1, _ = bounds(contours)
             return self.cell, [shift(c, (self.cell - (x1 - x0)) / 2 - x0, 0) for c in contours]
@@ -305,7 +305,7 @@ def glyph(master, cp):
             q = (reach * math.cos(angle), cy + reach * math.sin(angle))
             return [circle(0, cy, r), hole(circle(0, cy, r - m.t)), ink(stroke(p, q, t_slash))]
         d = y1 - y0  # as tall as the O
-        if master.cell:  # Code: as large as fits the cell once slanted
+        if master.cell:  # Crystal Mono: as large as fits the cell once slanted
             lo, hi = 0.0, d
             for _ in range(50):
                 mid = (lo + hi) / 2

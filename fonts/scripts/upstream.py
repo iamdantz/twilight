@@ -1,11 +1,11 @@
-"""The upstream fonts Twilight Text and Twilight Code derive from.
+"""The upstream fonts Twilight Crystal and Twilight Crystal Mono derive from.
 
 fonts/upstream.json pins each upstream repository to one commit. The design sources and the
 license files of that commit are copied into fonts/upstream/<repository>/ and recorded with
 their SHA-256. The upstream's own compiled variable fonts are not stored: they are fetched at
 the same commit when a build is compared against them, and verified by SHA-256.
 
-The "ligatures" entry pins the Fira Code files Twilight Code's optional ligatures come from
+The "ligatures" entry pins the Fira Code files Twilight Crystal Mono's optional ligatures come from
 (fonts/upstream/firacode/): the variable font of a release, its license, and the rules and glyph
 class written from that release's design source by tools/ligaturizer (ligaturize.py extract).
 verify checks them too; vendor leaves them alone.

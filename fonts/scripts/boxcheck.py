@@ -1,4 +1,4 @@
-"""Box drawing in Twilight Code: every line reaches the cell edge and meets its neighbor.
+"""Box drawing in Twilight Crystal Mono: every line reaches the cell edge and meets its neighbor.
 
 Two checks:
 
@@ -29,7 +29,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import boxdraw  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
-FONTS = ROOT / "fonts" / "build" / "TwilightCode" / "fonts"
+FONTS = ROOT / "fonts" / "build" / "TwilightCrystalMono" / "fonts"
 EDGE = 1  # depth, in font units, of the strip read on each cell edge
 TOLERANCE = 0.5  # font units; interpolated instances keep fractional coordinates
 PAD = 10

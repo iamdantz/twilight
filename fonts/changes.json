@@ -1,5 +1,5 @@
 {
-  "TwilightText[wght].ttf": {
+  "TwilightCrystal[wght].ttf": {
     "added": [
       "00B5",
       "2016",
@@ -24,7 +24,7 @@
       "27E8-27E9"
     ]
   },
-  "TwilightText-Italic[wght].ttf": {
+  "TwilightCrystal-Italic[wght].ttf": {
     "added": [
       "00B5",
       "2016",
@@ -49,7 +49,7 @@
       "27E8-27E9"
     ]
   },
-  "TwilightCode[wght].ttf": {
+  "TwilightCrystalMono[wght].ttf": {
     "added": [
       "00B5",
       "2016",
@@ -78,7 +78,7 @@
       "ss01"
     ]
   },
-  "TwilightCode-Italic[wght].ttf": {
+  "TwilightCrystalMono-Italic[wght].ttf": {
     "added": [
       "00B5",
       "2016",

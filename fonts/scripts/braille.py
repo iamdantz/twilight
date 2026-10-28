@@ -1,4 +1,4 @@
-"""Braille patterns for Twilight Code (U+2800–28FF).
+"""Braille patterns for Twilight Crystal Mono (U+2800–28FF).
 
 Terminal programs draw graphs with braille: each cell is a 2 × 4 grid of dots, so a line plot
 gets twice the columns and four times the rows of the text. The grid is spread evenly over the

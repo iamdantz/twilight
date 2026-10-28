@@ -1,4 +1,4 @@
-"""Box drawing, block elements and Powerline separators for Twilight Code.
+"""Box drawing, block elements and Powerline separators for Twilight Crystal Mono.
 
 Every glyph is computed from four numbers of each master, so it interpolates with the rest of
 the font and tiles with its neighbors:

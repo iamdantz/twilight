@@ -2,19 +2,23 @@
 
 ## 1.19.0
 
-Optional programming ligatures in Twilight Code, from Fira Code. No palette changes.
+Optional programming ligatures in Twilight Crystal Mono, from Fira Code. No palette changes.
+
+### Renamed
+- The typefaces are now Twilight Crystal (sans-serif) and Twilight Crystal Mono (monospaced), with files `TwilightCrystal` and `TwilightCrystalMono`. They were Twilight Text and Twilight Code during development and had not been released.
+- Under the OFL a Modified Version may not use the Reserved Font Names of its sources. Atkinson Hyperlegible Next, Atkinson Hyperlegible Mono and Fira Code declare none, and no published font was found under either new name.
 
 ### Added
-- Twilight Code 1.005: Fira Code 6.2's programming ligatures in stylistic set 1, "Programming ligatures", off by default. With the set off nothing changes. With it on, `->`, `!==`, `<=`, `&&`, `|>` and the rest of Fira Code's set join; arrows and rows of `-`, `=`, `#` and `_` join at any length (`<==>`, `|-->`, `####`). A sequence of n characters still takes n cells. Turn it on with `"editor.fontLigatures": "'ss01'"` in VS Code, or the same feature in any application that sets OpenType features.
+- Twilight Crystal Mono 1.005: Fira Code 6.2's programming ligatures in stylistic set 1, "Programming ligatures", off by default. With the set off nothing changes. With it on, `->`, `!==`, `<=`, `&&`, `|>` and the rest of Fira Code's set join; arrows and rows of `-`, `=`, `#` and `_` join at any length (`<==>`, `|-->`, `####`). A sequence of n characters still takes n cells. Turn it on with `"editor.fontLigatures": "'ss01'"` in VS Code, or the same feature in any application that sets OpenType features.
 - Fira Code's rules are kept as they are, with three exceptions. Rules that redraw single characters in Fira Code's style are left out: `0xFF` with ×, punctuation raised next to capitals, Greek capitals. So is `www`. And a double hyphen before a letter (`--watch`) stays plain.
-- The ligatures are fitted to Twilight Code in four ways. They are scaled to its cell. Each master takes them at the weight where Fira Code's hyphen is as thick as its own. They are moved onto its math axis (72.5 units lower than Fira Code's). And they are slanted 12 degrees in the italic.
+- The ligatures are fitted to Twilight Crystal Mono in four ways. They are scaled to its cell. Each master takes them at the weight where Fira Code's hyphen is as thick as its own. They are moved onto its math axis (72.5 units lower than Fira Code's). And they are slanted 12 degrees in the italic.
 
 ### Licensing
 - Fira Code (SIL Open Font License 1.1, no Reserved Font Name) is pinned in `fonts/upstream/firacode` with its license and authors.
-- Its copyright notice is in Twilight Code's copyright string and in `fonts/OFL.txt`.
-- Its trademark notice ("Fira Mono is a trademark of The Mozilla Corporation.") is in Twilight Code's trademark string, as the OFL FAQ asks of derivatives.
-- Twilight Code's description credits Fira Code.
-- Twilight Text and Twilight Code remain under the OFL 1.1.
+- Its copyright notice is in Twilight Crystal Mono's copyright string and in `fonts/OFL.txt`.
+- Its trademark notice ("Fira Mono is a trademark of The Mozilla Corporation.") is in Twilight Crystal Mono's trademark string, as the OFL FAQ asks of derivatives.
+- Twilight Crystal Mono's description credits Fira Code.
+- Twilight Crystal and Twilight Crystal Mono remain under the OFL 1.1.
 
 ### Tooling
 - `tools/ligaturizer`: a fork of Ligaturizer under the GNU GPL 3, rewritten on fontTools for Fira Code 6. It adds ligatures to Glyphs sources (every master) or to static TrueType fonts. It matches weight, math axis and slant, and turns Fira Code's reversed contours. The build runs it as a separate program, with `fonts/ligatures.json`.
@@ -25,7 +29,8 @@ Optional programming ligatures in Twilight Code, from Fira Code. No palette chan
   - no ink past the clipping box.
 - `check.py` accepts declared optional features. It verifies that their glyphs are reached only with the feature on, and that with it off shaping matches upstream.
 - Fonts workflow: runs the ligature check; also runs on changes to the tool.
-- Font Bakery: no new failures. Two new warnings are inherited from Fira Code's own glyphs:
+- `check.py` and `bakery.py` fail when the reference directory has no fonts for a family, instead of passing with nothing compared.
+- Font Bakery: no new failures. Twilight Crystal Mono's longest full name ("Twilight Crystal Mono ExtraBold Italic") is over 32 characters, as upstream's is (`name/family_and_style_max_length`); Twilight Crystal clears it. Two new warnings are inherited from Fira Code's own glyphs:
   - glyph names over 31 characters;
   - four glyphs with coinciding segments, which the static fonts remove.
 
@@ -34,55 +39,55 @@ Optional programming ligatures in Twilight Code, from Fira Code. No palette chan
 Hinting measured, and box drawing hinted for the cell. No palette changes.
 
 ### Changed
-- Twilight Code 1.004: in the static fonts, box drawing, blocks and Powerline separators carry instructions made for the cell instead of the autohinter's. The autohinter treated them as letters: in Regular, from 9 to 24 ppem, a third of their renderings put ink outside the rows of the cell, and in every weight some went past the Windows clipping box, where GDI cuts it off (at five to eight sizes); only 57 % of the rows their horizontal lines cover were fully covered. Now the cell's edges round to pixel rows, each line keeps its lower edge on a row and a whole number of pixels of thickness, at least one, and the same line lands on the same rows in every glyph: no ink outside the cell, 94 % of line rows fully covered. Outlines, letters and the variable fonts are unchanged.
+- Twilight Crystal Mono 1.004: in the static fonts, box drawing, blocks and Powerline separators carry instructions made for the cell instead of the autohinter's. The autohinter treated them as letters: in Regular, from 9 to 24 ppem, a third of their renderings put ink outside the rows of the cell, and in every weight some went past the Windows clipping box, where GDI cuts it off (at five to eight sizes); only 57 % of the rows their horizontal lines cover were fully covered. Now the cell's edges round to pixel rows, each line keeps its lower edge on a row and a whole number of pixels of thickness, at least one, and the same line lands on the same rows in every glyph: no ink outside the cell, 94 % of line rows fully covered. Outlines, letters and the variable fonts are unchanged.
 
 ### Documented
 - The hinting of every static font measured against the upstream font hinted the same way, from 9 to 50 ppem: the same alignment of x-height, capitals and baseline (at most 0.4 % of renderings off the common row from 9 to 20 ppem, against 8 to 12 % unhinted), crisp horizontal edges (0.76 to 1.00, against 0.60 to 0.80 unhinted), the same distinction of confusable pairs, and no clipping that upstream does not have (upstream clips Ő and Ű by one pixel at 9 ppem).
 
 ### Tooling
 - `fonts/scripts/cellhint.py`: the cell instructions; `build.py` applies them to the static fonts and compresses their web fonts again.
-- `fonts/scripts/hintcheck.py`: per static font, instruction coverage, clipping, alignment, crispness and distinction against upstream, and for Code the cell properties above. Built today: no failures.
+- `fonts/scripts/hintcheck.py`: per static font, instruction coverage, clipping, alignment, crispness and distinction against upstream, and for Crystal Mono the cell properties above. Built today: no failures.
 - Fonts workflow: runs the hinting check.
 
 ## 1.17.0
 
-Shapes, symbols and braille in Twilight Text and Twilight Code. No palette changes.
+Shapes, symbols and braille in Twilight Crystal and Twilight Crystal Mono. No palette changes.
 
 ### Added
-- Twilight Text 1.002 and Twilight Code 1.003, in both families:
+- Twilight Crystal 1.002 and Twilight Crystal Mono 1.003, in both families:
   - Geometric shapes ■ □ ▪ ▫ ▲ △ ▴ ▵ ▶ ▷ ▸ ▹ ▼ ▽ ▾ ▿ ◀ ◁ ◂ ◃ ◆ ◇ ○ ● ◦, computed per master: small shapes have the area of the bullet, large ones that of a circle as tall as a capital; all sit on the math axis; outlined shapes take the plus sign's stroke, or one fixed fraction of it where a heavy master would close the hole.
   - ∆ and ∅ with the plus sign's stroke (∅ crossed at the angle and thickness of the slash), and ⟨ ⟩ as tall and as wide as the parentheses.
   - From the designers' own outlines, moved but not redrawn: ‖ (two bars, spaced like the equal sign), ′ ″ (the straight quotes at the italic angle), ⅓ ⅔ (digits and slash of ½ and ¾), ⁴ (the 4 of ¼ at superior size), ₁ ₂ ₃ ₄ (the superiors on the subscript line the font declares), µ (the u with its stem carried to the descender).
-  - Twilight Text only: № (N and º); in Code it does not fit one cell.
-- Twilight Code only: the 256 braille patterns (U+2800–28FF), a 2 × 4 grid of the font's own period spread evenly over the cell, so terminal graphs keep one dot spacing across cells and rows; and the rounded Powerline separators U+E0B4–E0B7.
-- GF Latin Plus coverage: Text from 38 to 79 of 110 characters, Code from 36 to 76. Left out, because they need new drawing rather than derivation: superior and inferior 5 to 9 and 0, Ω, Ⓓ and the currency signs beyond those already present.
+  - Twilight Crystal only: № (N and º); in Code it does not fit one cell.
+- Twilight Crystal Mono only: the 256 braille patterns (U+2800–28FF), a 2 × 4 grid of the font's own period spread evenly over the cell, so terminal graphs keep one dot spacing across cells and rows; and the rounded Powerline separators U+E0B4–E0B7.
+- GF Latin Plus coverage: Crystal from 38 to 79 of 110 characters, Crystal Mono from 36 to 76. Left out, because they need new drawing rather than derivation: superior and inferior 5 to 9 and 0, Ω, Ⓓ and the currency signs beyond those already present.
 
 ### Tooling
 - `fonts/scripts/symbols.py` and `fonts/scripts/braille.py`: the geometry and the derivations; `boxdraw.py` gains the rounded separators.
-- `fonts/scripts/symbolcheck.py`: at every named instance, shapes on the axis with their areas and strokes, one stroke ratio across weights, derived digits at their source size and on their baselines, braille dots on the grid, rounded separators across the cell, and Code glyphs inside the cell. Built today: no failures.
+- `fonts/scripts/symbolcheck.py`: at every named instance, shapes on the axis with their areas and strokes, one stroke ratio across weights, derived digits at their source size and on their baselines, braille dots on the grid, rounded separators across the cell, and Crystal Mono glyphs inside the cell. Built today: no failures.
 - `fonts/scripts/build.py`: components are resolved when a new glyph reuses an outline.
 - Fonts workflow: runs the symbol check.
 
 ## 1.16.0
 
-Arrows in Twilight Text and Twilight Code. No palette changes.
+Arrows in Twilight Crystal and Twilight Crystal Mono. No palette changes.
 
 ### Added
-- Twilight Text 1.001 and Twilight Code 1.002: arrows ← ↑ → ↓ ↔ ↕ ↖ ↗ ↘ ↙ (U+2190–2199), ↩ ↪ (U+21A9–21AA), ↵ (U+21B5) and ⇐ ⇑ ⇒ ⇓ (U+21D0–21D3); Text also ⇔ ⇕ (U+21D4–21D5). Text gets 19 characters and Code 17. They are computed from each master: the stroke and the axis of the plus sign, the line spacing of the equal sign, the italic angle. Shaft and head share one stroke; heads are open, with arms at 45 degrees. In Text a horizontal arrow is about as wide as a capital M; in Code it fills the cell but for 40 units on each side.
-- Code leaves out ⇔ and ⇕: at ExtraBold a double line with a head at each end does not fit the cell with heads that reach past both lines.
+- Twilight Crystal 1.001 and Twilight Crystal Mono 1.002: arrows ← ↑ → ↓ ↔ ↕ ↖ ↗ ↘ ↙ (U+2190–2199), ↩ ↪ (U+21A9–21AA), ↵ (U+21B5) and ⇐ ⇑ ⇒ ⇓ (U+21D0–21D3); Text also ⇔ ⇕ (U+21D4–21D5). Text gets 19 characters and Code 17. They are computed from each master: the stroke and the axis of the plus sign, the line spacing of the equal sign, the italic angle. Shaft and head share one stroke; heads are open, with arms at 45 degrees. In Text a horizontal arrow is about as wide as a capital M; in Code it fills the cell but for 40 units on each side.
+- Crystal Mono leaves out ⇔ and ⇕: at ExtraBold a double line with a head at each end does not fit the cell with heads that reach past both lines.
 
 ### Tooling
 - `fonts/scripts/arrows.py`: the geometry.
-- `fonts/scripts/arrowcheck.py`: at every named instance, each shaft is as thick as the plus sign's bar and sits on its axis, double lines are spaced like the equal sign, opposite arrows match, no contour crosses itself, and Code arrows stay in the cell. Built today: no failures.
+- `fonts/scripts/arrowcheck.py`: at every named instance, each shaft is as thick as the plus sign's bar and sits on its axis, double lines are spaced like the equal sign, opposite arrows match, no contour crosses itself, and Crystal Mono arrows stay in the cell. Built today: no failures.
 - `fonts/scripts/build.py`: new glyphs are added by one routine, for box drawing and arrows alike.
 - Fonts workflow: runs the arrow check.
 
 ## 1.15.0
 
-Twilight Code draws terminal interfaces: box drawing, block elements and Powerline separators. No palette changes.
+Twilight Crystal Mono draws terminal interfaces: box drawing, block elements and Powerline separators. No palette changes.
 
 ### Added
-- Twilight Code 1.001: the 128 box drawing characters (U+2500–257F), the 32 block elements (U+2580–259F) and the four Powerline separators (U+E0B0–E0B3), in both styles and across the weight axis. They are computed from each master: the cell is the advance width and the typographic line box, light lines take the thickness of the hyphen, heavy lines twice that, and double lines are two light lines one line apart. Every line reaches the cell edge, so tables, trees, progress bars and prompts join across cells and rows, and no ink crosses it: a terminal that rounds the cell up to whole pixels can show a seam of up to half a pixel, faint, rather than ink bleeding into the next cell under a selection, a cursor or a background of another color. Twilight Text is unchanged.
+- Twilight Crystal Mono 1.001: the 128 box drawing characters (U+2500–257F), the 32 block elements (U+2580–259F) and the four Powerline separators (U+E0B0–E0B3), in both styles and across the weight axis. They are computed from each master: the cell is the advance width and the typographic line box, light lines take the thickness of the hyphen, heavy lines twice that, and double lines are two light lines one line apart. Every line reaches the cell edge, so tables, trees, progress bars and prompts join across cells and rows, and no ink crosses it: a terminal that rounds the cell up to whole pixels can show a seam of up to half a pixel, faint, rather than ink bleeding into the next cell under a selection, a cursor or a background of another color. Twilight Crystal is unchanged.
 
 ### Tooling
 - `fonts/scripts/boxdraw.py`: the geometry, read from the Unicode character names.
@@ -92,10 +97,10 @@ Twilight Code draws terminal interfaces: box drawing, block elements and Powerli
 
 ## 1.14.0
 
-Twilight Text and Twilight Code, the typefaces of Twilight. No palette changes.
+Twilight Crystal and Twilight Crystal Mono, the typefaces of Twilight. No palette changes.
 
 ### Added
-- fonts/: Twilight Text (sans-serif) and Twilight Code (monospaced), Modified Versions of Atkinson Hyperlegible Next 2.001 and Atkinson Hyperlegible Mono 2.001 under the SIL Open Font License 1.1, which reserves no font name. This version renames them; outlines, spacing, kerning and features are the upstream ones.
+- fonts/: Twilight Crystal (sans-serif) and Twilight Crystal Mono (monospaced), Modified Versions of Atkinson Hyperlegible Next 2.001 and Atkinson Hyperlegible Mono 2.001 under the SIL Open Font License 1.1, which reserves no font name. This version renames them; outlines, spacing, kerning and features are the upstream ones.
 - fonts/upstream/: the upstream design sources and license files, unmodified, pinned to one commit per family and verified by SHA-256 in fonts/upstream.json.
 - fonts/OFL.txt and fonts/FONTLOG.txt: the license with the added copyright line, and the record of changes and credits.
 

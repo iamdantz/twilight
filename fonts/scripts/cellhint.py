@@ -1,4 +1,4 @@
-"""TrueType instructions for the glyphs drawn on the cell in Twilight Code's static fonts.
+"""TrueType instructions for the glyphs drawn on the cell in Twilight Crystal Mono's static fonts.
 
 The autohinter hints box drawing, blocks and Powerline separators as if they were letters: it
 moves the ends of their lines off the cell edges, at some sizes past the Windows clipping box

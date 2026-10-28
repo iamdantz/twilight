@@ -1,4 +1,4 @@
-"""Build Twilight Text and Twilight Code from the pinned upstream sources.
+"""Build Twilight Crystal and Twilight Crystal Mono from the pinned upstream sources.
 
 Each upstream design source is copied, renamed and given the derivative's metadata (family
 name, copyright line, manufacturer, description, version); the outlines, spacing, kerning and
@@ -6,7 +6,7 @@ features are untouched. The copies are compiled with gftools builder, with the u
 build configuration, into fonts/build/<file>/fonts/: variable TTF, static TTF and WOFF2.
 
     python fonts/scripts/build.py              build both families
-    python fonts/scripts/build.py --only TwilightCode
+    python fonts/scripts/build.py --only TwilightCrystalMono
 """
 import argparse
 import os
@@ -187,11 +187,11 @@ def hint_cells(fonts):
 
 
 # Steps on the compiled fonts, per family.
-AFTER = {"TwilightCode": [hint_cells]}
+AFTER = {"TwilightCrystalMono": [hint_cells]}
 
 
 LIGATURIZER = ROOT / "tools" / "ligaturizer" / "ligaturize.py"
-LIGATURES = {"TwilightCode": ROOT / "fonts" / "ligatures.json"}
+LIGATURES = {"TwilightCrystalMono": ROOT / "fonts" / "ligatures.json"}
 
 
 def ligaturize(source, family):
@@ -204,8 +204,8 @@ def ligaturize(source, family):
 
 
 # Changes beyond the rename, per family, in the order they apply.
-STEPS = {"TwilightText": [add_arrows, add_symbols],
-         "TwilightCode": [add_box_drawing, add_arrows, add_symbols, add_braille]}
+STEPS = {"TwilightCrystal": [add_arrows, add_symbols],
+         "TwilightCrystalMono": [add_box_drawing, add_arrows, add_symbols, add_braille]}
 
 
 def rename(src, dst, family):
@@ -257,7 +257,7 @@ def build(family):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--only", help="build one family, by file name (TwilightText or TwilightCode)")
+    parser.add_argument("--only", help="build one family, by file name (TwilightCrystal or TwilightCrystalMono)")
     args = parser.parse_args()
     if not upstream.verify():
         sys.exit("the upstream files changed; run upstream.py verify for details")
