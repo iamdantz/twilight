@@ -19,12 +19,14 @@ import glyphsLib
 import yaml
 from fontTools.ttLib import TTFont
 from glyphsLib.classes import GSFontInfoValue, GSGlyph, GSLayer, GSNode, GSPath
+from glyphsLib.types import Point
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import arrows  # noqa: E402
 import boxdraw  # noqa: E402
 import braille  # noqa: E402
 import cellhint  # noqa: E402
+import punctuation  # noqa: E402
 import symbols  # noqa: E402
 import upstream  # noqa: E402
 
@@ -189,9 +191,20 @@ def hint_cells(fonts):
 AFTER = {"TwilightCode": [hint_cells]}
 
 
+def thicken_commas(font):
+    """Heavier tails on the comma and the comma-shaped quotes (fonts/scripts/punctuation.py),
+    in every layer."""
+    for name in punctuation.NAMES:
+        for lay in font.glyphs[name].layers:
+            for path in lay.paths:
+                nodes = [(n.position.x, n.position.y, n.type) for n in path.nodes]
+                for node, (x, y, _) in zip(path.nodes, punctuation.thicken(nodes)):
+                    node.position = Point(round(x), round(y))
+
+
 # Changes beyond the rename, per family, in the order they apply.
-STEPS = {"TwilightText": [add_arrows, add_symbols],
-         "TwilightCode": [add_box_drawing, add_arrows, add_symbols, add_braille]}
+STEPS = {"TwilightText": [add_arrows, add_symbols, thicken_commas],
+         "TwilightCode": [add_box_drawing, add_arrows, add_symbols, add_braille, thicken_commas]}
 
 
 def rename(src, dst, family):

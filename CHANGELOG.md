@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.19.0
+
+A comma that reads as a comma at small sizes. No palette changes.
+
+### Changed
+- Twilight Text 1.003 and Twilight Code 1.005: heavier tails on the comma and the comma-shaped marks (, ; ‚ „ ‘ ’ “ ”). Measured at 6 to 8 px x-height against the fonts the typeface was chosen from, ; against : and , against . were the weakest distinction in both families, in the lowest 5 %: the tail was as deep as most, but thin. Both edges of the tail move outward, keeping its angle and depth: 20 % of its end width on the side it leans toward (the most that touches no neighboring letter at any weight) and 80 % on the other (the first step that clears the median). At Regular, ; against : rises from 0.21–0.23 to 0.38–0.41 and , against . from 0.35–0.37 to 0.55–0.58, from the 4th to the 65th–77th percentile; every weight improves. The comma carries about 2.2 times the period's ink, among the heaviest of those fonts. Nothing else changes; the semicolon follows the comma it is built from.
+
+### Tooling
+- `fonts/scripts/punctuation.py`: the thickening; `build.py` applies it to every master.
+- `fonts/scripts/punctcheck.py`: at every named instance, the marks keep all of upstream's ink and add to it, both pairs beat upstream (and the median at Regular), and no tail touches a neighboring letter.
+- `fonts/scripts/check.py`: `fonts/changes.json` can name reshaped glyphs, whose outlines are left to their own check while advances and shaping are still compared.
+- Fonts workflow: runs the punctuation check.
+
 ## 1.18.0
 
 Hinting measured, and box drawing hinted for the cell. No palette changes.

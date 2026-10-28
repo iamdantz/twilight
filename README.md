@@ -169,7 +169,7 @@ Twilight is defined independently of any application. To build a theme for a too
 │   └── construction.md      derivation, optimization and validation
 ├── fonts/
 │   ├── upstream/            pinned upstream sources and licenses, unmodified
-│   ├── scripts/             build, box drawing, arrows, symbols, hinting, checks, Font Bakery
+│   ├── scripts/             build, box drawing, arrows, symbols, punctuation, hinting, checks
 │   ├── upstream.json        upstream repositories, commits and SHA-256
 │   ├── changes.json         characters added to the upstream fonts
 │   ├── OFL.txt              license of Twilight Text and Twilight Code

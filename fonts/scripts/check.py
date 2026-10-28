@@ -15,8 +15,10 @@ every named instance, so an unintended difference cannot pass unnoticed:
 
 Changes made on purpose are declared in fonts/changes.json, per font file: "added" lists the
 code point ranges of new characters (their glyphs join the glyph set and character map, and
-nothing else may), "differences" lists the reported differences that are expected, by prefix.
-Anything else fails.
+nothing else may); "reshaped" names existing glyphs whose outlines change on purpose (their
+advance widths and shaping are still compared; another check verifies the new outlines);
+"differences" lists the reported differences that are expected, by prefix. Anything else
+fails.
 
     python fonts/scripts/upstream.py reference /tmp/reference
     python fonts/scripts/check.py /tmp/reference
@@ -96,7 +98,7 @@ def codepoints(ranges):
     return result
 
 
-def compare(ours_path, ref_path, added=frozenset()):
+def compare(ours_path, ref_path, added=frozenset(), reshaped=frozenset()):
     ours, ref = TTFont(ours_path), TTFont(ref_path)
     found = []
     worst = 0.0
@@ -134,7 +136,7 @@ def compare(ours_path, ref_path, added=frozenset()):
         b = outlines(instancer.instantiateVariableFont(TTFont(ref_path), location))
         widths = sorted(g for g in b if g in a and a[g][0] != b[g][0])
         shapes = []
-        for g in sorted(set(a) & set(b)):
+        for g in sorted(set(a) & set(b) - set(reshaped)):
             d = deviation(a[g][1], b[g][1])
             if d is None or d > TOLERANCE:
                 shapes.append(g)
@@ -166,7 +168,8 @@ def main():
                 continue
             declared = expected.get(ours_path.name, {})
             allowed = declared.get("differences", [])
-            found, worst = compare(ours_path, ref_path, codepoints(declared.get("added", [])))
+            found, worst = compare(ours_path, ref_path, codepoints(declared.get("added", [])),
+                                   set(declared.get("reshaped", [])))
             unexpected = [f for f in found if not any(f.startswith(a) for a in allowed)]
             status = "FAIL" if unexpected else "ok"
             print(f"{status:4} {ours_path.name} against {ref_path.name}: "

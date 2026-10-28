@@ -22,6 +22,16 @@
       "25CF",
       "25E6",
       "27E8-27E9"
+    ],
+    "reshaped": [
+      "comma",
+      "semicolon",
+      "quotesinglbase",
+      "quotedblbase",
+      "quoteleft",
+      "quoteright",
+      "quotedblleft",
+      "quotedblright"
     ]
   },
   "TwilightText-Italic[wght].ttf": {
@@ -47,6 +57,16 @@
       "25CF",
       "25E6",
       "27E8-27E9"
+    ],
+    "reshaped": [
+      "comma",
+      "semicolon",
+      "quotesinglbase",
+      "quotedblbase",
+      "quoteleft",
+      "quoteright",
+      "quotedblleft",
+      "quotedblright"
     ]
   },
   "TwilightCode[wght].ttf": {
@@ -73,6 +93,16 @@
       "27E8-27E9",
       "2800-28FF",
       "E0B0-E0B7"
+    ],
+    "reshaped": [
+      "comma",
+      "semicolon",
+      "quotesinglbase",
+      "quotedblbase",
+      "quoteleft",
+      "quoteright",
+      "quotedblleft",
+      "quotedblright"
     ]
   },
   "TwilightCode-Italic[wght].ttf": {
@@ -99,6 +129,16 @@
       "27E8-27E9",
       "2800-28FF",
       "E0B0-E0B7"
+    ],
+    "reshaped": [
+      "comma",
+      "semicolon",
+      "quotesinglbase",
+      "quotedblbase",
+      "quoteleft",
+      "quoteright",
+      "quotedblleft",
+      "quotedblright"
     ]
   }
 }
