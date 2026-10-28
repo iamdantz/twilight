@@ -9,6 +9,7 @@ build configuration, into fonts/build/<file>/fonts/: variable TTF, static TTF an
     python fonts/scripts/build.py --only TwilightCode
 """
 import argparse
+import math
 import os
 import shutil
 import subprocess
@@ -191,20 +192,20 @@ AFTER = {"TwilightCode": [hint_cells]}
 
 
 def add_ligatures(font):
-    """Optional code ligatures in stylistic set 1 (fonts/scripts/ligatures.py): a spacer glyph,
-    one glyph per sequence that the style draws in every master, and the feature."""
-    on_curve = arrows_on_curve(font)
-    masters = {m.id: ligatures.Master(lambda name, m=m: resolved(font, m, name),
-                                      arrows.Metrics(on_curve("plus", m), on_curve("equal", m), m.italicAngle,
-                                                     ligatures.CELL))
-               for m in font.masters}
-    drawn = {}
-    for seq in ligatures.SEQUENCES:
-        shapes = {mid: ligatures.contours(master, seq) for mid, master in masters.items()}
-        if all(shapes.values()):  # a sequence that joins at some weights only stays plain at all
-            drawn[seq] = shapes
-    for name, shapes in [(ligatures.SPACER, {m.id: [] for m in font.masters})] + \
-            [(ligatures.glyph_name(seq), shapes) for seq, shapes in drawn.items()]:
+    """Optional code ligatures in stylistic set 1, from Fira Code 6.2 (fonts/scripts/ligatures.py):
+    every glyph its rules output, in every master, and the rules."""
+    blocks = ligatures.lookups()
+    missing = sorted(g for g in ligatures.inputs(blocks) if font.glyphs[g] is None)
+    if missing:
+        raise SystemExit(f"Fira Code's rules need glyphs {font.familyName} lacks: {', '.join(missing)}")
+    names = ligatures.outputs(blocks)
+    source = ligatures.Source(names)
+    masters = {}
+    for m in font.masters:
+        hyphen = [n.position.y for p in layer(font, "hyphen", m).paths for n in p.nodes]
+        thickness, axis = max(hyphen) - min(hyphen), (max(hyphen) + min(hyphen)) / 2
+        masters[m.id] = ligatures.Master(source, thickness, axis, math.tan(math.radians(m.italicAngle)))
+    for name in names:
         if font.glyphs[name] is not None:
             raise SystemExit(f"{name} already exists in {font.familyName}")
         glyph = GSGlyph(name)
@@ -214,24 +215,17 @@ def add_ligatures(font):
             new = GSLayer()
             new.layerId = new.associatedMasterId = master.id
             new.width = ligatures.CELL
-            for contour in shapes[master.id]:
+            for contour in masters[master.id].glyph(name):
                 path = GSPath()
                 path.closed = True
                 for x, y, kind in contour:
                     path.nodes.append(GSNode((round(x), round(y)), kind))
                 new.paths.append(path)
             glyph.layers.append(new)
-    code = ligatures.feature(drawn)
-    feature = GSFeature("ss01", code.split("\n\n", 1)[1])
-    feature.notes = ""
-    font.features.append(feature)
-    prefix = next(p for p in font.featurePrefixes)
-    prefix.code += "\n" + code.split("\n\n", 1)[0] + "\n"
-
-
-def arrows_on_curve(font):
-    return lambda glyph, master: [(n.position.x, n.position.y) for p in layer(font, glyph, master).paths
-                                  for n in p.nodes if n.type != "offcurve"]
+    classes, code = ligatures.feature(blocks, {g.name for g in font.glyphs if g.export})
+    font.features.append(GSFeature("ss01", code))
+    prefix = next(iter(font.featurePrefixes))
+    prefix.code += "\n" + classes + "\n"
 
 
 # Changes beyond the rename, per family, in the order they apply.
@@ -245,7 +239,10 @@ def rename(src, dst, family):
         step(font)
     meta = metadata(family)
     font.familyName = family["family"]
-    prop(font, "copyrights", meta["copyright"].format(original=prop(font, "copyrights").rstrip(".") + "."))
+    copyright = meta["copyright"].format(original=prop(font, "copyrights").rstrip(".") + ".")
+    if add_ligatures in STEPS.get(family["file"], []):
+        copyright += " " + ligatures.NOTICE
+    prop(font, "copyrights", copyright)
     prop(font, "manufacturers", meta["manufacturer"])
     prop(font, "manufacturerURL", meta["manufacturerURL"])
     prop(font, "descriptions", meta["description"].format(designers=prop(font, "designers")))

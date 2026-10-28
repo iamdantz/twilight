@@ -1,343 +1,203 @@
-"""Optional code ligatures for Twilight Code (stylistic set 1, off by default).
+"""Optional code ligatures for Twilight Code (stylistic set 1, off by default), from Fira Code 6.2.
 
-A ligature never changes the text or the grid: a sequence of n characters still takes n cells.
-The first n - 1 characters become an empty spacer one cell wide (LIG) and the last becomes the
-ligature glyph, one cell wide, whose ink reaches back over the spacers. Editors and terminals
-keep counting cells and placing the cursor as before; with the set off nothing changes.
+The method follows Ligaturizer (https://github.com/ToxicFrog/Ligaturizer), which grafts Fira
+Code's ligatures onto another monospaced font, brought up to date with Fira Code 6. Ligaturizer
+copies each `.liga` glyph and writes one simple rule per sequence; since version 6 Fira Code
+builds much of its set from pieces one cell wide (`.seq`: arrows of any length such as -->,
+<==>, |-->, rows of #, ___), from per-character spacers and from rules that look at more than
+the sequence itself. Copying single glyphs no longer reproduces it, so this module takes Fira
+Code's whole contextual system instead:
 
-A sequence joins only when it stands alone: next to another operator character (as in -->,
-<=>, <<=, ||=, <!--) it keeps its plain characters, so a longer operator is never read as a
-shorter one plus a stray character; a double hyphen before a letter is a command-line option
-(--watch) and stays plain too. Longer sequences are matched first (=== before ==).
+- the rules are Fira Code's own calt lookups, verbatim (fonts/upstream/firacode/calt.fea,
+  from FiraCode.glyphs at the 6.2 tag), moved to stylistic set 1 so they are opt-in, less the
+  lookups that are not ligatures but contextual forms of single characters drawn for Fira Code
+  (EXCLUDED: x as a multiplication sign in 0xFF and 1920x1080, punctuation raised next to
+  capitals, Greek capitals) and www, the only ligature of letters; Fira Code's NotSpace class
+  is limited to the glyphs Twilight Code has;
+- the glyphs are every glyph those rules put in the text (ligatures, sequence pieces, centered
+  forms, spacers), none of them mapped to a character, taken from Fira Code 6.2's variable font;
+- each glyph is scaled from Fira Code's em (1950 units) to Twilight Code's (1000) and then
+  horizontally to the cell (Fira Code's 1200-unit advance to 632), as Ligaturizer does, so a
+  ligature of n characters covers n cells and the cursor and the grid are unchanged.
 
-Two designs of the same sequences, chosen with STYLE:
+Three measured adjustments, where Ligaturizer leaves the source as it is:
 
-- "join": the characters keep their own outlines and their horizontal strokes are extended
-  across the gap until they meet the ink of the neighbor: the hyphen runs into the greater-than
-  sign (->), the bars of the equal sign run into its chevron (=>, <=, >=) or into the next equal
-  sign (==, ===), the bars of plus and minus run together (++, --). A sequence whose strokes do
-  not all meet ink (!=, where the lower bar passes under the exclamation mark) or that has no
-  horizontal stroke at all (&&, ||, .., ...) is left as it is: nothing is drawn that the
-  characters do not already have.
-- "substitute": the sequence is drawn as the symbol it stands for, built from the font's own
-  glyphs: a long arrow (-> =>, as the font's arrows), a long equal sign and its triple (== ===),
-  the font's not-equal slash across them (!= !==), the font's ≤ ≥ and … unchanged, logical and
-  and or (&& ||) as the less-than chevron turned up or down, a double plus (++, two plus signs sharing their bar), a long minus
-  (--) and a two-dot leader (..). Symbols made of horizontal bars span the cells; the others
-  keep their own size, centered on the cells.
+- weight: Fira Code's two masters (300 and 700) interpolate linearly; for each Twilight master
+  the glyphs are taken at the point of that line where Fira Code's hyphen is as thick as
+  Twilight Code's (extrapolated past the masters where Twilight's is thinner or heavier), so
+  the strokes of a ligature match the characters around it;
+- axis: Fira Code's operators sit higher in the em than Atkinson's; every glyph is moved down
+  so the center of Fira Code's hyphen lands on the center of Twilight Code's;
+- slant: Fira Code has no italic; in the italic masters the glyphs are slanted by the italic
+  angle about that axis, as the italic characters are.
 
-Everything is computed per master in upright space (the italic slant taken off about the math
-axis, where the font slants) and slanted back, so the italic ligatures match the italic glyphs.
+One rule is added: a double hyphen before a letter opens a command-line option (--watch) and
+stays plain.
 """
-import math
+import hashlib
+import json
+import re
+from pathlib import Path
 
-import pathops
+from fontTools.pens.basePen import decomposeQuadraticSegment
+from fontTools.pens.recordingPen import DecomposingRecordingPen
+from fontTools.ttLib import TTFont
 
-import arrows
-from boxdraw import ink
+from boxdraw import reverse
 
-STYLE = "substitute"
+ROOT = Path(__file__).resolve().parents[2]
+MANIFEST = json.loads((ROOT / "fonts" / "upstream.json").read_text(encoding="utf-8"))["ligatures"]
+DIRECTORY = ROOT / MANIFEST["directory"]
+NOTICE = ("Programming ligatures from Fira Code, Copyright 2014 The Fira Code Project Authors "
+          "(https://github.com/tonsky/FiraCode).")
 CELL = 632
-SPACER = "LIG"
-NAMES = {"-": "hyphen", "=": "equal", ">": "greater", "<": "less", "!": "exclam", "&": "ampersand",
-         "|": "bar", "+": "plus", ".": "period"}
-# longest first: a lookup for === must run before the one for ==
-SEQUENCES = ["!==", "===", "...", "->", "=>", "==", "!=", "<=", ">=", "&&", "||", "++", "--", ".."]
-# characters that, next to a sequence, make it part of a longer operator
-OPERATORS = ["hyphen", "equal", "less", "greater", "exclam", "ampersand", "bar", "plus", "period",
-             "colon", "asterisk", "slash", "question", "asciitilde", "asciicircum", "percent",
-             "numbersign"]
-# a double hyphen before a letter opens a command-line option (--watch), not a decrement
-OPTION = "--"
+EXCLUDED = {"w_w_w", "hexadecimal_x", "caltGreekUC", "caltGreekUCdiph", "lowercase_hyphen", "lowercase_plus",
+            "lowercase_asterisk", "lowercase_asteriskmath", "uppercase_colon"}
 LETTERS = [chr(c) for c in range(ord("A"), ord("Z") + 1)] + [chr(c) for c in range(ord("a"), ord("z") + 1)]
-TOL = 2
+# the lookups that join two hyphens: as a pair, and as the start of a line or an arrow
+OPTION = ({"hyphen_hyphen", "hyphen_arrows"}, "  ignore sub hyphen' hyphen @TW_Letters;\n")
+NAME = re.compile(r"[A-Za-z_.][\w.\-]*")
+KEYWORDS = {"lookup", "sub", "by", "ignore", "pos"}
 
 
-def glyph_name(seq):
-    return "_".join(NAMES[c] for c in seq) + ".liga"
+def verify():
+    for name, digest in MANIFEST["vendored"].items():
+        if hashlib.sha256((DIRECTORY / name).read_bytes()).hexdigest() != digest:
+            raise SystemExit(f"{DIRECTORY / name} is not the pinned Fira Code {MANIFEST['tag']} file")
 
 
-# ---------- geometry ----------
-
-def to_path(contours):
-    """A pathops path from contours of (x, y, Glyphs node type)."""
-    path = pathops.Path()
-    pen = path.getPen()
-    for c in contours:
-        k = next(i for i, p in enumerate(c) if p[2] != "offcurve")
-        nodes = c[k + 1:] + c[:k + 1]
-        pen.moveTo(nodes[-1][:2])
-        offs = []
-        for x, y, kind in nodes:
-            if kind == "offcurve":
-                offs.append((x, y))
-            elif kind == "curve":
-                pen.curveTo(*offs, (x, y))
-                offs = []
-            elif kind == "qcurve":
-                pen.qCurveTo(*offs, (x, y))
-                offs = []
-            else:
-                pen.lineTo((x, y))
-        pen.closePath()
-    return path
-
-
-def intervals(path, y, x0, x1):
-    """Runs of ink along the line at height y, from x0 to x1, to the unit."""
-    out, start = [], None
-    for x in range(math.floor(x0), math.ceil(x1) + 1):
-        inside = path.contains((x, y))
-        if inside and start is None:
-            start = x
-        elif not inside and start is not None:
-            out.append((start, x - 1))
-            start = None
-    if start is not None:
-        out.append((start, math.ceil(x1)))
+def lookups():
+    """Fira Code's calt lookups that Twilight Code takes, as (name, code), in Fira Code's order."""
+    code = (DIRECTORY / "calt.fea").read_text(encoding="utf-8")
+    out = []
+    for m in re.finditer(r"lookup (\S+) \{.*?\} \1;", code, re.S):
+        name, block = m.group(1), m.group(0)
+        if name in EXCLUDED:
+            continue
+        if name in OPTION[0]:
+            head, rest = block.split("\n", 1)
+            block = head + "\n" + OPTION[1] + rest
+        out.append((name, block))
     return out
 
 
-def cluster(values):
+def outputs(blocks):
+    """The glyphs the rules put in the text, in order of first appearance."""
+    seen = {}
+    for _, block in blocks:
+        for m in re.finditer(r"\bby\s+([^;]+);", re.sub(r"#.*", "", block)):
+            for name in NAME.findall(m.group(1)):
+                seen.setdefault(name, None)
+    return list(seen)
+
+
+def inputs(blocks):
+    """Every glyph name the rules mention, other than lookup names and the ones they output."""
+    names = set()
+    for _, block in blocks:
+        body = re.sub(r"#.*", "", block).split("{", 1)[1].rsplit("}", 1)[0]
+        body = re.sub(r"@\w+", "", body)
+        names |= {t.rstrip("'") for t in NAME.findall(body) if t not in KEYWORDS}
+    return names - set(outputs(blocks)) - {name for name, _ in blocks}
+
+
+def feature(blocks, glyph_names):
+    """The classes the rules use (NotSpace limited to glyph_names) and the lookups."""
+    not_space = [g for g in (DIRECTORY / "NotSpace.txt").read_text(encoding="utf-8").split() if g in glyph_names]
+    classes = [f"@NotSpace = [{' '.join(not_space)}];", f"@TW_Letters = [{' '.join(LETTERS)}];"]
+    return "\n".join(classes), "\n\n".join(block for _, block in blocks) + "\n"
+
+
+class Source:
+    """Fira Code's glyphs along its weight axis: at t = 0 its light master, at t = 1 its bold
+    one, linear between and beyond."""
+
+    def __init__(self, names):
+        verify()
+        self.font = TTFont(DIRECTORY / "FiraCode-VF.ttf")
+        self.upm = self.font["head"].unitsPerEm
+        self.advance = self.font["hmtx"]["hyphen"][0]
+        axis = self.font["fvar"].axes[0]
+        self.names = ["hyphen"] + list(names)
+        self.ends = [self._record(axis.minValue), self._record(axis.maxValue)]
+
+    def _record(self, wght):
+        glyphs = self.font.getGlyphSet(location={"wght": wght})
+        out = {}
+        for name in self.names:
+            if self.font["hmtx"][name][0] != self.advance:
+                raise SystemExit(f"Fira Code's {name} is not one cell wide")
+            pen = DecomposingRecordingPen(glyphs)
+            glyphs[name].draw(pen)
+            out[name] = pen.value
+        return out
+
+    def outline(self, name, t):
+        """The glyph at t, in Fira Code units, as recorded pen operations."""
+        out = []
+        for (op, pa), (_, pb) in zip(self.ends[0][name], self.ends[1][name]):
+            out.append((op, [None if a is None else (a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]))
+                             for a, b in zip(pa, pb)]))
+        return out
+
+    def hyphen(self, t):
+        """Thickness and center of the hyphen at t, in Fira Code units."""
+        ys = [p[1] for _, pts in self.outline("hyphen", t) for p in pts if p]
+        return max(ys) - min(ys), (max(ys) + min(ys)) / 2
+
+    def weight(self, thickness):
+        """The t at which the hyphen, scaled to 1000 units, is this thick."""
+        scale = 1000 / self.upm
+        t0, t1 = self.hyphen(0)[0] * scale, self.hyphen(1)[0] * scale
+        return (thickness - t0) / (t1 - t0)
+
+
+def contours(operations, transform):
+    """Recorded TrueType operations to Glyphs contours: cubic (each quadratic segment raised
+    exactly), counter-clockwise for ink."""
     out = []
-    for v in sorted(values):
-        if out and v - out[-1][-1] <= TOL:
-            out[-1].append(v)
-        else:
-            out.append([v])
-    return [sum(c) / len(c) for c in out]
-
-
-def snap(v, levels):
-    return min(levels, key=lambda u: abs(u - v))
-
-
-def rect(x0, y0, x1, y1):
-    return [(x0, y0, "line"), (x1, y0, "line"), (x1, y1, "line"), (x0, y1, "line")]
-
-
-def shift(contours, dx, dy=0):
-    return [[(x + dx, y + dy, k) for x, y, k in c] for c in contours]
-
-
-def bounds(contours):
-    xs = [p[0] for c in contours for p in c]
-    ys = [p[1] for c in contours for p in c]
-    return min(xs), min(ys), max(xs), max(ys)
+    for op, pts in operations:
+        if op == "moveTo":
+            start = current = pts[0]
+            segs = []
+        elif op == "lineTo":
+            segs.append([(pts[0], "line")])
+            current = pts[0]
+        elif op == "qCurveTo":
+            if pts[-1] is None:
+                raise ValueError("contour without on-curve points")
+            for q, p in decomposeQuadraticSegment(pts):
+                c1 = (current[0] + 2 / 3 * (q[0] - current[0]), current[1] + 2 / 3 * (q[1] - current[1]))
+                c2 = (p[0] + 2 / 3 * (q[0] - p[0]), p[1] + 2 / 3 * (q[1] - p[1]))
+                segs.append([(c1, "offcurve"), (c2, "offcurve"), (p, "curve")])
+                current = p
+        elif op == "curveTo":
+            segs.append([(pts[0], "offcurve"), (pts[1], "offcurve"), (pts[2], "curve")])
+            current = pts[2]
+        elif op in ("closePath", "endPath"):
+            if current != start:
+                segs.append([(start, "line")])
+            nodes = [n for seg in segs for n in seg]
+            nodes = nodes[-1:] + nodes[:-1]  # start on the on-curve point that closes the contour
+            out.append(reverse([(*transform(*xy), kind) for xy, kind in nodes]))
+    return out
 
 
 class Master:
-    """One master's glyphs, in upright space.
+    """The glyphs for one Twilight Code master.
 
-    outline(name) gives a glyph's contours with components resolved; m is the arrows' metrics
-    (stroke, math axis, slant) measured from the plus and equal signs."""
+    thickness, axis: the hyphen's thickness and center in that master; slant: the tangent of its
+    italic angle."""
 
-    def __init__(self, outline, m):
-        self.outline, self.m = outline, m
+    def __init__(self, source, thickness, axis, slant):
+        self.source, self.slant, self.axis = source, slant, axis
+        self.t = source.weight(thickness)
+        self.sx, self.sy = CELL / source.advance, 1000 / source.upm
+        self.dy = axis - source.hyphen(self.t)[1] * self.sy
 
-    def upright(self, contours):
-        s, cy = self.m.slant, self.m.cy
-        return [[(x - s * (y - cy), y, k) for x, y, k in c] for c in contours]
-
-    def slanted(self, contours):
-        s, cy = self.m.slant, self.m.cy
-        return [[(x + s * (y - cy), y, k) for x, y, k in c] for c in contours]
+    def transform(self, x, y):
+        x, y = x * self.sx, y * self.sy + self.dy
+        return x + self.slant * (y - self.axis), y
 
     def glyph(self, name):
-        return self.upright(self.outline(name))
-
-    def rects(self, name):
-        """A glyph drawn only with horizontal and vertical lines, as overlapping rectangles
-        (x0, y0, x1, y1): its horizontal bars and vertical stems. None for any other glyph."""
-        contours = self.glyph(name)
-        for c in contours:
-            for (x0, y0, k), (x1, y1, _) in zip(c, c[1:] + c[:1]):
-                if k != "line" or (abs(x1 - x0) > TOL and abs(y1 - y0) > TOL):
-                    return None
-        xs = cluster(p[0] for c in contours for p in c)
-        ys = cluster(p[1] for c in contours for p in c)
-        path = to_path(contours)
-        out = []
-        for ya, yb in zip(ys, ys[1:]):
-            for a, b in intervals(path, (ya + yb) / 2, xs[0] - 1, xs[-1] + 1):
-                x0, x1 = snap(a, xs), snap(b, xs)
-                if x1 - x0 > yb - ya:
-                    out.append((x0, ya, x1, yb))
-        for xa, xb in zip(xs, xs[1:]):
-            col = [(snap(a, ys), snap(b, ys)) for a, b in vertical(path, (xa + xb) / 2, ys[0] - 1, ys[-1] + 1)]
-            out += [(xa, y0, xb, y1) for y0, y1 in col if y1 - y0 > xb - xa]
-        return out
-
-
-def vertical(path, x, y0, y1):
-    out, start = [], None
-    for y in range(math.floor(y0), math.ceil(y1) + 1):
-        inside = path.contains((x, y))
-        if inside and start is None:
-            start = y
-        elif not inside and start is not None:
-            out.append((start, y - 1))
-            start = None
-    return out
-
-
-# ---------- join ----------
-
-def join(master, seq):
-    """The characters' own outlines with their horizontal strokes carried across the gaps, or
-    None when not every stroke facing a gap meets ink."""
-    n = len(seq)
-    cells = []  # per character: (offset, rects or None, upright outline)
-    for i, ch in enumerate(seq):
-        dx = (i - (n - 1)) * CELL
-        rects = master.rects(NAMES[ch])
-        cells.append([dx, [list(r) for r in rects] if rects else None, master.glyph(NAMES[ch]), NAMES[ch]])
-    for c in cells:
-        if c[1]:
-            c[1] = [[x0 + c[0], y0, x1 + c[0], y1] for x0, y0, x1, y1 in c[1]]
-    extended = False
-    for (da, ra, ga, _), (db, rb, gb, _) in zip(cells, cells[1:]):
-        a_ink, b_ink = to_path(shift(ga, da)), to_path(shift(gb, db))
-        a_right = max(r[2] for r in ra) if ra else None
-        b_left = min(r[0] for r in rb) if rb else None
-        a_bars = [r for r in ra or [] if r[2] == a_right and r[2] - r[0] > r[3] - r[1]]
-        b_bars = [r for r in rb or [] if r[0] == b_left and r[2] - r[0] > r[3] - r[1]]
-        for bar in a_bars:
-            twin = next((r for r in b_bars if abs(r[1] - bar[1]) <= TOL and abs(r[3] - bar[3]) <= TOL), None)
-            if twin:  # the same bar continues in the next character: one bar
-                twin[0] = bar[0]
-                ra.remove(bar)
-                b_bars.remove(twin)
-            else:
-                runs = intervals(b_ink, (bar[1] + bar[3]) / 2, bar[2], db + CELL)
-                if not runs:
-                    return None
-                bar[2] = sum(runs[0]) / 2
-            extended = True
-        for bar in b_bars:
-            runs = intervals(a_ink, (bar[1] + bar[3]) / 2, da, bar[0])
-            if not runs:
-                return None
-            bar[0] = sum(runs[-1]) / 2
-            extended = True
-    if not extended:
-        return None
-    out = []
-    for dx, rects, _, name in cells:
-        if rects is None:  # kept as drawn, in the master's own (slanted) coordinates
-            out += shift(master.outline(name), dx)
-        else:
-            out += master.slanted([rect(*r) for r in rects])
-    return [ink(c) for c in out]
-
-
-# ---------- substitute ----------
-
-def substitute(master, seq):
-    m, n = master.m, len(seq)
-    left, center = -(n - 1) * CELL, CELL / 2 - (n - 1) * CELL / 2
-
-    def stretched(name):
-        """A glyph of horizontal bars (and stems) with its bars carried over every cell."""
-        rects = master.rects(name)
-        x0, x1 = min(r[0] for r in rects), max(r[2] for r in rects)
-        bars = [r for r in rects if r[0] == x0 and r[2] == x1]
-        return [(left + x0, r[1], x1, r[3]) for r in bars]
-
-    def centered(contours, cx=center, cy=None):
-        x0, y0, x1, y1 = bounds(contours)
-        return shift(contours, cx - (x0 + x1) / 2, 0 if cy is None else cy - (y0 + y1) / 2)
-
-    def slash(lo, hi):
-        """The slash of the font's not-equal sign, centered, reaching from lo to hi."""
-        pts = [p for c in master.glyph("notequal") for p in c if p[2] != "offcurve"]
-        y0, y1 = min(p[1] for p in pts), max(p[1] for p in pts)
-        bottom = sorted(p[0] for p in pts if p[1] == y0)
-        top = sorted(p[0] for p in pts if p[1] == y1)
-        run = ((top[0] + top[1]) - (bottom[0] + bottom[1])) / 2 / (y1 - y0)  # x per unit of y
-        mid_y, w = (lo + hi) / 2, (bottom[1] - bottom[0]) / 2
-        (xa, ya), (xb, yb) = [(center + (y - mid_y) * run, y) for y in (lo, hi)]  # crosses the middle
-        return [(xa - w, ya, "line"), (xa + w, ya, "line"), (xb + w, yb, "line"), (xb - w, yb, "line")]
-
-    def notequal_reach():
-        """How far the not-equal slash reaches past its bars, below and above."""
-        pts = [p for c in master.glyph("notequal") for p in c if p[2] != "offcurve"]
-        bars = master.rects("equal")
-        return (min(r[1] for r in bars) - min(p[1] for p in pts), max(p[1] for p in pts) - max(r[3] for r in bars))
-
-    def triple():
-        bars = sorted(master.rects("equal"), key=lambda r: r[1])
-        t, pitch = bars[0][3] - bars[0][1], (bars[1][1] - bars[0][1])
-        mid = (bars[0][1] + bars[1][3]) / 2
-        x0, x1 = left + bars[0][0], bars[0][2]
-        return [(x0, mid + k * pitch - t / 2, x1, mid + k * pitch + t / 2) for k in (-1, 0, 1)]
-
-    if seq in ("->", "=>"):
-        length = n * CELL - 2 * arrows.CODE_SB
-        shape = arrows.place(m, "single" if seq == "->" else "double", 0, length, slant=False)
-        return [ink(c) for c in master.slanted(shift(shape, center))]
-    if seq == "==":
-        out = [rect(*r) for r in stretched("equal")]
-    elif seq == "===":
-        out = [rect(*r) for r in triple()]
-    elif seq == "!=":
-        bars = stretched("equal")
-        below, above = notequal_reach()
-        out = [rect(*r) for r in bars] + [slash(min(r[1] for r in bars) - below, max(r[3] for r in bars) + above)]
-    elif seq == "!==":
-        bars = triple()
-        below, above = notequal_reach()
-        out = [rect(*r) for r in bars] + [slash(min(r[1] for r in bars) - below, max(r[3] for r in bars) + above)]
-    elif seq in ("<=", ">="):
-        out = centered(master.glyph("lessequal" if seq == "<=" else "greaterequal"))
-    elif seq in ("&&", "||"):
-        turn = -90 if seq == "&&" else 90  # the chevron's point up (and) or down (or)
-        less = [[(*arrows.rotate([(x, y)], turn)[0], k) for x, y, k in c] for c in master.glyph("less")]
-        out = centered(less, cy=m.cy)
-    elif seq == "++":
-        rects = master.rects("plus")
-        bar = next(r for r in rects if r[2] - r[0] > r[3] - r[1])
-        stem = next(r for r in rects if r[3] - r[1] > r[2] - r[0])
-        half, d = (bar[2] - bar[0]) / 2, (bar[2] - bar[0]) / 2
-        sw = (stem[2] - stem[0]) / 2
-        out = [rect(center - d - half, bar[1], center + d + half, bar[3])]
-        out += [rect(cx - sw, stem[1], cx + sw, stem[3]) for cx in (center - d, center + d)]
-    elif seq == "--":
-        out = [rect(*r) for r in stretched("minus")]
-    elif seq == "..":
-        dots = sorted(master.glyph("ellipsis"), key=lambda c: bounds([c])[0])[:2]
-        out = centered(dots)
-    elif seq == "...":
-        out = centered(master.glyph("ellipsis"))
-    else:
-        raise ValueError(seq)
-    return [ink(c) for c in master.slanted(out)]
-
-
-def contours(master, seq, style=STYLE):
-    return join(master, seq) if style == "join" else substitute(master, seq)
-
-
-# ---------- feature ----------
-
-def feature(sequences):
-    """Stylistic set 1: each sequence, longest first, becomes spacers and its ligature glyph,
-    unless an operator character stands right before or after it."""
-    lines = [f"@TW_OPERATORS = [{' '.join(OPERATORS)}];", f"@TW_LETTERS = [{' '.join(LETTERS)}];", ""]
-    for seq in sorted(sequences, key=lambda s: (-len(s), SEQUENCES.index(s))):
-        names = [NAMES[c] for c in seq]
-        tag = "TW_" + glyph_name(seq).replace(".", "_")
-        lines.append(f"lookup {tag} {{")
-        lines.append(f"  ignore sub @TW_OPERATORS {names[0]}' {' '.join(names[1:])};")
-        lines.append(f"  ignore sub {names[0]}' {' '.join(names[1:])} @TW_OPERATORS;")
-        if seq == OPTION:
-            lines.append(f"  ignore sub {names[0]}' {' '.join(names[1:])} @TW_LETTERS;")
-        n = len(names)
-        lines.append(f"  sub {' '.join([SPACER] * (n - 1))} {names[-1]}' by {glyph_name(seq)};")
-        for i in range(n - 2, -1, -1):
-            before = " ".join([SPACER] * i)
-            after = " ".join(names[i + 1:])
-            lines.append(f"  sub {before + ' ' if before else ''}{names[i]}' {after} by {SPACER};")
-        lines.append(f"}} {tag};")
-        lines.append("")
-    return "\n".join(lines)
+        return contours(self.source.outline(name, self.t), self.transform)
