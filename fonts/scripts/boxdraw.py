@@ -13,6 +13,9 @@ right) is none, light, heavy or double. Arms reach the cell edges exactly, so a 
 into the next cell and the next row without a gap; at a junction each arm stops where the
 perpendicular lines need it to (corners closed, crossings open where a double line passes).
 
+Powerline separators span the whole cell: triangles and chevrons (U+E0B0–E0B3) and half
+ellipses, filled or as a light outline (U+E0B4–E0B7).
+
 Ink stays inside the cell: no line overshoots the advance width or the line box. A terminal
 that rounds the cell up to whole pixels (632 units is 17.7 px at 28 px, drawn in an 18 px
 cell) leaves a seam between cells of up to half a pixel, at about half the sizes from 11 to 32
@@ -30,8 +33,9 @@ KAPPA = 0.5522847498
 BOX = range(0x2500, 0x2580)
 BLOCKS = range(0x2580, 0x25A0)
 POWERLINE = (0xE0B0, 0xE0B1, 0xE0B2, 0xE0B3)
+ROUNDED = (0xE0B4, 0xE0B5, 0xE0B6, 0xE0B7)
 ARCS = range(0x256D, 0x2571)
-CODEPOINTS = list(BOX) + list(BLOCKS) + list(POWERLINE)
+CODEPOINTS = list(BOX) + list(BLOCKS) + list(POWERLINE) + list(ROUNDED)
 
 
 class Cell:
@@ -321,11 +325,34 @@ def powerline(c, cp):
     return [poly(*pts)]
 
 
+def rounded(c, cp):
+    """Rounded separators: a half ellipse from the full height of the left edge to the right
+    edge at the middle (E0B4), its light outline (E0B5), and both mirrored (E0B6, E0B7)."""
+    w, b, t, cy = c.w, c.b, c.t, c.cy
+
+    def half(rx, ry):  # from the bottom of the left edge round to its top
+        k = KAPPA
+        return [(0, cy - ry, "line"), (k * rx, cy - ry, "offcurve"), (rx, cy - k * ry, "offcurve"), (rx, cy, "curve"),
+                (rx, cy + k * ry, "offcurve"), (k * rx, cy + ry, "offcurve"), (0, cy + ry, "curve")]
+    outer = half(w, (t - b) / 2)
+    if cp in (0xE0B4, 0xE0B6):
+        pts = outer
+    else:
+        q0, a, bb, q1, cc, d, q2 = half(w - c.light, (t - b) / 2 - c.light)
+        # back along the inner arc: a line across the stroke at the top, then the two arcs
+        pts = outer + [(q2[0], q2[1], "line"), d, cc, (q1[0], q1[1], "curve"), bb, a, (q0[0], q0[1], "curve")]
+    if cp in (0xE0B6, 0xE0B7):
+        pts = [(w - x, y, k) for x, y, k in pts]
+    return [ink(pts)]
+
+
 def contours(cell, cp):
     if cp in BOX:
         return box(cell, cp)
     if cp in BLOCKS:
         return blocks(cell, cp)
+    if cp in ROUNDED:
+        return rounded(cell, cp)
     return powerline(cell, cp)
 
 

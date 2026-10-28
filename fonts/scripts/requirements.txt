@@ -1,4 +1,4 @@
-# Build and checks (build.py, check.py, boxcheck.py, arrowcheck.py). Font Bakery has its own file: its pinned
+# Build and checks (build.py, check.py, boxcheck.py, arrowcheck.py, symbolcheck.py). Font Bakery has its own file: its pinned
 # protobuf conflicts with gftools.
 gftools==0.10.6
 fontmake==3.12.2

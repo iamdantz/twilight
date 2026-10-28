@@ -22,6 +22,8 @@ from glyphsLib.classes import GSFontInfoValue, GSGlyph, GSLayer, GSNode, GSPath
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import arrows  # noqa: E402
 import boxdraw  # noqa: E402
+import braille  # noqa: E402
+import symbols  # noqa: E402
 import upstream  # noqa: E402
 
 ROOT = upstream.ROOT
@@ -117,8 +119,47 @@ def add_arrows(font):
                lambda master, cp: arrows.glyph(metrics[master.id], cp))
 
 
+def resolved(font, master, name):
+    """A glyph's outline in one master, components resolved, as lists of (x, y, node type)."""
+    lay = layer(font, name, master)
+    out = [[(n.position.x, n.position.y, n.type) for n in p.nodes] for p in lay.paths]
+    for comp in lay.components:
+        a, b, c, d, tx, ty = comp.transform
+        for contour in resolved(font, master, comp.name):
+            out.append([(a * x + c * y + tx, b * x + d * y + ty, k) for x, y, k in contour])
+    return out
+
+
+def add_symbols(font):
+    """Shapes, primes, brackets and derived signs (fonts/scripts/symbols.py)."""
+    widths = {layer(font, g, m).width for g in ("i", "m", "plus") for m in font.masters}
+    cell = widths.pop() if len(widths) == 1 else None
+    # ufo2ft's default subscript offset, which the compiled OS/2 table declares (the sources set none)
+    subscript = round(0.075 * font.upm)
+    masters = {}
+    for m in font.masters:
+        if m.italicAngle not in (0, symbols.ITALIC_ANGLE):
+            raise SystemExit(f"{m.name}: italic angle {m.italicAngle}, symbols.py assumes {symbols.ITALIC_ANGLE}")
+        on_curve = lambda g, m=m: [(x, y) for c in resolved(font, m, g) for x, y, k in c if k != "offcurve"]
+        metrics = arrows.Metrics(on_curve("plus"), on_curve("equal"), m.italicAngle, cell)
+        masters[m.id] = symbols.Master(metrics, lambda g, m=m: resolved(font, m, g),
+                                       lambda g, m=m: layer(font, g, m).width, m.capHeight, m.xHeight, subscript)
+    symbols.prepare(list(masters.values()))
+    add_glyphs(font, symbols.codepoints(cell), symbols.glyph_name,
+               lambda master, cp: symbols.glyph(masters[master.id], cp))
+
+
+def add_braille(font):
+    """Braille patterns (fonts/scripts/braille.py), dots from each master's period."""
+    def draw(master, cp):
+        cell = master_cell(font, master)
+        return cell.w, braille.contours(cell.w, cell.b, cell.t, resolved(font, master, "period"), cp)
+    add_glyphs(font, braille.CODEPOINTS, braille.glyph_name, draw)
+
+
 # Changes beyond the rename, per family, in the order they apply.
-STEPS = {"TwilightText": [add_arrows], "TwilightCode": [add_box_drawing, add_arrows]}
+STEPS = {"TwilightText": [add_arrows, add_symbols],
+         "TwilightCode": [add_box_drawing, add_arrows, add_symbols, add_braille]}
 
 
 def rename(src, dst, family):

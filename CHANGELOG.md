@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.17.0
+
+Shapes, symbols and braille in Twilight Text and Twilight Code. No palette changes.
+
+### Added
+- Twilight Text 1.002 and Twilight Code 1.003, in both families:
+  - Geometric shapes ■ □ ▪ ▫ ▲ △ ▴ ▵ ▶ ▷ ▸ ▹ ▼ ▽ ▾ ▿ ◀ ◁ ◂ ◃ ◆ ◇ ○ ● ◦, computed per master: small shapes have the area of the bullet, large ones that of a circle as tall as a capital; all sit on the math axis; outlined shapes take the plus sign's stroke, or one fixed fraction of it where a heavy master would close the hole.
+  - ∆ and ∅ with the plus sign's stroke (∅ crossed at the angle and thickness of the slash), and ⟨ ⟩ as tall and as wide as the parentheses.
+  - From the designers' own outlines, moved but not redrawn: ‖ (two bars, spaced like the equal sign), ′ ″ (the straight quotes at the italic angle), ⅓ ⅔ (digits and slash of ½ and ¾), ⁴ (the 4 of ¼ at superior size), ₁ ₂ ₃ ₄ (the superiors on the subscript line the font declares), µ (the u with its stem carried to the descender).
+  - Twilight Text only: № (N and º); in Code it does not fit one cell.
+- Twilight Code only: the 256 braille patterns (U+2800–28FF), a 2 × 4 grid of the font's own period spread evenly over the cell, so terminal graphs keep one dot spacing across cells and rows; and the rounded Powerline separators U+E0B4–E0B7.
+- GF Latin Plus coverage: Text from 38 to 79 of 110 characters, Code from 36 to 76. Left out, because they need new drawing rather than derivation: superior and inferior 5 to 9 and 0, Ω, Ⓓ and the currency signs beyond those already present.
+
+### Tooling
+- `fonts/scripts/symbols.py` and `fonts/scripts/braille.py`: the geometry and the derivations; `boxdraw.py` gains the rounded separators.
+- `fonts/scripts/symbolcheck.py`: at every named instance, shapes on the axis with their areas and strokes, one stroke ratio across weights, derived digits at their source size and on their baselines, braille dots on the grid, rounded separators across the cell, and Code glyphs inside the cell. Built today: no failures.
+- `fonts/scripts/build.py`: components are resolved when a new glyph reuses an outline.
+- Fonts workflow: runs the symbol check.
+
 ## 1.16.0
 
 Arrows in Twilight Text and Twilight Code. No palette changes.

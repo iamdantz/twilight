@@ -64,6 +64,11 @@ jobs:
           set -o pipefail
           .venv-build/bin/python "$SCRIPTS/arrowcheck.py" | tee arrowcheck.txt
 
+      - name: Symbols
+        run: |
+          set -o pipefail
+          .venv-build/bin/python "$SCRIPTS/symbolcheck.py" | tee symbolcheck.txt
+
       - name: Font Bakery against upstream
         run: |
           set -o pipefail
@@ -72,7 +77,7 @@ jobs:
       - name: Report
         if: always()
         run: |
-          for f in check.txt boxcheck.txt arrowcheck.txt bakery.txt; do
+          for f in check.txt boxcheck.txt arrowcheck.txt symbolcheck.txt bakery.txt; do
             [ -f "$f" ] || continue
             { echo '```'; cat "$f"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
           done
