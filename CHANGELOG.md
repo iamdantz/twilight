@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.20.2
+
+Typography measured. No palette, font or rule changes.
+
+### Added
+- `docs/construction/typography.md`: the numbers the type rules will be built on, each measured on the fonts or derived from a cited source.
+  - Running text: 19 px on desktop screens and 16 px on handheld ones, the smallest sizes whose x-height reaches the critical print size (0.2°); 8 pt in print.
+  - Floors per weight, the smallest size at which stems and counters are at least one pixel: 12 px for Regular, from 10 px (Medium, SemiBold) to 19 px (ExtraLight).
+  - Scale: step −2 on the Regular floor, ratio 1.2583 on desktop and 1.1547 on handhelds; the largest steps are bounded by the width of the viewport.
+  - Line heights: 1.5 for running text, 1.3 (the font's natural line) for code, and 1.153 below which lines touch.
+  - Measure: 80 characters are 34.6 em (53.4ch, since the zero is wider than an average character).
+- `fonts/scripts/typography.py` prints every one of these numbers; the font workflow runs it.
+
 ## 1.20.1
 
 Documentation reorganized by part. No palette or font changes.
