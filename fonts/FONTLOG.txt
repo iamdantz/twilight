@@ -55,7 +55,10 @@ Twilight Code 1.005 (Twilight 1.19.0)
   exactly as in Fira Code 6.2, keep the grid, match the hyphen's weight and axis and stay inside
   the clipping box; fonts/scripts/check.py, that with the set off the fonts shape exactly as
   upstream and the new glyphs are reached only through it.
-- Fira Code's copyright notice added to the font's copyright string and to fonts/OFL.txt.
+- Fira Code's copyright notice added to the font's copyright string and to fonts/OFL.txt, and
+  its trademark notice, "Fira Mono is a trademark of The Mozilla Corporation.", to the font's
+  trademark string (name ID 7), as the OFL FAQ asks of derivatives (3.7). The description
+  (name ID 10) credits Fira Code.
 
 Twilight Code 1.004 (Twilight 1.18.0)
 - Static fonts only: the TrueType instructions of box drawing, block elements and Powerline

@@ -52,6 +52,9 @@ glyphs may go into another font only if:
   receiving them must be under that license, or under one that allows relicensing to it;
 - the result keeps Fira Code's copyright notice (this program adds it to the font's copyright
   string), and you keep it in the font's license file;
+- the result keeps Fira Code's trademark notice, "Fira Mono is a trademark of The Mozilla
+  Corporation" (this program adds it to the font's trademark string); the OFL grants no
+  trademark rights, so never name the result after Fira;
 - the result does not use a Reserved Font Name of either font; Fira Code declares none, but
   rename any font that does;
 - the result is not sold by itself.

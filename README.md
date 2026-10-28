@@ -188,7 +188,7 @@ Twilight is defined independently of any application. To build a theme for a too
 
 [MIT](LICENSE) © José D. Gutiérrez, except the fonts and the Ligaturizer tool.
 
-Twilight Text and Twilight Code are licensed under the [SIL Open Font License 1.1](fonts/OFL.txt). They derive from Atkinson Hyperlegible Next and Atkinson Hyperlegible Mono, by Applied Design Works and Letters from Sweden for the Braille Institute; the optional ligatures of Twilight Code come from [Fira Code](https://github.com/tonsky/FiraCode), by Nikita Prokopov. [FONTLOG.txt](fonts/FONTLOG.txt) records every change and credit.
+Twilight Text and Twilight Code are licensed under the [SIL Open Font License 1.1](fonts/OFL.txt). They derive from Atkinson Hyperlegible Next and Atkinson Hyperlegible Mono, by Applied Design Works and Letters from Sweden for the Braille Institute; the optional ligatures of Twilight Code come from [Fira Code](https://github.com/tonsky/FiraCode), by Nikita Prokopov. Fira Mono is a trademark of The Mozilla Corporation. [FONTLOG.txt](fonts/FONTLOG.txt) records every change and credit.
 
 [tools/ligaturizer](tools/ligaturizer) is a fork of [Ligaturizer](https://github.com/ToxicFrog/Ligaturizer) and is licensed, like it, under the [GNU General Public License 3](tools/ligaturizer/LICENSE). The build runs it as a separate program; its license does not extend to the fonts it helps build.
 

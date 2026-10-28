@@ -122,6 +122,7 @@ class FiraCode:
                      self.font.getGlyphSet(location={"wght": axes[0].maxValue})]
         self._recorded = {}
         self.copyright = self.font["name"].getDebugName(0)
+        self.trademark = self.font["name"].getDebugName(7)  # trademark notices stay in derivatives
 
     def _record(self, name):
         if name not in self._recorded:

@@ -12,6 +12,8 @@ Optional programming ligatures in Twilight Code, from Fira Code. No palette chan
 ### Licensing
 - Fira Code (SIL Open Font License 1.1, no Reserved Font Name) is pinned in `fonts/upstream/firacode` with its license and authors.
 - Its copyright notice is in Twilight Code's copyright string and in `fonts/OFL.txt`.
+- Its trademark notice ("Fira Mono is a trademark of The Mozilla Corporation.") is in Twilight Code's trademark string, as the OFL FAQ asks of derivatives.
+- Twilight Code's description credits Fira Code.
 - Twilight Text and Twilight Code remain under the OFL 1.1.
 
 ### Tooling

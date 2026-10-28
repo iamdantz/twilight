@@ -47,7 +47,8 @@ replacing the default list), "classes" (glyph classes the extra rules use, name:
 
 Fira Code is licensed under the SIL Open Font License 1.1, which allows its glyphs in another
 font only if the result is distributed under the same license, keeps Fira Code's copyright
-notice (added here to the receiving font's) and is not sold by itself. Use this program only on
+notice (added here to the receiving font's), keeps its trademark notices (Fira Code's own name
+table carries one, also added) and is not sold by itself. Use this program only on
 fonts whose license allows that, and rename any font that has a Reserved Font Name.
 """
 import argparse
@@ -262,14 +263,18 @@ def ligaturize_glyphs(path, source, config, output=None):
         existing.code = existing.code.rstrip("\n") + "\n\n" + code
     else:
         font.features.append(GSFeature(config["feature"], code))
-    record = next((p for p in font.properties if p.key == "copyrights"), None)
-    localized = getattr(record, "_localized_values", None)
-    if record is None:
-        font.properties.append(GSFontInfoValue("copyrights", notice(source)))
-    elif localized:
-        record._localized_values = {lang: append(text, notice(source)) for lang, text in localized.items()}
-    else:
-        record.value = append(record.value, notice(source))
+    def add(key, sentence):
+        record = next((p for p in font.properties if p.key == key), None)
+        localized = getattr(record, "_localized_values", None)
+        if record is None:
+            font.properties.append(GSFontInfoValue(key, sentence))
+        elif localized:
+            record._localized_values = {lang: append(text, sentence) for lang, text in localized.items()}
+        else:
+            record.value = append(record.value, sentence)
+    add("copyrights", notice(source))
+    if source.trademark:
+        add("trademarks", source.trademark)
     font.save(str(output or path))
     print(f"{Path(path).name}: {len(code.split('lookup ')) - 1} lookups, {len(outputs)} glyphs, "
           f"in {config['feature']}")
@@ -322,6 +327,9 @@ def ligaturize_font(path, source, config, output_dir, prefix, output_name):
     for record in font["name"].names:
         if record.nameID == 0:
             record.string = append(record.toUnicode(), notice(source))
+    if source.trademark:
+        existing = font["name"].getDebugName(7)
+        font["name"].setName(append(existing, source.trademark), 7, 3, 1, 0x409)
     out = Path(output_dir or Path(path).parent) / f"{font['name'].getDebugName(6)}.ttf"
     font.save(out)
     print(f"{out}: {len(outputs)} glyphs, in {config['feature']}")

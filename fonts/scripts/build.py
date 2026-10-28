@@ -43,7 +43,8 @@ def metadata(family):
         "manufacturerURL": PROJECT,
         # name ID 10, kept under the 200 characters applications expect
         "description": f"Derived from {up['family']} {up['version']}, designed by {{designers}}. "
-                       f"Part of Twilight.",
+                       + ("Optional ligatures from Fira Code. " if family["file"] in LIGATURES else "")
+                       + "Part of Twilight.",
     }
 
 
