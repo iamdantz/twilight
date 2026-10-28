@@ -5,11 +5,13 @@ on:
     branches: [main]
     paths:
       - "fonts/**"
+      - "tools/ligaturizer/**"
       - ".github/workflows/fonts.yml"
   push:
     branches: [main]
     paths:
       - "fonts/**"
+      - "tools/ligaturizer/**"
       - ".github/workflows/fonts.yml"
 
 permissions:
@@ -69,6 +71,11 @@ jobs:
           set -o pipefail
           .venv-build/bin/python "$SCRIPTS/symbolcheck.py" | tee symbolcheck.txt
 
+      - name: Ligatures
+        run: |
+          set -o pipefail
+          .venv-build/bin/python "$SCRIPTS/ligacheck.py" | tee ligacheck.txt
+
       - name: Hinting
         run: |
           set -o pipefail
@@ -82,7 +89,7 @@ jobs:
       - name: Report
         if: always()
         run: |
-          for f in check.txt boxcheck.txt arrowcheck.txt symbolcheck.txt hintcheck.txt bakery.txt; do
+          for f in check.txt boxcheck.txt arrowcheck.txt symbolcheck.txt ligacheck.txt hintcheck.txt bakery.txt; do
             [ -f "$f" ] || continue
             { echo '```'; cat "$f"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
           done

@@ -189,6 +189,19 @@ def hint_cells(fonts):
 AFTER = {"TwilightCode": [hint_cells]}
 
 
+LIGATURIZER = ROOT / "tools" / "ligaturizer" / "ligaturize.py"
+LIGATURES = {"TwilightCode": ROOT / "fonts" / "ligatures.json"}
+
+
+def ligaturize(source, family):
+    """Fira Code's ligatures, as fonts/ligatures.json selects them, added to a renamed source by
+    tools/ligaturizer, a separate program under the GNU GPL 3 run as its own process."""
+    config = LIGATURES.get(family["file"])
+    if config:
+        subprocess.run([sys.executable, str(LIGATURIZER), "glyphs", str(source), "--fira",
+                        str(ROOT / upstream.load()["ligatures"]["directory"]), "--config", str(config)], check=True)
+
+
 # Changes beyond the rename, per family, in the order they apply.
 STEPS = {"TwilightText": [add_arrows, add_symbols],
          "TwilightCode": [add_box_drawing, add_arrows, add_symbols, add_braille]}
@@ -229,6 +242,7 @@ def build(family):
     for src in sorted((ROOT / family["directory"] / "sources").glob("*.glyphs")):
         name = src.name.replace(old, new)
         rename(src, sources_dir / name, family)
+        ligaturize(sources_dir / name, family)
         names.append(name)
     configure(family, sources_dir, names)
     env = dict(os.environ, PATH=str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""))

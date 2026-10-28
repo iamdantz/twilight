@@ -29,7 +29,7 @@
     {
       "family": "Twilight Code",
       "file": "TwilightCode",
-      "version": "1.004",
+      "version": "1.005",
       "upstream": {
         "family": "Atkinson Hyperlegible Mono",
         "file": "AtkinsonHyperlegibleMono",
@@ -52,5 +52,26 @@
         "fonts/variable/AtkinsonHyperlegibleMono[wght].ttf": "5ce8b1698d1ded7dff2178c1a3ad159470085a58ea239e8b2cb88f4fb4a6f646"
       }
     }
-  ]
+  ],
+  "ligatures": {
+    "family": "Fira Code",
+    "repository": "https://github.com/tonsky/FiraCode",
+    "tag": "6.2",
+    "commit": "eee6db993696aba61ff4eef03698e2987d79910c",
+    "license": "OFL-1.1",
+    "directory": "fonts/upstream/firacode",
+    "vendored": {
+      "AUTHORS.txt": "bce848bf648020ae5c7cbcafe938d796e318afed3945ea009c3300bb08911220",
+      "FiraCode-VF.ttf": "04149681350f161aca538858b88d17443c586cacca83c165939a13423fe91a26",
+      "NotSpace.txt": "861f810e2254ff335ad16904ee6685640d0af62642b8dfd789e3ff3b0007ec0d",
+      "OFL.txt": "1d41e10031ab125302780a05ec4c91d218e47db0c7e37cf315cce5e608cdc25c",
+      "calt.fea": "8b10f625969f6de7925cd77ae23af89c9623efae2fdc66b9777ee4c2db11120e"
+    },
+    "notes": {
+      "FiraCode-VF.ttf": "variable_ttf/FiraCode-VF.ttf from the 6.2 release archive",
+      "calt.fea": "the calt feature code of FiraCode.glyphs at the tag",
+      "NotSpace.txt": "the NotSpace glyph class of FiraCode.glyphs at the tag, one name per line",
+      "AUTHORS.txt": "AUTHORS at the tag"
+    }
+  }
 }

@@ -73,6 +73,9 @@
       "27E8-27E9",
       "2800-28FF",
       "E0B0-E0B7"
+    ],
+    "features": [
+      "ss01"
     ]
   },
   "TwilightCode-Italic[wght].ttf": {
@@ -99,6 +102,9 @@
       "27E8-27E9",
       "2800-28FF",
       "E0B0-E0B7"
+    ],
+    "features": [
+      "ss01"
     ]
   }
 }

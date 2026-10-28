@@ -170,12 +170,15 @@ Twilight is defined independently of any application. To build a theme for a too
 ├── fonts/
 │   ├── upstream/            pinned upstream sources and licenses, unmodified
 │   ├── scripts/             build, box drawing, arrows, symbols, hinting, checks, Font Bakery
+│   ├── ligatures.json       which Fira Code ligatures Twilight Code takes
 │   ├── upstream.json        upstream repositories, commits and SHA-256
 │   ├── changes.json         characters added to the upstream fonts
 │   ├── OFL.txt              license of Twilight Text and Twilight Code
 │   └── FONTLOG.txt          changes from upstream and credits
 ├── palette/
 │   └── twilight.json        all values, machine-readable
+├── tools/
+│   └── ligaturizer/         Fira Code ligatures for monospaced fonts (GPL-3.0)
 ├── CONTRIBUTING.md
 ├── CHANGELOG.md
 └── LICENSE
@@ -183,6 +186,10 @@ Twilight is defined independently of any application. To build a theme for a too
 
 ## License
 
-[MIT](LICENSE) © José D. Gutiérrez, except the fonts.
+[MIT](LICENSE) © José D. Gutiérrez, except the fonts and the Ligaturizer tool.
 
-Twilight Text and Twilight Code are licensed under the [SIL Open Font License 1.1](fonts/OFL.txt). They derive from Atkinson Hyperlegible Next and Atkinson Hyperlegible Mono, by Applied Design Works and Letters from Sweden for the Braille Institute; [FONTLOG.txt](fonts/FONTLOG.txt) records every change and credit.
+Twilight Text and Twilight Code are licensed under the [SIL Open Font License 1.1](fonts/OFL.txt). They derive from Atkinson Hyperlegible Next and Atkinson Hyperlegible Mono, by Applied Design Works and Letters from Sweden for the Braille Institute; the optional ligatures of Twilight Code come from [Fira Code](https://github.com/tonsky/FiraCode), by Nikita Prokopov. [FONTLOG.txt](fonts/FONTLOG.txt) records every change and credit.
+
+[tools/ligaturizer](tools/ligaturizer) is a fork of [Ligaturizer](https://github.com/ToxicFrog/Ligaturizer) and is licensed, like it, under the [GNU General Public License 3](tools/ligaturizer/LICENSE). The build runs it as a separate program; its license does not extend to the fonts it helps build.
+
+Each license disclaims all warranty: Twilight, its fonts and its tools are provided as is.

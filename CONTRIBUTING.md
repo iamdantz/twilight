@@ -40,11 +40,14 @@ python fonts/scripts/upstream.py reference /tmp/reference
 .venv-build/bin/python fonts/scripts/boxcheck.py
 .venv-build/bin/python fonts/scripts/arrowcheck.py
 .venv-build/bin/python fonts/scripts/symbolcheck.py
+.venv-build/bin/python fonts/scripts/ligacheck.py
 .venv-build/bin/python fonts/scripts/hintcheck.py /tmp/reference
 .venv-bakery/bin/python fonts/scripts/bakery.py /tmp/reference
 ```
 
-`check.py` fails on any difference from the upstream fonts that `fonts/changes.json` does not declare, `boxcheck.py` on a box drawing line that stops short of its cell edge or breaks between cells, `arrowcheck.py` on an arrow whose stroke, axis or spacing departs from the plus and equal signs, `symbolcheck.py` on a shape, derived sign or braille pattern that breaks its rule, `hintcheck.py` on hinting worse than upstream's or box drawing that leaves its cell, and `bakery.py` on any Font Bakery failure the upstream fonts do not have. A step that adds characters declares their code points in `fonts/changes.json`.
+`check.py` fails on any difference from the upstream fonts that `fonts/changes.json` does not declare, `boxcheck.py` on a box drawing line that stops short of its cell edge or breaks between cells, `arrowcheck.py` on an arrow whose stroke, axis or spacing departs from the plus and equal signs, `symbolcheck.py` on a shape, derived sign or braille pattern that breaks its rule, `ligacheck.py` on an optional ligature that shapes unlike Fira Code, leaves the grid or departs from the hyphen's weight and axis, `hintcheck.py` on hinting worse than upstream's or box drawing that leaves its cell, and `bakery.py` on any Font Bakery failure the upstream fonts do not have. A step that adds characters declares their code points in `fonts/changes.json`, and one that adds an optional feature declares its tag there.
+
+Twilight Code's ligatures are added by [tools/ligaturizer](tools/ligaturizer), under the GNU GPL 3, which the build runs as a separate program; `fonts/ligatures.json` chooses which of Fira Code's rules it takes. Code that changes the tool stays in its directory and under its license; Twilight's own scripts must not import it.
 
 ## Versions
 

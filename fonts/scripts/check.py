@@ -15,8 +15,12 @@ every named instance, so an unintended difference cannot pass unnoticed:
 
 Changes made on purpose are declared in fonts/changes.json, per font file: "added" lists the
 code point ranges of new characters (their glyphs join the glyph set and character map, and
-nothing else may), "differences" lists the reported differences that are expected, by prefix.
-Anything else fails.
+nothing else may), "features" lists new optional features: they may add features and glyphs
+mapped to no character, provided that no glyph the upstream features reach from the character
+map is among them and that every one is reached only with a declared feature on. With the
+upstream features alone the font then shapes exactly as upstream, which the shaping comparison
+verifies. "differences" lists the reported differences that are expected, by prefix. Anything
+else fails.
 
     python fonts/scripts/upstream.py reference /tmp/reference
     python fonts/scripts/check.py /tmp/reference
@@ -27,6 +31,7 @@ import sys
 from pathlib import Path
 
 import uharfbuzz as hb
+from fontTools import subset
 from fontTools.pens.recordingPen import DecomposingRecordingPen
 from fontTools.ttLib import TTFont
 from fontTools.varLib import instancer
@@ -96,7 +101,20 @@ def codepoints(ranges):
     return result
 
 
-def compare(ours_path, ref_path, added=frozenset()):
+def reached(path, tags):
+    """The glyphs the character map and these layout features reach."""
+    options = subset.Options()
+    options.layout_features = list(tags)
+    options.glyph_names = True
+    options.notdef_outline = True
+    font = TTFont(path)
+    sub = subset.Subsetter(options)
+    sub.populate(unicodes=font.getBestCmap().keys())
+    sub.subset(font)
+    return set(font.getGlyphOrder())
+
+
+def compare(ours_path, ref_path, added=frozenset(), new_features=()):
     ours, ref = TTFont(ours_path), TTFont(ref_path)
     found = []
     worst = 0.0
@@ -111,8 +129,17 @@ def compare(ours_path, ref_path, added=frozenset()):
     if undeclared:
         found.append("character map adds " + " ".join(f"U+{cp:04X}" for cp in undeclared[:8]))
     diff("character map", {cp: g for cp, g in cmap.items() if cp not in new}, ref_cmap)
-    diff("glyph set", [g for g in ours.getGlyphOrder() if g not in set(new.values())], ref.getGlyphOrder())
-    diff("features", features(ours), features(ref))
+    extra = [g for g in ours.getGlyphOrder()
+             if g not in set(ref.getGlyphOrder()) and g not in set(cmap.values())]
+    if extra and new_features:
+        upstream_reach = reached(ours_path, features(ref))
+        feature_reach = reached(ours_path, features(ref) + list(new_features))
+        stray = [g for g in extra if g in upstream_reach or g not in feature_reach]
+        if stray:
+            found.append(f"glyphs not reached only through {', '.join(new_features)}: {', '.join(stray[:8])}")
+    allowed_glyphs = set(new.values()) | (set(extra) if new_features else set())
+    diff("glyph set", [g for g in ours.getGlyphOrder() if g not in allowed_glyphs], ref.getGlyphOrder())
+    diff("features", [t for t in features(ours) if t not in new_features], features(ref))
     axes = lambda f: [(a.axisTag, a.minValue, a.defaultValue, a.maxValue) for a in f["fvar"].axes]
     diff("axes", axes(ours), axes(ref))
     named = lambda f: [i.coordinates for i in f["fvar"].instances]
@@ -166,7 +193,8 @@ def main():
                 continue
             declared = expected.get(ours_path.name, {})
             allowed = declared.get("differences", [])
-            found, worst = compare(ours_path, ref_path, codepoints(declared.get("added", [])))
+            found, worst = compare(ours_path, ref_path, codepoints(declared.get("added", [])),
+                                   declared.get("features", []))
             unexpected = [f for f in found if not any(f.startswith(a) for a in allowed)]
             status = "FAIL" if unexpected else "ok"
             print(f"{status:4} {ours_path.name} against {ref_path.name}: "

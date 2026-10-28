@@ -18,17 +18,44 @@ Reserved Font Name:
   https://github.com/googlefonts/atkinson-hyperlegible-next
 - Twilight Code derives from Atkinson Hyperlegible Mono 2.001.
   https://github.com/googlefonts/atkinson-hyperlegible-next-mono
+- Twilight Code's optional programming ligatures (stylistic set 1) are glyphs and contextual
+  rules of Fira Code 6.2, scaled and placed to fit (see 1.005 below). Twilight Text has none.
+  https://github.com/tonsky/FiraCode
 
 The upstream design sources and license files are kept unmodified in fonts/upstream/, pinned
-to one commit and verified by SHA-256 (fonts/upstream.json). Every change below is applied by
+to one commit and verified by SHA-256 (fonts/upstream.json); for Fira Code, its 6.2 variable
+font, license and authors, and the contextual rules and one glyph class of its design source at
+that tag. Every change below is applied by
 fonts/scripts/build.py when the fonts are built; nothing is edited by hand.
 
 Twilight Text and Twilight Code are licensed under the SIL Open Font License 1.1
-(fonts/OFL.txt). The rest of the Twilight repository is licensed under the MIT License.
+(fonts/OFL.txt), which lists the copyright holders of every font they draw on. The ligatures
+are grafted by tools/ligaturizer, a separate program under the GNU General Public License 3;
+that license covers the program, not the fonts, which receive only Fira Code's data from it.
+The rest of the Twilight repository is licensed under the MIT License.
 
 
 ChangeLog
 ---------
+
+Twilight Code 1.005 (Twilight 1.19.0)
+- Added optional programming ligatures, in stylistic set 1 ("Programming ligatures"), off by
+  default: Fira Code 6.2's contextual rules (calt), unchanged but for one added rule, with the
+  169 glyphs they output (ligatures, one-cell pieces of arrows and rows of any length, centered
+  forms, spacers), none mapped to a character. A sequence of n characters keeps n cells.
+- Left out of Fira Code's rules: those that give single characters Fira Code's contextual forms
+  (x as a multiplication sign in 0xFF, punctuation raised next to capitals, Greek capitals) and
+  www. Added: a double hyphen before a letter (--watch) stays plain.
+- Each glyph is scaled from Fira Code's em to Twilight Code's and horizontally to the 632-unit
+  cell; taken, in each master, at the point of Fira Code's weight axis where its hyphen is as
+  thick as Twilight Code's (extended past Fira Code's lightest and heaviest weights); moved so
+  Fira Code's hyphen center lands on Twilight Code's (72.5 units down); slanted 12 degrees in
+  the italic. Contours are turned clockwise around ink where Fira Code turns them the other way.
+- fonts/scripts/ligacheck.py verifies, at every named instance, that the ligatures shape
+  exactly as in Fira Code 6.2, keep the grid, match the hyphen's weight and axis and stay inside
+  the clipping box; fonts/scripts/check.py, that with the set off the fonts shape exactly as
+  upstream and the new glyphs are reached only through it.
+- Fira Code's copyright notice added to the font's copyright string and to fonts/OFL.txt.
 
 Twilight Code 1.004 (Twilight 1.18.0)
 - Static fonts only: the TrueType instructions of box drawing, block elements and Powerline
@@ -84,6 +111,12 @@ Atkinson Hyperlegible was created for the Braille Institute of America by Applie
 Works (Elliott Scott, Megan Eiswerth, Linus Boman, Theodore Petrosky). Atkinson Hyperlegible
 Next and Atkinson Hyperlegible Mono extend it with Letters from Sweden; Emma Marichal
 contributed to both. Their AUTHORS.txt and CONTRIBUTORS.txt are kept in fonts/upstream/.
+
+Fira Code was created by Nikita Prokopov from Fira Mono, made for the Mozilla Foundation and
+Telefonica S.A.; its AUTHORS.txt is kept in fonts/upstream/firacode/.
+The method of grafting its ligatures onto another font comes from Ligaturizer, by Ilya
+Skriblovsky, Navid Rojiani, ToxicFrog and its contributors.
+https://github.com/ToxicFrog/Ligaturizer
 
 Twilight Text and Twilight Code are maintained by José D. Gutiérrez as part of Twilight.
 https://github.com/iamdantz/twilight

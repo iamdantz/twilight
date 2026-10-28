@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.19.0
+
+Optional programming ligatures in Twilight Code, from Fira Code. No palette changes.
+
+### Added
+- Twilight Code 1.005: Fira Code 6.2's programming ligatures in stylistic set 1, "Programming ligatures", off by default. With the set off nothing changes. With it on, `->`, `!==`, `<=`, `&&`, `|>` and the rest of Fira Code's set join; arrows and rows of `-`, `=`, `#` and `_` join at any length (`<==>`, `|-->`, `####`). A sequence of n characters still takes n cells. Turn it on with `"editor.fontLigatures": "'ss01'"` in VS Code, or the same feature in any application that sets OpenType features.
+- Fira Code's rules are kept as they are, with three exceptions. Rules that redraw single characters in Fira Code's style are left out: `0xFF` with ×, punctuation raised next to capitals, Greek capitals. So is `www`. And a double hyphen before a letter (`--watch`) stays plain.
+- The ligatures are fitted to Twilight Code in four ways. They are scaled to its cell. Each master takes them at the weight where Fira Code's hyphen is as thick as its own. They are moved onto its math axis (72.5 units lower than Fira Code's). And they are slanted 12 degrees in the italic.
+
+### Licensing
+- Fira Code (SIL Open Font License 1.1, no Reserved Font Name) is pinned in `fonts/upstream/firacode` with its license and authors.
+- Its copyright notice is in Twilight Code's copyright string and in `fonts/OFL.txt`.
+- Twilight Text and Twilight Code remain under the OFL 1.1.
+
+### Tooling
+- `tools/ligaturizer`: a fork of Ligaturizer under the GNU GPL 3, rewritten on fontTools for Fira Code 6. It adds ligatures to Glyphs sources (every master) or to static TrueType fonts. It matches weight, math axis and slant, and turns Fira Code's reversed contours. The build runs it as a separate program, with `fonts/ligatures.json`.
+- `fonts/scripts/ligacheck.py` checks four things at every named instance:
+  - shaping identical to Fira Code 6.2 on a corpus of 155 sequences;
+  - one cell per glyph;
+  - the hyphen's weight and axis;
+  - no ink past the clipping box.
+- `check.py` accepts declared optional features. It verifies that their glyphs are reached only with the feature on, and that with it off shaping matches upstream.
+- Fonts workflow: runs the ligature check; also runs on changes to the tool.
+- Font Bakery: no new failures. Two new warnings are inherited from Fira Code's own glyphs:
+  - glyph names over 31 characters;
+  - four glyphs with coinciding segments, which the static fonts remove.
+
 ## 1.18.0
 
 Hinting measured, and box drawing hinted for the cell. No palette changes.
