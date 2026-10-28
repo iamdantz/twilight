@@ -1,16 +1,16 @@
 ---
 name: twilight-auditor
-description: Use when reviewing, auditing or deciding whether to accept any change to the Twilight theme definition (a branch, pull request, staged change or working-tree edit) that touches palette/twilight.json, docs/construction.md, docs/design-system.md, README palette tables, CHANGELOG or version, assets/palette-*.png, or this skill's own scripts, or adds a new flavor. Also use when someone proposes changing a Twilight color, rule, parameter or guarantee. Not for building ports or app themes from Twilight.
+description: Use when reviewing, auditing or deciding whether to accept any change to the Twilight Theme definition (a branch, pull request, staged change or working-tree edit) that touches palette/twilight.json, docs/construction.md, docs/design-system.md, README palette tables, CHANGELOG or version, assets/palette-*.png, or this skill's own scripts, or adds a new flavor. Also use when someone proposes changing a Twilight Theme color, rule, parameter or guarantee. Not for building ports or app themes from Twilight Theme.
 allowed-tools: Read, Grep, Glob, Bash
 ---
 
-# Twilight auditor
+# Twilight Theme auditor
 
 ## Overview
 
-Twilight's value is that every color comes from a documented, measurable, reproducible method. The seed `#ee7a1f` is the only color chosen by hand: Afterglow is the sRGB cusp of its hue and the neutral hue is its complement (232°). Everything else is solved by docs/construction.md and validated in sRGB.
+Twilight Theme's value is that every color comes from a documented, measurable, reproducible method. The seed `#ee7a1f` is the only color chosen by hand: Afterglow is the sRGB cusp of its hue and the neutral hue is its complement (232°). Everything else is solved by docs/construction.md and validated in sRGB.
 
-This audit decides whether a change to the definition keeps Twilight being Twilight. It approves only on measurements, never on intent. A change that is internally consistent but has no derivation path is still rejected.
+This audit decides whether a change to the definition keeps Twilight Theme being Twilight Theme. It approves only on measurements, never on intent. A change that is internally consistent but has no derivation path is still rejected.
 
 ## Authority
 
@@ -99,7 +99,7 @@ wording · rule or method · palette values · new flavor · tooling. Most chang
 
 Two levels of floor live in `validate.py`, and every change must meet both (construction.md §10.1).
 
-- **Category minimums** (`MINIMUMS`): the Twilight standard for dark and for light themes. Every flavor of the category meets them, existing or new. They never go down; lowering one is BLOCKING.
+- **Category minimums** (`MINIMUMS`): the Twilight Theme standard for dark and for light themes. Every flavor of the category meets them, existing or new. They never go down; lowering one is BLOCKING.
 - **Flavor floors** (`FLOORS`): what each flavor reaches today, so a change cannot quietly degrade it. A flavor floor may go down only when all three hold:
   1. the new floor still meets its category minimum (the validator checks this);
   2. the version's CHANGELOG entry names the check, in backticks, under `### Lower`, exactly as `validate.py` names it (`` `ink on surfaces` ``), with its measured cause and the benefit it pays for (the validator checks the name);
@@ -182,7 +182,7 @@ Each of these means the change is being judged on intent instead of measurement:
 Write exactly this structure:
 
 ```
-# Twilight audit: <comparison>
+# Twilight Theme audit: <comparison>
 
 Verdict: APPROVED | CHANGES REQUESTED | REJECTED
 

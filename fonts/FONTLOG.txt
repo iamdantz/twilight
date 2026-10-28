@@ -8,8 +8,8 @@ SIL Open Font License recommends for Modified Versions.
 Basic font information
 ----------------------
 
-Twilight Crystal is the sans-serif typeface of Twilight, for interfaces, documentation and the
-web. Twilight Crystal Mono is its monospaced typeface, for code editors and terminals.
+Twilight Crystal is the sans-serif typeface of Twilight Theme, for interfaces, documentation
+and the web. Twilight Crystal Mono is its monospaced typeface, for code editors and terminals.
 
 Both are Modified Versions of fonts released under the SIL Open Font License 1.1, with no
 Reserved Font Name:
@@ -33,13 +33,13 @@ Twilight Crystal and Twilight Crystal Mono are licensed under the SIL Open Font 
 (fonts/OFL.txt), which lists the copyright holders of every font they draw on. The ligatures
 are grafted by tools/ligaturizer, a separate program under the GNU General Public License 3;
 that license covers the program, not the fonts, which receive only Fira Code's data from it.
-The rest of the Twilight repository is licensed under the MIT License.
+The rest of the Twilight Theme repository is licensed under the MIT License.
 
 
 ChangeLog
 ---------
 
-Twilight Crystal Mono 1.005 (Twilight 1.19.0)
+Twilight Crystal Mono 1.005 (Twilight Theme 1.19.0)
 - Added optional programming ligatures, in stylistic set 1 ("Programming ligatures"), off by
   default: Fira Code 6.2's contextual rules (calt), unchanged but for one added rule, with the
   169 glyphs they output (ligatures, one-cell pieces of arrows and rows of any length,
@@ -63,14 +63,14 @@ Twilight Crystal Mono 1.005 (Twilight 1.19.0)
   trademark string (name ID 7), as the OFL FAQ asks of derivatives (3.7). The description
   (name ID 10) credits Fira Code.
 
-Twilight Crystal Mono 1.004 (Twilight 1.18.0)
+Twilight Crystal Mono 1.004 (Twilight Theme 1.18.0)
 - Static fonts only: the TrueType instructions of box drawing, block elements and Powerline
   separators replaced by fonts/scripts/cellhint.py, which rounds the cell's edges to pixel
   rows and keeps every horizontal line on whole pixels, at least one thick. The rest of the
   font keeps the autohinter's instructions; outlines and the variable fonts are unchanged.
   fonts/scripts/hintcheck.py measures the hinting of every static font against upstream.
 
-Twilight Crystal 1.002 and Twilight Crystal Mono 1.003 (Twilight 1.17.0)
+Twilight Crystal 1.002 and Twilight Crystal Mono 1.003 (Twilight Theme 1.17.0)
 - Added, in both families: geometric shapes (U+25A0–25A1, 25AA–25AB, 25B2–25B9, 25BC–25C3,
   25C6–25C7, 25CB, 25CF, 25E6), U+2205–2206 and U+27E8–27E9, computed by
   fonts/scripts/symbols.py from each master's measures; U+00B5, 2016, 2032–2033, 2074,
@@ -82,7 +82,7 @@ Twilight Crystal 1.002 and Twilight Crystal Mono 1.003 (Twilight 1.17.0)
   fonts/scripts/check.py finds no difference from the upstream fonts beyond the added
   characters, declared in fonts/changes.json.
 
-Twilight Crystal 1.001 and Twilight Crystal Mono 1.002 (Twilight 1.16.0)
+Twilight Crystal 1.001 and Twilight Crystal Mono 1.002 (Twilight Theme 1.16.0)
 - Added arrows: U+2190–2199, U+21A9–21AA, U+21B5 and U+21D0–21D3 in both families, and
   U+21D4–21D5 in Twilight Crystal only. They are computed by fonts/scripts/arrows.py from each
   master's plus sign (stroke, axis, length, side bearings), equal sign (line spacing) and
@@ -90,7 +90,7 @@ Twilight Crystal 1.001 and Twilight Crystal Mono 1.002 (Twilight 1.16.0)
 - No other change: fonts/scripts/check.py finds no difference from the upstream fonts beyond
   the added characters, declared in fonts/changes.json.
 
-Twilight Crystal Mono 1.001 (Twilight 1.15.0)
+Twilight Crystal Mono 1.001 (Twilight Theme 1.15.0)
 - Added the box drawing characters (U+2500–257F), the block elements (U+2580–259F) and the
   Powerline separators (U+E0B0–E0B3), computed by fonts/scripts/boxdraw.py from each master's
   advance width, typographic line box and hyphen thickness. Lines reach the cell edges;
@@ -98,11 +98,12 @@ Twilight Crystal Mono 1.001 (Twilight 1.15.0)
 - No other change: fonts/scripts/check.py finds no difference from the upstream fonts beyond
   the added characters, declared in fonts/changes.json.
 
-Twilight Crystal and Twilight Crystal Mono 1.000 (Twilight 1.14.0)
+Twilight Crystal and Twilight Crystal Mono 1.000 (Twilight Theme 1.14.0)
 - Family names changed to Twilight Crystal and Twilight Crystal Mono; file names to
   TwilightCrystal and TwilightCrystalMono.
-- Copyright notice extended with the Twilight copyright line; manufacturer and manufacturer
-  URL set to Twilight; a description crediting the upstream family and its designers added.
+- Copyright notice extended with the Twilight Theme copyright line; manufacturer and
+  manufacturer URL set to Twilight Theme; a description crediting the upstream family and its
+  designers added.
 - Font version set to 1.000.
 - No outline, spacing, kerning or feature changes. fonts/scripts/check.py compares every named
   instance with the upstream fonts at the pinned commit: same glyphs, character map, axes,
@@ -125,5 +126,5 @@ Skriblovsky, Navid Rojiani, ToxicFrog and its contributors.
 https://github.com/ToxicFrog/Ligaturizer
 
 Twilight Crystal and Twilight Crystal Mono are maintained by José D. Gutiérrez as part of
-Twilight.
+Twilight Theme.
 https://github.com/iamdantz/twilight

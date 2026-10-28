@@ -3,7 +3,7 @@
 Adds [Fira Code](https://github.com/tonsky/FiraCode)'s programming ligatures to a monospaced
 font. A modernized fork of [Ligaturizer](https://github.com/ToxicFrog/Ligaturizer), originally
 written by Ilya Skriblovsky for dv-code-font and generalized by Navid Rojiani, ToxicFrog and its
-contributors. Twilight uses it to build the optional ligatures of Twilight Crystal Mono.
+contributors. Twilight Theme uses it to build the optional ligatures of Twilight Crystal Mono.
 
 ## What changed from Ligaturizer
 

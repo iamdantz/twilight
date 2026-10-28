@@ -1,6 +1,6 @@
-"""Twilight validator: quality floors, construction reproduction and document consistency.
+"""Twilight Theme validator: quality floors, construction reproduction and document consistency.
 
-Usage (from anywhere inside the Twilight repository):
+Usage (from anywhere inside the Twilight Theme repository):
     <skill>/.venv/bin/python <skill>/scripts/validate.py [palette/twilight.json] [--ref REF] [--compare REF] [--json] [--no-rebuild] [--robust]
 
 The rebuild runs construct.py (both flavors, §6.5 included) once per invocation, about 2 minutes.
@@ -32,7 +32,7 @@ TRANSIENT = ("selection", "selection-inactive", "find-match", "find-match-other"
 ANCHORS = {name: k.oklch_of(k.CORNERS[slot])[2] for name, slot in k.COLOR_KEYS.items() if slot in k.CORNERS}
 WCAG_THRESHOLDS = (3.0, 4.5, 7.0)   # compared strictly: a measured 4.496 does not meet 4.5
 # Quality floors (construction.md §10.1). Two levels:
-# MINIMUMS: the Twilight standard for each category. Every flavor of the category meets them, a new flavor included,
+# MINIMUMS: the Twilight Theme standard for each category. Every flavor of the category meets them, a new flavor included,
 #   and they never go down.
 # FLOORS: what each flavor reaches today, guarding it against regressions. A flavor floor may go down only when the
 #   latest CHANGELOG entry names the check, in backticks, under "### Lower", and the new floor still meets the
@@ -638,7 +638,7 @@ def floor_table_checks(P, category):
 
 
 def report(r):
-    print(f"# Twilight validation: {r['snapshot']}\n")
+    print(f"# Twilight Theme validation: {r['snapshot']}\n")
     print(f"{'check':34} " + "   ".join(f"{f:>8} {'floor':>7} {'min':>7}" for f in r["palette"]))
     for c in CHECKS:
         row = [x for x in r["floors"] if x["check"] == c]

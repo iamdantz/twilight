@@ -1,4 +1,4 @@
-# Twilight construction
+# Twilight Theme construction
 
 Version 1.12. How every value was derived, optimized and validated.
 
@@ -143,9 +143,9 @@ Dawn is the same system read from the other end of the neutral curve. Every form
 | Flavor | Neutral chroma amplitude | 0.035 | 0.035 |
 | System | Neutral curve, Rail (§3.4) | h(L), C(L) of §3.1–3.2; half step | the same |
 
-**Canvas and Ink.** Each flavor sets its own two anchors. Dawn's Canvas (L 0.95, `#eeeeef`) and Ink (L 0.20, `#11171b`) are the same two colors as Dusk's Ink and Canvas, with the roles exchanged; they are Dawn's own parameters, so changing Dusk's anchors does not move Dawn. Ink on Canvas is 15.58:1 in both flavors. The lightest value in Twilight is therefore L 0.95, a cool silver from the near-neutral end of the curve.
+**Canvas and Ink.** Each flavor sets its own two anchors. Dawn's Canvas (L 0.95, `#eeeeef`) and Ink (L 0.20, `#11171b`) are the same two colors as Dusk's Ink and Canvas, with the roles exchanged; they are Dawn's own parameters, so changing Dusk's anchors does not move Dawn. Ink on Canvas is 15.58:1 in both flavors. The lightest value in Twilight Theme is therefore L 0.95, a cool silver from the near-neutral end of the curve.
 
-**Surfaces keep the system's perceptual distances.** Shell, Raised and Edge are placed at the §3.3 distances from Canvas (2.41, 3.16 and 7.22 JND), stepping down from Canvas, the same distances Dusk uses. ΔE is the perceptual measure Twilight uses everywhere (§9.1). Matching contrast ratios instead, as Dawn did before 1.2, gives smaller visible steps near white: WCAG contrast changes faster with L at the light end, so the same ratio covers less lightness. With equal ΔE, Dawn's surfaces look as far apart as Dusk's, and the extra room lets background states reach their targets (§9.2).
+**Surfaces keep the system's perceptual distances.** Shell, Raised and Edge are placed at the §3.3 distances from Canvas (2.41, 3.16 and 7.22 JND), stepping down from Canvas, the same distances Dusk uses. ΔE is the perceptual measure Twilight Theme uses everywhere (§9.1). Matching contrast ratios instead, as Dawn did before 1.2, gives smaller visible steps near white: WCAG contrast changes faster with L at the light end, so the same ratio covers less lightness. With equal ΔE, Dawn's surfaces look as far apart as Dusk's, and the extra room lets background states reach their targets (§9.2).
 
 **Every surface is darker than Canvas.** Light interfaces darken frames, side panels and borders against the content area rather than lightening them, and there is no room above Canvas: it already sits at the lightest value of the system.
 
@@ -460,9 +460,9 @@ While Dawn 1.0 was being validated, its focus color (`#de711c`) passed 3:1 on Ca
 
 ### 10.1 Quality floors
 
-Twilight holds its flavors to two levels of floor.
+Twilight Theme holds its flavors to two levels of floor.
 
-**Category minimums** are the Twilight standard. Every dark flavor meets the dark column and every light flavor the light one, including a flavor added later. They sit above what established themes reach: on popular dark themes the median ANSI color is 4.8:1 on its background, and the best color-vision separation among them is ΔE 0.044.
+**Category minimums** are the Twilight Theme standard. Every dark flavor meets the dark column and every light flavor the light one, including a flavor added later. They sit above what established themes reach: on popular dark themes the median ANSI color is 4.8:1 on its background, and the best color-vision separation among them is ΔE 0.044.
 
 | Minimum | Dark | Light |
 |---|---|---|

@@ -1,4 +1,4 @@
-<h1 align="center">Twilight</h1>
+<h1 align="center">Twilight Theme</h1>
 
 <p align="center"><i>Calm by design, legible by proof.</i></p>
 
@@ -14,7 +14,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/palette-dusk.png">
     <source media="(prefers-color-scheme: light)" srcset="assets/palette-dawn.png">
-    <img src="assets/palette-dusk.png" alt="Twilight palette" width="800">
+    <img src="assets/palette-dusk.png" alt="Twilight Theme palette" width="800">
   </picture>
 </p>
 
@@ -26,7 +26,7 @@
 
 <br>
 
-Twilight is a color theme specification: two flavors, ten neutrals, eight colors and the rules that connect them. None of the palette colors were picked by eye. One value was chosen as a seed; every color was calculated from it, and every pairing was checked for contrast and for color-vision deficiency.
+Twilight Theme is a color theme specification: two flavors, ten neutrals, eight colors and the rules that connect them. None of the palette colors were picked by eye. One value was chosen as a seed; every color was calculated from it, and every pairing was checked for contrast and for color-vision deficiency.
 
 ## Why
 
@@ -52,7 +52,7 @@ Both flavors share every role, every rule and one neutral curve. Dawn's Canvas i
 
 ## Accent
 
-Afterglow, the most chromatic orange sRGB holds at the seed's hue, is the accent of every Twilight theme. It marks focus, the cursor, active items, badges, links and the main action; it never colors content. Its variants for text, pressed and focus states are solved to the same contrast rules as everything else. See [Accent in the design system](docs/design-system.md#5-accents).
+Afterglow, the most chromatic orange sRGB holds at the seed's hue, is the accent of every theme built from Twilight Theme. It marks focus, the cursor, active items, badges, links and the main action; it never colors content. Its variants for text, pressed and focus states are solved to the same contrast rules as everything else. See [Accent in the design system](docs/design-system.md#5-accents).
 
 A theme is named by its flavor: **Twilight Dusk**, **Twilight Dawn**.
 
@@ -151,9 +151,9 @@ All math is done in OKLCH and checked in sRGB. Afterglow is the most chromatic o
 
 The full derivation, with every formula and parameter, is in [construction.md](docs/construction.md).
 
-## Using Twilight
+## Using Twilight Theme
 
-Twilight is defined independently of any application. To build a theme for a tool, map its regions to the surface roles and follow [Applying the system](docs/design-system.md#12-applying-the-system), which also lists what a port must not do.
+Twilight Theme is defined independently of any application. To build a theme for a tool, map its regions to the surface roles and follow [Applying the system](docs/design-system.md#12-applying-the-system), which also lists what a port must not do.
 
 ## Repository
 
@@ -192,4 +192,4 @@ Twilight Crystal and Twilight Crystal Mono are licensed under the [SIL Open Font
 
 [tools/ligaturizer](tools/ligaturizer) is a fork of [Ligaturizer](https://github.com/ToxicFrog/Ligaturizer) and is licensed, like it, under the [GNU General Public License 3](tools/ligaturizer/LICENSE). The build runs it as a separate program; its license does not extend to the fonts it helps build.
 
-Each license disclaims all warranty: Twilight, its fonts and its tools are provided as is.
+Each license disclaims all warranty: Twilight Theme, its fonts and its tools are provided as is.

@@ -6,6 +6,7 @@ Optional programming ligatures in Twilight Crystal Mono, from Fira Code. No pale
 
 ### Renamed
 - The typefaces are now Twilight Crystal (sans-serif) and Twilight Crystal Mono (monospaced), with files `TwilightCrystal` and `TwilightCrystalMono`. They were Twilight Text and Twilight Code during development and had not been released.
+- The project is now Twilight Theme. The themes keep their names, Twilight Dusk and Twilight Dawn, and so does the naming *Twilight {Flavor}* for ports. The fonts' manufacturer (name ID 8) is Twilight Theme. The repository address is unchanged for now.
 - Under the OFL a Modified Version may not use the Reserved Font Names of its sources. Atkinson Hyperlegible Next, Atkinson Hyperlegible Mono and Fira Code declare none, and no published font was found under either new name.
 
 ### Added
@@ -97,7 +98,7 @@ Twilight Crystal Mono draws terminal interfaces: box drawing, block elements and
 
 ## 1.14.0
 
-Twilight Crystal and Twilight Crystal Mono, the typefaces of Twilight. No palette changes.
+Twilight Crystal and Twilight Crystal Mono, the typefaces of Twilight Theme. No palette changes.
 
 ### Added
 - fonts/: Twilight Crystal (sans-serif) and Twilight Crystal Mono (monospaced), Modified Versions of Atkinson Hyperlegible Next 2.001 and Atkinson Hyperlegible Mono 2.001 under the SIL Open Font License 1.1, which reserves no font name. This version renames them; outlines, spacing, kerning and features are the upstream ones.

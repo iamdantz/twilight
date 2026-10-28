@@ -1,4 +1,4 @@
-"""Compare the built Twilight fonts with the upstream fonts they derive from.
+"""Compare the built Twilight Theme fonts with the upstream fonts they derive from.
 
 Every change made to Twilight Crystal and Twilight Crystal Mono is meant to be deliberate. This check
 lists everything that differs between a built variable font and its upstream counterpart, at

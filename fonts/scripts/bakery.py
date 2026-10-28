@@ -1,4 +1,4 @@
-"""Font Bakery on the built Twilight fonts, against the upstream fonts they derive from.
+"""Font Bakery on the built Twilight Theme fonts, against the upstream fonts they derive from.
 
 Each built variable font and its upstream counterpart are checked with the Google Fonts
 profile, each alone in a scratch directory, so checks that read catalog files fail the same

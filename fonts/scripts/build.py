@@ -39,12 +39,12 @@ def metadata(family):
     up = family["upstream"]
     return {
         "copyright": f"{{original}} Copyright {YEAR} {HOLDER} ({PROJECT}).",
-        "manufacturer": "Twilight",
+        "manufacturer": "Twilight Theme",
         "manufacturerURL": PROJECT,
         # name ID 10, kept under the 200 characters applications expect
         "description": f"Derived from {up['family']} {up['version']}, designed by {{designers}}. "
-                       + ("Optional ligatures from Fira Code. " if family["file"] in LIGATURES else "")
-                       + "Part of Twilight.",
+                       + ("Ligatures from Fira Code. " if family["file"] in LIGATURES else "")
+                       + "Part of Twilight Theme.",
     }
 
 

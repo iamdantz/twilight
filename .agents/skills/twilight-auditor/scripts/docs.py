@@ -1,6 +1,6 @@
-"""Twilight documents from the palette: tables, measured figures in prose, and the palette images.
+"""Twilight Theme documents from the palette: tables, measured figures in prose, and the palette images.
 
-Usage (from anywhere inside the Twilight repository):
+Usage (from anywhere inside the Twilight Theme repository):
     <skill>/.venv/bin/python <skill>/scripts/docs.py           # rewrite README.md, design-system.md and assets/
     <skill>/.venv/bin/python <skill>/scripts/docs.py --check   # report every difference, change nothing
 
