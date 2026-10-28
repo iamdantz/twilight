@@ -11,6 +11,8 @@ Typography documented, fonts ready to release. No palette changes.
   - macOS: Verdana and Menlo;
   - Linux: Noto Sans or Adwaita Sans, with Hack, Adwaita Mono or DejaVu Sans Mono.
 - The rule that the original letters are kept, with what Twilight Crystal changes and what it does not.
+- `fonts/README.md`: the page of Twilight Crystal. It starts with legibility, the reason Twilight Theme chose Atkinson Hyperlegible, and goes on to the terminal characters, the optional ligatures and the smaller additions. It ends with the originals on Google Fonts and the licenses. A specimen in the Dusk colors goes with it (`assets/crystal-specimen.png`).
+- The documents this version and the earlier unreleased ones added were edited for plain language: no fragments for effect, no repeated sentence shapes, and no claims the checks do not measure.
 - Releases: a tag `v<version>` on main builds the fonts and runs every check. It publishes one archive per family with variable, static and web fonts, `OFL.txt` and `FONTLOG.txt`, plus `SHA256SUMS.txt` (`fonts/scripts/package.py`, `.github/workflows/release.yml`).
 
 ### Licensing
@@ -32,8 +34,8 @@ Optional programming ligatures in Twilight Crystal Mono, from Fira Code. No pale
 
 ### Added
 - Twilight Crystal Mono 1.005: Fira Code 6.2's programming ligatures in stylistic set 1, "Programming ligatures", off by default. With the set off nothing changes. With it on, `->`, `!==`, `<=`, `&&`, `|>` and the rest of Fira Code's set join; arrows and rows of `-`, `=`, `#` and `_` join at any length (`<==>`, `|-->`, `####`). A sequence of n characters still takes n cells. Turn it on with `"editor.fontLigatures": "'ss01'"` in VS Code, or the same feature in any application that sets OpenType features.
-- Fira Code's rules are kept as they are, with three exceptions. Rules that redraw single characters in Fira Code's style are left out: `0xFF` with ×, punctuation raised next to capitals, Greek capitals. So is `www`. And a double hyphen before a letter (`--watch`) stays plain.
-- The ligatures are fitted to Twilight Crystal Mono in four ways. They are scaled to its cell. Each master takes them at the weight where Fira Code's hyphen is as thick as its own. They are moved onto its math axis (72.5 units lower than Fira Code's). And they are slanted 12 degrees in the italic.
+- Fira Code's rules are kept as they are, with three exceptions. Rules that redraw single characters in Fira Code's style are left out (`0xFF` with ×, punctuation raised next to capitals, Greek capitals), and so is `www`. One rule is added: a double hyphen before a letter (`--watch`) stays plain.
+- The ligatures are scaled to Twilight Crystal Mono's cell, taken in each master at the weight where Fira Code's hyphen is as thick as its own, moved 72.5 units down onto its math axis, and slanted 12 degrees in the italic.
 
 ### Licensing
 - Fira Code (SIL Open Font License 1.1, no Reserved Font Name) is pinned in `fonts/upstream/firacode` with its license and authors.
@@ -80,7 +82,7 @@ Shapes, symbols and braille in Twilight Crystal and Twilight Crystal Mono. No pa
   - Geometric shapes ■ □ ▪ ▫ ▲ △ ▴ ▵ ▶ ▷ ▸ ▹ ▼ ▽ ▾ ▿ ◀ ◁ ◂ ◃ ◆ ◇ ○ ● ◦, computed per master: small shapes have the area of the bullet, large ones that of a circle as tall as a capital; all sit on the math axis; outlined shapes take the plus sign's stroke, or one fixed fraction of it where a heavy master would close the hole.
   - ∆ and ∅ with the plus sign's stroke (∅ crossed at the angle and thickness of the slash), and ⟨ ⟩ as tall and as wide as the parentheses.
   - From the designers' own outlines, moved but not redrawn: ‖ (two bars, spaced like the equal sign), ′ ″ (the straight quotes at the italic angle), ⅓ ⅔ (digits and slash of ½ and ¾), ⁴ (the 4 of ¼ at superior size), ₁ ₂ ₃ ₄ (the superiors on the subscript line the font declares), µ (the u with its stem carried to the descender).
-  - Twilight Crystal only: № (N and º); in Code it does not fit one cell.
+  - Twilight Crystal only: № (N and º); in Twilight Crystal Mono it does not fit one cell.
 - Twilight Crystal Mono only: the 256 braille patterns (U+2800–28FF), a 2 × 4 grid of the font's own period spread evenly over the cell, so terminal graphs keep one dot spacing across cells and rows; and the rounded Powerline separators U+E0B4–E0B7.
 - GF Latin Plus coverage: Crystal from 38 to 79 of 110 characters, Crystal Mono from 36 to 76. Left out, because they need new drawing rather than derivation: superior and inferior 5 to 9 and 0, Ω, Ⓓ and the currency signs beyond those already present.
 
@@ -95,7 +97,7 @@ Shapes, symbols and braille in Twilight Crystal and Twilight Crystal Mono. No pa
 Arrows in Twilight Crystal and Twilight Crystal Mono. No palette changes.
 
 ### Added
-- Twilight Crystal 1.001 and Twilight Crystal Mono 1.002: arrows ← ↑ → ↓ ↔ ↕ ↖ ↗ ↘ ↙ (U+2190–2199), ↩ ↪ (U+21A9–21AA), ↵ (U+21B5) and ⇐ ⇑ ⇒ ⇓ (U+21D0–21D3); Text also ⇔ ⇕ (U+21D4–21D5). Text gets 19 characters and Code 17. They are computed from each master: the stroke and the axis of the plus sign, the line spacing of the equal sign, the italic angle. Shaft and head share one stroke; heads are open, with arms at 45 degrees. In Text a horizontal arrow is about as wide as a capital M; in Code it fills the cell but for 40 units on each side.
+- Twilight Crystal 1.001 and Twilight Crystal Mono 1.002: arrows ← ↑ → ↓ ↔ ↕ ↖ ↗ ↘ ↙ (U+2190–2199), ↩ ↪ (U+21A9–21AA), ↵ (U+21B5) and ⇐ ⇑ ⇒ ⇓ (U+21D0–21D3); Twilight Crystal also ⇔ ⇕ (U+21D4–21D5). Twilight Crystal gets 19 characters and Twilight Crystal Mono 17. They are computed from each master: the stroke and the axis of the plus sign, the line spacing of the equal sign, the italic angle. Shaft and head share one stroke; heads are open, with arms at 45 degrees. In Twilight Crystal a horizontal arrow is about as wide as a capital M; in Twilight Crystal Mono it fills the cell but for 40 units on each side.
 - Crystal Mono leaves out ⇔ and ⇕: at ExtraBold a double line with a head at each end does not fit the cell with heads that reach past both lines.
 
 ### Tooling

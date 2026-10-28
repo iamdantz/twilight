@@ -155,7 +155,7 @@ The full derivation, with every formula and parameter, is in [construction.md](d
 
 Twilight Theme is defined independently of any application. To build a theme for a tool, map its regions to the surface roles and follow [Applying the system](docs/design-system.md#12-applying-the-system), which also lists what a port must not do.
 
-Twilight Theme recommends its typefaces, Twilight Crystal and Twilight Crystal Mono, published with every release. Atkinson Hyperlegible Next and Mono, on Google Fonts, are the alternative they derive from; the system's own fonts come last, and the user's taste always has the last word. [typography.md](docs/typography.md) covers which font to use, what Twilight Crystal adds, the optional ligatures and the closest system fonts.
+Twilight Theme recommends its typefaces, [Twilight Crystal and Twilight Crystal Mono](fonts/README.md), published with every release. Atkinson Hyperlegible Next and Mono, on Google Fonts, are the alternative they derive from; the system's own fonts come last, and the user's taste always has the last word. [typography.md](docs/typography.md) covers which font to use, what Twilight Crystal adds, the optional ligatures and the closest system fonts.
 
 ## Repository
 
@@ -171,6 +171,7 @@ Twilight Theme recommends its typefaces, Twilight Crystal and Twilight Crystal M
 │   ├── construction.md      derivation, optimization and validation
 │   └── typography.md        typefaces, alternatives and ligatures
 ├── fonts/
+│   ├── README.md            Twilight Crystal and Twilight Crystal Mono
 │   ├── upstream/            pinned upstream sources and licenses, unmodified
 │   ├── scripts/             build, additions, hinting, checks, Font Bakery, packaging
 │   ├── ligatures.json       which Fira Code ligatures Twilight Crystal Mono takes
@@ -189,7 +190,7 @@ Twilight Theme recommends its typefaces, Twilight Crystal and Twilight Crystal M
 
 ## License
 
-Each part of the repository has the license that fits what it is:
+Each part of the repository has its own license:
 
 | Part | License | Holder |
 | --- | --- | --- |
