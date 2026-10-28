@@ -30,12 +30,6 @@ Twilight Text and Twilight Code are licensed under the SIL Open Font License 1.1
 ChangeLog
 ---------
 
-Twilight Text 1.003 and Twilight Code 1.005 (Twilight 1.19.0)
-- Comma, quotesinglbase, quotedblbase, quoteleft, quoteright, quotedblleft and quotedblright
-  (and the semicolon, built from the comma): the tail thickened by fonts/scripts/punctuation.py,
-  both edges moved outward, in every master, so ; and , stay distinct from : and . at small
-  sizes. fonts/scripts/punctcheck.py verifies it. No other glyph changes.
-
 Twilight Code 1.004 (Twilight 1.18.0)
 - Static fonts only: the TrueType instructions of box drawing, block elements and Powerline
   separators replaced by fonts/scripts/cellhint.py, which rounds the cell's edges to pixel rows

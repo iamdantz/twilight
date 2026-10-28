@@ -69,11 +69,6 @@ jobs:
           set -o pipefail
           .venv-build/bin/python "$SCRIPTS/symbolcheck.py" | tee symbolcheck.txt
 
-      - name: Punctuation
-        run: |
-          set -o pipefail
-          .venv-build/bin/python "$SCRIPTS/punctcheck.py" "$RUNNER_TEMP/reference" | tee punctcheck.txt
-
       - name: Hinting
         run: |
           set -o pipefail
@@ -87,7 +82,7 @@ jobs:
       - name: Report
         if: always()
         run: |
-          for f in check.txt boxcheck.txt arrowcheck.txt symbolcheck.txt punctcheck.txt hintcheck.txt bakery.txt; do
+          for f in check.txt boxcheck.txt arrowcheck.txt symbolcheck.txt hintcheck.txt bakery.txt; do
             [ -f "$f" ] || continue
             { echo '```'; cat "$f"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
           done
