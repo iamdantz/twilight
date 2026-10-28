@@ -4,13 +4,13 @@ Twilight Theme is at the definition stage. The palette, the rules and the docume
 
 ## What is useful right now
 
-- **Errors in the numbers.** If a value in [design-system.md](docs/design-system.md) or [palette/twilight.json](palette/twilight.json) does not meet the contrast it claims, open an issue with the two colors and the ratio you measured.
+- **Errors in the numbers.** If a value in [design-system/color.md](docs/design-system/color.md) or [palette/twilight.json](palette/twilight.json) does not meet the contrast it claims, open an issue with the two colors and the ratio you measured.
 - **Gaps in the rules.** If you tried to map Twilight Theme onto a tool and a region had no clear role, describe the region and the tool.
-- **Questions about the method.** If a step in [construction.md](docs/construction.md) is unclear or looks wrong, ask.
+- **Questions about the method.** If a step in [construction/color.md](docs/construction/color.md) is unclear or looks wrong, ask.
 
 ## Proposing a change to a color
 
-Colors are not adjusted by eye. A proposal should name the rule it changes, or the parameter in [construction.md, section 12](docs/construction.md#12-parameters-decided-vs-derived), and show that every guarantee in [design-system.md, section 14](docs/design-system.md#14-guarantees) still holds afterwards. A guarantee may go down only under the conditions in [construction.md, section 10.1](docs/construction.md#101-quality-floors): never below its category minimum, named in the changelog, and with a loss that is imperceptible or well inside the standard.
+Colors are not adjusted by eye. A proposal should name the rule it changes, or the parameter in [construction/color.md, section 12](docs/construction/color.md#12-parameters-decided-vs-derived), and show that every guarantee in [design-system/color.md, section 14](docs/design-system/color.md#14-guarantees) still holds afterwards. A guarantee may go down only under the conditions in [construction/color.md, section 10.1](docs/construction/color.md#101-quality-floors): never below its category minimum, named in the changelog, and with a loss that is imperceptible or well inside the standard.
 
 ## Before opening a pull request
 
@@ -59,7 +59,7 @@ Twilight Crystal Mono's ligatures are added by [tools/ligaturizer](tools/ligatur
 
 ## Building a theme for a tool
 
-Not accepted yet. When ports open, they will follow [Applying the system](docs/design-system.md#12-applying-the-system) and use the naming *Twilight {Flavor}*, with Afterglow as the accent.
+Not accepted yet. When ports open, they will follow [Applying the system](docs/design-system/color.md#12-applying-the-system) and use the naming *Twilight {Flavor}*, with Afterglow as the accent.
 
 ## Licensing of contributions
 

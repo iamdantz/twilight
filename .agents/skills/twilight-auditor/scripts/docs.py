@@ -1,7 +1,7 @@
 """Twilight Theme documents from the palette: tables, measured figures in prose, and the palette images.
 
 Usage (from anywhere inside the Twilight Theme repository):
-    <skill>/.venv/bin/python <skill>/scripts/docs.py           # rewrite README.md, design-system.md and assets/
+    <skill>/.venv/bin/python <skill>/scripts/docs.py           # rewrite README.md, design-system/color.md and assets/
     <skill>/.venv/bin/python <skill>/scripts/docs.py --check   # report every difference, change nothing
 
 Every number this script writes is computed from palette/twilight.json. A measured figure in prose is wrapped in
@@ -20,7 +20,7 @@ ROOT = Path(subprocess.run(["git", "rev-parse", "--show-toplevel"], check=True, 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import construct as k  # noqa: E402
 
-DOCS = ("README.md", "docs/design-system.md")
+DOCS = ("README.md", "docs/design-system/color.md")
 NAMES = {"Afterglow": "afterglow", "Coral": "coral", "Gold": "gold", "Grove": "grove", "Sea Salt": "sea-salt",
          "Sky": "sky", "Orchid": "orchid", "Ember": "ember"}
 NEUTRAL_ORDER = ("shell", "rail", "canvas", "raised", "edge", "control", "faint", "subtle", "body", "ink")

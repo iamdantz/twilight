@@ -1,10 +1,10 @@
-# Twilight Theme design system
+# Twilight Theme design system: color
 
 Version 1.13 · Flavors: Dusk (dark), Dawn (light)
 
 This document defines Twilight Theme: what each color is, what it means, where it may go, and what it guarantees. It does not describe any particular application. A theme for any tool can be built from it by mapping that tool's regions onto the roles below.
 
-How the values were derived is in [construction.md](construction.md). All values in machine-readable form are in [palette/twilight.json](../palette/twilight.json).
+How the values were derived is in [construction/color.md](../construction/color.md). All values in machine-readable form are in [palette/twilight.json](../../palette/twilight.json).
 
 ## Contents
 
@@ -126,7 +126,7 @@ Placeholders use Subtle, never Faint. A placeholder can sit on Raised, and readi
 
 Afterglow is the accent of every theme built from Twilight Theme, and a theme is named by its flavor alone: *Twilight Dusk*, *Twilight Dawn*.
 
-The other seven colors also have accent families, built and validated by the same rules and published in [palette/twilight.json](../palette/twilight.json). No theme uses them as an accent. Their `accent-text` is the text variant of each semantic color ([§8](#8-semantic-states)); the other tokens are kept so the accent can become a choice without changing any other token.
+The other seven colors also have accent families, built and validated by the same rules and published in [palette/twilight.json](../../palette/twilight.json). No theme uses them as an accent. Their `accent-text` is the text variant of each semantic color ([§8](#8-semantic-states)); the other tokens are kept so the accent can become a choice without changing any other token.
 
 Each family provides five tokens:
 
@@ -223,7 +223,7 @@ A music player shows how the two kinds combine. The play button of the open play
 
 Code colors, semantic states, background states (including selection), the cursor and terminal colors belong to the flavor and would stay identical whatever the accent. Background-state hues were allocated so that no two collide, and letting the accent tint them would break that.
 
-The cursor is Afterglow's `accent-focus`, the color the code colors are optimized against ([construction.md §6.5](construction.md#65-joint-optimization)). Text under it is Afterglow's `on-accent`.
+The cursor is Afterglow's `accent-focus`, the color the code colors are optimized against ([construction/color.md §6.5](../construction/color.md#65-joint-optimization)). Text under it is Afterglow's `on-accent`.
 
 ## 6. Colors
 
@@ -244,7 +244,7 @@ Coral is reserved for danger. It never colors a frequent code category, so an er
 
 ## 7. Syntax roles
 
-The mapping is fixed by [construction.md, section 8](construction.md#8-syntax-roles). Categories are named generically so they map onto any grammar.
+The mapping is fixed by [construction/color.md, section 8](../construction/color.md#8-syntax-roles). Categories are named generically so they map onto any grammar.
 
 | Category | Includes | Color | Style |
 |---|---|---|---|
@@ -268,7 +268,7 @@ The mapping is fixed by [construction.md, section 8](construction.md#8-syntax-ro
 
 Only comments, parameters and `this`/`self` are italic.
 
-Properties are uncolored because they cover more of the screen than any other category the convention leaves open, so code is not colored end to end ([construction.md §8](construction.md#8-syntax-roles)).
+Properties are uncolored because they cover more of the screen than any other category the convention leaves open, so code is not colored end to end ([construction/color.md §8](../construction/color.md#8-syntax-roles)).
 
 ## 8. Semantic states
 
@@ -283,7 +283,7 @@ Properties are uncolored because they cover more of the screen than any other ca
 | Renamed | Sea Salt | Renamed or moved items |
 | Ignored, inactive | Faint | Ignored files, dead code, disabled items |
 
-Version-control markers (gutter bars, file decorations) follow the same mapping: added Grove, modified Gold, removed Coral, renamed Sea Salt, ignored Faint, conflict Orchid. Every marker also carries a letter or an icon. Under color-vision deficiency, Faint sits only <!-- fact:dawn.faint_semantic -->1.05<!-- /fact --> JND from the nearest semantic color in Dawn (Dusk: <!-- fact:dusk.faint_semantic -->3.30<!-- /fact -->), so color alone cannot separate an ignored item from an added one ([construction.md §11](construction.md#11-known-limits)).
+Version-control markers (gutter bars, file decorations) follow the same mapping: added Grove, modified Gold, removed Coral, renamed Sea Salt, ignored Faint, conflict Orchid. Every marker also carries a letter or an icon. Under color-vision deficiency, Faint sits only <!-- fact:dawn.faint_semantic -->1.05<!-- /fact --> JND from the nearest semantic color in Dawn (Dusk: <!-- fact:dusk.faint_semantic -->3.30<!-- /fact -->), so color alone cannot separate an ignored item from an added one ([construction/color.md §11](../construction/color.md#11-known-limits)).
 
 Icons, markers and 3 px bars use the semantic color itself, which reaches at least <!-- fact:min.semantic_surfaces -->3.19<!-- /fact -->:1 on every surface and on Edge. Text in a semantic color uses that color's `accent-text` ([§5](#5-accents)), which meets the code floor of its category (7:1 dark, 4.5:1 light) on every surface. The colors themselves are not enough for text: in Dawn, Grove, Gold and Sea Salt stay below 4.5:1 on Raised. On a filled chip, the label is Shell in dark flavors and Canvas in light ones. Both reach at least <!-- fact:chip -->5.04<!-- /fact -->:1 on every semantic color.
 
@@ -403,7 +403,7 @@ Of black and white, the one that matches the background's polarity is a surface:
 9. **No color without a role.** Status bars, labels and file-type tags use neutrals.
 10. **Terminals use only the sixteen ANSI colors.** Prompts and tools must not depend on others.
 11. **The current line uses a border, not a fill.**
-12. **New surfaces are derived.** If a tool needs a surface not listed here, derive it with the surface rules in [construction.md](construction.md#3-neutrals) and re-check every text level on it.
+12. **New surfaces are derived.** If a tool needs a surface not listed here, derive it with the surface rules in [construction/color.md](../construction/color.md#3-neutrals) and re-check every text level on it.
 13. **Shadows use the darkest neutral with transparency:** Shell at 60 % in dark flavors, Body at 20 % in light ones.
 14. **Tokens are solid.** If a platform requires transparency, choose the alpha so that the result over Canvas equals the solid token.
 15. **No gradients.** Depth comes from tone.
@@ -470,7 +470,7 @@ On Shell or Raised, hover and pressed share Edge. Only Body, Ink and Subtle (for
 
 ### 12.4 Data visualization
 
-Data series take the code colors in a fixed order, the same in every flavor, so a series keeps its color when a chart moves between a dark and a light theme. The order keeps the largest separation at every number of series ([construction.md §7.1](construction.md#71-series-order)). The figures are the smallest ΔE OKLab among the series up to that row, worst case across normal vision and the three dichromacies; for Other, between Control and every series.
+Data series take the code colors in a fixed order, the same in every flavor, so a series keeps its color when a chart moves between a dark and a light theme. The order keeps the largest separation at every number of series ([construction/color.md §7.1](../construction/color.md#71-series-order)). The figures are the smallest ΔE OKLab among the series up to that row, worst case across normal vision and the three dichromacies; for Other, between Control and every series.
 
 | Series | Color | Dusk | Dawn | Smallest ΔE, Dusk | Smallest ΔE, Dawn |
 |---|---|---|---|---|---|
@@ -490,7 +490,7 @@ Data series take the code colors in a fixed order, the same in every flavor, so 
 - To bring one series forward, draw the others in Control.
 - Magnitude is shown with the two scales below, never by interpolating between palette colors.
 
-**Sequential** (one quantity, low to high): five steps of Ember from Canvas. **Diverging** (deviation from a middle value): two steps of Sky below, Canvas at the middle, two steps of Gold above. Every step is at least as far from its neighbors as the code colors must be from each other (4 JND in normal vision, 2 JND under color-vision deficiency), and so are the two diverging steps at the same distance from the middle. Every colored cell takes a label at 4.5:1 or more, in Ink or in the chip label of §8, whichever contrasts more. The method is in [construction.md §7.2](construction.md#72-continuous-scales).
+**Sequential** (one quantity, low to high): five steps of Ember from Canvas. **Diverging** (deviation from a middle value): two steps of Sky below, Canvas at the middle, two steps of Gold above. Every step is at least as far from its neighbors as the code colors must be from each other (4 JND in normal vision, 2 JND under color-vision deficiency), and so are the two diverging steps at the same distance from the middle. Every colored cell takes a label at 4.5:1 or more, in Ink or in the chip label of §8, whichever contrasts more. The method is in [construction/color.md §7.2](../construction/color.md#72-continuous-scales).
 
 | Scale | Step | Dusk | Dawn |
 |---|---|---|---|
@@ -581,7 +581,7 @@ Each misuse below breaks a role or a guarantee. Ports are checked against this t
 | State, links or series told apart by color alone | Readers with a color-vision deficiency lose them | Icon, label, underline, marker or position ([rule 6](#11-rules)) |
 | Gradients, glows, washes | [Rule 15](#11-rules) | Tone and Edge |
 | A color borrowed from another role to stand in for one the target lacks | Two meanings share a color | Leave the effect out (§12.5) |
-| A hex value edited by hand | It no longer rebuilds from [construction.md](construction.md) | A change to the method, validated |
+| A hex value edited by hand | It no longer rebuilds from [construction/color.md](../construction/color.md) | A change to the method, validated |
 
 ## 14. Guarantees
 
@@ -610,4 +610,4 @@ Each misuse below breaks a role or a guarantee. Ports are checked against this t
 | Pure black or white | none | none |
 | Gamut | sRGB | sRGB |
 
-These are the values each flavor reaches today; no change may lower one without the conditions of [construction.md §10.1](construction.md#101-quality-floors), and no flavor, present or future, may fall below the minimums listed there. Contrast is WCAG 2.x relative-luminance contrast on final sRGB values. Color-vision figures are the worst case across simulated deuteranopia, protanopia and tritanopia, over the six code colors (Orchid, Sky, Sea Salt, Grove, Gold, Ember) and the cursor. The six code colors are also the six data series, so the code-color figures hold for any number of series.
+These are the values each flavor reaches today; no change may lower one without the conditions of [construction/color.md §10.1](../construction/color.md#101-quality-floors), and no flavor, present or future, may fall below the minimums listed there. Contrast is WCAG 2.x relative-luminance contrast on final sRGB values. Color-vision figures are the worst case across simulated deuteranopia, protanopia and tritanopia, over the six code colors (Orchid, Sky, Sea Salt, Grove, Gold, Ember) and the cursor. The six code colors are also the six data series, so the code-color figures hold for any number of series.

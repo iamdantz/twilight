@@ -1,4 +1,4 @@
-"""Twilight Theme construction: the reference implementation of docs/construction.md.
+"""Twilight Theme construction: the reference implementation of docs/construction/color.md.
 
 Rebuilds both flavors from the decided parameters (construction.md §12) and reproduces
 palette/twilight.json exactly. Nothing here is fitted to the published values.
