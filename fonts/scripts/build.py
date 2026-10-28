@@ -20,6 +20,7 @@ import yaml
 from glyphsLib.classes import GSFontInfoValue, GSGlyph, GSLayer, GSNode, GSPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import arrows  # noqa: E402
 import boxdraw  # noqa: E402
 import upstream  # noqa: E402
 
@@ -65,32 +66,59 @@ def master_cell(font, master):
     return boxdraw.Cell(width, params["typoDescender"], params["typoAscender"], max(ys) - min(ys))
 
 
-def add_box_drawing(font):
-    """Box drawing, block elements and Powerline separators (fonts/scripts/boxdraw.py)."""
-    cells = {m.id: master_cell(font, m) for m in font.masters}
-    for cp in boxdraw.CODEPOINTS:
-        name = boxdraw.glyph_name(cp)
-        if font.glyphs[name] is not None:
-            raise SystemExit(f"{name} already exists in {font.familyName}")
-        glyph = GSGlyph(name)
+def layer(font, glyph, master):
+    return next(l for l in font.glyphs[glyph].layers if l.layerId == master.id)
+
+
+def add_glyphs(font, codepoints, name, draw):
+    """New glyphs, one layer per master: draw(master, cp) gives the advance and the contours,
+    each a list of (x, y, node type)."""
+    for cp in codepoints:
+        glyph_name = name(cp)
+        if font.glyphs[glyph_name] is not None:
+            raise SystemExit(f"{glyph_name} already exists in {font.familyName}")
+        glyph = GSGlyph(glyph_name)
         glyph.unicode = f"{cp:04X}"
         font.glyphs.append(glyph)
         for master in font.masters:
-            layer = GSLayer()
-            layer.layerId = layer.associatedMasterId = master.id
-            cell = cells[master.id]
-            layer.width = cell.w
-            for contour in boxdraw.contours(cell, cp):
+            new = GSLayer()
+            new.layerId = new.associatedMasterId = master.id
+            new.width, contours = draw(master, cp)
+            for contour in contours:
                 path = GSPath()
                 path.closed = True
                 for x, y, kind in contour:
                     path.nodes.append(GSNode((round(x), round(y)), kind))
-                layer.paths.append(path)
-            glyph.layers.append(layer)
+                new.paths.append(path)
+            glyph.layers.append(new)
+
+
+def add_box_drawing(font):
+    """Box drawing, block elements and Powerline separators (fonts/scripts/boxdraw.py)."""
+    cells = {m.id: master_cell(font, m) for m in font.masters}
+
+    def draw(master, cp):
+        cell = cells[master.id]
+        return cell.w, boxdraw.contours(cell, cp)
+    add_glyphs(font, boxdraw.CODEPOINTS, boxdraw.glyph_name, draw)
+
+
+def add_arrows(font):
+    """Arrows (fonts/scripts/arrows.py), measured from each master's plus and equal signs."""
+    widths = {layer(font, g, m).width for g in ("i", "m", "plus") for m in font.masters}
+    cell = widths.pop() if len(widths) == 1 else None  # monospaced: every glyph fills one cell
+
+    def on_curve(glyph, master):
+        return [(n.position.x, n.position.y) for p in layer(font, glyph, master).paths for n in p.nodes
+                if n.type != "offcurve"]
+    metrics = {m.id: arrows.Metrics(on_curve("plus", m), on_curve("equal", m), m.italicAngle, cell)
+               for m in font.masters}
+    add_glyphs(font, arrows.codepoints(cell), arrows.glyph_name,
+               lambda master, cp: arrows.glyph(metrics[master.id], cp))
 
 
 # Changes beyond the rename, per family, in the order they apply.
-STEPS = {"TwilightCode": [add_box_drawing]}
+STEPS = {"TwilightText": [add_arrows], "TwilightCode": [add_box_drawing, add_arrows]}
 
 
 def rename(src, dst, family):

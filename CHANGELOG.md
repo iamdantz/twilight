@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.16.0
+
+Arrows in Twilight Text and Twilight Code. No palette changes.
+
+### Added
+- Twilight Text 1.001 and Twilight Code 1.002: arrows ← ↑ → ↓ ↔ ↕ ↖ ↗ ↘ ↙ (U+2190–2199), ↩ ↪ (U+21A9–21AA), ↵ (U+21B5) and ⇐ ⇑ ⇒ ⇓ (U+21D0–21D3); Text also ⇔ ⇕ (U+21D4–21D5). Text gets 19 characters and Code 17. They are computed from each master: the stroke and the axis of the plus sign, the line spacing of the equal sign, the italic angle. Shaft and head share one stroke; heads are open, with arms at 45 degrees. In Text a horizontal arrow is about as wide as a capital M; in Code it fills the cell but for 40 units on each side.
+- Code leaves out ⇔ and ⇕: at ExtraBold a double line with a head at each end does not fit the cell with heads that reach past both lines.
+
+### Tooling
+- `fonts/scripts/arrows.py`: the geometry.
+- `fonts/scripts/arrowcheck.py`: at every named instance, each shaft is as thick as the plus sign's bar and sits on its axis, double lines are spaced like the equal sign, opposite arrows match, no contour crosses itself, and Code arrows stay in the cell. Built today: no failures.
+- `fonts/scripts/build.py`: new glyphs are added by one routine, for box drawing and arrows alike.
+- Fonts workflow: runs the arrow check.
+
 ## 1.15.0
 
 Twilight Code draws terminal interfaces: box drawing, block elements and Powerline separators. No palette changes.

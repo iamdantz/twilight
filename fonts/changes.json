@@ -1,16 +1,40 @@
 {
+  "TwilightText[wght].ttf": {
+    "added": [
+      "2190-2199",
+      "21A9-21AA",
+      "21B5",
+      "21D0-21D5"
+    ]
+  },
+  "TwilightText-Italic[wght].ttf": {
+    "added": [
+      "2190-2199",
+      "21A9-21AA",
+      "21B5",
+      "21D0-21D5"
+    ]
+  },
   "TwilightCode[wght].ttf": {
     "added": [
       "2500-257F",
       "2580-259F",
-      "E0B0-E0B3"
+      "E0B0-E0B3",
+      "2190-2199",
+      "21A9-21AA",
+      "21B5",
+      "21D0-21D3"
     ]
   },
   "TwilightCode-Italic[wght].ttf": {
     "added": [
       "2500-257F",
       "2580-259F",
-      "E0B0-E0B3"
+      "E0B0-E0B3",
+      "2190-2199",
+      "21A9-21AA",
+      "21B5",
+      "21D0-21D3"
     ]
   }
 }

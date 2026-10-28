@@ -30,6 +30,14 @@ Twilight Text and Twilight Code are licensed under the SIL Open Font License 1.1
 ChangeLog
 ---------
 
+Twilight Text 1.001 and Twilight Code 1.002 (Twilight 1.16.0)
+- Added arrows: U+2190–2199, U+21A9–21AA, U+21B5 and U+21D0–21D3 in both families, and
+  U+21D4–21D5 in Twilight Text only. They are computed by fonts/scripts/arrows.py from each
+  master's plus sign (stroke, axis, length, side bearings), equal sign (line spacing) and
+  italic angle; fonts/scripts/arrowcheck.py verifies them at every named instance.
+- No other change: fonts/scripts/check.py finds no difference from the upstream fonts beyond
+  the added characters, declared in fonts/changes.json.
+
 Twilight Code 1.001 (Twilight 1.15.0)
 - Added the box drawing characters (U+2500–257F), the block elements (U+2580–259F) and the
   Powerline separators (U+E0B0–E0B3), computed by fonts/scripts/boxdraw.py from each master's
