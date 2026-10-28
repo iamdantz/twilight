@@ -25,7 +25,7 @@ Twilight Theme recommends its own typefaces, Twilight Crystal and Twilight Cryst
 | Adds | 60 characters | 481 characters, cell hinting, optional ligatures |
 | License | SIL Open Font License 1.1 | The same |
 
-Atkinson Hyperlegible was designed for the Braille Institute so that readers with low vision can tell characters apart: I, l and 1, or O and 0, each have a shape of their own. Twilight Crystal keeps that design and adds what a theme needs around it.
+Twilight Crystal keeps the letters of Atkinson Hyperlegible, in which I, l and 1, or O and 0, each have a shape of their own, and adds what a theme needs around them. [FONTLOG.txt](../fonts/FONTLOG.txt) credits their authors.
 
 ## 2. Which font to use
 

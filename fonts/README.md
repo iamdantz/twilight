@@ -11,11 +11,11 @@
   <a href="FONTLOG.txt">Changes and credits</a>
 </p>
 
-Twilight Crystal and Twilight Crystal Mono are the typefaces of [Twilight Theme](../README.md): a sans-serif for interfaces, documents, images and the web, and a monospaced face for code editors and terminals. They are derivatives of [Atkinson Hyperlegible Next](https://fonts.google.com/specimen/Atkinson+Hyperlegible+Next) and [Atkinson Hyperlegible Mono](https://fonts.google.com/specimen/Atkinson+Hyperlegible+Mono), designed by Applied Design Works and Letters from Sweden for the Braille Institute, and they keep those letters unchanged.
+Twilight Crystal and Twilight Crystal Mono are the typefaces of [Twilight Theme](../README.md): a sans-serif for interfaces, documents, images and the web, and a monospaced face for code editors and terminals. They are derivatives of [Atkinson Hyperlegible Next](https://fonts.google.com/specimen/Atkinson+Hyperlegible+Next) and [Atkinson Hyperlegible Mono](https://fonts.google.com/specimen/Atkinson+Hyperlegible+Mono) and keep their letters unchanged; the [credits](#license) name their authors.
 
 ## Legibility
 
-Atkinson Hyperlegible was drawn so that readers with low vision can tell characters apart. Pairs that other faces draw alike get shapes of their own: I has serifs and l a tail, 1 has a flag, 0 has a slash, and rn stays apart from m. Legibility is why Twilight Theme chose it.
+In Twilight Crystal, characters that other faces draw alike have shapes of their own: I has serifs and l a tail, 1 has a flag, 0 has a slash, and rn stays apart from m. These letters are the work of Atkinson Hyperlegible's designers, Elliott Scott, Megan Eiswerth, Linus Boman, Theodore Petrosky and Letters from Sweden, and their legibility is why Twilight Theme chose that design.
 
 Twilight Crystal keeps that design: every letter, number and punctuation mark keeps the outline, spacing and kerning of the original, and every build checks this against the originals: same glyphs within 0.5 font units, same shaping. The static fonts are hinted as the originals are, and a check confirms on every build that alignment and sharpness from 9 to 20 pixels, and the distinction of those pairs from 9 to 14 pixels, are no worse than the originals'.
 
