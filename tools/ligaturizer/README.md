@@ -42,8 +42,8 @@ Ligaturizer does. The configuration file is described in `python ligaturize.py -
 ## Licenses
 
 This program is free software under the [GNU General Public License, version 3](LICENSE), as
-Ligaturizer is. The license covers the program, not the fonts it changes: what it adds to a font
-is Fira Code's data, not code of the program.
+Ligaturizer is. The license covers the program itself. What the program adds to a font is Fira
+Code's data, so the fonts it changes keep their own license.
 
 Fira Code is licensed under the [SIL Open Font License 1.1](https://openfontlicense.org). Its
 glyphs may go into another font only if:

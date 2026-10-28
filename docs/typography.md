@@ -25,29 +25,29 @@ Twilight Theme recommends its own typefaces, Twilight Crystal and Twilight Cryst
 | Adds | 60 characters | 481 characters, cell hinting, optional ligatures |
 | License | SIL Open Font License 1.1 | The same |
 
-Atkinson Hyperlegible was designed for the Braille Institute so that letters are told apart by readers with low vision: I, l and 1, O and 0, b and d each have a shape of their own. Twilight Crystal keeps that design and adds what a theme needs around it.
+Twilight Crystal keeps the letters of Atkinson Hyperlegible, in which I, l and 1, or O and 0, each have a shape of their own, and adds what a theme needs around them. [FONTLOG.txt](../fonts/FONTLOG.txt) credits their authors.
 
 ## 2. Which font to use
 
 Twilight Theme encourages Twilight Crystal, and names the alternatives in order. The user's taste has the last word: any face can carry the theme.
 
-1. **Twilight Crystal and Twilight Crystal Mono.** The recommended faces. They draw box drawing, arrows, symbols and Powerline separators in the same strokes as the letters, keep terminal lines on whole pixels, and offer optional ligatures. They are downloaded from the repository's releases and installed by hand.
+1. **Twilight Crystal and Twilight Crystal Mono**, the recommended faces. They draw box drawing, arrows, symbols and Powerline separators in the same strokes as the letters, keep terminal lines on whole pixels, and offer optional ligatures. They are downloaded from the repository's releases and installed by hand.
 2. **Atkinson Hyperlegible Next and Atkinson Hyperlegible Mono**, from Google Fonts. Twilight Crystal is a derivative of them: letters, spacing, kerning and features are the same, and `fonts/scripts/check.py` verifies on every build that they shape identically. Use them when Twilight Crystal has an error that affects you (please report it), or for convenience: they load in a web project from Google Fonts with one link and are packaged by Fontsource and Homebrew. What they lack are the additions of §3, which then come from whatever other font the system has.
-3. **The system's own fonts.** Twilight Theme does not favor them: they may not reach the same legibility or character. They are the alternative when nothing else is possible, or when installing fonts is not wanted. §6 lists the closest ones on each system and how to size them.
+3. **The system's own fonts**, last. Twilight Theme does not favor them: they may not reach the same legibility or character. They are the alternative when nothing else is possible, or when installing fonts is not wanted. §6 lists the closest ones on each system and how to size them.
 
 ## 3. What Twilight Crystal adds
 
-Every added glyph is computed from the font's own measures (stroke, axis, cell) so it reads as part of it; each family has a check that measures the rules at every named instance.
+Every added character is computed from the font's own measures (stroke, axis, cell) or assembled from its own outlines, so it reads as part of the font; the ligatures are Fira Code's, fitted to it (§4). Each addition has a check that measures it at every named instance.
 
 | Addition | Twilight Crystal | Twilight Crystal Mono | Check |
 | --- | --- | --- | --- |
 | Arrows: ← ↑ → ↓ ↔ ↕ ↖ ↗ ↘ ↙ ↩ ↪ ↵ ⇐ ⇑ ⇒ ⇓ | Yes, with ⇔ ⇕ | Yes, in the cell | `arrowcheck.py` |
 | Shapes and symbols: ■ □ ▲ ▶ ● ○ ◆ ∆ ∅ ⟨ ⟩ µ ‖ ′ ″ ⁴ ₁–₄ ⅓ ⅔ | Yes, with № | Yes, in the cell | `symbolcheck.py` |
-| Box drawing and block elements (U+2500–259F) | — | Yes, joined across cells | `boxcheck.py` |
-| Powerline separators (U+E0B0–E0B7) | — | Yes, filled, outlined and rounded | `boxcheck.py`, `symbolcheck.py` |
-| Braille patterns (U+2800–28FF) | — | Yes | `symbolcheck.py` |
-| Hinting for the cell (static fonts) | — | Lines on whole pixel rows, ink inside the cell | `hintcheck.py` |
-| Programming ligatures | — | Optional, §4 | `ligacheck.py` |
+| Box drawing and block elements (U+2500–259F) | No | Yes, joined across cells | `boxcheck.py` |
+| Powerline separators (U+E0B0–E0B7) | No | Yes, filled, outlined and rounded | `boxcheck.py`, `symbolcheck.py` |
+| Braille patterns (U+2800–28FF) | No | Yes | `symbolcheck.py` |
+| Hinting for the cell (static fonts) | No | Lines on whole pixel rows, ink inside the cell | `hintcheck.py` |
+| Programming ligatures | No | Optional, §4 | `ligacheck.py` |
 
 ## 4. Optional ligatures
 
