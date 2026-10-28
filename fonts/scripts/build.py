@@ -9,7 +9,6 @@ build configuration, into fonts/build/<file>/fonts/: variable TTF, static TTF an
     python fonts/scripts/build.py --only TwilightCode
 """
 import argparse
-import math
 import os
 import shutil
 import subprocess
@@ -19,14 +18,13 @@ from pathlib import Path
 import glyphsLib
 import yaml
 from fontTools.ttLib import TTFont
-from glyphsLib.classes import GSFeature, GSFontInfoValue, GSGlyph, GSLayer, GSNode, GSPath
+from glyphsLib.classes import GSFontInfoValue, GSGlyph, GSLayer, GSNode, GSPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import arrows  # noqa: E402
 import boxdraw  # noqa: E402
 import braille  # noqa: E402
 import cellhint  # noqa: E402
-import ligatures  # noqa: E402
 import symbols  # noqa: E402
 import upstream  # noqa: E402
 
@@ -191,46 +189,22 @@ def hint_cells(fonts):
 AFTER = {"TwilightCode": [hint_cells]}
 
 
-def add_ligatures(font):
-    """Optional code ligatures in stylistic set 1, from Fira Code 6.2 (fonts/scripts/ligatures.py):
-    every glyph its rules output, in every master, and the rules."""
-    blocks = ligatures.lookups()
-    missing = sorted(g for g in ligatures.inputs(blocks) if font.glyphs[g] is None)
-    if missing:
-        raise SystemExit(f"Fira Code's rules need glyphs {font.familyName} lacks: {', '.join(missing)}")
-    names = ligatures.outputs(blocks)
-    source = ligatures.Source(names)
-    masters = {}
-    for m in font.masters:
-        hyphen = [n.position.y for p in layer(font, "hyphen", m).paths for n in p.nodes]
-        thickness, axis = max(hyphen) - min(hyphen), (max(hyphen) + min(hyphen)) / 2
-        masters[m.id] = ligatures.Master(source, thickness, axis, math.tan(math.radians(m.italicAngle)))
-    for name in names:
-        if font.glyphs[name] is not None:
-            raise SystemExit(f"{name} already exists in {font.familyName}")
-        glyph = GSGlyph(name)
-        glyph.category, glyph.subCategory = "Symbol", None
-        font.glyphs.append(glyph)
-        for master in font.masters:
-            new = GSLayer()
-            new.layerId = new.associatedMasterId = master.id
-            new.width = ligatures.CELL
-            for contour in masters[master.id].glyph(name):
-                path = GSPath()
-                path.closed = True
-                for x, y, kind in contour:
-                    path.nodes.append(GSNode((round(x), round(y)), kind))
-                new.paths.append(path)
-            glyph.layers.append(new)
-    classes, code = ligatures.feature(blocks, {g.name for g in font.glyphs if g.export})
-    font.features.append(GSFeature("ss01", code))
-    prefix = next(iter(font.featurePrefixes))
-    prefix.code += "\n" + classes + "\n"
+LIGATURIZER = ROOT / "tools" / "ligaturizer" / "ligaturize.py"
+LIGATURES = {"TwilightCode": ROOT / "fonts" / "ligatures.json"}
+
+
+def ligaturize(source, family):
+    """Fira Code's ligatures, as fonts/ligatures.json selects them, added to a renamed source by
+    tools/ligaturizer, a separate program under the GNU GPL 3 run as its own process."""
+    config = LIGATURES.get(family["file"])
+    if config:
+        subprocess.run([sys.executable, str(LIGATURIZER), "glyphs", str(source), "--fira",
+                        str(ROOT / upstream.load()["ligatures"]["directory"]), "--config", str(config)], check=True)
 
 
 # Changes beyond the rename, per family, in the order they apply.
 STEPS = {"TwilightText": [add_arrows, add_symbols],
-         "TwilightCode": [add_box_drawing, add_arrows, add_symbols, add_braille, add_ligatures]}
+         "TwilightCode": [add_box_drawing, add_arrows, add_symbols, add_braille]}
 
 
 def rename(src, dst, family):
@@ -239,10 +213,7 @@ def rename(src, dst, family):
         step(font)
     meta = metadata(family)
     font.familyName = family["family"]
-    copyright = meta["copyright"].format(original=prop(font, "copyrights").rstrip(".") + ".")
-    if add_ligatures in STEPS.get(family["file"], []):
-        copyright += " " + ligatures.NOTICE
-    prop(font, "copyrights", copyright)
+    prop(font, "copyrights", meta["copyright"].format(original=prop(font, "copyrights").rstrip(".") + "."))
     prop(font, "manufacturers", meta["manufacturer"])
     prop(font, "manufacturerURL", meta["manufacturerURL"])
     prop(font, "descriptions", meta["description"].format(designers=prop(font, "designers")))
@@ -271,6 +242,7 @@ def build(family):
     for src in sorted((ROOT / family["directory"] / "sources").glob("*.glyphs")):
         name = src.name.replace(old, new)
         rename(src, sources_dir / name, family)
+        ligaturize(sources_dir / name, family)
         names.append(name)
     configure(family, sources_dir, names)
     env = dict(os.environ, PATH=str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""))

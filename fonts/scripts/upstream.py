@@ -5,6 +5,11 @@ license files of that commit are copied into fonts/upstream/<repository>/ and re
 their SHA-256. The upstream's own compiled variable fonts are not stored: they are fetched at
 the same commit when a build is compared against them, and verified by SHA-256.
 
+The "ligatures" entry pins the Fira Code files Twilight Code's optional ligatures come from
+(fonts/upstream/firacode/): the variable font of a release, its license, and the rules and glyph
+class written from that release's design source by tools/ligaturizer (ligaturize.py extract).
+verify checks them too; vendor leaves them alone.
+
     python fonts/scripts/upstream.py vendor            copy the pinned files and record hashes
     python fonts/scripts/upstream.py verify            check the copied files against their hashes
     python fonts/scripts/upstream.py reference DIR     fetch and verify the upstream binaries into DIR
@@ -69,7 +74,8 @@ def vendor():
 
 def verify():
     bad = []
-    for family in load()["families"]:
+    manifest = load()
+    for family in manifest["families"] + [manifest["ligatures"]]:
         for rel, digest in family["vendored"].items():
             path = ROOT / family["directory"] / rel
             if not path.exists():
