@@ -12,17 +12,19 @@ data repository, pinned by SHA-256 and downloaded on first use.
    families; the tallest and deepest letters, whose distance is the line height at which two
    lines of text cannot touch; tabular figures.
 2. Viewing geometry. The x-height, in each geometry's unit, that subtends a given visual angle: a
-   CSS pixel on a desktop screen (the CSS reference pixel) and on a handheld one, a point in print,
-   and a percentage of the slide height for slides seen from the back of a room.
+   CSS pixel on a desktop screen (the CSS reference pixel) and on a handheld one, a point on a page
+   read at 40 cm, and a percentage of the slide height for slides seen from the back of a room.
 3. Running text. Per geometry, the smallest size whose x-height subtends the critical print size,
-   never below the browser default on screens.
+   never below the browser default on screens. Page documents take the decided size of 12 pt; their
+   x-height angle on paper and on a desktop screen at 100 % zoom is reported.
 4. Floors. Per weight, the smallest whole pixel size at which the lowercase stems and the
    narrowest counters (the white inside e, a, s, B, g, 8, m, n, H) are each at least one pixel,
    so no stroke or counter falls below the pixel grid of a 1x screen. Pair distinction (the
    metric of hintcheck.py) is reported from each floor to 20 px. Where there are no pixels
-   (print, slides), the floor is the angle the Regular floor subtends on a desktop screen. Italic
-   glyphs are uprighted by their angle before their counters are measured. Each style's lowest
-   step is the smallest step at or above its floor in every geometry.
+   (slides), the floor is the angle the Regular floor subtends on a desktop screen; documents, read
+   on screens at 100 % zoom, take the pixel floor in points. Italic glyphs are uprighted by their
+   angle before their counters are measured. Each style's lowest step is the smallest step at or
+   above its floor in every geometry.
 5. Scale. Per geometry, the ratio that places step -2 on the floor, with step 0 on running text;
    the steps from -2 to 7, and on screens the smallest difference in x-height between adjacent
    steps, in device pixels.
@@ -30,6 +32,9 @@ data repository, pinned by SHA-256 and downloaded on first use.
    which the widest word of the corpus, in Bold, fits a 320 px viewport.
 7. Measure. The mean advance of a character of running text, per language, and the width in em
    and in ch that holds 80 of them.
+8. Code. The size of code in editors and terminals: at least the x-height of the default editor
+   font and size on each system, then the size, up to desktop running text, whose x-height, cell
+   and line land closest to whole pixels.
 """
 import argparse
 import hashlib
@@ -64,6 +69,12 @@ FLUENT_TOP = 2.0               # degrees of x-height; the same source
 REFERENCE_PIXEL = math.degrees(math.atan((1 / 96) / 28))  # CSS Values 4: 96 dpi at 28 inches
 HANDHELD_PIXEL = math.degrees(math.atan((25.4 / 160) / 320))  # 1/160 inch at 32 cm
 PRINT_DISTANCE = 400           # mm; the distance print sizes are measured at
+DOCUMENT_SIZE = 12             # pt; running text of page documents, the size APA Style gives Aptos and Times New Roman
+PX_PER_PT = 4 / 3              # a document at 100 % zoom
+# The default font and size of the most used code editor on each system, and that font's x-height,
+# measured on the font as the system installs it (the files are not distributed).
+EDITOR_DEFAULTS = {"Windows": ("Consolas", 14, 0.4902), "macOS": ("Menlo", 12, 0.5469),
+                   "Linux": ("Droid Sans Mono", 14, 0.5361)}
 DEFAULT_SIZE = 16              # px; the browsers' default font size, 1rem
 HANDHELD_DPR = 2               # device pixels per CSS pixel, at least, on handheld screens
 NARROWEST = 320                # CSS px; WCAG 1.4.10 Reflow
@@ -84,12 +95,12 @@ def up(value, grain):
 
 # x-height, in each geometry's unit, that subtends a given angle in degrees
 GEOMETRIES = {
-    "desktop": {"unit": "px", "grain": 1, "default": DEFAULT_SIZE, "pixels": True, "dpr": 1,
+    "desktop": {"unit": "px", "grain": 1, "default": DEFAULT_SIZE, "pixels": 1, "dpr": 1,
                 "x": lambda a: math.tan(math.radians(a)) / math.tan(math.radians(REFERENCE_PIXEL))},
-    "handheld": {"unit": "px", "grain": 1, "default": DEFAULT_SIZE, "pixels": True, "dpr": HANDHELD_DPR,
+    "handheld": {"unit": "px", "grain": 1, "default": DEFAULT_SIZE, "pixels": 1, "dpr": HANDHELD_DPR,
                  "x": lambda a: math.tan(math.radians(a)) / math.tan(math.radians(HANDHELD_PIXEL))},
-    "print": {"unit": "pt", "grain": 0.1,
-              "x": lambda a: PRINT_DISTANCE * math.tan(math.radians(a)) / 25.4 * 72},
+    "documents": {"unit": "pt", "grain": 0.5, "body": DOCUMENT_SIZE, "pixels": PX_PER_PT,
+                  "x": lambda a: PRINT_DISTANCE * math.tan(math.radians(a)) / 25.4 * 72},
     "slides": {"unit": "% of slide height", "grain": 0.01,
                "x": lambda a: SLIDE_DISTANCE * math.tan(math.radians(a)) * 100},
 }
@@ -216,7 +227,7 @@ def distinction(family, weight, sizes):
 def measure():
     out = {"decided": {"critical print size (deg)": CRITICAL_PRINT_SIZE, "fluent range top (deg)": FLUENT_TOP,
                        "desktop pixel (deg)": REFERENCE_PIXEL, "handheld pixel (deg)": HANDHELD_PIXEL,
-                       "print distance (mm)": PRINT_DISTANCE, "default size (px)": DEFAULT_SIZE,
+                       "print distance (mm)": PRINT_DISTANCE, "document size (pt)": DOCUMENT_SIZE, "default size (px)": DEFAULT_SIZE,
                        "handheld device pixels per px": HANDHELD_DPR, "narrowest viewport (px)": NARROWEST,
                        "slide viewing distance (image heights)": SLIDE_DISTANCE,
                        "gutter (px)": GUTTER, "measure (characters)": MEASURE_CHARACTERS}}
@@ -239,8 +250,8 @@ def measure():
     geometries = {}
     for geometry, g in GEOMETRIES.items():
         least = up(g["x"](CRITICAL_PRINT_SIZE) / xh, g["grain"])
-        body = max(least, g.get("default", 0))
-        floor = max(pixel_floor if g.get("pixels") else 0, up(g["x"](floor_angle) / xh, g["grain"]))
+        body = g.get("body", max(least, g.get("default", 0)))
+        floor = max(pixel_floor / g["pixels"] if g.get("pixels") else 0, up(g["x"](floor_angle) / xh, g["grain"]))
         ratio = math.sqrt(body / floor)
         sizes = {k: body * ratio ** k for k in STEPS}
         entry = {"unit": g["unit"], "least running text": least, "running text": body,
@@ -250,13 +261,34 @@ def measure():
             entry["least x-height step (device px)"] = min((sizes[k + 1] - sizes[k]) * xh * g["dpr"] for k in list(STEPS)[:-1])
         geometries[geometry] = entry
     out["geometries"] = geometries
+    docs = geometries["documents"]
+    docs["x-height angle on a desktop screen at 100 % (deg)"] = angle(
+        docs["running text"] * PX_PER_PT * xh * math.tan(math.radians(REFERENCE_PIXEL)))
+    docs["zoom for the critical print size on a desktop screen"] = geometries["desktop"]["least running text"] / (
+        docs["running text"] * PX_PER_PT)
+
+    # Code in editors and terminals: at least the x-height of each system's default editor, then the
+    # size up to running text whose x-height, cell and line (1.3) land closest to whole pixels.
+    mono = out["facts"]["Twilight Crystal Mono"]
+    cell = 0.632
+    comfort = max(size * x for _, size, x in EDITOR_DEFAULTS.values()) / mono["x-height"]
+    grid = {}
+    for size in range(pixel_floor, int(geometries["desktop"]["running text"]) + 1):
+        worst = max(abs(round(v) - v) / v for v in (size * mono["x-height"], size * cell, size * mono["natural line"]))
+        grid[size] = worst
+    code = min((s for s in grid if s >= comfort), key=lambda s: (grid[s], s))
+    out["code"] = {"editor defaults": {k: {"font": f, "size (px)": s, "x-height (px)": s * x}
+                                       for k, (f, s, x) in EDITOR_DEFAULTS.items()},
+                   "comfort bound (px)": comfort, "worst rounding to whole pixels": grid, "size (px)": code,
+                   "size (pt)": code / PX_PER_PT}
 
     # The lowest step each style may take in every geometry: on screens its pixel floor, elsewhere
     # the geometry's floor scaled by the style's pixel floor over Regular's.
     for name in FAMILIES:
         for style, s in floors[name].items():
             s["lowest step"] = max(min(k for k, v in g["steps"].items()
-                                       if v >= (s["floor"] if GEOMETRIES[geo].get("pixels") else g["floor"] * s["floor"] / pixel_floor) - 1e-9)
+                                       if v >= (s["floor"] / GEOMETRIES[geo]["pixels"] if GEOMETRIES[geo].get("pixels")
+                                                else g["floor"] * s["floor"] / pixel_floor) - 1e-9)
                                    for geo, g in geometries.items())
 
     # 6. Upper bounds
@@ -306,6 +338,14 @@ def main():
         print(f"  {g} ({s['unit']}): running text {r(s['running text'], 2)} (least {r(s['least running text'], 2)}, "
               f"x-height {r(s['x-height angle of running text (deg)'])} deg), floor {r(s['floor'], 2)}, ratio {r(s['ratio'], 4)}{extra}")
         print("    " + "  ".join(f"{k}: {r(v, 2)}" for k, v in s["steps"].items()))
+    d = out["geometries"]["documents"]
+    print(f"\nDocuments: x-height {r(d['x-height angle of running text (deg)'])} deg on paper, "
+          f"{r(d['x-height angle on a desktop screen at 100 % (deg)'])} deg on a desktop screen at 100 %; "
+          f"zoom {r(d['zoom for the critical print size on a desktop screen'], 3)} reaches the critical print size")
+    c = out["code"]
+    print(f"\nCode: comfort bound {r(c['comfort bound (px)'], 2)} px; worst rounding "
+          + ", ".join(f"{k}: {r(v * 100, 1)} %" for k, v in c["worst rounding to whole pixels"].items())
+          + f"; size {c['size (px)']} px ({r(c['size (pt)'], 2)} pt)")
     print("\nUpper bounds:", {k: (r(v, 2) if isinstance(v, float) else v) for k, v in out["upper bounds"].items()})
     m = out["measure"]
     print("\nMeasure:", {k: (r(v) if isinstance(v, float) else {a: r(b, 2) for a, b in v.items()}) for k, v in m.items()})
