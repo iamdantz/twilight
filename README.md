@@ -155,7 +155,7 @@ The full derivation, with every formula and parameter, is in [construction/color
 
 Twilight Theme is defined independently of any application. To build a theme for a tool, map its regions to the surface roles and follow [Applying the system](docs/design-system/color.md#12-applying-the-system), which also lists what a port must not do.
 
-Twilight Theme recommends its typefaces, [Twilight Crystal and Twilight Crystal Mono](fonts/README.md), published with every release. Atkinson Hyperlegible Next and Mono, on Google Fonts, are the alternative they derive from; the system's own fonts come last, and the user's taste always has the last word. The [typography rules](docs/design-system/typography.md) cover which font to use and the closest system fonts; the [font page](fonts/README.md) covers what Twilight Crystal adds and the optional ligatures.
+Twilight Theme recommends its typefaces, [Twilight Crystal and Twilight Crystal Mono](fonts/README.md), published with every release. Atkinson Hyperlegible Next and Mono, on Google Fonts, are the alternative they derive from; the system's own fonts come last, and the user's taste always has the last word. The [typography rules](docs/design-system/typography.md) cover which font to use, the closest system fonts, and how text is set in any format: sizes, weights, line heights, spacing and line length; the [font page](fonts/README.md) covers what Twilight Crystal adds and the optional ligatures.
 
 ## Repository
 

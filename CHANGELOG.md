@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.21.0
+
+Typography rules. No palette or font changes.
+
+### Added
+- `docs/design-system/typography.md` §3–15: how text is set in any format, from the measurements of `docs/construction/typography.md`.
+  - Twilight Crystal for all text; Twilight Crystal Mono only for literal text, at the size of the sentence around it.
+  - Four geometries (desktop screen, handheld screen, documents, slides) and which one each format takes; on the web, the primary pointer decides, not the width of the window. Documents take 12 pt, the body size style guides give; pieces read from a distance are sized by it.
+  - Code in editors and terminals at 16 px (12 pt): at least the size of each system's default editor, and the size where the Mono grid lands closest to whole pixels.
+  - One scale of ten steps per geometry; levels from Fine to Display 1, each with one step, weight and line height.
+  - The lowest step of every weight and style; line heights 1.5 and 1.3; spacing in lines; letter spacing 0; lines of at most 34.6 em; tabular figures for data; interface and document text; how a level changes size; fitting the column; values for common tools; misuses.
+- `docs/construction/typography.md`: floors of the italic styles, measured on uprighted glyphs, and the lowest step of every style; the documents geometry, in place of print; text read from a distance; the size of code in editors and terminals.
+
 ## 1.20.2
 
 Typography measured. No palette, font or rule changes.
