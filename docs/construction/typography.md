@@ -8,9 +8,9 @@ The companion document, [design-system/typography.md](../design-system/typograph
 
 ## 1. Method in one page
 
-1. **Sizes are set by visual angle, not by habit.** Reading speed is at its maximum only when the x-height subtends at least the critical print size, 0.2°. The size of running text is the smallest that reaches it on each viewing geometry, and never smaller than the reader's default size.
-2. **Floors are set by the pixel.** Each weight has a smallest size, the first whole pixel size at which both its stems and its narrowest counters are at least one pixel wide. Below it, strokes blur into partial pixels, so the text shows a lower contrast than its color guarantees, or counters fill in.
-3. **The scale is the strongest one the floors allow.** Step 0 is running text and step −2 sits on the Regular floor; the ratio follows from those two sizes. Every step is then checked against the top of the fluent range and against the narrowest screen.
+1. **Sizes are set by visual angle, not by habit.** Reading speed is at its maximum only when the x-height subtends at least the critical print size, 0.2°. The size of running text is the smallest that reaches it on each viewing geometry (desktop screen, handheld screen, print, slides), and on screens never smaller than the reader's default size.
+2. **Floors are set by the pixel.** Each weight has a smallest size, the first whole pixel size at which both its stems and its narrowest counters are at least one pixel wide. Below it, strokes blur into partial pixels, so the text shows a lower contrast than its color guarantees, or counters fill in. Where there are no pixels, in print and on slides, the floor is the angle the Regular floor subtends on a desktop screen.
+3. **The scale is the strongest one the floors allow.** Step 0 is running text and step −2 sits on the floor; the ratio follows from those two sizes. Every step is then checked against the top of the fluent range and against the narrowest screen.
 4. **Spacing is taken from the font and from WCAG.** Code uses the font's own line, so box drawing joins across lines; running text uses WCAG's 1.5; no line height is allowed at which two lines can touch.
 5. **The measure is counted in characters of real text**, then converted to em, because Twilight Crystal's zero is wider than its average character.
 
@@ -36,13 +36,14 @@ The two families share x-height and cap height, so code set inside text at the s
 
 ## 3. Viewing geometry
 
-The same CSS pixel covers a different angle depending on the device and how far away it is read. Three geometries are measured:
+The same CSS pixel covers a different angle depending on the device and how far away it is read. Four geometries are measured:
 
 | Geometry | Unit | Angle of one unit | Basis |
 |---|---|---|---|
 | Desktop | CSS pixel | 0.02132° | The CSS reference pixel: one pixel at 96 dpi seen from 28 inches |
 | Handheld | CSS pixel | 0.02842° | A pixel of 1/160 inch (the density-independent pixel of handheld systems) at 32 cm, the measured mean distance at which people read web pages on a phone |
 | Print | point | 1/72 inch at 40 cm | The distance at which print sizes are measured |
+| Slides | percentage of the slide's height | seen from 6 slide heights | The farthest viewer for content that must be read, by the 4/6/8 rule of audiovisual room design |
 
 A CSS pixel on a phone covers a third more angle than on a desktop screen, so the same size in pixels looks larger on a phone. The width of the viewport does not tell the two geometries apart: a phone in landscape and a narrow desktop window can have the same width.
 
@@ -50,15 +51,16 @@ A CSS pixel on a phone covers a third more angle than on a desktop screen, so th
 
 ## 4. Running text
 
-Running text needs an x-height of at least 0.2°, the critical print size, below which reading slows. The size is the smallest whole unit that reaches it, and never smaller than the browser's default of 16 px:
+Running text needs an x-height of at least 0.2°, the critical print size, below which reading slows. The size is the smallest that reaches it, rounded up to whole pixels on screens, tenths of a point in print and hundredths of a percent on slides; on screens it is never smaller than the browser's default of 16 px:
 
 | Geometry | x-height needed | Smallest size | Size | x-height at that size |
 |---|---|---|---|---|
 | Desktop | 9.38 px | 19 px | **19 px** | 0.201° |
 | Handheld | 7.04 px | 15 px | **16 px** (the default) | 0.226° |
-| Print | 1.40 mm | **8 pt** | 8 pt | 0.20° |
+| Print | 1.40 mm | 8.0 pt | **8.0 pt** | 0.201° |
+| Slides | 2.09 % of the slide height | 4.23 % | **4.23 %** | 0.200° |
 
-The browser default of 16 px meets the critical print size on handhelds but not on desktop screens, where it gives 0.169°.
+The browser default of 16 px meets the critical print size on handhelds but not on desktop screens, where it gives 0.169°. On a slide 7.5 inches high (540 pt), 4.23 % is 22.8 pt.
 
 ---
 
@@ -78,7 +80,11 @@ A stroke narrower than one pixel is drawn as a partly covered pixel, so on a 1x 
 
 Mono stems and counters differ from these by at most 0.004 em; its narrowest counter in the heavier weights is m, compressed into one cell, which raises its ExtraBold floor to 14 px.
 
-Light weights are limited by their stems and heavy weights by their counters, so the floors are lowest in the middle of the range. From each floor to 20 px, the confusable pairs I-l, l-1, I-1, O-0, rn-m and cl-d stay apart: their worst pixel distinction, hinted or not, is 0.21 or more in Twilight Crystal and 0.15 or more in Mono (the metric of `fonts/scripts/hintcheck.py`; 0 would be identical).
+Light weights are limited by their stems and heavy weights by their counters, so the floors are lowest in the middle of the range.
+
+Print and slides have no pixels to measure, so their floor is an angle: the x-height of the Regular floor on a desktop screen, 12 px, subtends 0.1269°. Applied to the other geometries it gives 5.1 pt in print and 2.68 % of the slide height on slides. On a handheld screen it gives 10 px, under the pixel floor of 12 px, which stays.
+
+The floors of the other weights scale with the same angle: a weight whose pixel floor is f px has, in print and on slides, the floor of Regular multiplied by f / 12. From each floor to 20 px, the confusable pairs I-l, l-1, I-1, O-0, rn-m and cl-d stay apart: their worst pixel distinction, hinted or not, is 0.21 or more in Twilight Crystal and 0.15 or more in Mono (the metric of `fonts/scripts/hintcheck.py`; 0 would be identical).
 
 ---
 
@@ -86,7 +92,7 @@ Light weights are limited by their stems and heavy weights by their counters, so
 
 Step 0 is running text (§4). Step −2, the smallest step, sits on the Regular floor (§5), because any text may be set in Regular. With steps spaced by a constant ratio, these two sizes fix it:
 
-ratio = √(running text size / Regular floor)
+ratio = √(running text size / floor)
 
 This is the largest ratio, so the strongest hierarchy, whose smallest step is still legible. Each geometry has its own:
 
@@ -94,8 +100,10 @@ This is the largest ratio, so the strongest hierarchy, whose smallest step is st
 |---|---|---|---|---|---|---|---|---|---|---|
 | Desktop, ratio 1.2583 (px) | 12 | 15.10 | 19 | 23.91 | 30.08 | 37.85 | 47.63 | 59.94 | 75.42 | 94.90 |
 | Handheld, ratio 1.1547 (px) | 12 | 13.86 | 16 | 18.48 | 21.33 | 24.63 | 28.44 | 32.84 | 37.93 | 43.79 |
+| Print, ratio 1.2524 (pt) | 5.1 | 6.39 | 8 | 10.02 | 12.55 | 15.72 | 19.68 | 24.65 | 30.88 | 38.67 |
+| Slides, ratio 1.2563 (% of height) | 2.68 | 3.37 | 4.23 | 5.31 | 6.68 | 8.39 | 10.54 | 13.24 | 16.63 | 20.90 |
 
-Adjacent steps differ in x-height by at least 1.54 device pixels on a desktop screen and 1.84 on a handheld one (at 2 device pixels per CSS pixel or more), so no two steps render alike.
+Adjacent steps differ in x-height by at least 1.54 device pixels on a desktop screen and 1.84 on a handheld one (at 2 device pixels per CSS pixel or more), so no two steps render alike. Where the floor is an angle, the ratio is close to √(0.2 / 0.1269) = 1.2554 and differs from it only by rounding; handhelds have a flatter scale because the default size and the pixel floor are both above what the angle asks for.
 
 ---
 
@@ -142,9 +150,10 @@ The narrower language sets the limit: **34.6 em**, which is 53.4ch. At the handh
 | Desktop pixel | 0.02132° | [CSS Values 4, the reference pixel](https://www.w3.org/TR/css-values-4/#reference-pixel) |
 | Handheld pixel | 1/160 inch at 32 cm | Bababekova et al., Font size and viewing distance of handheld smart phones, Optometry and Vision Science, 2011 (web pages read at 32 cm on average) |
 | Print distance | 40 cm | Legge and Bigelow, as above |
+| Slide distance | 6 slide heights | The 4/6/8 rule of audiovisual design: 6 image heights is the farthest viewer for content that must be read |
 | Handheld density | at least 2 device pixels per CSS pixel | Checked only for the spacing of steps (§6); floors are taken at 1x |
 | Default size | 16 px | The default font size of browsers; running text is never smaller |
-| Floor criterion | stems and counters at least 1 px, at 1x | Text keeps the contrast its color guarantees |
+| Floor criterion | stems and counters at least 1 px, at 1x; where there are no pixels, the angle of the Regular floor on a desktop screen | Text keeps the contrast its color guarantees |
 | Line height of running text | 1.5 | [WCAG 1.4.8](https://www.w3.org/WAI/WCAG22/Understanding/visual-presentation) |
 | Measure | 80 characters | WCAG 1.4.8 |
 | Narrowest viewport | 320 CSS px | [WCAG 1.4.10](https://www.w3.org/WAI/WCAG22/Understanding/reflow) |

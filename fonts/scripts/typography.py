@@ -11,16 +11,19 @@ data repository, pinned by SHA-256 and downloaded on first use.
 1. Font facts. x-height, cap height and the natural line (ascender to descender) of both
    families; the tallest and deepest letters, whose distance is the line height at which two
    lines of text cannot touch; tabular figures.
-2. Viewing geometry. The visual angle of one CSS pixel on a desktop screen (the CSS reference
-   pixel) and on a handheld screen, and of one point in print.
-3. Running text. The smallest size whose x-height subtends the critical print size, per geometry.
+2. Viewing geometry. The x-height, in each geometry's unit, that subtends a given visual angle: a
+   CSS pixel on a desktop screen (the CSS reference pixel) and on a handheld one, a point in print,
+   and a percentage of the slide height for slides seen from the back of a room.
+3. Running text. Per geometry, the smallest size whose x-height subtends the critical print size,
+   never below the browser default on screens.
 4. Floors. Per weight, the smallest whole pixel size at which the lowercase stems and the
    narrowest counters (the white inside e, a, s, B, g, 8, m, n, H) are each at least one pixel,
    so no stroke or counter falls below the pixel grid of a 1x screen. Pair distinction (the
-   metric of hintcheck.py) is reported from each floor to 20 px.
-5. Scale. Per geometry, the ratio that places step -2 on the Regular floor, with step 0 on the
-   running-text size; the steps from -2 to 7, and the smallest difference in x-height between
-   adjacent steps, in device pixels.
+   metric of hintcheck.py) is reported from each floor to 20 px. Where there are no pixels
+   (print, slides), the floor is the angle the Regular floor subtends on a desktop screen.
+5. Scale. Per geometry, the ratio that places step -2 on the floor, with step 0 on running text;
+   the steps from -2 to 7, and on screens the smallest difference in x-height between adjacent
+   steps, in device pixels.
 6. Upper bounds. The size whose x-height reaches the top of the fluent range; the largest size at
    which the widest word of the corpus, in Bold, fits a 320 px viewport.
 7. Measure. The mean advance of a character of running text, per language, and the width in em
@@ -64,6 +67,29 @@ NARROWEST = 320                # CSS px; WCAG 1.4.10 Reflow
 GUTTER = 16                    # CSS px, each side
 MEASURE_CHARACTERS = 80        # WCAG 1.4.8
 STEPS = range(-2, 8)
+SLIDE_DISTANCE = 6             # image heights from the farthest viewer; basic viewing in the 4/6/8 rule
+
+
+def angle(tan_value):
+    return math.degrees(math.atan(tan_value))
+
+
+def up(value, grain):
+    """Round up to the grain of the unit."""
+    return round(math.ceil(value / grain - 1e-9) * grain, 6)
+
+
+# x-height, in each geometry's unit, that subtends a given angle in degrees
+GEOMETRIES = {
+    "desktop": {"unit": "px", "grain": 1, "default": DEFAULT_SIZE, "pixels": True, "dpr": 1,
+                "x": lambda a: math.tan(math.radians(a)) / math.tan(math.radians(REFERENCE_PIXEL))},
+    "handheld": {"unit": "px", "grain": 1, "default": DEFAULT_SIZE, "pixels": True, "dpr": HANDHELD_DPR,
+                 "x": lambda a: math.tan(math.radians(a)) / math.tan(math.radians(HANDHELD_PIXEL))},
+    "print": {"unit": "pt", "grain": 0.1,
+              "x": lambda a: PRINT_DISTANCE * math.tan(math.radians(a)) / 25.4 * 72},
+    "slides": {"unit": "% of slide height", "grain": 0.01,
+               "x": lambda a: SLIDE_DISTANCE * math.tan(math.radians(a)) * 100},
+}
 
 CORPUS_URL = "https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/udhr.zip"
 CORPUS_SHA256 = "97e4c9dfa4a402f243d60b03d511afb04cf63f92f9ad1be9108b511448c329fa"
@@ -181,24 +207,12 @@ def measure():
                        "desktop pixel (deg)": REFERENCE_PIXEL, "handheld pixel (deg)": HANDHELD_PIXEL,
                        "print distance (mm)": PRINT_DISTANCE, "default size (px)": DEFAULT_SIZE,
                        "handheld device pixels per px": HANDHELD_DPR, "narrowest viewport (px)": NARROWEST,
+                       "slide viewing distance (image heights)": SLIDE_DISTANCE,
                        "gutter (px)": GUTTER, "measure (characters)": MEASURE_CHARACTERS}}
     out["facts"] = {name: facts(fam) for name, fam in FAMILIES.items()}
     xh = out["facts"]["Twilight Crystal"]["x-height"]
 
-    # 2-3. Running text per geometry
-    running = {}
-    for geometry, pixel in (("desktop", REFERENCE_PIXEL), ("handheld", HANDHELD_PIXEL)):
-        x_px = math.tan(math.radians(CRITICAL_PRINT_SIZE)) / math.tan(math.radians(pixel))
-        least = math.ceil(x_px / xh)
-        running[geometry] = {"x-height at CPS (px)": x_px, "least size (px)": least,
-                             "size (px)": max(least, DEFAULT_SIZE),
-                             "x-height angle at size (deg)": math.degrees(math.atan(max(least, DEFAULT_SIZE) * xh *
-                                                                                     math.tan(math.radians(pixel))))}
-    x_mm = PRINT_DISTANCE * math.tan(math.radians(CRITICAL_PRINT_SIZE))
-    running["print"] = {"x-height at CPS (mm)": x_mm, "least size (pt)": math.ceil(x_mm / xh / 25.4 * 72 * 2) / 2}
-    out["running text"] = running
-
-    # 4. Floors
+    # 2-5. Running text, floor and scale per geometry
     floors = {}
     for name, fam in FAMILIES.items():
         floors[name] = {}
@@ -207,17 +221,24 @@ def measure():
             s["distinction, floor to 20 px"] = distinction(fam, w, range(s["floor"], 21))
             floors[name][w] = s
     out["floors"] = floors
-    regular_floor = max(floors[n]["Regular"]["floor"] for n in FAMILIES)
+    pixel_floor = max(floors[n]["Regular"]["floor"] for n in FAMILIES)
+    floor_angle = angle(pixel_floor * xh * math.tan(math.radians(REFERENCE_PIXEL)))
+    out["floor angle (deg)"] = floor_angle
 
-    # 5. Scale per geometry
-    scales = {}
-    for geometry, dpr in (("desktop", 1), ("handheld", HANDHELD_DPR)):
-        body = running[geometry]["size (px)"]
-        ratio = math.sqrt(body / regular_floor)
+    geometries = {}
+    for geometry, g in GEOMETRIES.items():
+        least = up(g["x"](CRITICAL_PRINT_SIZE) / xh, g["grain"])
+        body = max(least, g.get("default", 0))
+        floor = max(pixel_floor if g.get("pixels") else 0, up(g["x"](floor_angle) / xh, g["grain"]))
+        ratio = math.sqrt(body / floor)
         sizes = {k: body * ratio ** k for k in STEPS}
-        gaps = [(sizes[k + 1] - sizes[k]) * xh * dpr for k in list(STEPS)[:-1]]
-        scales[geometry] = {"ratio": ratio, "steps (px)": sizes, "least x-height step (device px)": min(gaps)}
-    out["scale"] = scales
+        entry = {"unit": g["unit"], "least running text": least, "running text": body,
+                 "x-height angle of running text (deg)": angle(body * xh / g["x"](1) * math.tan(math.radians(1))),
+                 "floor": floor, "ratio": ratio, "steps": sizes}
+        if "dpr" in g:
+            entry["least x-height step (device px)"] = min((sizes[k + 1] - sizes[k]) * xh * g["dpr"] for k in list(STEPS)[:-1])
+        geometries[geometry] = entry
+    out["geometries"] = geometries
 
     # 6. Upper bounds
     text = corpus()
@@ -236,7 +257,7 @@ def measure():
     out["measure"] = {"mean character (em)": measure_, f"{MEASURE_CHARACTERS} characters (em)": MEASURE_CHARACTERS * narrow,
                       f"{MEASURE_CHARACTERS} characters (ch)": MEASURE_CHARACTERS * narrow / zero,
                       f"characters at {NARROWEST} px, handheld": {
-                          lang: (NARROWEST - 2 * GUTTER) / (m * running["handheld"]["size (px)"]) for lang, m in measure_.items()}}
+                          lang: (NARROWEST - 2 * GUTTER) / (m * geometries["handheld"]["running text"]) for lang, m in measure_.items()}}
     return out
 
 
@@ -254,18 +275,18 @@ def main():
         print(f"\n{name}: x-height {f['x-height']}, cap height {f['cap height']}, natural line {f['natural line']}, "
               f"lines touch below {r(f['touching line height'])} ({f['tallest letter'][0]} over {f['deepest letter'][0]}), "
               f"tabular figures {f['figures']['tabular']}, zero {f['zero']}")
-    print("\nRunning text:")
-    for g, v in out["running text"].items():
-        print(f"  {g}: " + ", ".join(f"{k} {r(x)}" for k, x in v.items()))
     print("\nFloors (stem, narrowest counter, floor px, worst pair distinction from the floor to 20 px):")
     for name, ws in out["floors"].items():
         for w, s in ws.items():
             print(f"  {name} {w}: stem {r(s['stem'])} em, counter {r(s['counter'])} em ({s['counter glyph']}), "
                   f"floor {s['floor']} px, distinction {r(s['distinction, floor to 20 px'], 2)}")
-    print("\nScale:")
-    for g, s in out["scale"].items():
-        print(f"  {g}: ratio {r(s['ratio'], 4)}, least x-height step {r(s['least x-height step (device px)'], 2)} device px")
-        print("    " + "  ".join(f"{k}: {r(v, 2)}" for k, v in s["steps (px)"].items()))
+    print(f"\nFloor angle (x-height of the Regular floor on a desktop screen): {r(out['floor angle (deg)'], 4)} deg")
+    print("\nGeometries:")
+    for g, s in out["geometries"].items():
+        extra = f", least x-height step {r(s['least x-height step (device px)'], 2)} device px" if "least x-height step (device px)" in s else ""
+        print(f"  {g} ({s['unit']}): running text {r(s['running text'], 2)} (least {r(s['least running text'], 2)}, "
+              f"x-height {r(s['x-height angle of running text (deg)'])} deg), floor {r(s['floor'], 2)}, ratio {r(s['ratio'], 4)}{extra}")
+        print("    " + "  ".join(f"{k}: {r(v, 2)}" for k, v in s["steps"].items()))
     print("\nUpper bounds:", {k: (r(v, 2) if isinstance(v, float) else v) for k, v in out["upper bounds"].items()})
     m = out["measure"]
     print("\nMeasure:", {k: (r(v) if isinstance(v, float) else {a: r(b, 2) for a, b in v.items()}) for k, v in m.items()})
