@@ -625,10 +625,25 @@ def run(snap, json_path="palette/twilight.json", do_rebuild=True):
 def generated_checks(snap, P):
     """Tables, measured figures in prose and the palette images must equal what scripts/docs.py renders."""
     import docs
+    import typeset
     errs = docs.document_errors(snap.read, P)
     if not snap.ref:                                  # images are read from the working tree
         errs += docs.image_errors(P)
+    if typeset.TOKENS in snap.files:                  # a snapshot may predate the typography tokens
+        T = typeset.load(snap.read)
+        errs += typeset.token_errors(T, snap.read("CHANGELOG.md")) + typeset.document_errors(snap.read, T)
+    if not snap.ref and (ROOT / "css" / "build.py").exists():   # the CSS reset, written from the tokens
+        errs += css_errors()
     return errs
+
+
+def css_errors():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("css_build", ROOT / "css" / "build.py")
+    build = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(build)
+    return [f"{path.relative_to(ROOT)}: differs from css/build.py (run it)" for key, text in build.build().items()
+            if not (path := build.OUT[key]).exists() or path.read_text() != text]
 
 
 def floor_table_checks(P, category):

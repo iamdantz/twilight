@@ -1,10 +1,11 @@
 """Twilight Theme documents from the palette: tables, measured figures in prose, and the palette images.
 
 Usage (from anywhere inside the Twilight Theme repository):
-    <skill>/.venv/bin/python <skill>/scripts/docs.py           # rewrite README.md, design-system/color.md and assets/
+    <skill>/.venv/bin/python <skill>/scripts/docs.py           # rewrite README.md, design-system/*.md, construction/typography.md, assets/
     <skill>/.venv/bin/python <skill>/scripts/docs.py --check   # report every difference, change nothing
 
-Every number this script writes is computed from palette/twilight.json. A measured figure in prose is wrapped in
+Every number this script writes is computed from palette/twilight.json, and in the typography documents from
+typography/twilight.json (scripts/typeset.py). A measured figure in prose is wrapped in
 `<!-- fact:NAME -->…<!-- /fact -->`; FACTS below says how each one is computed. Tables are recognized by their
 header row, and flavor sections by a heading or summary that names the flavor.
 """
@@ -352,10 +353,16 @@ def main():
     ap.add_argument("--check", action="store_true", help="report differences and exit 1 if any; change nothing")
     a = ap.parse_args()
     P = json.loads((ROOT / "palette/twilight.json").read_text())["flavors"]
+    import typeset
+    read = lambda p: (ROOT / p).read_text()  # noqa: E731
+    T = typeset.load(read) if (ROOT / typeset.TOKENS).exists() else None
     if a.check:
-        errs = document_errors(lambda p: (ROOT / p).read_text(), P) + image_errors(P)
-        print("\n".join(errs) or "documents and images match the palette")
+        errs = document_errors(read, P) + image_errors(P) + (typeset.document_errors(read, T) if T else [])
+        print("\n".join(errs) or "documents and images match the palette and the typography tokens")
         sys.exit(1 if errs else 0)
+    if T:
+        for path in typeset.DOCS:
+            (ROOT / path).write_text(typeset.render(read(path), T))
     M = measures(P)
     F_ = facts(P, M)
     for path in DOCS:

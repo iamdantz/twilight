@@ -1,0 +1,17 @@
+{
+  "name": "twilight-css-tests",
+  "private": true,
+  "description": "Checks the CSS reset of Twilight Theme in Chromium: plain HTML equals Tailwind CSS 4, and component libraries keep their styles.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "node test.mjs"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.3",
+    "daisyui": "5.7.47",
+    "flowbite": "4.0.2",
+    "playwright-core": "1.63.0",
+    "tailwindcss": "4.3.3"
+  }
+}

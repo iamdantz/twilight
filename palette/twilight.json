@@ -1,6 +1,6 @@
 {
   "name": "Twilight Theme",
-  "version": "1.20.1",
+  "version": "1.23.1",
   "series": {
     "order": ["sky", "ember", "gold", "sea-salt", "orchid", "grove"],
     "other": "control"

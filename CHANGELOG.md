@@ -1,5 +1,65 @@
 # Changelog
 
+## 1.23.1
+
+CSS checks. No palette, font, rule or style changes.
+
+### Added
+- `tests/css`: checks of the CSS reset in Chromium. A page of every styled element computes the same with `twilight.css`, `twilight.min.css`, and Tailwind CSS 4 with `twilight-tailwind.css`, on desktop, narrow desktop, handheld and print; its values match the typography tokens; and components of daisyUI, Flowbite and utility classes keep every style their classes set.
+- The CSS workflow runs them in one job, only when the CSS, the tokens or the tests change, with the runner's own Chrome.
+
+## 1.23.0
+
+CSS reset. No palette, font or rule changes.
+
+### Added
+- `css/`: a reset that sets any page in Twilight Theme's typography, written by `css/build.py` from the typography tokens.
+  - `twilight-tailwind.css`, for Tailwind CSS 4, in `@layer base` after Preflight.
+  - `twilight.css` and `twilight.min.css`, for any other project: Tailwind CSS Preflight 4.3.3 (MIT, pinned in `css/upstream.json`) and the same typography, in no layer.
+  - Font stacks with the closest system fonts resized by `size-adjust`; the scale by geometry (coarse pointer for handhelds, print for documents); levels on `body`, headings, `small`, captions and literal text; tabular figures; document flow inside `.document` only, never above the specificity of one element; every value as a `--twilight-*` property.
+- The validator checks that the CSS matches the tokens.
+- `typography/twilight.json`: the system fonts, their `size-adjust` and installed names; the table of design-system/typography.md §2 is generated from them.
+
+## 1.22.0
+
+Typography tokens. No palette or font changes.
+
+### Added
+- `typography/twilight.json`: the typography tokens, written by `fonts/scripts/typography.py --write` from the built fonts and the rules. Font metrics, floors and lowest steps of every style, the scale of each geometry (desktop, handheld, documents, slides, and text read from a distance), levels, line heights, spacing, measure, the column bound, code sizes, and the values each document and slide tool takes.
+- The tables and figures of `docs/design-system/typography.md` and `docs/construction/typography.md` are generated from the tokens by `docs.py`.
+- The validator checks the tokens: version, every scale against its ratio, floor and running text, levels against the lowest step of their weight, line heights, code sizes, measure and letter spacing; and the documents against the tokens. The font workflow fails when the tokens differ from the fonts.
+
+### Changed
+- Code in editors and terminals has a minimum of 14 px, the smallest size whose Mono grid lands within 2 % of whole pixels, and an optimal size of 16 px. 14 px meets the rules.
+
+## 1.21.0
+
+Typography rules. No palette or font changes.
+
+### Added
+- `docs/design-system/typography.md` §3–15: how text is set in any format, from the measurements of `docs/construction/typography.md`.
+  - Twilight Crystal for all text; Twilight Crystal Mono only for literal text, at the size of the sentence around it.
+  - Four geometries (desktop screen, handheld screen, documents, slides) and which one each format takes; on the web, the primary pointer decides, not the width of the window. Documents take 12 pt, the body size style guides give; pieces read from a distance are sized by it.
+  - Code in editors and terminals at 16 px (12 pt): at least the size of each system's default editor, and the size where the Mono grid lands closest to whole pixels.
+  - One scale of ten steps per geometry; levels from Fine to Display 1, each with one step, weight and line height.
+  - The lowest step of every weight and style; line heights 1.5 and 1.3; spacing in lines; letter spacing 0; lines of at most 34.6 em; tabular figures for data; interface and document text; how a level changes size; fitting the column; values for common tools; misuses.
+- `docs/construction/typography.md`: floors of the italic styles, measured on uprighted glyphs, and the lowest step of every style; the documents geometry, in place of print; text read from a distance; the size of code in editors and terminals.
+
+## 1.20.2
+
+Typography measured. No palette, font or rule changes.
+
+### Added
+- `docs/construction/typography.md`: the numbers the type rules will be built on, each measured on the fonts or derived from a cited source.
+  - Four viewing geometries: desktop screens, handheld screens, print, and slides seen from six slide heights.
+  - Running text: 19 px on desktop screens and 16 px on handheld ones, the smallest sizes whose x-height reaches the critical print size (0.2°); 8 pt in print; 4.23 % of the slide height on slides.
+  - Floors per weight, the smallest size at which stems and counters are at least one pixel: 12 px for Regular, from 10 px (Medium, SemiBold) to 19 px (ExtraLight).
+  - Where there are no pixels, the floor is the angle of the Regular floor on a desktop screen: 5.1 pt in print, 2.68 % of the slide height.
+  - Scale: step −2 on the floor, ratio 1.2583 on desktop, 1.1547 on handhelds, 1.2524 in print and 1.2563 on slides; the largest steps are bounded by the width of the viewport.
+  - Line heights: 1.5 for running text, 1.3 (the font's natural line) for code, and 1.153 below which lines touch.
+  - Measure: 80 characters are 34.6 em (53.4ch, since the zero is wider than an average character).
+- `fonts/scripts/typography.py` prints every one of these numbers; the font workflow runs it.
+
 ## 1.20.1
 
 Documentation reorganized by part. No palette or font changes.
