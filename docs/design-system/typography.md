@@ -67,39 +67,41 @@ The size text needs depends on how far it is read from and on what. Every format
 
 | Geometry | Formats | Unit | Running text |
 |---|---|---|---|
-| Desktop screen | Web pages and applications on computers | CSS pixel (px) | 19 px |
-| Handheld screen | Web pages and applications on phones and tablets | CSS pixel, the same as a point on iOS and a density-independent pixel on Android | 16 px |
-| Documents | Pages: word processors, PDFs, anything printed and held in the hand, whether read on paper or on screen | Point (pt); at 100 % zoom, 1 pt = 4/3 px | 12 pt |
-| Slides | Presentations shown to a room | Percentage of the slide's height | 4.23 % |
+| Desktop screen | Web pages and applications on computers | CSS pixel (px) | <!-- fact:t.desktop.step0 -->19 px<!-- /fact --> |
+| Handheld screen | Web pages and applications on phones and tablets | CSS pixel, the same as a point on iOS and a density-independent pixel on Android | <!-- fact:t.handheld.step0 -->16 px<!-- /fact --> |
+| Documents | Pages: word processors, PDFs, anything printed and held in the hand, whether read on paper or on screen | Point (pt); at 100 % zoom, 1 pt = 4/3 px | <!-- fact:t.documents.step0 -->12 pt<!-- /fact --> |
+| Slides | Presentations shown to a room | Percentage of the slide's height | <!-- fact:t.slides.step0 -->4.23 %<!-- /fact --> |
 
 Which geometry a format takes:
 
 - **Web.** The primary pointer: a coarse pointer (touch) is a handheld screen, a fine one (mouse, trackpad) a desktop screen. Printing a page uses the documents values. The width of the window does not decide it: a phone held sideways and a narrow window on a computer can be equally wide.
 - **Applications.** The device: phones and tablets are handheld; computers are desktop.
-- **Documents.** Always the documents geometry, whatever paper they are printed on or screen they are read on. Its 12 pt is the body size style guides give, and 1.5 times the size text needs on a page held at 40 cm. On a computer screen it reaches the size of running text at a zoom of 120 %.
-- **Slides.** Slides take the slides geometry, projected or not. Its values also meet the desktop screen whenever the slide is at least 450 px high, so a deck read on a computer needs no other sizes.
-- **Pieces read from farther than arm's length** (posters, signs, displays), when the farthest reading distance D is known: step 0 is 0.704 % of D, and each step is 1.2554 times the one below, down to step −2. From 2 m, step 0 is 14.1 mm, 40 pt.
+- **Documents.** Always the documents geometry, whatever paper they are printed on or screen they are read on. Its 12 pt is the body size style guides give, and 1.5 times the size text needs on a page held at 40 cm. On a computer screen it reaches the size of running text on screen at a zoom of <!-- fact:t.documents.zoom -->119 %<!-- /fact -->.
+- **Slides.** Slides take the slides geometry, projected or not. Its values also meet the desktop screen whenever the slide is at least <!-- fact:t.slides.desktop -->450 px<!-- /fact --> high, so a deck read on a computer needs no other sizes.
+- **Pieces read from farther than arm's length** (posters, signs, displays), when the farthest reading distance D is known: step 0 is <!-- fact:t.distance.step0 -->0.704 %<!-- /fact --> of D, and each step is <!-- fact:t.distance.ratio -->1.2556<!-- /fact --> times the one below, down to step −2. From 2 m, step 0 is <!-- fact:t.distance.2m -->14.1 mm, 40 pt<!-- /fact -->.
 - **Images** (graphics, posts, thumbnails) take the geometry of the screen they are shown on, at the size they are shown: a value in the image's pixels is the step × the image's width ÷ the width it is displayed at.
 
 ## 5. Scale
 
 All text takes its size from one scale of ten steps, from −2 to 7. Step 0 is running text, step −2 the smallest text, and every step is the one below it times a constant ratio. Sizes between steps are not used.
 
+<!-- generated:scale -->
 | Step | Desktop (px) | Desktop (rem) | Handheld (px) | Handheld (rem) | Documents (pt) | Slides (% of height) |
-|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- |
 | 7 | 94.90 | 5.9311 | 43.79 | 2.7371 | 32.84 | 20.90 |
 | 6 | 75.42 | 4.7136 | 37.93 | 2.3704 | 28.44 | 16.63 |
-| 5 | 59.94 | 3.7460 | 32.84 | 2.0528 | 24.63 | 13.24 |
-| 4 | 47.63 | 2.9770 | 28.44 | 1.7778 | 21.33 | 10.54 |
+| 5 | 59.94 | 3.746 | 32.84 | 2.0528 | 24.63 | 13.24 |
+| 4 | 47.63 | 2.977 | 28.44 | 1.7778 | 21.33 | 10.54 |
 | 3 | 37.85 | 2.3659 | 24.63 | 1.5396 | 18.48 | 8.39 |
 | 2 | 30.08 | 1.8802 | 21.33 | 1.3333 | 16 | 6.68 |
 | 1 | 23.91 | 1.4942 | 18.48 | 1.1547 | 13.86 | 5.31 |
 | **0** | **19** | **1.1875** | **16** | **1** | **12** | **4.23** |
-| −1 | 15.10 | 0.9437 | 13.86 | 0.8660 | 10.39 | 3.37 |
+| −1 | 15.10 | 0.9437 | 13.86 | 0.866 | 10.39 | 3.37 |
 | −2 | 12 | 0.75 | 12 | 0.75 | 9 | 2.68 |
-| Ratio | 1.2583 | | 1.1547 | | 1.1547 | 1.2563 |
+| Ratio | 1.2583 |  | 1.1547 |  | 1.1547 | 1.2563 |
+<!-- /generated -->
 
-Step 0 is the smallest size at which running text reads at full speed in that geometry, and on screens never less than the reader's default size; in documents it is 12 pt. Step −2 is the smallest size at which Regular text keeps strokes and counters of at least one pixel. The ratio is the largest that keeps step −2 there.
+Step 0 is the smallest size at which running text reads at full speed in that geometry, and on screens never less than the reader's default size; in documents it is <!-- fact:t.documents.step0 -->12 pt<!-- /fact -->. Step −2 is the smallest size at which Regular text keeps strokes and counters of at least one pixel. The ratio is the largest that keeps step −2 there.
 
 On the web, sizes are set in rem, so the whole scale follows the size the reader chose in the browser. Where a tool does not take the exact value, round up to the nearest value it takes; §14 lists them for common tools.
 
@@ -107,40 +109,48 @@ On the web, sizes are set in rem, so the whole scale follows the size the reader
 
 A **level** is a kind of text. Each has one step, weight and line height, the same in every format:
 
-| Level | Step | Weight | Line height | Family |
-|---|---|---|---|---|
-| Display 1 | 7 | Regular, or any weight (§7) | 1.3 | Crystal |
-| Display 2 | 6 | Regular, or any weight (§7) | 1.3 | Crystal |
-| Heading 1 | 5 | Bold | 1.3 | Crystal |
-| Heading 2 | 4 | Bold | 1.3 | Crystal |
-| Heading 3 | 3 | Bold | 1.3 | Crystal |
-| Heading 4 | 2 | Bold | 1.3 | Crystal |
-| Heading 5 | 1 | Bold | 1.3 | Crystal |
-| Heading 6 | 0 | Bold | 1.3 | Crystal |
-| Lead (the opening paragraph of a document) | 1 | Regular | 1.5 | Crystal |
-| Running text: paragraphs, lists, quotes | 0 | Regular | 1.5 | Crystal |
-| Interface text: controls, labels, menus, tabs, table cells, messages | 0 | Regular | 1.3 on one line, 1.5 when it wraps | Crystal |
-| Small: captions, help text, metadata, secondary labels | −1 | Regular | 1.5 | Crystal |
-| Fine: timestamps, counts, badges, notes | −2 | Regular | 1.5 | Crystal |
-| Code blocks | 0 | Regular | 1.3 | Mono |
-| Code in editors and terminals | 16 px (12 pt), outside the scale | Regular | 1.3 | Mono |
-| Literal text in a sentence | the sentence's | the sentence's | the sentence's | Mono |
+<!-- generated:levels -->
+| Level | Use | Step | Weight | Line height | Family |
+| --- | --- | --- | --- | --- | --- |
+| Display 1 | The one title of a page, a cover or a slide | 7 | Regular, or any weight (§7) | 1.3 | Crystal |
+| Display 2 | The same, one step down | 6 | Regular, or any weight (§7) | 1.3 | Crystal |
+| Heading 1 | Headings, by structure | 5 | Bold | 1.3 | Crystal |
+| Heading 2 |  | 4 | Bold | 1.3 | Crystal |
+| Heading 3 |  | 3 | Bold | 1.3 | Crystal |
+| Heading 4 |  | 2 | Bold | 1.3 | Crystal |
+| Heading 5 |  | 1 | Bold | 1.3 | Crystal |
+| Heading 6 |  | 0 | Bold | 1.3 | Crystal |
+| Lead | The opening paragraph of a document | 1 | Regular | 1.5 | Crystal |
+| Running text | Paragraphs, lists, quotes | 0 | Regular | 1.5 | Crystal |
+| Interface text | Controls, labels, menus, tabs, table cells, messages; 1.5 when it wraps | 0 | Regular | 1.3 | Crystal |
+| Small | Captions, help text, metadata, secondary labels | −1 | Regular | 1.5 | Crystal |
+| Fine | Timestamps, counts, badges, notes | −2 | Regular | 1.5 | Crystal |
+| Code blocks | Code in documents, pages and slides | 0 | Regular | 1.3 | Mono |
+| Code in editors and terminals | Read for hours; outside the scale | 14 px minimum, 16 px optimal | Regular | 1.3 | Mono |
+| Literal text in a sentence | Code, commands, paths, keys and values inside running or interface text | the sentence's | the sentence's | the sentence's | Mono |
+<!-- /generated -->
 
 - **Running text is never set below step 0.** Small and Fine carry short text: a label, a caption or a note of one sentence at most. Anything longer is running text.
 - **Emphasis** is italic; **strong emphasis** is Bold. Fine text has no italic (§7).
-- **Code in editors and terminals** is read for hours and needs columns, so it is not set at step 0: 16 px is at least as large as code in the default editor of every system, and the size at which the Mono grid (x-height, cell and line) lands closest to whole pixels.
+- **Literal text in a sentence** takes the sentence's step, weight and line height, in Mono.
+- **Code in editors and terminals** is read for hours and needs columns, so it is not set at step 0. <!-- fact:t.code.minimum -->14 px<!-- /fact --> (<!-- fact:t.code.minimum-pt -->10.5 pt<!-- /fact -->) is the smallest size at which the Mono grid (x-height, cell and line) lands on whole pixels; it is the usual size and meets the rules. <!-- fact:t.code.optimal -->16 px<!-- /fact --> (<!-- fact:t.code.optimal-pt -->12 pt<!-- /fact -->) is the optimal size: at least as large as code in the default editor of every system, on the cleanest grid of all, and less tiring over long sessions, for anyone who prefers larger text.
 - Display levels are for the one title of a page, a cover or a slide, and no more than one per view.
 
 ## 7. Weights and styles
 
 Each weight and style has a lowest step, below which its strokes or counters drop under a pixel and the text loses the contrast its color guarantees. It holds in every format:
 
-| Lowest step | Styles |
-|---|---|
-| −2 | Regular, Medium, SemiBold and Bold, upright and italic, except Twilight Crystal Italic at Regular weight |
-| −1 | Twilight Crystal Italic; Twilight Crystal ExtraBold, upright and italic |
-| 0 | Light, upright and italic; Twilight Crystal Mono ExtraBold, upright and italic |
-| 2 | ExtraLight, upright and italic |
+<!-- generated:lowest-steps -->
+| Weight | Twilight Crystal | Italic | Twilight Crystal Mono | Mono italic |
+| --- | --- | --- | --- | --- |
+| ExtraLight | 2 | 2 | 2 | 2 |
+| Light | 0 | 0 | 0 | 0 |
+| Regular | −2 | −1 | −2 | −2 |
+| Medium | −2 | −2 | −2 | −2 |
+| SemiBold | −2 | −2 | −2 | −2 |
+| Bold | −2 | −2 | −2 | −2 |
+| ExtraBold | −1 | −1 | 0 | 0 |
+<!-- /generated -->
 
 The levels of §6 use Regular and Bold, and italic from step −1. The other weights are for Display levels, where every weight is above its lowest step; which one is a matter of taste.
 
@@ -150,9 +160,9 @@ The levels of §6 use Regular and Bold, and italic from step −1. The other wei
 
 - **1.5** for running text and for any text that wraps to more than one line (WCAG 1.4.8).
 - **1.3** for headings, Display, one-line interface text, code, editors and terminals. It is the fonts' own line: box drawing and blocks in a terminal join from one line to the next only at this height.
-- Nothing below 1.3. Below 1.153 an accent can touch the line above.
+- Nothing below 1.3. Below <!-- fact:t.touching -->1.153<!-- /fact --> an accent can touch the line above.
 
-**Spacing** between blocks is measured in **lines**, one line being step 0 × 1.5: 28.5 px on desktop screens, 24 px on handheld screens, 18 pt in documents and 6.35 % of the slide's height on slides.
+**Spacing** between blocks is measured in **lines**, one line being step 0 × 1.5: <!-- fact:t.desktop.line -->28.5 px<!-- /fact --> on desktop screens, <!-- fact:t.handheld.line -->24 px<!-- /fact --> on handheld screens, <!-- fact:t.documents.line -->18 pt<!-- /fact --> in documents and <!-- fact:t.slides.line -->6.34 %<!-- /fact --> of the slide's height on slides.
 
 | Between | Space |
 |---|---|
@@ -170,7 +180,7 @@ Layouts must not break when a reader raises line height to 1.5, paragraph spacin
 
 ## 9. Line length and alignment
 
-- **A line of running text is at most 34.6 em long**, which holds 80 characters (WCAG 1.4.8): 657 px on desktop screens, 554 px on handheld screens (wider than a phone held upright, so there it binds only on tablets and phones held sideways), 415 pt (14.6 cm) in documents. On a Letter or A4 page with the usual 2.5 cm margins, the text block is wider than that, so the margins grow, or the text is set in two columns. On the web, set it in em, not in ch: the `ch` unit is the width of the zero, wider than an average character in Twilight Crystal, and 80ch holds about 120 characters.
+- **A line of running text is at most <!-- fact:t.measure.em -->34.6 em<!-- /fact --> long**, which holds <!-- fact:t.measure.characters -->80<!-- /fact --> characters (WCAG 1.4.8): <!-- fact:t.desktop.measure -->657 px<!-- /fact --> on desktop screens, <!-- fact:t.handheld.measure -->554 px<!-- /fact --> on handheld screens (wider than a phone held upright, so there it binds only on tablets and phones held sideways), <!-- fact:t.documents.measure -->415 pt<!-- /fact --> (<!-- fact:t.documents.measure-cm -->14.6 cm<!-- /fact -->) in documents. On a Letter or A4 page with the usual 2.5 cm margins, the text block is wider than that, so the margins grow, or the text is set in two columns. On the web, set it in em, not in ch: the `ch` unit is the width of the zero, wider than an average character in Twilight Crystal, and 80ch holds about 120 characters.
 - Running text is aligned to the start of the line (left, in left-to-right languages) and never justified (WCAG 1.4.8). Words are not hyphenated.
 - Headings, Display and one-line labels may be centered; running text is not.
 
@@ -198,11 +208,11 @@ A level may move to another step, never between steps, and keeps its weight, lin
 
 ## 13. Fitting the column
 
-No word may run past its column. The widest common words, in Bold, are 7.94 em wide, so a step fits a column if
+No word may run past its column. The widest common words, in Bold, are <!-- fact:t.fit.em -->7.94<!-- /fact --> em wide, so a step fits a column if
 
-size ≤ column width ÷ 7.94
+size ≤ column width ÷ <!-- fact:t.fit.em -->7.94<!-- /fact -->
 
-The size of a level that does not fit is reduced to that bound, which affects only the largest steps on narrow columns: on a 320 px screen with 16 px margins, the bound is 36.25 px, under handheld steps 6 and 7. On the web, a size that spans the page is written `min(step, (100vw − 2rem) / 7.94)`.
+The size of a level that does not fit is reduced to that bound, which affects only the largest steps on narrow columns: on a 320 px screen with 16 px margins, the bound is <!-- fact:t.fit.narrowest -->36.27 px<!-- /fact -->, under handheld steps 6 and 7. On the web, a size that spans the page is written `min(step, (100vw − 2rem) / 7.94)`.
 
 ## 14. Setting up tools
 
@@ -212,12 +222,19 @@ Where a tool does not take the exact value, round up to the nearest value it tak
 |---|---|
 | Web | Sizes in rem from §5; desktop values unless the primary pointer is coarse (`@media (pointer: coarse)`), documents values in `@media print` |
 | iOS, Android | Handheld values: pt on iOS, sp on Android, equal to the px of §5 |
-| Word, Google Docs, Pages, PDFs | 9, 10.5, 12, 14, 16, 18.5, 21.5, 25, 28.5, 33 pt for steps −2 to 7 |
-| PowerPoint, 16:9 (7.5 in high) | 14.5, 18.5, 23, 29, 36.5, 45.5, 57, 71.5, 90, 113 pt |
-| Google Slides, 16:9 (5.625 in high) | 11, 14, 17.5, 22, 27.5, 34, 43, 54, 67.5, 85 pt |
-| Keynote, 1920 × 1080 | 29, 37, 46, 58, 73, 91, 114, 143, 180, 226 pt |
 | Figma, Photoshop, Illustrator | px of the geometry where the design will be shown; in a 72 ppi document, 1 pt = 1 px |
-| Editors and terminals | 16 px, or 12 pt in tools sized in points; line height 1.3 |
+| Editors and terminals | <!-- fact:t.code.minimum -->14 px<!-- /fact --> or <!-- fact:t.code.optimal -->16 px<!-- /fact --> (<!-- fact:t.code.minimum-pt -->10.5 pt<!-- /fact --> or <!-- fact:t.code.optimal-pt -->12 pt<!-- /fact --> in tools sized in points); line height 1.3 |
+
+Documents and slides take the steps in points, rounded up to what each tool accepts:
+
+<!-- generated:tool-values -->
+| Tool | −2 | −1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | Unit |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Word, Google Docs, Pages, PDFs | 9 | 10.5 | 12 | 14 | 16 | 18.5 | 21.5 | 25 | 28.5 | 33 | pt |
+| PowerPoint, 16:9 (7.5 in high) | 14.5 | 18.5 | 23 | 29 | 36.5 | 45.5 | 57 | 71.5 | 90 | 113 | pt |
+| Google Slides, 16:9 (5.625 in high) | 11 | 14 | 17.5 | 22 | 27.5 | 34 | 43 | 54 | 67.5 | 85 | pt |
+| Keynote, 1920 × 1080 | 29 | 37 | 46 | 58 | 73 | 91 | 114 | 143 | 180 | 226 | pt |
+<!-- /generated -->
 
 Each level of §6 becomes a named style in tools that have them (paragraph and character styles in documents, text styles in design tools), so text is set by level and never by a size typed by hand.
 
@@ -233,7 +250,7 @@ Each level of §6 becomes a named style in tools that have them (paragraph and c
 | A line height below 1.3, or below 1.5 for running text | Accents touch, terminals show gaps, WCAG 1.4.8 fails | §8 |
 | Letter spacing, or capitals as a style | The fonts' spacing is lost; capitals read slower | Letter spacing 0; the case of the language |
 | Justified or hyphenated running text | Uneven word spaces; WCAG 1.4.8 | Text aligned to the start |
-| A line limit of 80ch | About 120 characters per line | 34.6 em |
+| A line limit of 80ch | About 120 characters per line | <!-- fact:t.measure.em -->34.6 em<!-- /fact --> |
 | Proportional figures in tables or changing values | Columns do not line up; numbers shift | Tabular figures |
 | Spacing in arbitrary amounts | Rhythm is lost | Lines and half lines (§8) |
 | A Display level for section titles, or more than one per view | It stops marking the one title | Headings |

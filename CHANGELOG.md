@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.22.0
+
+Typography tokens. No palette or font changes.
+
+### Added
+- `typography/twilight.json`: the typography tokens, written by `fonts/scripts/typography.py --write` from the built fonts and the rules. Font metrics, floors and lowest steps of every style, the scale of each geometry (desktop, handheld, documents, slides, and text read from a distance), levels, line heights, spacing, measure, the column bound, code sizes, and the values each document and slide tool takes.
+- The tables and figures of `docs/design-system/typography.md` and `docs/construction/typography.md` are generated from the tokens by `docs.py`.
+- The validator checks the tokens: version, every scale against its ratio, floor and running text, levels against the lowest step of their weight, line heights, code sizes, measure and letter spacing; and the documents against the tokens. The font workflow fails when the tokens differ from the fonts.
+
+### Changed
+- Code in editors and terminals has a minimum of 14 px, the smallest size whose Mono grid lands within 2 % of whole pixels, and an optimal size of 16 px. 14 px meets the rules.
+
 ## 1.21.0
 
 Typography rules. No palette or font changes.

@@ -13,7 +13,7 @@ The companion document, [design-system/typography.md](../design-system/typograph
 3. **The scale is the strongest one the floors allow.** Step 0 is running text and step −2 sits on the floor; the ratio follows from those two sizes. Every step is then checked against the top of the fluent range and against the narrowest screen.
 4. **Spacing is taken from the font and from WCAG.** Code uses the font's own line, so box drawing joins across lines; running text uses WCAG's 1.5; no line height is allowed at which two lines can touch.
 5. **The measure is counted in characters of real text**, then converted to em, because Twilight Crystal's zero is wider than its average character.
-6. **Code in editors and terminals** is at least as large as each system's default editor shows it, at the size where the Mono grid lands closest to whole pixels.
+6. **Code in editors and terminals** has a minimum, the smallest size at which the Mono grid lands on whole pixels, and an optimal size, at least as large as each system's default editor shows code and on the cleanest grid.
 
 Designer decisions and their sources are listed in §11; everything else is measured.
 
@@ -48,7 +48,7 @@ The same CSS pixel covers a different angle depending on the device and how far 
 
 A CSS pixel on a phone covers a third more angle than on a desktop screen, so the same size in pixels looks larger on a phone. The width of the viewport does not tell the two geometries apart: a phone in landscape and a narrow desktop window can have the same width.
 
-Slides are one case of text read from a distance. For any such text (a poster, a sign) seen from at most D, the critical print size is an x-height of D × tan 0.2°, a Twilight Crystal size of **0.704 % of D**; the floor angle of §5 gives 0.447 % of D, and the ratio is √(0.2 / 0.1269) = 1.2554.
+Slides are one case of text read from a distance. For any such text (a poster, a sign) seen from at most D, the critical print size is an x-height of D × tan 0.2°, a Twilight Crystal size of **<!-- fact:t.distance.step0 -->0.704 %<!-- /fact --> of D**; the floor angle of §5 gives <!-- fact:t.distance.floor -->0.446 %<!-- /fact --> of D, and the ratio is <!-- fact:t.distance.ratio -->1.2556<!-- /fact -->.
 
 ---
 
@@ -73,8 +73,9 @@ Page documents are read on paper of every size and on screens at every zoom, so 
 
 A stroke narrower than one pixel is drawn as a partly covered pixel, so on a 1x screen it is lighter than its color: the contrast of the text drops below the contrast the color guarantees. A counter (the white inside e, a, s, B, g, 8, m, n, H) narrower than one pixel fills in. The floor of a weight is the smallest whole pixel size at which its lowercase stems and its narrowest counter are both at least one pixel. It is measured on the outlines, unhinted, at 1x, the worst case.
 
+<!-- generated:floors -->
 | Weight | Stem | Narrowest counter | Floor, upright | Floor, italic | Mono, upright | Mono, italic |
-|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- |
 | ExtraLight (200) | 0.054 em | 0.141 em (g) | 19 px | 19 px | 19 px | 19 px |
 | Light (300) | 0.067 em | 0.135 em (g) | 15 px | 16 px | 15 px | 15 px |
 | Regular (400) | 0.084 em | 0.128 em (g) | **12 px** | 13 px | 12 px | 12 px |
@@ -82,6 +83,7 @@ A stroke narrower than one pixel is drawn as a partly covered pixel, so on a 1x 
 | SemiBold (600) | 0.122 em | 0.109 em (s) | 10 px | 9 px | 10 px | 10 px |
 | Bold (700) | 0.139 em | 0.096 em (s) | 11 px | 11 px | 11 px | 11 px |
 | ExtraBold (800) | 0.165 em | 0.077 em (s) | 13 px | 13 px | 14 px | 14 px |
+<!-- /generated -->
 
 Stems and counters are those of upright Twilight Crystal; the other styles differ by at most 0.006 em. Italic glyphs are uprighted by their angle before their counters are measured, and stems are measured across, as the pixel rows meet them, so a slanted stem counts at its horizontal width. Twilight Crystal Italic's stem, 0.083 em, falls just short of one pixel at 12 px, which puts its floor at 13. Mono's narrowest counter in the heavier weights is m, compressed into one cell, which raises its ExtraBold floor to 14 px.
 
@@ -91,12 +93,17 @@ Documents are read on screens at 100 % zoom, where a point is 4/3 px, so their f
 
 The **lowest step** of a style is the smallest step of the scale (§6) that is at or above its floor in every geometry:
 
-| Lowest step | Styles |
-|---|---|
-| −2 | Regular, Medium, SemiBold and Bold, upright and italic, except Twilight Crystal Italic at Regular weight |
-| −1 | Twilight Crystal Italic; Twilight Crystal ExtraBold, upright and italic |
-| 0 | Light, upright and italic; Twilight Crystal Mono ExtraBold, upright and italic |
-| 2 | ExtraLight, upright and italic |
+<!-- generated:lowest-steps -->
+| Weight | Twilight Crystal | Italic | Twilight Crystal Mono | Mono italic |
+| --- | --- | --- | --- | --- |
+| ExtraLight | 2 | 2 | 2 | 2 |
+| Light | 0 | 0 | 0 | 0 |
+| Regular | −2 | −1 | −2 | −2 |
+| Medium | −2 | −2 | −2 | −2 |
+| SemiBold | −2 | −2 | −2 | −2 |
+| Bold | −2 | −2 | −2 | −2 |
+| ExtraBold | −1 | −1 | 0 | 0 |
+<!-- /generated -->
 
 ---
 
@@ -108,14 +115,16 @@ ratio = √(running text size / floor)
 
 This is the largest ratio, so the strongest hierarchy, whose smallest step is still legible. Each geometry has its own:
 
+<!-- generated:scale-by-geometry -->
 | Step | −2 | −1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-|---|---|---|---|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Desktop, ratio 1.2583 (px) | 12 | 15.10 | 19 | 23.91 | 30.08 | 37.85 | 47.63 | 59.94 | 75.42 | 94.90 |
 | Handheld, ratio 1.1547 (px) | 12 | 13.86 | 16 | 18.48 | 21.33 | 24.63 | 28.44 | 32.84 | 37.93 | 43.79 |
 | Documents, ratio 1.1547 (pt) | 9 | 10.39 | 12 | 13.86 | 16 | 18.48 | 21.33 | 24.63 | 28.44 | 32.84 |
 | Slides, ratio 1.2563 (% of height) | 2.68 | 3.37 | 4.23 | 5.31 | 6.68 | 8.39 | 10.54 | 13.24 | 16.63 | 20.90 |
+<!-- /generated -->
 
-Adjacent steps differ in x-height by at least 1.54 device pixels on a desktop screen and 1.84 on a handheld one (at 2 device pixels per CSS pixel or more), so no two steps render alike. Documents are the handheld scale in points: 12 pt is 16 px and 9 pt is 12 px. On slides the ratio is √(0.2 / 0.1269) = 1.2554 but for rounding.
+Adjacent steps differ in x-height by at least 1.54 device pixels on a desktop screen and 1.84 on a handheld one (at 2 device pixels per CSS pixel or more), so no two steps render alike. Documents are the handheld scale in points: 12 pt is 16 px and 9 pt is 12 px. On slides the ratio differs from that of text read from a distance, <!-- fact:t.distance.ratio -->1.2556<!-- /fact --> (§3), only by rounding.
 
 ---
 
@@ -142,36 +151,41 @@ Adjacent steps differ in x-height by at least 1.54 device pixels on a desktop sc
 
 WCAG 1.4.8 limits running text to 80 characters per line. The CSS unit `ch` is the width of the zero, which in Twilight Crystal is wider than an average character, so 80ch would hold about 120 characters. The measure is therefore counted on real text: the mean advance of a character, spaces and punctuation included, in the Universal Declaration of Human Rights, shaped with kerning in Regular.
 
+<!-- generated:measure -->
 | Language | Mean character | 80 characters |
-|---|---|---|
+| --- | --- | --- |
 | English | 0.433 em | 34.6 em |
 | Spanish | 0.440 em | 35.2 em |
+<!-- /generated -->
 
-The narrower language sets the limit: **34.6 em**, which is 53.4ch. At the handheld size on a 320 px screen, a line holds about 41 characters.
+The narrower language sets the limit: **<!-- fact:t.measure.em -->34.6 em<!-- /fact -->**, which is 53.4ch. At the handheld size on a 320 px screen, a line holds about 41 characters.
 
 ---
 
 ## 10. Code in editors and terminals
 
-Code is set by the reader in an editor or a terminal, for hours at a time, and needs many columns, so it does not take step 0 of the desktop scale (19 px). Its size meets two conditions:
+Code is set by the reader in an editor or a terminal, for hours at a time, and needs many columns, so it does not take step 0 of the desktop scale (19 px). Terminals round the cell to whole pixels, and editors at 1x draw on them, so a size whose x-height (0.496 em), cell (0.632 em) and line (1.3 em) fall between pixels renders uneven columns or blurred letters. The largest of the three roundings, from the Mono floor to desktop running text:
 
-1. **At least the default.** Its x-height is no smaller than the x-height of code in the most used editor at its default font and size, on every system:
+<!-- generated:code-grid -->
+| Size (px) | 12 | 13 | **14** | 15 | **16** | 17 | 18 | 19 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Largest rounding | 5.5 % | 7.0 % | **1.7 %** | 5.9 % | **1.1 %** | 5.1 % | 3.3 % | 4.5 % |
+<!-- /generated -->
 
-   | System | Default | x-height of the font | x-height |
-   |---|---|---|---|
-   | Windows | Consolas, 14 px | 0.490 em | 6.86 px |
-   | macOS | Menlo, 12 px | 0.547 em | 6.56 px |
-   | Linux | Droid Sans Mono, 14 px | 0.536 em | 7.51 px |
+- **Minimum, <!-- fact:t.code.minimum -->14 px<!-- /fact -->.** The smallest size at which all three land within 2 % of whole pixels: an x-height of 6.94 px, a cell of 8.85 px and a line of 18.2 px, next to 7, 9 and 18. Its x-height is at least that of code in the default editor on Windows and macOS.
+- **Optimal, <!-- fact:t.code.optimal -->16 px<!-- /fact -->.** The size, from the x-height of the default editor on every system up to running text, whose grid lands closest to whole pixels. The defaults it is measured against:
 
-   Twilight Crystal Mono reaches 7.51 px of x-height at 15.13 px.
+<!-- generated:editor-defaults -->
+| System | Default | x-height of the font | x-height |
+| --- | --- | --- | --- |
+| Windows | Consolas, 14 px | 0.490 em | 6.86 px |
+| macOS | Menlo, 12 px | 0.547 em | 6.56 px |
+| Linux | Droid Sans Mono, 14 px | 0.536 em | 7.51 px |
+<!-- /generated -->
 
-2. **On the pixel grid.** Terminals round the cell to whole pixels, and editors at 1x draw on them. Among the sizes from that bound to step 0, the size is the one whose x-height (0.496 em), cell (0.632 em) and line (1.3 em) land closest to whole pixels:
+  Twilight Crystal Mono reaches the largest of these x-heights, 7.51 px, at 15.13 px. At 16 px its x-height, cell and line are 7.94, 10.11 and 20.8 px, all within 1.1 % of 8, 10 and 21: the cleanest grid of any size from the floor to running text. It is also the browser default and the size of running text in documents.
 
-   | Size (px) | 12 | 13 | 14 | 15 | **16** | 17 | 18 | 19 |
-   |---|---|---|---|---|---|---|---|---|
-   | Largest rounding | 5.5 % | 6.9 % | 1.7 % | 5.9 % | **1.1 %** | 5.1 % | 3.3 % | 4.5 % |
-
-**16 px**, 12 pt, has the cleanest grid of any size from the floor to running text: an x-height of 7.94 px, a cell of 10.11 px and a line of 20.8 px, all within 1.1 % of 8, 10 and 21. It is also the browser default and the size of running text in documents. 14 px is the next cleanest, but its x-height (6.94 px) is below the default of one system.
+Both meet the rules. <!-- fact:t.code.minimum -->14 px<!-- /fact --> is the usual size; <!-- fact:t.code.optimal -->16 px<!-- /fact --> reduces fatigue over long sessions and suits anyone who prefers larger text.
 
 ---
 
@@ -191,6 +205,7 @@ Code is set by the reader in an editor or a terminal, for hours at a time, and n
 | Handheld density | at least 2 device pixels per CSS pixel | Checked only for the spacing of steps (§6); floors are taken at 1x |
 | Default size | 16 px | The default font size of browsers; running text on screens is never smaller |
 | Floor criterion | stems and counters at least 1 px, at 1x; on slides, the angle of the Regular floor on a desktop screen | Text keeps the contrast its color guarantees |
+| Code grid tolerance | 2 % | The minimum code size: x-height, cell and line within 2 % of whole pixels |
 | Editor defaults | §10 | The default font and size of the most used code editor on each system; x-heights measured on the fonts as each system installs them |
 | Line height of running text | 1.5 | [WCAG 1.4.8](https://www.w3.org/WAI/WCAG22/Understanding/visual-presentation) |
 | Measure | 80 characters | WCAG 1.4.8 |
@@ -200,7 +215,7 @@ Code is set by the reader in an editor or a terminal, for hours at a time, and n
 
 ### Derived (everything else)
 
-Running text sizes on screens and slides (§4), floors (§5), scale ratios and steps (§6), the width bound (§7), the touching line heights and the code line height (§8), the measure (§9) and the size of code (§10).
+Running text sizes on screens and slides (§4), floors (§5), scale ratios and steps (§6), the width bound (§7), the touching line heights and the code line height (§8), the measure (§9) and the minimum and optimal sizes of code (§10).
 
 ---
 

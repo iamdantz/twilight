@@ -179,9 +179,11 @@ Twilight Theme recommends its typefaces, [Twilight Crystal and Twilight Crystal 
 │   ├── OFL.txt              license of Twilight Crystal and Twilight Crystal Mono
 │   └── FONTLOG.txt          changes from upstream and credits
 ├── palette/
-│   └── twilight.json        all values, machine-readable
+│   └── twilight.json        all color values, machine-readable
 ├── tools/
 │   └── ligaturizer/         Fira Code ligatures for monospaced fonts (GPL-3.0)
+├── typography/
+│   └── twilight.json        typography tokens: scales, levels, floors, code sizes
 ├── CONTRIBUTING.md
 ├── CHANGELOG.md
 └── LICENSE
