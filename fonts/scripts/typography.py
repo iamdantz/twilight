@@ -242,10 +242,10 @@ def tokens(out):
         "levels": {k: {"use": use, "size": s, "weight": w, "leading": lh, "font": fam,
                        **({"weights": "any at or above its lowest step"} if k in DISPLAY_LEVELS else {})}
                    for k, (use, s, w, lh, fam) in LEVELS.items()},
-        "editor": {"text": c["minimum (px)"], "text-lg": c["optimal (px)"], "leading": "tight", "font": "mono",
-                   "grid-rounding": {str(k): q(v) for k, v in c["worst rounding to whole pixels"].items()},
-                   "defaults": {k: {"font": v["font"], "size": v["size (px)"], "x-height": q(v["x-height (px)"], 2)}
-                                for k, v in c["editor defaults"].items()}},
+        "editors": {"font-size": {"default": c["minimum (px)"], "lg": c["optimal (px)"]}, "leading": "tight", "font": "mono",
+                    "grid-rounding": {str(k): q(v) for k, v in c["worst rounding to whole pixels"].items()},
+                    "defaults": {k: {"font": v["font"], "size": v["size (px)"], "x-height": q(v["x-height (px)"], 2)}
+                                 for k, v in c["editor defaults"].items()}},
         "leading": LEADING,
         "tracking": 0,
         "spacing": SPACING,
@@ -503,7 +503,7 @@ def main():
     c = out["code"]
     print(f"\nEditor: comfort bound {r(c['comfort bound (px)'], 2)} px; worst rounding "
           + ", ".join(f"{k}: {r(v * 100, 1)} %" for k, v in c["worst rounding to whole pixels"].items())
-          + f"; editor {c['minimum (px)']} px, editor-lg {c['optimal (px)']} px")
+          + f"; {c['minimum (px)']} px, or {c['optimal (px)']} px to reduce fatigue")
     print("\nUpper bounds:", {k: (r(v, 2) if isinstance(v, float) else v) for k, v in out["upper bounds"].items()})
     m = out["measure"]
     print("\nMeasure:", {k: (r(v) if isinstance(v, float) else {a: r(b, 2) for a, b in v.items()}) for k, v in m.items()})

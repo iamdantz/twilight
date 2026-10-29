@@ -62,7 +62,6 @@ Every name follows [the typography rules, §3](../docs/design-system/typography.
 | `--twl-font-sans`, `--twl-font-mono` | The two font stacks |
 | `--twl-text-xs` … `--twl-text-6xl` | The scale of the current geometry |
 | `--twl-text-display-1`, `--twl-text-display-2`, `--twl-text-h1` … `--twl-text-h6`, `--twl-text-body-lg`, `--twl-text-body`, `--twl-text-ui`, `--twl-text-body-sm`, `--twl-text-body-xs`, `--twl-text-code` | The size of each level |
-| `--twl-text-editor`, `--twl-text-editor-lg` | Code in editors and terminals: 14 px and 16 px |
 | `--twl-text-fit` | The largest size whose widest words fit the screen |
 | `--twl-leading`, `--twl-leading-tight` | 1.5 and 1.3 |
 | `--twl-spacing` | One line of body text, the unit of spacing |

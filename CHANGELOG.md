@@ -9,11 +9,11 @@ One set of names for typography, in the rules, the tokens and the CSS. No palett
   - fonts `sans` and `mono` (were text and literal): `--twl-font-sans`, `--twl-font-mono`;
   - steps `xs` to `6xl`, with `base` for body text (were −2 to 7): `--twl-text-base`;
   - levels named after their element or their step: `h1` to `h6`, `body-lg`, `body`, `ui`, `body-sm`, `body-xs`, `code` (were Heading 1 to 6, Lead, Running text, Interface text, Small and Fine): `--twl-text-h1`;
-  - code in editors `editor` and `editor-lg` (were minimum and optimal);
   - leading `default` and `tight`, `spacing`, the `prose` container and `fit`: `--twl-leading-tight`, `--twl-spacing`, `--twl-container-prose`, `--twl-text-fit`;
   - geometries `desktop`, `handheld`, `page` and `slide` (were documents and slides);
   - prose, styled inside the class `twl-prose` (was document text, `.document`).
 - `typography/twilight.json` uses those keys, in kebab case, and keeps each value once.
+- Code editors and terminals are not part of the names or the CSS: their font size is a setting of each application. The rules give 14 px, or 16 px to reduce fatigue, under `editors` in the tokens.
 - The CSS reset is named for what it will grow into: a base for every HTML element, of which typography is the first part.
 - `docs/design-system/typography.md`, `docs/construction/typography.md` and `css/README.md` edited for the new names and for plain language.
 

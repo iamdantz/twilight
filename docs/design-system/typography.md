@@ -58,7 +58,7 @@ Every typographic value has one name, used the same way in these rules, in [typo
 | Namespace | Keys | Example in CSS |
 |---|---|---|
 | `font` | `sans`, `mono` | `--twl-font-mono` |
-| `text` | the steps of the scale, `xs` to `6xl` (§6); the levels, such as `h1` or `body-sm` (§7); `editor`, `editor-lg`; `fit` (§14) | `--twl-text-base`, `--twl-text-h2` |
+| `text` | the steps of the scale, `xs` to `6xl` (§6); the levels, such as `h1` or `body-sm` (§7); `fit` (§14) | `--twl-text-base`, `--twl-text-h2` |
 | `leading` | `default` (1.5), `tight` (1.3) | `--twl-leading`, `--twl-leading-tight` |
 | `spacing` | one line of body text (§9) | `--twl-spacing` |
 | `container` | `prose` (§10) | `--twl-container-prose` |
@@ -145,13 +145,12 @@ A **level** is a kind of text. Each has one step, weight and leading, the same i
 | `body-sm` | Captions, help text, metadata, secondary labels | `sm` | Regular | `default` (1.5) | `sans` |
 | `body-xs` | Timestamps, counts, badges, notes | `xs` | Regular | `default` (1.5) | `sans` |
 | `code` | Code blocks in prose, pages and slides | `base` | Regular | `tight` (1.3) | `mono` |
-| `editor` | Code in editors and terminals; outside the scale | 14 px, 16 px for `editor-lg` | Regular | `tight` (1.3) | `mono` |
 <!-- /generated -->
 
 - **Body text is never set below `base`.** `body-sm` and `body-xs` carry short text: a label, a caption or a note of one sentence at most. Anything longer is `body`.
 - **Emphasis** is italic, **strong emphasis** Bold. `body-xs` has no italic (§8).
 - **Literal text in a sentence** takes the sentence's level, in `mono`.
-- **`editor`** is code in editors and terminals. It is read for hours and needs columns, so it is not set at `base`. <!-- fact:t.editor.text -->14 px<!-- /fact --> (<!-- fact:t.editor.text-pt -->10.5 pt<!-- /fact -->) is the smallest size at which the Mono grid (x-height, cell and line) lands on whole pixels; it is the usual size and meets the rules. `editor-lg`, <!-- fact:t.editor.text-lg -->16 px<!-- /fact --> (<!-- fact:t.editor.text-lg-pt -->12 pt<!-- /fact -->), is at least as large as code in the default editor of every system, on the cleanest grid of all, and less tiring over long sessions, for anyone who prefers larger text.
+- **Code editors and terminals** are not a level and have no name: their font size is a setting of the application, chosen by its user. These rules give two sizes for it. <!-- fact:t.editors.size -->14 px<!-- /fact --> (<!-- fact:t.editors.size-pt -->10.5 pt<!-- /fact -->) is the smallest at which the Mono grid (x-height, cell and line) lands on whole pixels; it is the usual size and meets the rules. <!-- fact:t.editors.size-lg -->16 px<!-- /fact --> (<!-- fact:t.editors.size-lg-pt -->12 pt<!-- /fact -->) is at least as large as code in the default editor of every system, on the cleanest grid of all, and less tiring over long sessions, for anyone who prefers larger text. Line height is 1.3, the font's own line, in both.
 - `display-1` and `display-2` are for the one title of a page, a cover or a slide, and no more than one per view.
 
 ## 8. Weights and styles
@@ -241,7 +240,7 @@ Where a tool does not take the exact value, round up to the nearest value it tak
 | Web | Sizes in rem from §6: `desktop` unless the primary pointer is coarse (`@media (pointer: coarse)`), `page` in `@media print`. The [CSS reset](../../css/README.md) applies all of it, with the names of §3 |
 | iOS, Android | `handheld`: pt on iOS, sp on Android, equal to the px of §6 |
 | Figma, Photoshop, Illustrator | px of the geometry where the design will be shown; in a 72 ppi document, 1 pt = 1 px |
-| Editors and terminals | `editor`, <!-- fact:t.editor.text -->14 px<!-- /fact -->, or `editor-lg`, <!-- fact:t.editor.text-lg -->16 px<!-- /fact --> (<!-- fact:t.editor.text-pt -->10.5 pt<!-- /fact --> or <!-- fact:t.editor.text-lg-pt -->12 pt<!-- /fact --> in tools sized in points); leading `tight` |
+| Code editors and terminals | In the application's settings: font size <!-- fact:t.editors.size -->14 px<!-- /fact -->, or <!-- fact:t.editors.size-lg -->16 px<!-- /fact --> to reduce fatigue (<!-- fact:t.editors.size-pt -->10.5 pt<!-- /fact --> or <!-- fact:t.editors.size-lg-pt -->12 pt<!-- /fact --> in applications sized in points); line height 1.3 |
 
 Documents and slides take the steps in points, rounded up to what each tool accepts:
 

@@ -685,8 +685,6 @@ input:where([type='button'], [type='reset'], [type='submit']),
   --twl-text-body-sm: var(--twl-text-sm);
   --twl-text-body-xs: var(--twl-text-xs);
   --twl-text-code: var(--twl-text-base);
-  --twl-text-editor: 0.875rem;
-  --twl-text-editor-lg: 1rem;
   --twl-leading: 1.5;
   --twl-leading-tight: 1.3;
   --twl-spacing: calc(var(--twl-text-base) * var(--twl-leading));

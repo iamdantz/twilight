@@ -86,10 +86,6 @@ def levels(T):
         weight = "Regular, or any weight (§8)" if "weights" in L else WEIGHT_NAMES[L["weight"]]
         rows.append([code(key), L["use"], code(L["size"]), weight,
                      f"{code(L['leading'])} ({num(T['leading'][L['leading']], 1)})", code(L["font"])])
-    E = T["editor"]
-    rows.append([code("editor"), "Code in editors and terminals; outside the scale",
-                 f"{E['text']} px, {E['text-lg']} px for {code('editor-lg')}", "Regular",
-                 f"{code(E['leading'])} ({num(T['leading'][E['leading']], 1)})", code(E["font"])])
     return table(["Level", "Use", "Step", "Weight", "Leading", "Font"], rows)
 
 
@@ -121,13 +117,13 @@ def tool_values(T):
 
 def editor_defaults(T):
     rows = [[system, f"{d['font']}, {d['size']} px", f"{d['x-height'] / d['size']:.3f} em", f"{d['x-height']:.2f} px"]
-            for system, d in T["editor"]["defaults"].items()]
+            for system, d in T["editors"]["defaults"].items()]
     return table(["System", "Default", "x-height of the font", "x-height"], rows)
 
 
 def grid(T):
-    G, E = T["editor"]["grid-rounding"], T["editor"]
-    mark = lambda size, text: f"**{text}**" if int(size) in (E["text"], E["text-lg"]) else text  # noqa: E731
+    G, S = T["editors"]["grid-rounding"], T["editors"]["font-size"]
+    mark = lambda size, text: f"**{text}**" if int(size) in S.values() else text  # noqa: E731
     return table(["Size (px)"] + [mark(s, s) for s in G],
                  [["Largest rounding"] + [mark(s, f"{v * 100:.1f} %") for s, v in G.items()]])
 
@@ -153,7 +149,7 @@ BLOCKS = {"scale": scale, "scale-by-geometry": scale_by_geometry, "levels": leve
 
 # Figures in prose ------------------------------------------------------------------------------
 def facts(T):
-    G, E, P, Fit = T["geometries"], T["editor"], T["container"]["prose"], T["fit"]
+    G, E, P, Fit = T["geometries"], T["editors"]["font-size"], T["container"]["prose"], T["fit"]
     out = {}
     for g in ("desktop", "handheld", "page"):
         unit = "pt" if g == "page" else "px"
@@ -174,10 +170,10 @@ def facts(T):
     out["t.prose.characters"] = str(P["characters"])
     out["t.fit.em"] = f"{Fit['em']:.2f}"
     out["t.fit.narrowest"] = f"{(Fit['narrowest'] - 2 * Fit['gutter']) / Fit['em']:.2f} px"
-    out["t.editor.text"] = f"{E['text']} px"
-    out["t.editor.text-lg"] = f"{E['text-lg']} px"
-    out["t.editor.text-pt"] = f"{num(E['text'] / PX_PER_PT, 1)} pt"
-    out["t.editor.text-lg-pt"] = f"{num(E['text-lg'] / PX_PER_PT)} pt"
+    out["t.editors.size"] = f"{E['default']} px"
+    out["t.editors.size-lg"] = f"{E['lg']} px"
+    out["t.editors.size-pt"] = f"{num(E['default'] / PX_PER_PT, 1)} pt"
+    out["t.editors.size-lg-pt"] = f"{num(E['lg'] / PX_PER_PT)} pt"
     out["t.touching"] = f"{T['fonts']['sans']['touching-line']:.3f}"
     return out
 
@@ -234,11 +230,12 @@ def token_errors(T, changelog):
             errs.append(f"{TOKENS}: level {k} is body text below base or below the default leading")
     if T["levels"]["body"]["size"] != "base" or T["leading"]["default"] < 1.5:
         errs.append(f"{TOKENS}: body must be base at a leading of at least 1.5 (WCAG 1.4.8)")
-    E, mono = T["editor"], T["fonts"]["mono"]
-    if not mono["styles"]["Regular"]["floor"] <= E["text"] <= E["text-lg"] <= T["geometries"]["desktop"]["scale"]["base"]:
-        errs.append(f"{TOKENS}: editor sizes must lie between the Mono floor and desktop base")
-    if any(E["text-lg"] * mono["x-height"] < d["x-height"] - 0.01 for d in E["defaults"].values()):
-        errs.append(f"{TOKENS}: editor-lg is below the x-height of an editor default")
+    E, mono = T["editors"], T["fonts"]["mono"]
+    S = E["font-size"]
+    if not mono["styles"]["Regular"]["floor"] <= S["default"] <= S["lg"] <= T["geometries"]["desktop"]["scale"]["base"]:
+        errs.append(f"{TOKENS}: editor font sizes must lie between the Mono floor and desktop base")
+    if any(S["lg"] * mono["x-height"] < d["x-height"] - 0.01 for d in E["defaults"].values()):
+        errs.append(f"{TOKENS}: the larger editor font size is below the x-height of an editor default")
     if abs(T["leading"][E["leading"]] - mono["natural-line"]) > 1e-9:
         errs.append(f"{TOKENS}: editor leading is not the Mono natural line")
     P = T["container"]["prose"]

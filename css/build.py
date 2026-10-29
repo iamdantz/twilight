@@ -96,15 +96,12 @@ def scale(T, geometry, unit):
 
 def tokens_css(T):
     _, fit_expr = fit(T)
-    E = T["editor"]
     lines = [
         f"  {var('font', 'sans')}: {stack(T, 'sans', 'sans-serif')};",
         f"  {var('font', 'mono')}: {stack(T, 'mono', 'monospace')};",
         scale(T, "desktop", "rem"),
         f"  {var('text', 'fit')}: {fit_expr};",
         *(f"  {var('text', level)}: {level_size(T, level)};" for level in T["levels"]),
-        f"  {var('text', 'editor')}: {n(E['text'] / 16)}rem;",
-        f"  {var('text', 'editor-lg')}: {n(E['text-lg'] / 16)}rem;",
         *(f"  {var('leading', k)}: {n(v)};" for k, v in T["leading"].items()),
         f"  {var('spacing')}: calc({use('text', 'base')} * {use('leading')});",
         f"  {var('container', 'prose')}: {n(T['container']['prose']['em'])}em;",

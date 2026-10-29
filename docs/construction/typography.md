@@ -13,7 +13,7 @@ The companion document, [design-system/typography.md](../design-system/typograph
 3. **The scale is the strongest one the floors allow.** `base` is body text and `xs` sits on the floor, two steps below; the ratio follows from those two sizes. Every step is then checked against the top of the fluent range and against the narrowest screen.
 4. **Leading is taken from the font and from WCAG.** `tight` is the font's own line, so box drawing joins across lines; `default` is WCAG's 1.5; no leading is allowed at which two lines can touch.
 5. **The prose container is counted in characters of real text**, then converted to em, because Twilight Crystal's zero is wider than its average character.
-6. **Code in editors and terminals** has two sizes: `editor`, the smallest at which the Mono grid lands on whole pixels, and `editor-lg`, at least as large as each system's default editor shows code and on the cleanest grid.
+6. **Code editors and terminals** get two font sizes for their settings: the smallest at which the Mono grid lands on whole pixels, and one at least as large as each system's default editor shows code, on the cleanest grid.
 
 Designer decisions and their sources are listed in §11; everything else is measured.
 
@@ -172,8 +172,8 @@ Code is set by the reader in an editor or a terminal, for hours at a time, and n
 | Largest rounding | 5.5 % | 7.0 % | **1.7 %** | 5.9 % | **1.1 %** | 5.1 % | 3.3 % | 4.5 % |
 <!-- /generated -->
 
-- **`editor`, <!-- fact:t.editor.text -->14 px<!-- /fact -->.** The smallest size at which all three land within 2 % of whole pixels: an x-height of 6.94 px, a cell of 8.85 px and a line of 18.2 px, next to 7, 9 and 18. Its x-height is at least that of code in the default editor on Windows and macOS.
-- **`editor-lg`, <!-- fact:t.editor.text-lg -->16 px<!-- /fact -->.** The size, from the x-height of the default editor on every system up to `base` on `desktop`, whose grid lands closest to whole pixels. The defaults it is measured against:
+- **The usual size, <!-- fact:t.editors.size -->14 px<!-- /fact -->.** The smallest size at which all three land within 2 % of whole pixels: an x-height of 6.94 px, a cell of 8.85 px and a line of 18.2 px, next to 7, 9 and 18. Its x-height is at least that of code in the default editor on Windows and macOS.
+- **The larger size, <!-- fact:t.editors.size-lg -->16 px<!-- /fact -->.** The size, from the x-height of the default editor on every system up to `base` on `desktop`, whose grid lands closest to whole pixels. The defaults it is measured against:
 
 <!-- generated:editor-defaults -->
 | System | Default | x-height of the font | x-height |
@@ -185,7 +185,7 @@ Code is set by the reader in an editor or a terminal, for hours at a time, and n
 
   Twilight Crystal Mono reaches the largest of these x-heights, 7.51 px, at 15.13 px. At 16 px its x-height, cell and line are 7.94, 10.11 and 20.8 px, all within 1.1 % of 8, 10 and 21: the cleanest grid of any size from the floor to `base`. It is also the browser default and `base` on `page`.
 
-Both meet the rules. `editor` is the usual size; `editor-lg` reduces fatigue over long sessions and suits anyone who prefers larger text.
+Both meet the rules, and the user chooses in the application's settings. 14 px is the usual size; 16 px reduces fatigue over long sessions and suits anyone who prefers larger text.
 
 ---
 
@@ -205,7 +205,7 @@ Both meet the rules. `editor` is the usual size; `editor-lg` reduces fatigue ove
 | Handheld density | at least 2 device pixels per CSS pixel | Checked only for the distance between steps (§6); floors are taken at 1x |
 | Default size | 16 px | The default font size of browsers; `base` on screens is never smaller |
 | Floor criterion | stems and counters at least 1 px, at 1x; on slides, the angle of the Regular floor on a desktop screen | Text keeps the contrast its color guarantees |
-| Editor grid tolerance | 2 % | `editor`: x-height, cell and line within 2 % of whole pixels |
+| Editor grid tolerance | 2 % | The usual editor size: x-height, cell and line within 2 % of whole pixels |
 | Editor defaults | §10 | The default font and size of the most used code editor on each system; x-heights measured on the fonts as each system installs them |
 | `default` leading | 1.5 | [WCAG 1.4.8](https://www.w3.org/WAI/WCAG22/Understanding/visual-presentation) |
 | `prose` container | 80 characters | WCAG 1.4.8 |
@@ -215,7 +215,7 @@ Both meet the rules. `editor` is the usual size; `editor-lg` reduces fatigue ove
 
 ### Derived (everything else)
 
-`base` on screens and slides (§4), floors and lowest steps (§5), scale ratios and steps (§6), `fit` (§7), the touching line heights and `tight` (§8), the `prose` container (§9), and `editor` and `editor-lg` (§10).
+`base` on screens and slides (§4), floors and lowest steps (§5), scale ratios and steps (§6), `fit` (§7), the touching line heights and `tight` (§8), the `prose` container (§9), and the two editor sizes (§10).
 
 ---
 

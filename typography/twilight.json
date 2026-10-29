@@ -646,9 +646,11 @@
       "font": "mono"
     }
   },
-  "editor": {
-    "text": 14,
-    "text-lg": 16,
+  "editors": {
+    "font-size": {
+      "default": 14,
+      "lg": 16
+    },
     "leading": "tight",
     "font": "mono",
     "grid-rounding": {
