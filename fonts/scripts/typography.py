@@ -20,7 +20,9 @@ data repository, pinned by SHA-256 and downloaded on first use.
    narrowest counters (the white inside e, a, s, B, g, 8, m, n, H) are each at least one pixel,
    so no stroke or counter falls below the pixel grid of a 1x screen. Pair distinction (the
    metric of hintcheck.py) is reported from each floor to 20 px. Where there are no pixels
-   (print, slides), the floor is the angle the Regular floor subtends on a desktop screen.
+   (print, slides), the floor is the angle the Regular floor subtends on a desktop screen. Italic
+   glyphs are uprighted by their angle before their counters are measured. Each style's lowest
+   step is the smallest step at or above its floor in every geometry.
 5. Scale. Per geometry, the ratio that places step -2 on the floor, with step 0 on running text;
    the steps from -2 to 7, and on screens the smallest difference in x-height between adjacent
    steps, in device pixels.
@@ -54,6 +56,7 @@ ROOT = upstream.ROOT
 BUILD = ROOT / "fonts" / "build"
 FAMILIES = {"Twilight Crystal": "TwilightCrystal", "Twilight Crystal Mono": "TwilightCrystalMono"}
 WEIGHTS = list(hintcheck.WEIGHTS)
+STYLES = WEIGHTS + [("Italic" if w == "Regular" else w + "Italic") for w in WEIGHTS]
 
 # Decided parameters (docs/construction/typography.md §8) -----------------------------------
 CRITICAL_PRINT_SIZE = 0.2      # degrees of x-height; Legge and Bigelow 2011
@@ -177,8 +180,16 @@ def strokes(family, weight):
     for ch in "nl":
         bits, top = raster(face, ch)
         stems[ch] = min(runs(bits[top - quarter], 1)) / RASTER
+    slant = math.tan(math.radians(-TTFont(static(family, weight))["post"].italicAngle))
     for ch in COUNTERS_V:
-        bits, _ = raster(face, ch)
+        bits, top = raster(face, ch)
+        if slant:  # upright the glyph, so the center line follows its slant; horizontal runs keep their length
+            pad = int(slant * bits.shape[0]) + 1
+            upright = np.zeros((bits.shape[0], bits.shape[1] + pad), int)
+            for row in range(bits.shape[0]):
+                shift = int(round((bits.shape[0] - row) * slant))
+                upright[row, pad - shift:pad - shift + bits.shape[1]] = bits[row]
+            bits = upright[:, np.flatnonzero(upright.any(0))[0]:np.flatnonzero(upright.any(0))[-1] + 1]
         counters[ch] = min(runs(bits[:, bits.shape[1] // 2], 0)) / RASTER
     for ch in COUNTERS_H:
         bits, top = raster(face, ch)
@@ -216,7 +227,7 @@ def measure():
     floors = {}
     for name, fam in FAMILIES.items():
         floors[name] = {}
-        for w in WEIGHTS:
+        for w in STYLES:
             s = strokes(fam, w)
             s["distinction, floor to 20 px"] = distinction(fam, w, range(s["floor"], 21))
             floors[name][w] = s
@@ -239,6 +250,14 @@ def measure():
             entry["least x-height step (device px)"] = min((sizes[k + 1] - sizes[k]) * xh * g["dpr"] for k in list(STEPS)[:-1])
         geometries[geometry] = entry
     out["geometries"] = geometries
+
+    # The lowest step each style may take in every geometry: on screens its pixel floor, elsewhere
+    # the geometry's floor scaled by the style's pixel floor over Regular's.
+    for name in FAMILIES:
+        for style, s in floors[name].items():
+            s["lowest step"] = max(min(k for k, v in g["steps"].items()
+                                       if v >= (s["floor"] if GEOMETRIES[geo].get("pixels") else g["floor"] * s["floor"] / pixel_floor) - 1e-9)
+                                   for geo, g in geometries.items())
 
     # 6. Upper bounds
     text = corpus()
@@ -275,11 +294,11 @@ def main():
         print(f"\n{name}: x-height {f['x-height']}, cap height {f['cap height']}, natural line {f['natural line']}, "
               f"lines touch below {r(f['touching line height'])} ({f['tallest letter'][0]} over {f['deepest letter'][0]}), "
               f"tabular figures {f['figures']['tabular']}, zero {f['zero']}")
-    print("\nFloors (stem, narrowest counter, floor px, worst pair distinction from the floor to 20 px):")
+    print("\nFloors (stem, narrowest counter, floor px, lowest step in every geometry, worst pair distinction from the floor to 20 px):")
     for name, ws in out["floors"].items():
         for w, s in ws.items():
             print(f"  {name} {w}: stem {r(s['stem'])} em, counter {r(s['counter'])} em ({s['counter glyph']}), "
-                  f"floor {s['floor']} px, distinction {r(s['distinction, floor to 20 px'], 2)}")
+                  f"floor {s['floor']} px, lowest step {s['lowest step']}, distinction {r(s['distinction, floor to 20 px'], 2)}")
     print(f"\nFloor angle (x-height of the Regular floor on a desktop screen): {r(out['floor angle (deg)'], 4)} deg")
     print("\nGeometries:")
     for g, s in out["geometries"].items():

@@ -68,23 +68,32 @@ The browser default of 16 px meets the critical print size on handhelds but not 
 
 A stroke narrower than one pixel is drawn as a partly covered pixel, so on a 1x screen it is lighter than its color: the contrast of the text drops below the contrast the color guarantees. A counter (the white inside e, a, s, B, g, 8, m, n, H) narrower than one pixel fills in. The floor of a weight is the smallest whole pixel size at which its lowercase stems and its narrowest counter are both at least one pixel. It is measured on the outlines, unhinted, at 1x, the worst case.
 
-| Weight | Stem | Narrowest counter | Twilight Crystal floor | Mono floor |
-|---|---|---|---|---|
-| ExtraLight (200) | 0.054 em | 0.141 em (g) | 19 px | 19 px |
-| Light (300) | 0.067 em | 0.135 em (g) | 15 px | 15 px |
-| Regular (400) | 0.084 em | 0.128 em (g) | **12 px** | 12 px |
-| Medium (500) | 0.106 em | 0.121 em (s) | 10 px | 10 px |
-| SemiBold (600) | 0.122 em | 0.109 em (s) | 10 px | 10 px |
-| Bold (700) | 0.139 em | 0.096 em (s) | 11 px | 11 px |
-| ExtraBold (800) | 0.165 em | 0.077 em (s) | 13 px | 14 px |
+| Weight | Stem | Narrowest counter | Floor, upright | Floor, italic | Mono, upright | Mono, italic |
+|---|---|---|---|---|---|---|
+| ExtraLight (200) | 0.054 em | 0.141 em (g) | 19 px | 19 px | 19 px | 19 px |
+| Light (300) | 0.067 em | 0.135 em (g) | 15 px | 16 px | 15 px | 15 px |
+| Regular (400) | 0.084 em | 0.128 em (g) | **12 px** | 13 px | 12 px | 12 px |
+| Medium (500) | 0.106 em | 0.121 em (s) | 10 px | 10 px | 10 px | 10 px |
+| SemiBold (600) | 0.122 em | 0.109 em (s) | 10 px | 9 px | 10 px | 10 px |
+| Bold (700) | 0.139 em | 0.096 em (s) | 11 px | 11 px | 11 px | 11 px |
+| ExtraBold (800) | 0.165 em | 0.077 em (s) | 13 px | 13 px | 14 px | 14 px |
 
-Mono stems and counters differ from these by at most 0.004 em; its narrowest counter in the heavier weights is m, compressed into one cell, which raises its ExtraBold floor to 14 px.
+Stems and counters are those of upright Twilight Crystal; the other styles differ by at most 0.006 em. Italic glyphs are uprighted by their angle before their counters are measured, and stems are measured across, as the pixel rows meet them, so a slanted stem counts at its horizontal width. Twilight Crystal Italic's stem, 0.083 em, falls just short of one pixel at 12 px, which puts its floor at 13. Mono's narrowest counter in the heavier weights is m, compressed into one cell, which raises its ExtraBold floor to 14 px.
 
-Light weights are limited by their stems and heavy weights by their counters, so the floors are lowest in the middle of the range.
+Light weights are limited by their stems and heavy weights by their counters, so the floors are lowest in the middle of the range. From each floor to 20 px, the confusable pairs I-l, l-1, I-1, O-0, rn-m and cl-d stay apart: their worst pixel distinction, hinted or not, is 0.21 or more in Twilight Crystal and 0.14 or more in Mono (the metric of `fonts/scripts/hintcheck.py`; 0 would be identical).
 
 Print and slides have no pixels to measure, so their floor is an angle: the x-height of the Regular floor on a desktop screen, 12 px, subtends 0.1269°. Applied to the other geometries it gives 5.1 pt in print and 2.68 % of the slide height on slides. On a handheld screen it gives 10 px, under the pixel floor of 12 px, which stays.
 
-The floors of the other weights scale with the same angle: a weight whose pixel floor is f px has, in print and on slides, the floor of Regular multiplied by f / 12. From each floor to 20 px, the confusable pairs I-l, l-1, I-1, O-0, rn-m and cl-d stay apart: their worst pixel distinction, hinted or not, is 0.21 or more in Twilight Crystal and 0.15 or more in Mono (the metric of `fonts/scripts/hintcheck.py`; 0 would be identical).
+The floors of the other weights scale with the same angle: a weight whose pixel floor is f px has, in print and on slides, the floor of Regular multiplied by f / 12.
+
+The **lowest step** of a style is the smallest step of the scale (§6) that is at or above its floor in every geometry:
+
+| Lowest step | Styles |
+|---|---|
+| −2 | Regular, Medium, SemiBold and Bold, upright and italic, except Twilight Crystal Italic at Regular weight |
+| −1 | Twilight Crystal Italic; Twilight Crystal ExtraBold, upright and italic |
+| 0 | Light, upright and italic; Twilight Crystal Mono ExtraBold, upright and italic |
+| 2 | ExtraLight, upright and italic |
 
 ---
 
