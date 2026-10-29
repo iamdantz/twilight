@@ -2,3 +2,5 @@
 __pycache__/
 .agents/skills/twilight-auditor/.cache/
 fonts/build/
+tests/css/node_modules/
+tests/css/.build/
