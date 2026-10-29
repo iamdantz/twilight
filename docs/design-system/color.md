@@ -195,7 +195,7 @@ Every variant keeps the hue and relative chroma of its color. Only lightness cha
 - Badges and counters: `accent` with `on-accent`
 - The single main action of a view: `accent`, `accent-pressed`, `on-accent`
 - Progress indicators: `accent`
-- Links and matched characters: `accent-text`. Links in running text are also underlined, or marked by an icon where an underline cannot be drawn. No `accent-text` reaches 3:1 against Body (Dusk <!-- fact:dusk.link_body -->1.04–1.56<!-- /fact -->, Dawn <!-- fact:dawn.link_body -->1.49–2.42<!-- /fact -->), so color alone cannot separate a link from the text around it (WCAG 2.2 SC 1.4.1, technique G183). With Afterglow, `accent-text` is also ΔE_OK <!-- fact:dusk.link_coral -->0.074<!-- /fact --> (Dusk) and <!-- fact:dawn.link_coral -->0.059<!-- /fact --> (Dawn) from Coral, below the smallest code-color difference ([§14](#14-guarantees)). Links whose role is clear from position, such as navigation items and buttons, need no extra cue.
+- Links and matched characters: `accent-text`. Links in prose are also underlined, or marked by an icon where an underline cannot be drawn. No `accent-text` reaches 3:1 against Body (Dusk <!-- fact:dusk.link_body -->1.04–1.56<!-- /fact -->, Dawn <!-- fact:dawn.link_body -->1.49–2.42<!-- /fact -->), so color alone cannot separate a link from the text around it (WCAG 2.2 SC 1.4.1, technique G183). With Afterglow, `accent-text` is also ΔE_OK <!-- fact:dusk.link_coral -->0.074<!-- /fact --> (Dusk) and <!-- fact:dawn.link_coral -->0.059<!-- /fact --> (Dawn) from Coral, below the smallest code-color difference ([§14](#14-guarantees)). Links whose role is clear from position, such as navigation items and buttons, need no extra cue.
 - A small emblem: `accent-focus`
 
 ### Where it never goes
@@ -397,7 +397,7 @@ Of black and white, the one that matches the background's polarity is a surface:
 3. **The active tab is Canvas.** It merges with its content and carries a 2 px `accent-focus` line on its top edge.
 4. **Text levels follow function.** Ink for titles and focus, Body for content, Subtle for secondary labels, icons and placeholders, Faint for metadata.
 5. **Every interactive control has a Control boundary** (3:1 or more on all surfaces) and an `accent-focus` ring when focused.
-6. **Semantic states never rely on color alone.** Pair them with an icon, label or position. Links in running text follow the same principle: they are underlined or marked by an icon ([§5](#where-the-accent-goes)).
+6. **Semantic states never rely on color alone.** Pair them with an icon, label or position. Links in prose follow the same principle: they are underlined or marked by an icon ([§5](#where-the-accent-goes)).
 7. **Coral only means danger.** Regular expressions use the string color; only invalid code is Coral.
 8. **The accent marks focus, activity, the main action and links,** and nothing else: one fill per view and one active mark per container ([§5](#how-much-accent-a-view-carries)).
 9. **No color without a role.** Status bars, labels and file-type tags use neutrals.

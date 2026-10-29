@@ -1,20 +1,23 @@
-"""Twilight Theme's CSS reset, generated from the typography tokens.
+"""Twilight Theme's CSS reset, generated from the tokens.
 
     python css/build.py            write the three files below
     python css/build.py --check    exit 1 if any of them differs from what this script writes
 
-Inputs: typography/twilight.json (the tokens) and css/upstream/tailwindcss/preflight.css (Tailwind CSS
-Preflight, pinned with its SHA-256 in css/upstream.json). Outputs:
+Inputs: typography/twilight.json and css/upstream/tailwindcss/preflight.css (Tailwind CSS Preflight, pinned
+with its SHA-256 in css/upstream.json). Outputs:
 
-- css/twilight-tailwind.css   for Tailwind CSS 4: Twilight's typography in `@layer base`, after Preflight.
-- css/twilight.css            for anything else: Preflight and Twilight's typography, in no layer.
+- css/twilight-tailwind.css   for Tailwind CSS 4: Twilight Theme's base in `@layer base`, after Preflight.
+- css/twilight.css            for anything else: Preflight and Twilight Theme's base, in no layer.
 - css/twilight.min.css        the same, minified.
 
-Both carry the same typography; the vanilla files add Preflight, so a page without Tailwind starts from the
-same base a Tailwind page does. Only element selectors are styled globally; document flow (spacing between
-blocks, list markers, link underlines, quotes, table rules, line length, lead) applies inside `.document`
-only. Every rule has at most the specificity of one element selector, so any class (a component's, a
-utility's) overrides it. Nothing here sets a color.
+The reset covers typography today. Only element selectors are styled globally; prose (spacing between
+blocks, list markers, link underlines, quotes, table rules, line length, the opening paragraph) is styled
+inside `.twl-prose` only. Every rule has at most the specificity of one element selector, so any class (a
+component's, a utility's) overrides it. Nothing here sets a color.
+
+Every name follows one scheme, the one of the tokens: the prefix `twl`, then a namespace (`font`, `text`,
+`leading`, `spacing`, `container`), then a key from typography/twilight.json. `--twl-text-base` is a step of
+the scale, `--twl-text-h1` a level, `--twl-leading-tight` a leading.
 
 Standard library only.
 """
@@ -33,8 +36,10 @@ PREFLIGHT = ROOT / "css" / "upstream" / "tailwindcss" / "preflight.css"
 OUT = {"tailwind": ROOT / "css" / "twilight-tailwind.css", "vanilla": ROOT / "css" / "twilight.css",
        "min": ROOT / "css" / "twilight.min.css"}
 PROJECT = "https://github.com/iamdantz/twilight-theme"
-HEADINGS = {f"h{i}": f"heading-{i}" for i in range(1, 7)}
-STEP_VAR = {k: f"--twilight-step-{'n' + k[1:] if k.startswith('-') else k}" for k in map(str, range(-2, 8))}
+PREFIX = "twl"
+PROSE = f".{PREFIX}-prose"
+# Elements and the level they take
+ELEMENTS = {"body": "body", **{f"h{i}": f"h{i}" for i in range(1, 7)}, "small, figcaption, caption": "body-sm"}
 
 
 def n(v):
@@ -42,27 +47,32 @@ def n(v):
     return f"{v:.4f}".rstrip("0").rstrip(".")
 
 
-def family(name):
-    return f'"{name}"'
+def var(namespace, key=None):
+    return f"--{PREFIX}-{namespace}" + (f"-{key}" if key and key != "default" else "")
+
+
+def use(namespace, key=None):
+    return f"var({var(namespace, key)})"
 
 
 # Pieces ----------------------------------------------------------------------------------------
 def fallback_faces(T):
     out = []
-    for group in T["fallbacks"].values():
-        for name, F in group.items():
+    for font in T["fonts"].values():
+        for name, F in font["fallbacks"].items():
             for key, names in F["faces"].items():
                 weight, style = key.split()
                 src = ", ".join(f'local("{x}")' for x in names)
                 out.append(f'@font-face {{\n  font-family: "Twilight {name}";\n  src: {src};\n'
                            f"  font-weight: {weight};\n  font-style: {style};\n"
-                           f"  size-adjust: {round(F['size adjust'] * 100)}%;\n}}")
+                           f"  size-adjust: {round(F['size-adjust'] * 100)}%;\n}}")
     return "\n\n".join(out)
 
 
-def stack(T, role, generic):
-    names = [T["families"][role], T["originals"][role]] + [f"Twilight {x}" for x in T["fallbacks"][role]]
-    return ", ".join(family(x) for x in names) + f", {generic}"
+def stack(T, key, generic):
+    F = T["fonts"][key]
+    names = [F["family"], F["original"]] + [f"Twilight {x}" for x in F["fallbacks"]]
+    return ", ".join(f'"{x}"' for x in names) + f", {generic}"
 
 
 def fit(T):
@@ -70,185 +80,96 @@ def fit(T):
     return (F["narrowest"] - 2 * F["gutter"]) / F["em"], f"calc((100vw - {n(2 * F['gutter'] / 16)}rem) / {F['em']})"
 
 
-def level_value(T, level):
+def level_size(T, level):
     """A level's size: its step, bounded by the column where the step can be wider than the narrowest screen."""
-    step = str(T["levels"][level]["step"])
+    step = T["levels"][level]["size"]
     bound, _ = fit(T)
-    widest = max(T["geometries"][g]["steps"][step] for g in ("desktop", "handheld"))
-    var = f"var({STEP_VAR[step]})"
-    return f"min({var}, var(--twilight-fit))" if widest > bound else var
+    widest = max(T["geometries"][g]["scale"][step] for g in ("desktop", "handheld"))
+    return f"min({use('text', step)}, {use('text', 'fit')})" if widest > bound else use("text", step)
 
 
-def steps(T, geometry, unit):
-    S = T["geometries"][geometry]["steps"]
-    if unit == "rem":
-        return "\n".join(f"  {STEP_VAR[k]}: {n(S[k] / 16)}rem;" for k in STEP_VAR)
-    return "\n".join(f"  {STEP_VAR[k]}: {n(S[k])}pt;" for k in STEP_VAR)
+def scale(T, geometry, unit):
+    S = T["geometries"][geometry]["scale"]
+    value = (lambda v: f"{n(v / 16)}rem") if unit == "rem" else (lambda v: f"{n(v)}pt")
+    return "\n".join(f"  {var('text', k)}: {value(v)};" for k, v in S.items())
 
 
 def tokens_css(T):
-    L = T["levels"]
     _, fit_expr = fit(T)
     lines = [
-        f"  --twilight-font-text: {stack(T, 'text', 'sans-serif')};",
-        f"  --twilight-font-literal: {stack(T, 'literal', 'monospace')};",
-        steps(T, "desktop", "rem"),
-        f"  --twilight-fit: {fit_expr};",
-    ]
-    for level in L:
-        if level == "code-block":
-            continue
-        lines.append(f"  --twilight-{level}: {level_value(T, level)};")
-    C = T["code"]
-    lines += [
-        f"  --twilight-line: {n(T['line height']['running'])};",
-        f"  --twilight-line-compact: {n(T['line height']['compact'])};",
-        f"  --twilight-space: calc(var(--twilight-step-0) * var(--twilight-line));",
-        f"  --twilight-measure: {n(T['measure']['em'])}em;",
-        f"  --twilight-code: {n(C['minimum'] / 16)}rem;",
-        f"  --twilight-code-optimal: {n(C['optimal'] / 16)}rem;",
+        f"  {var('font', 'sans')}: {stack(T, 'sans', 'sans-serif')};",
+        f"  {var('font', 'mono')}: {stack(T, 'mono', 'monospace')};",
+        scale(T, "desktop", "rem"),
+        f"  {var('text', 'fit')}: {fit_expr};",
+        *(f"  {var('text', level)}: {level_size(T, level)};" for level in T["levels"]),
+        *(f"  {var('leading', k)}: {n(v)};" for k, v in T["leading"].items()),
+        f"  {var('spacing')}: calc({use('text', 'base')} * {use('leading')});",
+        f"  {var('container', 'prose')}: {n(T['container']['prose']['em'])}em;",
     ]
     media = lambda query, body: f"@media {query} {{\n  :root {{\n{textwrap.indent(body, '  ')}\n  }}\n}}"  # noqa: E731
     return (":root {\n" + "\n".join(lines) + "\n}\n\n"
-            "/* Handheld screens: a coarse primary pointer. */\n" + media("(pointer: coarse)", steps(T, "handheld", "rem"))
-            + "\n\n/* Documents: printed pages. */\n" + media("print", steps(T, "documents", "pt")))
+            "/* Handheld screens: a coarse primary pointer. */\n" + media("(pointer: coarse)", scale(T, "handheld", "rem"))
+            + "\n\n/* Pages: printed. */\n" + media("print", scale(T, "page", "pt")))
+
+
+def rule(selector, decls):
+    return f"{selector} {{\n" + "".join(f"  {k}: {v};\n" for k, v in decls) + "}"
 
 
 def global_css(T):
     L = T["levels"]
-    head = "\n".join(f"{el} {{\n  font-size: var(--twilight-{lv});\n}}" for el, lv in HEADINGS.items())
-    weight = L["heading-1"]["weight"]
-    return f"""html {{
-  font-family: var(--twilight-font-text);
-  line-height: var(--twilight-line);
-  letter-spacing: 0;
-}}
-
-body {{
-  font-size: var(--twilight-running-text);
-}}
-
-{head}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {{
-  font-weight: {weight};
-  line-height: var(--twilight-line-compact);
-  text-wrap: balance;
-}}
-
-b,
-strong {{
-  font-weight: {weight};
-}}
-
-small,
-figcaption,
-caption {{
-  font-size: var(--twilight-small);
-}}
-
-code,
-kbd,
-samp,
-pre {{
-  font-family: var(--twilight-font-literal);
-  font-size: 1em;
-  font-variant-ligatures: none;
-}}
-
-pre {{
-  line-height: var(--twilight-line-compact);
-}}
-
-table,
-time,
-output {{
-  font-variant-numeric: tabular-nums;
-}}"""
+    out = [rule("html", [("font-family", use("font", "sans")), ("line-height", use("leading")),
+                         ("letter-spacing", T["tracking"])])]
+    out += [rule(selector.replace(", ", ",\n"), [("font-size", use("text", level))]) for selector, level in ELEMENTS.items()]
+    headings = [f"h{i}" for i in range(1, 7)]
+    assert len({(L[h]["weight"], L[h]["leading"]) for h in headings}) == 1, "headings share weight and leading"
+    out.append(rule(",\n".join(headings), [("font-weight", L["h1"]["weight"]), ("line-height", use("leading", L["h1"]["leading"])),
+                                           ("text-wrap", "balance")]))
+    out += [
+        rule("b,\nstrong", [("font-weight", L["h1"]["weight"])]),
+        rule("code,\nkbd,\nsamp,\npre", [("font-family", use("font", L["code"]["font"])), ("font-size", "1em"),
+                                          ("font-variant-ligatures", "none")]),
+        rule("pre", [("line-height", use("leading", L["code"]["leading"]))]),
+        rule("table,\ntime,\noutput", [("font-variant-numeric", "tabular-nums")]),
+    ]
+    return "\n\n".join(out)
 
 
-def document_css(T):
+def prose_css(T):
     S = T["spacing"]
-    space = lambda k: "var(--twilight-space)" if k == 1 else f"calc(var(--twilight-space) * {n(k)})"  # noqa: E731
-    half, before, after = space(0.5), space(S["before-heading"]), space(S["after-heading"])
+    space = lambda k: use("spacing") if k == 1 else f"calc({use('spacing')} * {n(k)})"  # noqa: E731
+    w = f":where({PROSE})"
     hs = "h1, h2, h3, h4, h5, h6"
-    return f""":where(.document) {{
-  max-inline-size: var(--twilight-measure);
-}}
-
-:where(.document) > :where(* + *) {{
-  margin-block-start: {space(S['paragraph'])};
-}}
-
-:where(.document) > :where({hs}):where(:not(:first-child)) {{
-  margin-block-start: {before};
-}}
-
-:where(.document) > :where({hs}) + :where(*) {{
-  margin-block-start: {after};
-}}
-
-:where(.document) > :where(p:first-of-type) {{
-  font-size: var(--twilight-lead);
-}}
-
-:where(.document) :is(ul, ol) {{
-  padding-inline-start: 1.5em;
-}}
-
-:where(.document) ul {{
-  list-style: disc;
-}}
-
-:where(.document) ol {{
-  list-style: decimal;
-}}
-
-:where(.document) li > * + *,
-:where(.document) :is(ul, ol):has(> li > p + p) > li + li {{
-  margin-block-start: {half};
-}}
-
-:where(.document) a {{
-  text-decoration-line: underline;
-}}
-
-:where(.document) blockquote {{
-  padding-inline-start: 1.5em;
-  border-inline-start-width: 3px;
-}}
-
-:where(.document) :is(th, td) {{
-  padding-inline-end: 1em;
-  border-block-end-width: 1px;
-  text-align: start;
-  vertical-align: top;
-}}
-
-:where(.document) figcaption {{
-  margin-block-start: {half};
-}}
-
-:where(.document) pre {{
-  overflow-x: auto;
-}}"""
+    return "\n\n".join([
+        rule(w, [("max-inline-size", use("container", "prose"))]),
+        rule(f"{w} > :where(* + *)", [("margin-block-start", space(S["block"]))]),
+        rule(f"{w} > :where({hs}):where(:not(:first-child))", [("margin-block-start", space(S["before-heading"]))]),
+        rule(f"{w} > :where({hs}) + :where(*)", [("margin-block-start", space(S["after-heading"]))]),
+        rule(f"{w} > :where(p:first-of-type)", [("font-size", use("text", "body-lg"))]),
+        rule(f"{w} :is(ul, ol)", [("padding-inline-start", "1.5em")]),
+        rule(f"{w} ul", [("list-style", "disc")]),
+        rule(f"{w} ol", [("list-style", "decimal")]),
+        rule(f"{w} li > * + *,\n{w} :is(ul, ol):has(> li > p + p) > li + li",
+             [("margin-block-start", space(S["list-item-with-paragraphs"]))]),
+        rule(f"{w} a", [("text-decoration-line", "underline")]),
+        rule(f"{w} blockquote", [("padding-inline-start", "1.5em"), ("border-inline-start-width", "3px")]),
+        rule(f"{w} :is(th, td)", [("padding-inline-end", "1em"), ("border-block-end-width", "1px"),
+                                  ("text-align", "start"), ("vertical-align", "top")]),
+        rule(f"{w} figcaption", [("margin-block-start", space(S["after-heading"]))]),
+        rule(f"{w} pre", [("overflow-x", "auto")]),
+    ])
 
 
 def twilight(T):
     return "\n\n".join([
         "/* Fallback faces: the system fonts closest to Twilight Crystal, sized to its x-height. */",
         fallback_faces(T),
-        "/* Tokens: the scale of the geometry, levels, line heights, spacing and line length. */",
+        "/* Tokens: fonts, the scale of the geometry, levels, leading, spacing and the prose container. */",
         tokens_css(T),
-        "/* Every text: families, levels, literal text and figures. */",
+        "/* Elements: fonts, levels, code and figures. */",
         global_css(T),
-        "/* Document text: flow inside .document only, never above the specificity of one element. */",
-        document_css(T),
+        f"/* Prose: flow inside {PROSE} only, never above the specificity of one element. */",
+        prose_css(T),
     ])
 
 
@@ -264,7 +185,7 @@ def preflight():
 
 
 def header(T, extra=""):
-    return (f"/*! Twilight Theme typography reset {T['version']} | MIT License | {PROJECT}\n"
+    return (f"/*! Twilight Theme reset {T['version']} | MIT License | {PROJECT}\n"
             f"    Generated from typography/twilight.json by css/build.py; do not edit.{extra} */")
 
 

@@ -16,27 +16,27 @@ data repository, pinned by SHA-256 and downloaded on first use.
 2. Viewing geometry. The x-height, in each geometry's unit, that subtends a given visual angle: a
    CSS pixel on a desktop screen (the CSS reference pixel) and on a handheld one, a point on a page
    read at 40 cm, and a percentage of the slide height for slides seen from the back of a room.
-3. Running text. Per geometry, the smallest size whose x-height subtends the critical print size,
-   never below the browser default on screens. Page documents take the decided size of 12 pt; their
+3. Body text. Per geometry, the smallest size whose x-height subtends the critical print size,
+   never below the browser default on screens. Pages take the decided size of 12 pt; their
    x-height angle on paper and on a desktop screen at 100 % zoom is reported.
 4. Floors. Per weight, the smallest whole pixel size at which the lowercase stems and the
    narrowest counters (the white inside e, a, s, B, g, 8, m, n, H) are each at least one pixel,
    so no stroke or counter falls below the pixel grid of a 1x screen. Pair distinction (the
    metric of hintcheck.py) is reported from each floor to 20 px. Where there are no pixels
-   (slides), the floor is the angle the Regular floor subtends on a desktop screen; documents, read
+   (slides), the floor is the angle the Regular floor subtends on a desktop screen; pages, read
    on screens at 100 % zoom, take the pixel floor in points. Italic glyphs are uprighted by their
    angle before their counters are measured. Each style's lowest step is the smallest step at or
    above its floor in every geometry.
-5. Scale. Per geometry, the ratio that places step -2 on the floor, with step 0 on running text;
+5. Scale. Per geometry, the ratio that places step -2 on the floor, with step 0 on body text;
    the steps from -2 to 7, and on screens the smallest difference in x-height between adjacent
    steps, in device pixels.
 6. Upper bounds. The size whose x-height reaches the top of the fluent range; the largest size at
    which the widest word of the corpus, in Bold, fits a 320 px viewport.
-7. Measure. The mean advance of a character of running text, per language, and the width in em
+7. Measure. The mean advance of a character of body text, per language, and the width in em
    and in ch that holds 80 of them.
 8. Code. The size of code in editors and terminals. Minimum: the smallest size from the floor whose
    x-height, cell and line all land within 2 % of whole pixels. Optimal: at least the x-height of
-   the default editor font and size on every system, then the size, up to desktop running text,
+   the default editor font and size on every system, then the size, up to desktop body text,
    whose x-height, cell and line land closest to whole pixels.
 
 With --write, the measurements and the rules below become typography/twilight.json, the
@@ -75,7 +75,7 @@ FLUENT_TOP = 2.0               # degrees of x-height; the same source
 REFERENCE_PIXEL = math.degrees(math.atan((1 / 96) / 28))  # CSS Values 4: 96 dpi at 28 inches
 HANDHELD_PIXEL = math.degrees(math.atan((25.4 / 160) / 320))  # 1/160 inch at 32 cm
 PRINT_DISTANCE = 400           # mm; the distance print sizes are measured at
-DOCUMENT_SIZE = 12             # pt; running text of page documents, the size APA Style gives Aptos and Times New Roman
+PAGE_SIZE = 12                 # pt; body text on pages, the size APA Style gives Aptos and Times New Roman
 PX_PER_PT = 4 / 3              # a document at 100 % zoom
 # The default font and size of the most used code editor on each system, and that font's x-height,
 # measured on the font as the system installs it (the files are not distributed).
@@ -106,9 +106,9 @@ GEOMETRIES = {
                 "x": lambda a: math.tan(math.radians(a)) / math.tan(math.radians(REFERENCE_PIXEL))},
     "handheld": {"unit": "px", "grain": 1, "default": DEFAULT_SIZE, "pixels": 1, "dpr": HANDHELD_DPR,
                  "x": lambda a: math.tan(math.radians(a)) / math.tan(math.radians(HANDHELD_PIXEL))},
-    "documents": {"unit": "pt", "grain": 0.5, "body": DOCUMENT_SIZE, "pixels": PX_PER_PT,
+    "page": {"unit": "pt", "grain": 0.5, "body": PAGE_SIZE, "pixels": PX_PER_PT,
                   "x": lambda a: PRINT_DISTANCE * math.tan(math.radians(a)) / 25.4 * 72},
-    "slides": {"unit": "% of slide height", "grain": 0.01,
+    "slide": {"unit": "% of slide height", "grain": 0.01,
                "x": lambda a: SLIDE_DISTANCE * math.tan(math.radians(a)) * 100},
 }
 
@@ -123,40 +123,45 @@ COUNTERS_H = "mnH"             # white measured on a row at a quarter of the em
 
 
 # Rules (docs/design-system/typography.md) -------------------------------------------------------
+# One vocabulary for tokens, CSS and the documents: fonts sans and mono; scale steps xs to 6xl; levels named
+# after their HTML element or their step (body-lg is body text at lg); leading default and tight.
 TOKENS = ROOT / "typography" / "twilight.json"
-RUNNING_LINE = 1.5             # WCAG 1.4.8
-FAMILY_OF = {"text": "Twilight Crystal", "literal": "Twilight Crystal Mono"}
-# id: (name, use, step, weight, line height, family); Display takes any weight at or above its lowest step
+SCALE = ["xs", "sm", "base", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl"]   # steps -2 to 7
+STEP = dict(zip(range(-2, 8), SCALE))
+LEADING = {"default": 1.5, "tight": 1.3}   # WCAG 1.4.8; the fonts' natural line
+FONT_KEYS = {"sans": "Twilight Crystal", "mono": "Twilight Crystal Mono"}
+ORIGINALS = {"sans": "Atkinson Hyperlegible Next", "mono": "Atkinson Hyperlegible Mono"}
+# key: (use, step, weight, leading, font); Display takes any weight at or above its lowest step
 LEVELS = {
-    "display-1": ("Display 1", "The one title of a page, a cover or a slide", 7, 400, 1.3, "text"),
-    "display-2": ("Display 2", "The same, one step down", 6, 400, 1.3, "text"),
-    "heading-1": ("Heading 1", "Headings, by structure", 5, 700, 1.3, "text"),
-    "heading-2": ("Heading 2", "", 4, 700, 1.3, "text"),
-    "heading-3": ("Heading 3", "", 3, 700, 1.3, "text"),
-    "heading-4": ("Heading 4", "", 2, 700, 1.3, "text"),
-    "heading-5": ("Heading 5", "", 1, 700, 1.3, "text"),
-    "heading-6": ("Heading 6", "", 0, 700, 1.3, "text"),
-    "lead": ("Lead", "The opening paragraph of a document", 1, 400, 1.5, "text"),
-    "running-text": ("Running text", "Paragraphs, lists, quotes", 0, 400, 1.5, "text"),
-    "interface-text": ("Interface text", "Controls, labels, menus, tabs, table cells, messages; 1.5 when it wraps",
-                       0, 400, 1.3, "text"),
-    "small": ("Small", "Captions, help text, metadata, secondary labels", -1, 400, 1.5, "text"),
-    "fine": ("Fine", "Timestamps, counts, badges, notes", -2, 400, 1.5, "text"),
-    "code-block": ("Code blocks", "Code in documents, pages and slides", 0, 400, 1.3, "literal"),
+    "display-1": ("The one title of a page, a cover or a slide", "6xl", 400, "tight", "sans"),
+    "display-2": ("The same, one step down", "5xl", 400, "tight", "sans"),
+    "h1": ("Headings, by structure", "4xl", 700, "tight", "sans"),
+    "h2": ("", "3xl", 700, "tight", "sans"),
+    "h3": ("", "2xl", 700, "tight", "sans"),
+    "h4": ("", "xl", 700, "tight", "sans"),
+    "h5": ("", "lg", 700, "tight", "sans"),
+    "h6": ("", "base", 700, "tight", "sans"),
+    "body-lg": ("The opening paragraph of prose", "lg", 400, "default", "sans"),
+    "body": ("Paragraphs, lists, quotes", "base", 400, "default", "sans"),
+    "ui": ("Controls, labels, menus, tabs, table cells, messages; default leading when it wraps",
+           "base", 400, "tight", "sans"),
+    "body-sm": ("Captions, help text, metadata, secondary labels", "sm", 400, "default", "sans"),
+    "body-xs": ("Timestamps, counts, badges, notes", "xs", 400, "default", "sans"),
+    "code": ("Code blocks in prose, pages and slides", "base", 400, "tight", "mono"),
 }
 DISPLAY_LEVELS = ("display-1", "display-2")
-SPACING = {"paragraph": 1, "list-item": 0, "list-item-with-paragraphs": 0.5, "before-heading": 2,
-           "after-heading": 0.5}    # in lines of running text
-# Tools that take the steps in their own unit: geometry, factor to the tool's unit, grain
-TOOLS = {"Word, Google Docs, Pages, PDFs": ("documents", 1, 0.5, "pt"),
-         "PowerPoint, 16:9 (7.5 in high)": ("slides", 5.4, 0.5, "pt"),
-         "Google Slides, 16:9 (5.625 in high)": ("slides", 4.05, 0.5, "pt"),
-         "Keynote, 1920 × 1080": ("slides", 10.8, 1, "pt")}
+SPACING = {"block": 1, "list-item": 0, "list-item-with-paragraphs": 0.5, "before-heading": 2,
+           "after-heading": 0.5}    # in units of spacing: one line of body text
+# Tools that take the scale in their own unit: geometry, factor to the tool's unit, grain
+TOOLS = {"Word, Google Docs, Pages, PDFs": ("page", 1, 0.5, "pt"),
+         "PowerPoint, 16:9 (7.5 in high)": ("slide", 5.4, 0.5, "pt"),
+         "Google Slides, 16:9 (5.625 in high)": ("slide", 4.05, 0.5, "pt"),
+         "Keynote, 1920 × 1080": ("slide", 10.8, 1, "pt")}
 # System fonts closest to Twilight Crystal (design-system/typography.md §2), measured in an earlier study: the
 # size that matches Twilight Crystal's x-height, and the names each face is installed under (full name, then
 # PostScript name) for CSS local(). Listed in the order a CSS stack tries them.
 FALLBACKS = {
-    "text": {
+    "sans": {
         "Tahoma": (0.91, {"400 normal": ["Tahoma"], "700 normal": ["Tahoma Bold", "Tahoma-Bold"]}),
         "Verdana": (0.91, {"400 normal": ["Verdana"], "700 normal": ["Verdana Bold", "Verdana-Bold"],
                            "400 italic": ["Verdana Italic", "Verdana-Italic"],
@@ -170,7 +175,7 @@ FALLBACKS = {
                              "400 italic": ["Noto Sans Italic", "NotoSans-Italic"],
                              "700 italic": ["Noto Sans Bold Italic", "NotoSans-BoldItalic"]}),
     },
-    "literal": {
+    "mono": {
         "Cascadia Mono": (0.92, {"400 normal": ["Cascadia Mono Regular", "CascadiaMono-Regular"],
                                  "700 normal": ["Cascadia Mono Bold", "CascadiaMono-Bold"],
                                  "400 italic": ["Cascadia Mono Italic", "CascadiaMono-Italic"],
@@ -194,7 +199,6 @@ FALLBACKS = {
 SYSTEMS = [("Windows", "Tahoma", "Cascadia Mono", 0.54), ("macOS", "Verdana", "Menlo", 0.55),
            ("Linux, KDE", "Noto Sans", "Hack", 0.55), ("Linux, GNOME", "Adwaita Sans", "Adwaita Mono", 0.57),
            ("Linux, other", "Noto Sans if installed", "DejaVu Sans Mono", 0.55)]
-ORIGINALS = {"text": "Atkinson Hyperlegible Next", "literal": "Atkinson Hyperlegible Mono"}
 STYLE_KEYS = {"Regular": (400, "normal"), "Italic": (400, "italic")}
 for _w, _n in zip(("ExtraLight", "Light", "Medium", "SemiBold", "Bold", "ExtraBold"), (200, 300, 500, 600, 700, 800)):
     STYLE_KEYS[_w], STYLE_KEYS[_w + "Italic"] = (_n, "normal"), (_n, "italic")
@@ -211,50 +215,46 @@ def tokens(out):
     G = out["geometries"]
     geometries = {}
     for name, g in G.items():
-        geometries[name] = {"unit": g["unit"], "step0": q(g["running text"]), "floor": q(g["floor"]),
-                            "ratio": q(g["ratio"], 6), "line": q(g["running text"] * RUNNING_LINE),
-                            "steps": {str(k): q(v) for k, v in g["steps"].items()}}
+        geometries[name] = {"unit": g["unit"], "ratio": q(g["ratio"], 6),
+                                   "scale": {STEP[k]: q(v) for k, v in g["steps"].items()}}
     d = out["distance"]
-    geometries["distance"] = {"unit": "% of the farthest reading distance", "step0": q(d["step0"]),
-                              "floor": q(d["floor"]), "ratio": q(d["ratio"], 6),
-                              "steps": {str(k): q(d["step0"] * d["ratio"] ** k) for k in STEPS}}
+    geometries["distance"] = {"unit": "% of the farthest reading distance", "ratio": q(d["ratio"], 6),
+                              "scale": {STEP[k]: q(d["step0"] * d["ratio"] ** k) for k in STEPS}}
     fonts = {}
-    for name, f in out["facts"].items():
-        fonts[name] = {"x-height": f["x-height"], "cap height": f["cap height"], "natural line": f["natural line"],
-                       "touching line": q(f["touching line height"], 3), "tabular figure": f["figures"]["tabular"][0],
-                       "zero": f["zero"],
-                       "styles": {s: {"weight": STYLE_KEYS[s][0], "style": STYLE_KEYS[s][1], "stem": q(v["stem"], 3),
-                                      "counter": q(v["counter"], 3), "counter glyph": v["counter glyph"],
-                                      "floor": v["floor"], "lowest step": v["lowest step"]}
-                                  for s, v in out["floors"][name].items()}}
+    for key, name in FONT_KEYS.items():
+        f = out["facts"][name]
+        fonts[key] = {"family": name, "original": ORIGINALS[key], "x-height": f["x-height"],
+                      "cap-height": f["cap height"], "natural-line": f["natural line"],
+                      "touching-line": q(f["touching line height"], 3), "tabular-figure": f["figures"]["tabular"][0],
+                      "zero": f["zero"],
+                      "styles": {s: {"weight": STYLE_KEYS[s][0], "style": STYLE_KEYS[s][1], "stem": q(v["stem"], 3),
+                                     "counter": q(v["counter"], 3), "counter-glyph": v["counter glyph"],
+                                     "floor": v["floor"], "lowest-step": STEP[v["lowest step"]]}
+                                 for s, v in out["floors"][name].items()},
+                      "fallbacks": {n: {"size-adjust": size, "faces": faces} for n, (size, faces) in FALLBACKS[key].items()}}
     c, m, u = out["code"], out["measure"], out["upper bounds"]
     return {
         "version": version(),
         "_": "Generated by fonts/scripts/typography.py --write from the built fonts and the rules of "
              "docs/design-system/typography.md; derivations in docs/construction/typography.md. Do not edit by hand.",
-        "families": FAMILY_OF,
         "fonts": fonts,
         "geometries": geometries,
-        "levels": {k: {"name": n, "use": use, "step": s, "weight": w, "line height": lh, "family": fam,
+        "levels": {k: {"use": use, "size": s, "weight": w, "leading": lh, "font": fam,
                        **({"weights": "any at or above its lowest step"} if k in DISPLAY_LEVELS else {})}
-                   for k, (n, use, s, w, lh, fam) in LEVELS.items()},
-        "code": {"minimum": c["minimum (px)"], "optimal": c["optimal (px)"], "line height": 1.3, "family": "literal",
-                 "grid rounding": {str(k): q(v) for k, v in c["worst rounding to whole pixels"].items()},
-                 "editor defaults": {k: {"font": v["font"], "size": v["size (px)"], "x-height": q(v["x-height (px)"], 2)}
-                                     for k, v in c["editor defaults"].items()}},
-        "line height": {"running": RUNNING_LINE, "compact": out["facts"]["Twilight Crystal"]["natural line"]},
+                   for k, (use, s, w, lh, fam) in LEVELS.items()},
+        "editors": {"font-size": {"default": c["minimum (px)"], "lg": c["optimal (px)"]}, "leading": "tight", "font": "mono",
+                    "grid-rounding": {str(k): q(v) for k, v in c["worst rounding to whole pixels"].items()},
+                    "defaults": {k: {"font": v["font"], "size": v["size (px)"], "x-height": q(v["x-height (px)"], 2)}
+                                 for k, v in c["editor defaults"].items()}},
+        "leading": LEADING,
+        "tracking": 0,
         "spacing": SPACING,
-        "letter spacing": 0,
-        "measure": {"characters": MEASURE_CHARACTERS, "em": q(m[f"{MEASURE_CHARACTERS} characters (em)"], 1),
-                    "mean character": {k: q(v) for k, v in m["mean character (em)"].items()}},
+        "container": {"prose": {"em": q(m[f"{MEASURE_CHARACTERS} characters (em)"], 1), "characters": MEASURE_CHARACTERS,
+                                "mean-character": {k: q(v) for k, v in m["mean character (em)"].items()}}},
         "fit": {"word": u["widest word"], "em": q(u["widest word (em)"], 2), "gutter": GUTTER, "narrowest": NARROWEST},
         "tools": {k: {"geometry": g, "factor": f, "grain": gr, "unit": un} for k, (g, f, gr, un) in TOOLS.items()},
-        "originals": ORIGINALS,
-        "fallbacks": {role: {name: {"size adjust": size, "faces": faces} for name, (size, faces) in group.items()}
-                      for role, group in FALLBACKS.items()},
-        "systems": [{"system": s, "text": a, "literal": b, "cell": c} for s, a, b, c in SYSTEMS],
+        "systems": [{"system": s, "sans": a, "mono": b, "cell": c} for s, a, b, c in SYSTEMS],
     }
-
 
 def static(family, weight):
     return BUILD / family / "fonts" / "ttf" / f"{family}-{weight}.ttf"
@@ -368,14 +368,14 @@ def distinction(family, weight, sizes):
 def measure():
     out = {"decided": {"critical print size (deg)": CRITICAL_PRINT_SIZE, "fluent range top (deg)": FLUENT_TOP,
                        "desktop pixel (deg)": REFERENCE_PIXEL, "handheld pixel (deg)": HANDHELD_PIXEL,
-                       "print distance (mm)": PRINT_DISTANCE, "document size (pt)": DOCUMENT_SIZE, "default size (px)": DEFAULT_SIZE,
+                       "print distance (mm)": PRINT_DISTANCE, "page size (pt)": PAGE_SIZE, "default size (px)": DEFAULT_SIZE,
                        "handheld device pixels per px": HANDHELD_DPR, "narrowest viewport (px)": NARROWEST,
                        "slide viewing distance (image heights)": SLIDE_DISTANCE,
                        "gutter (px)": GUTTER, "measure (characters)": MEASURE_CHARACTERS}}
     out["facts"] = {name: facts(fam) for name, fam in FAMILIES.items()}
     xh = out["facts"]["Twilight Crystal"]["x-height"]
 
-    # 2-5. Running text, floor and scale per geometry
+    # 2-5. Body text, floor and scale per geometry
     floors = {}
     for name, fam in FAMILIES.items():
         floors[name] = {}
@@ -395,8 +395,8 @@ def measure():
         floor = max(pixel_floor / g["pixels"] if g.get("pixels") else 0, up(g["x"](floor_angle) / xh, g["grain"]))
         ratio = math.sqrt(body / floor)
         sizes = {k: body * ratio ** k for k in STEPS}
-        entry = {"unit": g["unit"], "least running text": least, "running text": body,
-                 "x-height angle of running text (deg)": angle(body * xh / g["x"](1) * math.tan(math.radians(1))),
+        entry = {"unit": g["unit"], "least body text": least, "body text": body,
+                 "x-height angle of body text (deg)": angle(body * xh / g["x"](1) * math.tan(math.radians(1))),
                  "floor": floor, "ratio": ratio, "steps": sizes}
         if "dpr" in g:
             entry["least x-height step (device px)"] = min((sizes[k + 1] - sizes[k]) * xh * g["dpr"] for k in list(STEPS)[:-1])
@@ -405,19 +405,19 @@ def measure():
     dist = lambda angle_: math.tan(math.radians(angle_)) / xh * 100  # noqa: E731  (% of the distance)
     out["distance"] = {"step0": dist(CRITICAL_PRINT_SIZE), "floor": dist(floor_angle),
                        "ratio": math.sqrt(dist(CRITICAL_PRINT_SIZE) / dist(floor_angle))}
-    docs = geometries["documents"]
+    docs = geometries["page"]
     docs["x-height angle on a desktop screen at 100 % (deg)"] = angle(
-        docs["running text"] * PX_PER_PT * xh * math.tan(math.radians(REFERENCE_PIXEL)))
-    docs["zoom for the critical print size on a desktop screen"] = geometries["desktop"]["least running text"] / (
-        docs["running text"] * PX_PER_PT)
+        docs["body text"] * PX_PER_PT * xh * math.tan(math.radians(REFERENCE_PIXEL)))
+    docs["zoom for the critical print size on a desktop screen"] = geometries["desktop"]["least body text"] / (
+        docs["body text"] * PX_PER_PT)
 
     # Code in editors and terminals: at least the x-height of each system's default editor, then the
-    # size up to running text whose x-height, cell and line (1.3) land closest to whole pixels.
+    # size up to body text whose x-height, cell and line (1.3) land closest to whole pixels.
     mono = out["facts"]["Twilight Crystal Mono"]
     cell = 0.632
     comfort = max(size * x for _, size, x in EDITOR_DEFAULTS.values()) / mono["x-height"]
     grid = {}
-    for size in range(pixel_floor, int(geometries["desktop"]["running text"]) + 1):
+    for size in range(pixel_floor, int(geometries["desktop"]["body text"]) + 1):
         worst = max(abs(round(v) - v) / v for v in (size * mono["x-height"], size * cell, size * mono["natural line"]))
         grid[size] = worst
     optimal = min((s for s in grid if s >= comfort), key=lambda s: (grid[s], s))
@@ -453,7 +453,7 @@ def measure():
     out["measure"] = {"mean character (em)": measure_, f"{MEASURE_CHARACTERS} characters (em)": MEASURE_CHARACTERS * narrow,
                       f"{MEASURE_CHARACTERS} characters (ch)": MEASURE_CHARACTERS * narrow / zero,
                       f"characters at {NARROWEST} px, handheld": {
-                          lang: (NARROWEST - 2 * GUTTER) / (m * geometries["handheld"]["running text"]) for lang, m in measure_.items()}}
+                          lang: (NARROWEST - 2 * GUTTER) / (m * geometries["handheld"]["body text"]) for lang, m in measure_.items()}}
     return out
 
 
@@ -493,17 +493,17 @@ def main():
     print("\nGeometries:")
     for g, s in out["geometries"].items():
         extra = f", least x-height step {r(s['least x-height step (device px)'], 2)} device px" if "least x-height step (device px)" in s else ""
-        print(f"  {g} ({s['unit']}): running text {r(s['running text'], 2)} (least {r(s['least running text'], 2)}, "
-              f"x-height {r(s['x-height angle of running text (deg)'])} deg), floor {r(s['floor'], 2)}, ratio {r(s['ratio'], 4)}{extra}")
-        print("    " + "  ".join(f"{k}: {r(v, 2)}" for k, v in s["steps"].items()))
-    d = out["geometries"]["documents"]
-    print(f"\nDocuments: x-height {r(d['x-height angle of running text (deg)'])} deg on paper, "
+        print(f"  {g} ({s['unit']}): body text {r(s['body text'], 2)} (least {r(s['least body text'], 2)}, "
+              f"x-height {r(s['x-height angle of body text (deg)'])} deg), floor {r(s['floor'], 2)}, ratio {r(s['ratio'], 4)}{extra}")
+        print("    " + "  ".join(f"{STEP[k]}: {r(v, 2)}" for k, v in s["steps"].items()))
+    d = out["geometries"]["page"]
+    print(f"\nPage: x-height {r(d['x-height angle of body text (deg)'])} deg on paper, "
           f"{r(d['x-height angle on a desktop screen at 100 % (deg)'])} deg on a desktop screen at 100 %; "
           f"zoom {r(d['zoom for the critical print size on a desktop screen'], 3)} reaches the critical print size")
     c = out["code"]
-    print(f"\nCode: comfort bound {r(c['comfort bound (px)'], 2)} px; worst rounding "
+    print(f"\nEditor: comfort bound {r(c['comfort bound (px)'], 2)} px; worst rounding "
           + ", ".join(f"{k}: {r(v * 100, 1)} %" for k, v in c["worst rounding to whole pixels"].items())
-          + f"; minimum {c['minimum (px)']} px, optimal {c['optimal (px)']} px")
+          + f"; {c['minimum (px)']} px, or {c['optimal (px)']} px to reduce fatigue")
     print("\nUpper bounds:", {k: (r(v, 2) if isinstance(v, float) else v) for k, v in out["upper bounds"].items()})
     m = out["measure"]
     print("\nMeasure:", {k: (r(v) if isinstance(v, float) else {a: r(b, 2) for a, b in v.items()}) for k, v in m.items()})
