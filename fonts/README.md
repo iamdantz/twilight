@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/iamdantz/twilight-theme/releases/latest">Download</a> ·
-  <a href="../docs/typography.md">Typography guide</a> ·
+  <a href="../docs/design-system/typography.md">Which font to use</a> ·
   <a href="OFL.txt">License</a> ·
   <a href="FONTLOG.txt">Changes and credits</a>
 </p>
@@ -17,7 +17,14 @@ Twilight Crystal and Twilight Crystal Mono are the typefaces of [Twilight Theme]
 
 In Twilight Crystal, characters that other faces draw alike have shapes of their own: I has serifs and l a tail, 1 has a flag, 0 has a slash, and rn stays apart from m. These letters are the work of Atkinson Hyperlegible's designers, Elliott Scott, Megan Eiswerth, Linus Boman, Theodore Petrosky and Letters from Sweden, and their legibility is why Twilight Theme chose that design.
 
-Twilight Crystal keeps that design: every letter, number and punctuation mark keeps the outline, spacing and kerning of the original, and every build checks this against the originals: same glyphs within 0.5 font units, same shaping. The static fonts are hinted as the originals are, and a check confirms on every build that alignment and sharpness from 9 to 20 pixels, and the distinction of those pairs from 9 to 14 pixels, are no worse than the originals'.
+Twilight Crystal keeps that design: every letter, number and punctuation mark keeps the outline, spacing and kerning of the original, and every build checks this against the originals: same glyphs within 0.5 font units, same shaping. Changes to the original letters were measured, and none both improved the measures and passed visual review. What Twilight Crystal changes is limited to:
+
+- characters Atkinson Hyperlegible does not have;
+- the hinting of those characters;
+- optional features, off by default;
+- names and metadata.
+
+The static fonts are hinted as the originals are, and a check confirms on every build that alignment and sharpness from 9 to 20 pixels, and the distinction of those pairs from 9 to 14 pixels, are no worse than the originals'.
 
 ## Made for terminals
 
@@ -31,17 +38,35 @@ In the static fonts these characters carry their own hinting: their lines land o
 
 ## Optional ligatures
 
-Twilight Crystal Mono includes Fira Code's programming ligatures, off by default in stylistic set 1. Turned on, `->`, `!==`, `<=`, `&&`, `|>` and the rest of Fira Code's set join, and arrows and rows of `-`, `=`, `#` and `_` join at any length. Each sequence keeps one cell per character, so columns and the cursor do not move. The glyphs are Fira Code 6.2's, fitted to this font's cell, weight, math axis and italic angle. The [typography guide](../docs/typography.md#4-optional-ligatures) shows how to turn them on in VS Code, Windows Terminal, kitty, WezTerm, Ghostty, Word and Adobe applications.
+Twilight Crystal Mono includes Fira Code's programming ligatures, off by default in stylistic set 1. Turned on, `->`, `!==`, `<=`, `&&`, `|>` and the rest of Fira Code's set join, and arrows and rows of `-`, `=`, `#` and `_` join at any length. Each sequence keeps one cell per character, so columns and the cursor do not move. The glyphs are Fira Code 6.2's, fitted to this font's cell, weight, math axis and italic angle. Fira Code's contextual forms of single characters (× in `0xFF`, punctuation raised next to capitals) are left out, and a double hyphen before a letter (`--watch`) stays plain.
+
+| Where | How to turn them on |
+| --- | --- |
+| VS Code, editor | `"editor.fontLigatures": "'ss01'"` |
+| VS Code, terminal | `"terminal.integrated.fontLigatures.enabled": true` and `"terminal.integrated.fontLigatures.featureSettings": "\"ss01\""` |
+| Windows Terminal | in the profile, `"font": { "face": "Twilight Crystal Mono", "features": { "ss01": 1 } }` |
+| kitty | `font_features TwilightCrystalMono-Regular +ss01`, one line per style |
+| WezTerm | `harfbuzz_features = { 'ss01' }` on the font |
+| Ghostty | `font-feature = ss01` |
+| Web pages | the `font-feature-settings` property with `"ss01"` |
+| Word | Font, Advanced, Stylistic sets: 1 |
+| Photoshop, Illustrator, InDesign | OpenType panel or menu, Stylistic Sets: Set 1 |
+
+Where stylistic sets cannot be turned on, the text shows the plain characters, which is the default.
 
 ## Also included
 
 Both families add arrows (← ↑ → ↓ ↔ ↕ ↖ ↗ ↘ ↙ ↩ ↪ ↵ ⇐ ⇑ ⇒ ⇓, and ⇔ ⇕ in Twilight Crystal), geometric shapes (■ □ ▲ ▶ ● ○ ◆ ◇) and a few symbols (∆ ∅ ⟨ ⟩ µ ‖ ′ ″ ⁴ ₁–₄ ⅓ ⅔, and № in Twilight Crystal), each drawn from the font's own strokes and outlines. Both come in seven weights from ExtraLight to ExtraBold, upright and italic, as variable fonts, static fonts and WOFF2 web fonts.
 
+## Installing
+
+The fonts are published with every [release](https://github.com/iamdantz/twilight-theme/releases/latest), one archive per family. Each archive holds the variable fonts (`variable/`), static fonts (`ttf/`) and web fonts (`webfonts/`), with `OFL.txt` and `FONTLOG.txt`. For desktop use, install the variable fonts, or the static ones where an application does not list a variable font's weights.
+
 ## If you prefer the originals
 
 Twilight Theme recommends Twilight Crystal, and it also recommends the fonts it comes from. If Twilight Crystal gives you trouble (please [report it](https://github.com/iamdantz/twilight-theme/issues)), or you would rather not install fonts by hand, use Atkinson Hyperlegible Next and Mono from Google Fonts. They have the same letters, load in a web project with one link, and are packaged by Fontsource and Homebrew. Without Twilight Crystal you lose the additions above, which then come from whatever font the system has.
 
-When neither can be installed, the [typography guide](../docs/typography.md#6-system-fonts) lists the closest fonts each system ships, and the size that matches Twilight Crystal's. Your taste has the last word: Twilight Theme's colors work with any font.
+When neither can be installed, the [design system](../docs/design-system/typography.md#2-system-fonts) lists the closest fonts each system ships, and the size that matches Twilight Crystal's. Your taste has the last word: Twilight Theme's colors work with any font.
 
 ## License
 

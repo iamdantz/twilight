@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.20.1
+
+Documentation reorganized by part. No palette or font changes.
+
+### Changed
+- The design system is a folder, `docs/design-system/`, with an index and one document per part: `color.md` (formerly `docs/design-system.md`) and `typography.md`. How the values were derived is in `docs/construction/`: `color.md` (formerly `docs/construction.md`).
+- `docs/typography.md` is split: which font to use and the closest system fonts are in `docs/design-system/typography.md`; what Twilight Crystal adds, the optional ligatures and installing are on the font page, `fonts/README.md`.
+- The validator and the docs generator follow the new paths.
+
 ## 1.20.0
 
 Typography documented, fonts ready to release. No palette changes.

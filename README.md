@@ -6,8 +6,8 @@
   <a href="#flavors">Flavors</a> ·
   <a href="#accent">Accent</a> ·
   <a href="#palette">Palette</a> ·
-  <a href="docs/design-system.md">Design system</a> ·
-  <a href="docs/construction.md">Construction</a>
+  <a href="docs/design-system/README.md">Design system</a> ·
+  <a href="docs/construction/color.md">Construction</a>
 </p>
 
 <p align="center">
@@ -36,7 +36,7 @@ I wanted my own theme but I do not trust my eye for color. So instead of choosin
 
 ## Principles
 
-- **Calculated.** One seed, everything else derived. Each value can be traced back to a rule in [construction.md](docs/construction.md).
+- **Calculated.** One seed, everything else derived. Each value can be traced back to a rule in [construction/color.md](docs/construction/color.md).
 - **Legible everywhere.** Each text level is solved against the hardest surface it can appear on, so its contrast holds on all of them.
 - **Distinct for everyone.** Code colors were optimized together so they stay apart under deuteranopia, protanopia and tritanopia.
 - **Calm.** Surfaces are quiet, the accent is a detail rather than a field, and nothing is pure black or pure white.
@@ -52,7 +52,7 @@ Both flavors share every role, every rule and one neutral curve. Dawn's Canvas i
 
 ## Accent
 
-Afterglow, the most chromatic orange sRGB holds at the seed's hue, is the accent of every theme built from Twilight Theme. It marks focus, the cursor, active items, badges, links and the main action; it never colors content. Its variants for text, pressed and focus states are solved to the same contrast rules as everything else. See [Accent in the design system](docs/design-system.md#5-accents).
+Afterglow, the most chromatic orange sRGB holds at the seed's hue, is the accent of every theme built from Twilight Theme. It marks focus, the cursor, active items, badges, links and the main action; it never colors content. Its variants for text, pressed and focus states are solved to the same contrast rules as everything else. See [Accent in the design system](docs/design-system/color.md#5-accents).
 
 A theme is named by its flavor: **Twilight Dusk**, **Twilight Dawn**.
 
@@ -143,19 +143,19 @@ Machine-readable values for both flavors, the accent families, background states
 | Smallest code-color difference, color-vision deficiency | ΔE 0.061 | ΔE 0.040 |
 | Pure black or white | none | none |
 
-Contrast is WCAG 2.x, measured on final sRGB values. The color-vision figure is the worst case across simulated deuteranopia, protanopia and tritanopia. Full tables are in the [design system](docs/design-system.md#14-guarantees).
+Contrast is WCAG 2.x, measured on final sRGB values. The color-vision figure is the worst case across simulated deuteranopia, protanopia and tritanopia. Full tables are in the [design system](docs/design-system/color.md#14-guarantees).
 
 ## How it was built
 
 All math is done in OKLCH and checked in sRGB. Afterglow is the most chromatic orange sRGB holds at the seed's hue, and the neutrals sit at the exact complement of that hue. Dusk's surface lightness follows a geometric progression; Dawn keeps the same perceptual distances at the light end of the curve. Text levels are solved by contrast target. The six terminal hues are anchored to the ANSI standard, placed at each hue's natural lightness and lit by one shared warm chroma law. Those six and Ember were then optimized together for distinctness under four vision models. Each code category has one color, and Coral and Afterglow never color code.
 
-The full derivation, with every formula and parameter, is in [construction.md](docs/construction.md).
+The full derivation, with every formula and parameter, is in [construction/color.md](docs/construction/color.md).
 
 ## Using Twilight Theme
 
-Twilight Theme is defined independently of any application. To build a theme for a tool, map its regions to the surface roles and follow [Applying the system](docs/design-system.md#12-applying-the-system), which also lists what a port must not do.
+Twilight Theme is defined independently of any application. To build a theme for a tool, map its regions to the surface roles and follow [Applying the system](docs/design-system/color.md#12-applying-the-system), which also lists what a port must not do.
 
-Twilight Theme recommends its typefaces, [Twilight Crystal and Twilight Crystal Mono](fonts/README.md), published with every release. Atkinson Hyperlegible Next and Mono, on Google Fonts, are the alternative they derive from; the system's own fonts come last, and the user's taste always has the last word. [typography.md](docs/typography.md) covers which font to use, what Twilight Crystal adds, the optional ligatures and the closest system fonts.
+Twilight Theme recommends its typefaces, [Twilight Crystal and Twilight Crystal Mono](fonts/README.md), published with every release. Atkinson Hyperlegible Next and Mono, on Google Fonts, are the alternative they derive from; the system's own fonts come last, and the user's taste always has the last word. The [typography rules](docs/design-system/typography.md) cover which font to use and the closest system fonts; the [font page](fonts/README.md) covers what Twilight Crystal adds and the optional ligatures.
 
 ## Repository
 
@@ -167,9 +167,8 @@ Twilight Theme recommends its typefaces, [Twilight Crystal and Twilight Crystal 
 ├── .github/workflows/       validation and font builds on every pull request; releases
 ├── assets/                  palette images
 ├── docs/
-│   ├── design-system.md     roles, rules and application
-│   ├── construction.md      derivation, optimization and validation
-│   └── typography.md        typefaces, alternatives and ligatures
+│   ├── design-system/       the rules: index, color, typography
+│   └── construction/        how the values were derived: color
 ├── fonts/
 │   ├── README.md            Twilight Crystal and Twilight Crystal Mono
 │   ├── upstream/            pinned upstream sources and licenses, unmodified

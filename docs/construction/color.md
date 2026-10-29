@@ -1,8 +1,8 @@
-# Twilight Theme construction
+# Twilight Theme construction: color
 
 Version 1.12. How every value was derived, optimized and validated.
 
-The companion document, [design-system.md](design-system.md), defines the system and how to apply it. This one explains why each value is what it is. It is written so the full palette can be rebuilt from one seed and the rules below.
+The companion document, [design-system/color.md](../design-system/color.md), defines the system and how to apply it. This one explains why each value is what it is. It is written so the full palette can be rebuilt from one seed and the rules below.
 
 ---
 
@@ -151,7 +151,7 @@ Dawn is the same system read from the other end of the neutral curve. Every form
 
 **No chroma correction.** Before 1.2, Dawn copied the relative chroma of Dusk's surfaces to keep near-white surfaces from turning blue. On the shared curve that correction is unnecessary: chroma vanishes at both ends by construction (§3.2).
 
-**Two Dawn floors moved with Canvas.** Before 1.2, Dawn's Canvas sat at L 0.975 (`#f4f7f9`). At L 0.95 the light surfaces are closer to Ink, so Ink on Raised, the darkest surface text sits on, falls from 14.81:1 to 13.36:1, still above every text target. The hues were optimized again for the new surfaces and β: the normal-vision separation of the code colors rose from ΔE 0.077 to 0.088, and the worst color-vision case went from 0.041 to 0.040 (Sea Salt against Grove). Dawn's floors in [design-system.md](design-system.md#14-guarantees) are these measured values.
+**Two Dawn floors moved with Canvas.** Before 1.2, Dawn's Canvas sat at L 0.975 (`#f4f7f9`). At L 0.95 the light surfaces are closer to Ink, so Ink on Raised, the darkest surface text sits on, falls from 14.81:1 to 13.36:1, still above every text target. The hues were optimized again for the new surfaces and β: the normal-vision separation of the code colors rose from ΔE 0.077 to 0.088, and the worst color-vision case went from 0.041 to 0.040 (Sea Salt against Grove). Dawn's floors in [design-system/color.md](../design-system/color.md#14-guarantees) are these measured values.
 
 Search ranges. Shell, Raised and Edge: §3.3. Text levels: the highest L in 0.05–0.95 that reaches the target against Raised (50 steps). Rail: §3.4, bisected between Shell and Canvas.
 
@@ -173,7 +173,7 @@ Every theme uses Afterglow as its accent. Each of the eight colors gets an accen
 keeping hue and relative chroma. `accent-pressed` is L − 0.10. If that drops the on-accent label
 below 4.5:1, a 50-step bisection finds the 4.5:1 boundary instead.
 
-For Afterglow this gives, in Dusk: text `#ff944d` (7.02:1 on Raised), pressed `#d26600` (label 5.27:1), focus `#ff7d00` (5.99:1 or more). In Dawn: text `#994900` (4.51:1), pressed `#d26600` (label 4.85:1), focus `#c45e00` (3.02:1 or more). Every other accent passes the same checks; the full table is in [design-system.md](design-system.md#5-accents).
+For Afterglow this gives, in Dusk: text `#ff944d` (7.02:1 on Raised), pressed `#d26600` (label 5.27:1), focus `#ff7d00` (5.99:1 or more). In Dawn: text `#994900` (4.51:1), pressed `#d26600` (label 4.85:1), focus `#c45e00` (3.02:1 or more). Every other accent passes the same checks; the full table is in [design-system/color.md](../design-system/color.md#5-accents).
 
 An earlier hand-made accent ramp used arbitrary hue drifts (−6°, +8°, +12°) and chromas. It was replaced by a constant hue and relative chroma, with each variant's lightness set by its contrast target.
 
@@ -254,7 +254,7 @@ subject to |hᵢ − anchorᵢ| ≤ 24°,  Ember constraints above,
 
 Simulations are full-severity dichromacy (ColorAide implementation).
 
-The cursor is Afterglow's `accent-focus` (§5). It is fixed before the search, because Afterglow does not depend on the hues. The color-vision guarantee in [design-system.md](design-system.md#14-guarantees) covers the six code colors plus the cursor, so the optimizer covers the same pairs. Coral marks only errors and is not compared with the cursor. In Dusk and Dawn no pair with the cursor is the closest one, so the published hues of both flavors are unchanged. Only Dawn's first pass (§6.6) moves: its Coral hue goes from 29° to 10°, which places the removed-diff background at 2.06 JND instead of 2.02 and 1.01 JND from the inactive selection instead of 0.61. Including the cursor keeps a future change from moving a code color onto it unnoticed.
+The cursor is Afterglow's `accent-focus` (§5). It is fixed before the search, because Afterglow does not depend on the hues. The color-vision guarantee in [design-system/color.md](../design-system/color.md#14-guarantees) covers the six code colors plus the cursor, so the optimizer covers the same pairs. Coral marks only errors and is not compared with the cursor. In Dusk and Dawn no pair with the cursor is the closest one, so the published hues of both flavors are unchanged. Only Dawn's first pass (§6.6) moves: its Coral hue goes from 29° to 10°, which places the removed-diff background at 2.06 JND instead of 2.02 and 1.01 JND from the inactive selection instead of 0.61. Including the cursor keeps a future change from moving a code color onto it unnoticed.
 
 The search is deterministic:
 
@@ -550,7 +550,7 @@ These were searched over a range, and the published value is the one the guarant
 
 ### Solved (everything else)
 
-Every hex value in [design-system.md](design-system.md): L₀, the six hue shifts, Ember's hue and lightness, all text and control lightnesses, all eight accent families, Rail, every state background, every bright, and Dawn's Shell, Raised and Edge.
+Every hex value in [design-system/color.md](../design-system/color.md): L₀, the six hue shifts, Ember's hue and lightness, all text and control lightnesses, all eight accent families, Rail, every state background, every bright, and Dawn's Shell, Raised and Edge.
 
 ### 12.1 Precision conventions
 

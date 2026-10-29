@@ -1,6 +1,6 @@
 ---
 name: twilight-auditor
-description: Use when reviewing, auditing or deciding whether to accept any change to the Twilight Theme definition (a branch, pull request, staged change or working-tree edit) that touches palette/twilight.json, docs/construction.md, docs/design-system.md, README palette tables, CHANGELOG or version, assets/palette-*.png, or this skill's own scripts, or adds a new flavor. Also use when someone proposes changing a Twilight Theme color, rule, parameter or guarantee. Not for building ports or app themes from Twilight Theme.
+description: Use when reviewing, auditing or deciding whether to accept any change to the Twilight Theme definition (a branch, pull request, staged change or working-tree edit) that touches palette/twilight.json, docs/construction/color.md, docs/design-system/color.md, README palette tables, CHANGELOG or version, assets/palette-*.png, or this skill's own scripts, or adds a new flavor. Also use when someone proposes changing a Twilight Theme color, rule, parameter or guarantee. Not for building ports or app themes from Twilight Theme.
 allowed-tools: Read, Grep, Glob, Bash
 ---
 
@@ -8,7 +8,7 @@ allowed-tools: Read, Grep, Glob, Bash
 
 ## Overview
 
-Twilight Theme's value is that every color comes from a documented, measurable, reproducible method. The seed `#ee7a1f` is the only color chosen by hand: Afterglow is the sRGB cusp of its hue and the neutral hue is its complement (232°). Everything else is solved by docs/construction.md and validated in sRGB.
+Twilight Theme's value is that every color comes from a documented, measurable, reproducible method. The seed `#ee7a1f` is the only color chosen by hand: Afterglow is the sRGB cusp of its hue and the neutral hue is its complement (232°). Everything else is solved by docs/construction/color.md and validated in sRGB.
 
 This audit decides whether a change to the definition keeps Twilight Theme being Twilight Theme. It approves only on measurements, never on intent. A change that is internally consistent but has no derivation path is still rejected.
 
@@ -37,9 +37,9 @@ The scripts live in this skill's `scripts/` directory (`<skill>` is the director
 | File | Role |
 |---|---|
 | `scripts/validate.py` | Measures and cross-checks one snapshot; `--compare REF` adds regressions. Exit 1 on any failure. `--json` for the summary only. |
-| `scripts/construct.py` | Reference implementation of construction.md in three levels (§1.1): system constants, `CATEGORIES` (dark, light) and `FLAVORS`; `PROFILES` merges each flavor with its category. Rebuilds every flavor exactly, each from the system and its own category only; `validate.py` imports it. Import it yourself to recompute a value by hand. |
-| `scripts/docs.py` | Regenerates the tables, `<!-- fact -->` numbers and swatch strips of README.md and docs/design-system.md, and redraws `assets/palette-*.png`, from the JSON. `--check` reports differences without writing; `validate.py` runs it. |
-| `scripts/syntax_study.py`, `scripts/syntax/` | The reproducible corpus study of construction.md §8: `manifest.json` pins every package by version, SHA-256 and verified license; `fetch` downloads and verifies, `measure` rebuilds `stats.json`, `check` does both and compares. Needs `scripts/requirements-study.txt`; the validator does not. |
+| `scripts/construct.py` | Reference implementation of construction/color.md in three levels (§1.1): system constants, `CATEGORIES` (dark, light) and `FLAVORS`; `PROFILES` merges each flavor with its category. Rebuilds every flavor exactly, each from the system and its own category only; `validate.py` imports it. Import it yourself to recompute a value by hand. |
+| `scripts/docs.py` | Regenerates the tables, `<!-- fact -->` numbers and swatch strips of README.md and docs/design-system/color.md, and redraws `assets/palette-*.png`, from the JSON. `--check` reports differences without writing; `validate.py` runs it. |
+| `scripts/syntax_study.py`, `scripts/syntax/` | The reproducible corpus study of construction/color.md §8: `manifest.json` pins every package by version, SHA-256 and verified license; `fetch` downloads and verifies, `measure` rebuilds `stats.json`, `check` does both and compares. Needs `scripts/requirements-study.txt`; the validator does not. |
 | `scripts/syntax_roles.py` | Reads `syntax/stats.json`: the uncolored category and the distinctness ranking of §8. `validate.py` checks the published roles against it. |
 | `scripts/requirements.txt` | `coloraide==8.13` and `pillow==11.3.0`, pinned. |
 
@@ -61,11 +61,11 @@ What it checks:
 - **Floors**: every row of the area C table, per flavor, against its category minimum and its flavor floor. WCAG thresholds (3.0, 4.5, 7.0) and the Body target (10.89) are compared strictly on unrounded values; other floors (e.g. 13.25, 0.061) are met at their stated precision.
 - **Rules**: no pure black or white; every state's chroma within what sRGB holds at Canvas's lightness (§9.2); the JSON `series` equals `construct.SERIES` and the §7.1 search on Dusk and Dawn still returns it; ANSI hue anchors ±24°; Ember 45–70°; Afterglow equals the sRGB cusp of the seed hue; every `accents.X.accent` equals `colors.X`; brights recomputed with the construction's own function.
 - **Reproduction**: the transient states rebuilt in reverse order equal the published ones (§9.4); rebuilds both flavors from the decided parameters (§6.5 included, about 2 minutes) and compares every token exactly. Tolerance is zero: any difference is a hand edit or an undocumented method change. A flavor with no construction is an error.
-- **Construction table**: the §6.5 hue table, Ember and L₀ in construction.md against the rebuild; every hex in a construction.md table must exist in the JSON.
-- **Consistency**: `_` keys; `docs.py --check` (generated tables, facts and image pixels); JSON `version` = latest CHANGELOG heading; every hex, swatch, RGB/OKLCH column and measured number in README.md and docs/design-system.md; relative links and anchors in every `.md`.
+- **Construction table**: the §6.5 hue table, Ember and L₀ in construction/color.md against the rebuild; every hex in a construction/color.md table must exist in the JSON.
+- **Consistency**: `_` keys; `docs.py --check` (generated tables, facts and image pixels); JSON `version` = latest CHANGELOG heading; every hex, swatch, RGB/OKLCH column and measured number in README.md and docs/design-system/color.md; relative links and anchors in every `.md`.
 - **Regressions** (`--compare`): any value below its category minimum or its flavor floor; any known limit below `LIMIT_FLOORS`; a category minimum lowered; a flavor floor or known limit lowered without its check named, in backticks, under `### Lower` in a CHANGELOG entry newer than the base (a change spanning several versions declares each lowering in its own entry); a check or table removed; changed neutrals or colors with unchanged images. The base and proposal tables are read from each snapshot's own `validate.py`. Every delta against the baseline is printed for context.
 
-`--robust` rebuilds with 20 optimizer restarts instead of 10 and fails if any token changes. It does not parse construction.md prose or CHANGELOG text. `--no-rebuild` skips reproduction and is only for wording or link changes. Exit 0 is necessary, not sufficient: areas A, D and E still need judgment.
+`--robust` rebuilds with 20 optimizer restarts instead of 10 and fails if any token changes. It does not parse construction/color.md prose or CHANGELOG text. `--no-rebuild` skips reproduction and is only for wording or link changes. Exit 0 is necessary, not sufficient: areas A, D and E still need judgment.
 
 The repository's Validate workflow (`.github/workflows/validate.yml`) runs the same validator on every pull request, plus `--robust` when the construction changes and the base copy of the validator when the scripts change. A green workflow is the same evidence as a local exit 0; read its job summary instead of rerunning when it is available.
 
@@ -79,7 +79,7 @@ wording · rule or method · palette values · new flavor · tooling. Most chang
 
 ## 4. Audit areas
 
-### A. Method integrity (docs/construction.md)
+### A. Method integrity (docs/construction/color.md)
 
 - Every rule, formula and parameter is explicit, measurable and reproducible from the document alone.
 - Every parameter is classified in §12 as **decided** (design choice with written rationale), **resolved** (searched over a stated range, the value the guarantees select), **measured** (from data, with source) or **solved** (computed). A parameter moves from decided to resolved only with the search written down. New or changed parameters must appear there correctly.
@@ -87,17 +87,17 @@ wording · rule or method · palette values · new flavor · tooling. Most chang
 - "Looks better", "felt off", "warmer", "rounded for taste" or a constant with no derivation is BLOCKING. Either it is declared *decided* with rationale, or it is rejected.
 - Removing or weakening a rule, check or guarantee is BLOCKING unless replaced by something strictly stronger and measured to be so.
 - "Fitted" or "measured" parameters must state their method, inclusion rule and result, so a reader can redo the fit on a sample of their own.
-- A measured parameter may come from an analysis of other themes. construction.md states the method, the inclusion rule and the result, without naming any theme, and no other theme's palette ships with the repository. Copying another theme's colors or values directly, with no measurement, is BLOCKING.
+- A measured parameter may come from an analysis of other themes. construction/color.md states the method, the inclusion rule and the result, without naming any theme, and no other theme's palette ships with the repository. Copying another theme's colors or values directly, with no measurement, is BLOCKING.
 
 ### B. Palette values follow the method
 
 - Recompute; never trust numbers written in the JSON or docs. The validator rebuilds every token of both flavors. Any reproduction mismatch is a hand edit or an undocumented method change and is BLOCKING.
-- A method change must change `scripts/construct.py` and construction.md together, and Dusk must still rebuild byte for byte unless the change states that it alters Dusk and why.
+- A method change must change `scripts/construct.py` and construction/color.md together, and Dusk must still rebuild byte for byte unless the change states that it alters Dusk and why.
 - If the method changed, every dependent value must be regenerated (accents, states, ANSI brights, docs, images), not only the one that motivated the change.
 
 ### C. Quality floor
 
-Two levels of floor live in `validate.py`, and every change must meet both (construction.md §10.1).
+Two levels of floor live in `validate.py`, and every change must meet both (construction/color.md §10.1).
 
 - **Category minimums** (`MINIMUMS`): the Twilight Theme standard for dark and for light themes. Every flavor of the category meets them, existing or new. They never go down; lowering one is BLOCKING.
 - **Flavor floors** (`FLOORS`): what each flavor reaches today, so a change cannot quietly degrade it. A flavor floor may go down only when all three hold:
@@ -127,12 +127,12 @@ Two levels of floor live in `validate.py`, and every change must meet both (cons
 
 Also: no `#000000` or `#ffffff`; everything inside sRGB, gamut-mapped by chroma reduction only; hues within ±24° of their ANSI anchors; Ember hue 45–70°. Contrast is WCAG 2.x on final 8-bit sRGB. Report contrast to two decimals and ΔE to three, each next to its floor.
 
-The known limits in construction.md §11 (JND of every background state, ANSI black/white contrast, background-state separation) are the minimums in `LIMIT_FLOORS` of `validate.py`. A limit below its minimum, or lowered without a Lower entry, is BLOCKING. Closest CVD pairs are reported in §11 and are covered by the CVD floor.
+The known limits in construction/color.md §11 (JND of every background state, ANSI black/white contrast, background-state separation) are the minimums in `LIMIT_FLOORS` of `validate.py`. A limit below its minimum, or lowered without a Lower entry, is BLOCKING. Closest CVD pairs are reported in §11 and are covered by the CVD floor.
 
 ### D. New flavors
 
 - Produced end to end by the construction method: surfaces, text levels, accents, colors, states and ANSI all solved, never picked. It is a new entry in `scripts/construct.py` `FLAVORS`, in an existing category, that sets only flavor parameters (Canvas, Ink, neutral chroma amplitude), and its committed JSON must equal the generator's output. System and category parameters may not be changed to suit it unless every other flavor still rebuilds exactly.
-- Any new seed or parameter is declared *decided* with written rationale in §12. Seed rule: one seed; Afterglow at the cusp of its hue, neutrals at its exact complement. A second or different seed requires construction.md to be amended first, by a change that itself passes this audit.
+- Any new seed or parameter is declared *decided* with written rationale in §12. Seed rule: one seed; Afterglow at the cusp of its hue, neutrals at its exact complement. A second or different seed requires construction/color.md to be amended first, by a change that itself passes this audit.
 - If the flavor has its own generator test, run it on an exported copy; it does not replace the validator, which checks every floor including ΔE.
 - Its palette image (`assets/palette-<flavor>.png`) is drawn by `scripts/docs.py`, or the README states why not.
 - It passes `validate.py --robust`: twice the optimizer restarts rebuild it unchanged.
@@ -145,15 +145,15 @@ The known limits in construction.md §11 (JND of every background state, ANSI bl
 All of these stay in sync with each other and with the recomputed values:
 
 - palette/twilight.json: values, structure, `version`; no `_`-prefixed or debug keys.
-- docs/design-system.md: every hex, contrast number, swatch URL (`placehold.co/<size>/<hex>/<hex>` matches its label) the §12 application tables and the §14 guarantee table.
-- docs/construction.md: formulas, parameters, worked numbers, §11 limits, §12 table. The validator does not parse its prose: check worked numbers by hand.
+- docs/design-system/color.md: every hex, contrast number, swatch URL (`placehold.co/<size>/<hex>/<hex>` matches its label) the §12 application tables and the §14 guarantee table.
+- docs/construction/color.md: formulas, parameters, worked numbers, §11 limits, §12 table. The validator does not parse its prose: check worked numbers by hand.
 - README.md: palette and accent tables, guarantees, swatches, links, anchors, repository layout.
 - assets/palette-dusk.png, assets/palette-dawn.png: drawn by `scripts/docs.py` whenever a shown value changes; otherwise flag as stale.
 - CHANGELOG.md: a new entry for every change. Versions follow [CONTRIBUTING.md](../../../CONTRIBUTING.md#versions): **patch** for wording or tooling, **minor** for added rules or tokens and for values regenerated by the documented method after a method change, **major** for a removed or renamed token. A value that changed without a method change has no derivation path (area B). JSON `version` equals the latest CHANGELOG heading. A pre-release suffix that does not match the heading is a mismatch.
 - English, sober, no filler, no claim that cannot be measured.
 - No other theme or palette is named or compared in the documents or scripts. The README's history paragraph is the only exception.
 
-The validator does not parse construction.md prose or CHANGELOG text. For every hex or number the change edits, grep its old value across every `.md` file: a copy left behind is a MAJOR finding in this change, not a follow-up.
+The validator does not parse construction/color.md prose or CHANGELOG text. For every hex or number the change edits, grep its old value across every `.md` file: a copy left behind is a MAJOR finding in this change, not a follow-up.
 
 ## 5. Verdict
 
@@ -173,7 +173,7 @@ Each of these means the change is being judged on intent instead of measurement:
 | "The docs and JSON agree, so it's consistent" | Consistency is area E. Without a derivation path it is still REJECTED. |
 | "The author documented the floor miss" | A category minimum never moves. A flavor floor moves only with a method change, its measured cause, its benefit and a Lower entry, and never below the minimum. A palette that misses a floor is a regression however it is documented. |
 | "It still passes AA, close enough" | Compare against the table above, not against WCAG. |
-| "The validator passed" | Exit 0 covers what it parses. Areas A, D and construction.md prose need you. |
+| "The validator passed" | Exit 0 covers what it parses. Areas A, D and construction/color.md prose need you. |
 | "Small enough to fix in a follow-up" | If the change leaves the docs inconsistent, it is MAJOR now. Verdict: CHANGES REQUESTED, with the exact fix. |
 | "This was already wrong on main" | Then note it as pre-existing; do not block the change for it, and do not let it hide a new one. |
 

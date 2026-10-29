@@ -91,6 +91,11 @@ LIMIT_FLOORS = {  # the measured minimum of each limit per flavor (truncated to 
 
 
 # Snapshot: the working tree, or a git ref ----------------------------------
+# Files that moved, new path -> old path, so a base ref from before the move still reads.
+MOVED = {"docs/design-system/color.md": "docs/design-system.md",
+         "docs/construction/color.md": "docs/construction.md"}
+
+
 class Snap:
     def __init__(self, ref=None):
         self.ref = ref
@@ -98,6 +103,8 @@ class Snap:
         self.files = set(git(*args).splitlines())
 
     def read(self, path):
+        if self.ref and path not in self.files and MOVED.get(path) in self.files:
+            path = MOVED[path]
         return git("show", f"{self.ref}:{path}") if self.ref else (ROOT / path).read_text()
 
     def label(self):
@@ -341,7 +348,7 @@ def reproduce(P):
 def construction_checks(snap, P, meta):
     """Numbers in construction.md that the rebuild determines: the §6.5 hue table and L₀."""
     errs = []
-    text = snap.read("docs/construction.md")
+    text = snap.read("docs/construction/color.md")
     rows = {"Coral": "red", "Gold": "yellow", "Grove": "green", "Sea Salt": "cyan", "Sky": "blue", "Orchid": "magenta"}
     cols = {}                                     # §6.5 hue table: flavor → column, from its header row
     for no, line in enumerate(text.splitlines(), 1):
@@ -356,15 +363,15 @@ def construction_checks(snap, P, meta):
             for f, col in cols.items():
                 want = f"{meta[f]['hues'][i]}°"
                 if cells[col] != want:
-                    errs.append(f"docs/construction.md:{no}: {cells[0]} {f} hue shows {cells[col]}, rebuilt {want}")
+                    errs.append(f"docs/construction/color.md:{no}: {cells[0]} {f} hue shows {cells[col]}, rebuilt {want}")
         elif cells and cells[0] == "Ember":
             for f, col in cols.items():
                 if cells[col] != f"{meta[f]['ember'][0]}°":
-                    errs.append(f"docs/construction.md:{no}: Ember {f} hue shows {cells[col]}, rebuilt {meta[f]['ember'][0]}°")
+                    errs.append(f"docs/construction/color.md:{no}: Ember {f} hue shows {cells[col]}, rebuilt {meta[f]['ember'][0]}°")
         elif cells and cells[0].startswith("L₀"):
             for f, col in cols.items():
                 if cells[col] != f"{meta[f]['L0']:.3f}":
-                    errs.append(f"docs/construction.md:{no}: L₀ {f} shows {cells[col]}, rebuilt {meta[f]['L0']:.3f}")
+                    errs.append(f"docs/construction/color.md:{no}: L₀ {f} shows {cells[col]}, rebuilt {meta[f]['L0']:.3f}")
             cols = {}
     allhex = {h.lower() for f in P for h in all_hexes(P[f])} | {k.SEED}   # the seed is documented, not a token
     for no, line in enumerate(text.splitlines(), 1):
@@ -372,7 +379,7 @@ def construction_checks(snap, P, meta):
             continue
         for h in HEX.findall(line):
             if "#" + h.lower() not in allhex:
-                errs.append(f"docs/construction.md:{no}: #{h} is not in palette/twilight.json")
+                errs.append(f"docs/construction/color.md:{no}: #{h} is not in palette/twilight.json")
     return errs
 
 
@@ -390,7 +397,7 @@ def doc_checks(snap, P, M):
     """Hexes, swatches and numbers in README.md and design-system.md against the JSON and the measurements."""
     errs = []
     allhex = {h.lower() for f in P for h in all_hexes(P[f])} | {k.SEED}   # the seed is documented, not a token
-    for path in ("README.md", "docs/design-system.md"):
+    for path in ("README.md", "docs/design-system/color.md"):
         flavor, section = None, ""
         for no, line in enumerate(snap.read(path).splitlines(), 1):
             where = f"{path}:{no}"
