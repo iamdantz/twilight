@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.25.0
+
+Remix, Twilight Theme's CSS reset. No palette, font or rule changes.
+
+### Added
+- `docs/construction/remix.md`: what a CSS reset does, from a comparison of normalize.css, modern-normalize, Eric Meyer's reset, Tailwind CSS Preflight and Bootstrap Reboot; the fixes that are no longer needed; Remix's role and limits; the reason for every rule.
+
+### Changed
+- The CSS reset is Remix, in `remix/`: `remix.min.css` for projects, `remix.css` to read, `remix-tailwind.css` for Tailwind CSS 4. It is written from scratch: it no longer includes Tailwind CSS Preflight, and the repository no longer keeps a copy of it.
+- Remix covers every element, not only text: box sizing, outer spacing, lists, media, tables, form controls, interactive elements and the `hidden` attribute, with the result of Preflight and modern-normalize, so components look the same with or without Tailwind CSS.
+- Where the design system or the other tools ask for it, Remix departs from that result: placeholders at 54 % of the text color (4.5:1, where Preflight's half gives 3.95:1), one-line form controls at `tight` leading, `pre` that scrolls, plain search fields, fieldsets that can shrink.
+- `remix-tailwind.css` holds only the rules Preflight does not already give.
+- Remix sets no spacing between elements, as no reset does: the class `twl-prose` is gone, and prose takes its spacing from `--twl-spacing` and `--twl-container-prose`.
+- `tests/remix` checks every element, form controls included, and compares placeholders by the gray of their darkest pixel.
+
 ## 1.24.0
 
 One set of names for typography, in the rules, the tokens and the CSS. No palette or font changes, and no value changes.

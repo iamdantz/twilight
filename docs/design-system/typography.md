@@ -65,7 +65,7 @@ Every typographic value has one name, used the same way in these rules, in [typo
 
 The steps are named as size modifiers usually are, from `xs` to `6xl`, with `base` for body text. A level is named after the HTML element it styles (`h1` to `h6`) or after its step (`body-lg` is body text one step up, at `lg`). The key `default` is left out of a name: `--twl-leading` is the default leading.
 
-In CSS, every name starts with `twl`, Twilight's consonants, which no common framework uses (Tailwind CSS uses `--tw-` for its own), so the names stay apart from a framework's and a page's. The same prefix marks the one class the rules define, `twl-prose` (§12).
+In CSS, every name starts with `twl`, Twilight's consonants, which no common framework uses (Tailwind CSS uses `--tw-` for its own), so the names stay apart from a framework's and a page's.
 
 ## 4. Fonts
 
@@ -214,7 +214,7 @@ Twilight Crystal Mono figures are always tabular.
 
 Every text is one or the other, and both follow §4 to §11.
 
-- **Prose** is read in sequence: articles, documentation, messages, posts, reports, help pages. It flows: the spacing of §9 separates its blocks, its lines fit the `prose` container of §10, links in it are underlined ([color.md §5](color.md#where-the-accent-goes)), and lists show their markers. On the web, prose is marked with the class `twl-prose`.
+- **Prose** is read in sequence: articles, documentation, messages, posts, reports, help pages. It flows: the spacing of §9 separates its blocks, its lines fit the `prose` container of §10, links in it are underlined ([color.md §5](color.md#where-the-accent-goes)), and lists show their markers. On the web, the page applies this spacing to its prose with `--twl-spacing` and `--twl-container-prose`; [Remix](../../remix/README.md), like every CSS reset, leaves the space between elements at zero.
 - **UI text** names, labels or reports on something on screen: buttons, fields, menus, tabs, navigation, table cells, cards, notifications. It is set at `ui`, `body-sm` or `body-xs`, in one line where possible; the layout decides its spacing, and links in it are identified by their place or an icon rather than an underline.
 
 Text inside an interface that is read in sequence, such as the body of a message or an empty state that explains something, is prose.
@@ -237,7 +237,7 @@ Where a tool does not take the exact value, round up to the nearest value it tak
 
 | Tool | Unit and values |
 |---|---|
-| Web | Sizes in rem from §6: `desktop` unless the primary pointer is coarse (`@media (pointer: coarse)`), `page` in `@media print`. The [CSS reset](../../css/README.md) applies all of it, with the names of §3 |
+| Web | Sizes in rem from §6: `desktop` unless the primary pointer is coarse (`@media (pointer: coarse)`), `page` in `@media print`. [Remix](../../remix/README.md), the CSS reset, applies the rules for elements, with the names of §3 |
 | iOS, Android | `handheld`: pt on iOS, sp on Android, equal to the px of §6 |
 | Figma, Photoshop, Illustrator | px of the geometry where the design will be shown; in a 72 ppi document, 1 pt = 1 px |
 | Code editors and terminals | In the application's settings: font size <!-- fact:t.editors.size -->14 px<!-- /fact -->, or <!-- fact:t.editors.size-lg -->16 px<!-- /fact --> to reduce fatigue (<!-- fact:t.editors.size-pt -->10.5 pt<!-- /fact --> or <!-- fact:t.editors.size-lg-pt -->12 pt<!-- /fact --> in applications sized in points); line height 1.3 |
@@ -272,4 +272,4 @@ Each level of §7 becomes a named style in tools that have them (paragraph and c
 | Spacing in arbitrary amounts | Rhythm is lost | Lines and half lines (§9) |
 | `display-1` or `display-2` for section titles, or more than one per view | It stops marking the one title | Headings |
 | A heading skipped or chosen for its size | The structure no longer matches what is shown | The level by structure, its size changed by §13 |
-| Names of other schemes (`--twilight-…`, `.document`, a step called "small") | The vocabulary splits | The names of §3 |
+| Names of other schemes (`--twilight-…`, a step called "small") | The vocabulary splits | The names of §3 |

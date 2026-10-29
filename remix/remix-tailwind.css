@@ -1,9 +1,9 @@
-/*! Twilight Theme reset 1.24.0 | MIT License | https://github.com/iamdantz/twilight-theme
-    Generated from typography/twilight.json by css/build.py; do not edit.
-    For Tailwind CSS 4: import it after tailwindcss. */
+/*! Remix 1.25.0, Twilight Theme's CSS reset | MIT License | https://github.com/iamdantz/twilight-theme
+    Generated from typography/twilight.json by remix/build.py; do not edit.
+    For Tailwind CSS 4: import it after tailwindcss. Preflight gives the rest of Remix's result. */
 
 @layer base {
-  /* Fallback faces: the system fonts closest to Twilight Crystal, sized to its x-height. */
+  /* Fallback fonts: the system fonts closest to Twilight Crystal, sized to its x-height. */
 
   @font-face {
     font-family: "Twilight Tahoma";
@@ -277,7 +277,7 @@
     size-adjust: 91%;
   }
 
-  /* Tokens: fonts, the scale of the geometry, levels, leading, spacing and the prose container. */
+  /* Tokens: fonts, the scale of the current geometry, levels, leading, spacing, the prose container. */
 
   :root {
     --twl-font-sans: "Twilight Crystal", "Atkinson Hyperlegible Next", "Twilight Tahoma", "Twilight Verdana", "Twilight Adwaita Sans", "Twilight Noto Sans", sans-serif;
@@ -345,9 +345,10 @@
     }
   }
 
-  /* Elements: fonts, levels, code and figures. */
+  /* Document: Twilight's font, leading and tracking; body text at the level body. */
 
-  html {
+  html,
+  :host {
     font-family: var(--twl-font-sans);
     line-height: var(--twl-leading);
     letter-spacing: 0;
@@ -356,6 +357,8 @@
   body {
     font-size: var(--twl-text-body);
   }
+
+  /* Headings and text levels. */
 
   h1 {
     font-size: var(--twl-text-h1);
@@ -395,13 +398,14 @@
   h6 {
     font-weight: 700;
     line-height: var(--twl-leading-tight);
-    text-wrap: balance;
   }
 
   b,
   strong {
     font-weight: 700;
   }
+
+  /* Literal text: Twilight Crystal Mono at the size of the text around it, without ligatures. */
 
   code,
   kbd,
@@ -414,7 +418,10 @@
 
   pre {
     line-height: var(--twl-leading-tight);
+    overflow: auto;
   }
+
+  /* Figures: tabular in tables, times and outputs. */
 
   table,
   time,
@@ -422,66 +429,27 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Prose: flow inside .twl-prose only, never above the specificity of one element. */
+  /* Forms: one-line controls at the leading of UI text; readable placeholders; plain search fields; fieldsets that shrink. */
 
-  :where(.twl-prose) {
-    max-inline-size: var(--twl-container-prose);
+  button,
+  input,
+  select,
+  ::file-selector-button {
+    line-height: var(--twl-leading-tight);
   }
 
-  :where(.twl-prose) > :where(* + *) {
-    margin-block-start: var(--twl-spacing);
+  ::placeholder {
+    color: inherit;
+    opacity: 0.54;
   }
 
-  :where(.twl-prose) > :where(h1, h2, h3, h4, h5, h6):where(:not(:first-child)) {
-    margin-block-start: calc(var(--twl-spacing) * 2);
+  [type='search'] {
+    -webkit-appearance: textfield;
+    appearance: textfield;
+    outline-offset: -2px;
   }
 
-  :where(.twl-prose) > :where(h1, h2, h3, h4, h5, h6) + :where(*) {
-    margin-block-start: calc(var(--twl-spacing) * 0.5);
-  }
-
-  :where(.twl-prose) > :where(p:first-of-type) {
-    font-size: var(--twl-text-body-lg);
-  }
-
-  :where(.twl-prose) :is(ul, ol) {
-    padding-inline-start: 1.5em;
-  }
-
-  :where(.twl-prose) ul {
-    list-style: disc;
-  }
-
-  :where(.twl-prose) ol {
-    list-style: decimal;
-  }
-
-  :where(.twl-prose) li > * + *,
-  :where(.twl-prose) :is(ul, ol):has(> li > p + p) > li + li {
-    margin-block-start: calc(var(--twl-spacing) * 0.5);
-  }
-
-  :where(.twl-prose) a {
-    text-decoration-line: underline;
-  }
-
-  :where(.twl-prose) blockquote {
-    padding-inline-start: 1.5em;
-    border-inline-start-width: 3px;
-  }
-
-  :where(.twl-prose) :is(th, td) {
-    padding-inline-end: 1em;
-    border-block-end-width: 1px;
-    text-align: start;
-    vertical-align: top;
-  }
-
-  :where(.twl-prose) figcaption {
-    margin-block-start: calc(var(--twl-spacing) * 0.5);
-  }
-
-  :where(.twl-prose) pre {
-    overflow-x: auto;
+  fieldset {
+    min-width: 0;
   }
 }
