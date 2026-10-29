@@ -168,7 +168,7 @@ Twilight Theme recommends its typefaces, [Twilight Crystal and Twilight Crystal 
 ├── assets/                  palette images
 ├── docs/
 │   ├── design-system/       the rules: index, color, typography
-│   └── construction/        how the values were derived: color
+│   └── construction/        how the values were derived: color, typography
 ├── fonts/
 │   ├── README.md            Twilight Crystal and Twilight Crystal Mono
 │   ├── upstream/            pinned upstream sources and licenses, unmodified

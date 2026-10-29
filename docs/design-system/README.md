@@ -5,6 +5,6 @@ Twilight Theme defines how a theme looks in any tool that lets it choose colors 
 | Part | Rules | How the values were derived |
 | --- | --- | --- |
 | Color | [color.md](color.md) | [construction/color.md](../construction/color.md) |
-| Typography | [typography.md](typography.md) | The fonts' own checks, in [fonts/README.md](../../fonts/README.md) and [FONTLOG.txt](../../fonts/FONTLOG.txt) |
+| Typography | [typography.md](typography.md) | [construction/typography.md](../construction/typography.md); the fonts' own checks are in [FONTLOG.txt](../../fonts/FONTLOG.txt) |
 
 All color values in machine-readable form are in [palette/twilight.json](../../palette/twilight.json). The typefaces are described in [fonts/README.md](../../fonts/README.md).
