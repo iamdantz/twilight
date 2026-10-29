@@ -88,6 +88,14 @@ Every value is a custom property on `:root`, for components to use:
 
 In Tailwind, use them as arbitrary values, such as `text-(length:--twilight-heading-2)` or `mt-(--twilight-space)`. Twilight Theme does not change Tailwind's theme (`@theme`).
 
+## Tested
+
+On every change to the CSS, the typography tokens or the tests, the CSS workflow runs [tests/css](../tests/css/test.mjs) in Chromium:
+
+- **Parity.** A page with every element the reset styles has the same computed style with `twilight.css`, with `twilight.min.css`, and with Tailwind CSS 4 and `twilight-tailwind.css`, on a desktop screen, a 320 px window, a handheld screen and in print.
+- **Rules.** Its sizes, weights, line heights, spacing and line length are the values of the tokens in each geometry.
+- **Components.** Components of daisyUI, of Flowbite, and written in utility classes as shadcn/ui and Nuxt UI write them keep every style their classes set when Twilight's file is added.
+
 ## License
 
 MIT, as the rest of Twilight Theme. `twilight.css` and `twilight.min.css` include Tailwind CSS Preflight, MIT License, Copyright (c) Tailwind Labs, Inc.; the copy it is built from, and its license, are in [`upstream/tailwindcss/`](upstream/tailwindcss/), pinned in [`upstream.json`](upstream.json).

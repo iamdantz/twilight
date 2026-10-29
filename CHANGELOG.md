@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.23.1
+
+CSS checks. No palette, font, rule or style changes.
+
+### Added
+- `tests/css`: checks of the CSS reset in Chromium. A page of every styled element computes the same with `twilight.css`, `twilight.min.css`, and Tailwind CSS 4 with `twilight-tailwind.css`, on desktop, narrow desktop, handheld and print; its values match the typography tokens; and components of daisyUI, Flowbite and utility classes keep every style their classes set.
+- The CSS workflow runs them in one job, only when the CSS, the tokens or the tests change, with the runner's own Chrome.
+
 ## 1.23.0
 
 CSS reset. No palette, font or rule changes.

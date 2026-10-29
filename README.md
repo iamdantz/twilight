@@ -181,6 +181,7 @@ Twilight Theme recommends its typefaces, [Twilight Crystal and Twilight Crystal 
 │   └── FONTLOG.txt          changes from upstream and credits
 ├── palette/
 │   └── twilight.json        all color values, machine-readable
+├── tests/css/               Chromium checks of the CSS reset: parity, rules, components
 ├── tools/
 │   └── ligaturizer/         Fira Code ligatures for monospaced fonts (GPL-3.0)
 ├── typography/

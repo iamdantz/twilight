@@ -1,0 +1,45 @@
+name: CSS
+
+# One light job, only when the CSS reset or what it is built from changes: Chromium (the runner's own
+# Chrome, nothing to download), one Tailwind CSS build per component library.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "css/**"
+      - "typography/**"
+      - "tests/css/**"
+      - ".github/workflows/css.yml"
+  push:
+    branches: [main]
+    paths:
+      - "css/**"
+      - "typography/**"
+      - "tests/css/**"
+      - ".github/workflows/css.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: css-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  css:
+    name: parity, rules and components
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: CSS matches the tokens
+        run: python3 css/build.py --check
+
+      - name: Dependencies
+        working-directory: tests/css
+        run: npm ci --no-audit --no-fund
+
+      - name: Chromium
+        working-directory: tests/css
+        run: npm test
