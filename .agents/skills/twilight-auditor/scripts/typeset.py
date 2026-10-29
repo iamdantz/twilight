@@ -137,7 +137,14 @@ def measure(T):
                  [[lang, f"{v:.3f} em", f"{M['characters'] * v:.1f} em"] for lang, v in M["mean character"].items()])
 
 
-BLOCKS = {"scale": scale, "scale-by-geometry": scale_by_geometry, "levels": levels, "lowest-steps": lowest_steps,
+def system_fonts(T):
+    size = lambda name: f"{round(T['fallbacks']['text' if name in T['fallbacks']['text'] else 'literal'][name]['size adjust'] * 100)} %"  # noqa: E731
+    rows = [[r["system"], r["text"], size(r["text"].replace(" if installed", "")), r["literal"], size(r["literal"]),
+             f"{r['cell']:.2f} em"] for r in T["systems"]]
+    return table(["System", "Sans-serif", "Size", "Monospaced", "Size", "Cell after sizing"], rows)
+
+
+BLOCKS = { "system-fonts": system_fonts,"scale": scale, "scale-by-geometry": scale_by_geometry, "levels": levels, "lowest-steps": lowest_steps,
           "floors": floors, "tool-values": tool_values, "editor-defaults": editor_defaults, "code-grid": grid,
           "measure": measure}
 

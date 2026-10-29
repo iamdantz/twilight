@@ -152,6 +152,49 @@ TOOLS = {"Word, Google Docs, Pages, PDFs": ("documents", 1, 0.5, "pt"),
          "PowerPoint, 16:9 (7.5 in high)": ("slides", 5.4, 0.5, "pt"),
          "Google Slides, 16:9 (5.625 in high)": ("slides", 4.05, 0.5, "pt"),
          "Keynote, 1920 × 1080": ("slides", 10.8, 1, "pt")}
+# System fonts closest to Twilight Crystal (design-system/typography.md §2), measured in an earlier study: the
+# size that matches Twilight Crystal's x-height, and the names each face is installed under (full name, then
+# PostScript name) for CSS local(). Listed in the order a CSS stack tries them.
+FALLBACKS = {
+    "text": {
+        "Tahoma": (0.91, {"400 normal": ["Tahoma"], "700 normal": ["Tahoma Bold", "Tahoma-Bold"]}),
+        "Verdana": (0.91, {"400 normal": ["Verdana"], "700 normal": ["Verdana Bold", "Verdana-Bold"],
+                           "400 italic": ["Verdana Italic", "Verdana-Italic"],
+                           "700 italic": ["Verdana Bold Italic", "Verdana-BoldItalic"]}),
+        "Adwaita Sans": (0.91, {"400 normal": ["Adwaita Sans Regular", "AdwaitaSans-Regular"],
+                                "700 normal": ["Adwaita Sans Bold", "AdwaitaSans-Bold"],
+                                "400 italic": ["Adwaita Sans Italic", "AdwaitaSans-Italic"],
+                                "700 italic": ["Adwaita Sans Bold Italic", "AdwaitaSans-BoldItalic"]}),
+        "Noto Sans": (0.93, {"400 normal": ["Noto Sans Regular", "NotoSans-Regular"],
+                             "700 normal": ["Noto Sans Bold", "NotoSans-Bold"],
+                             "400 italic": ["Noto Sans Italic", "NotoSans-Italic"],
+                             "700 italic": ["Noto Sans Bold Italic", "NotoSans-BoldItalic"]}),
+    },
+    "literal": {
+        "Cascadia Mono": (0.92, {"400 normal": ["Cascadia Mono Regular", "CascadiaMono-Regular"],
+                                 "700 normal": ["Cascadia Mono Bold", "CascadiaMono-Bold"],
+                                 "400 italic": ["Cascadia Mono Italic", "CascadiaMono-Italic"],
+                                 "700 italic": ["Cascadia Mono Bold Italic", "CascadiaMono-BoldItalic"]}),
+        "Menlo": (0.91, {"400 normal": ["Menlo Regular", "Menlo-Regular"], "700 normal": ["Menlo Bold", "Menlo-Bold"],
+                         "400 italic": ["Menlo Italic", "Menlo-Italic"],
+                         "700 italic": ["Menlo Bold Italic", "Menlo-BoldItalic"]}),
+        "Hack": (0.91, {"400 normal": ["Hack Regular", "Hack-Regular"], "700 normal": ["Hack Bold", "Hack-Bold"],
+                        "400 italic": ["Hack Italic", "Hack-Italic"], "700 italic": ["Hack Bold Italic", "Hack-BoldItalic"]}),
+        "Adwaita Mono": (0.95, {"400 normal": ["Adwaita Mono Regular", "AdwaitaMono-Regular"],
+                                "700 normal": ["Adwaita Mono Bold", "AdwaitaMono-Bold"],
+                                "400 italic": ["Adwaita Mono Italic", "AdwaitaMono-Italic"],
+                                "700 italic": ["Adwaita Mono Bold Italic", "AdwaitaMono-BoldItalic"]}),
+        "DejaVu Sans Mono": (0.91, {"400 normal": ["DejaVu Sans Mono", "DejaVuSansMono"],
+                                    "700 normal": ["DejaVu Sans Mono Bold", "DejaVuSansMono-Bold"],
+                                    "400 italic": ["DejaVu Sans Mono Oblique", "DejaVuSansMono-Oblique"],
+                                    "700 italic": ["DejaVu Sans Mono Bold Oblique", "DejaVuSansMono-BoldOblique"]}),
+    },
+}
+# System, sans-serif face, monospaced face, monospaced cell after sizing (em)
+SYSTEMS = [("Windows", "Tahoma", "Cascadia Mono", 0.54), ("macOS", "Verdana", "Menlo", 0.55),
+           ("Linux, KDE", "Noto Sans", "Hack", 0.55), ("Linux, GNOME", "Adwaita Sans", "Adwaita Mono", 0.57),
+           ("Linux, other", "Noto Sans if installed", "DejaVu Sans Mono", 0.55)]
+ORIGINALS = {"text": "Atkinson Hyperlegible Next", "literal": "Atkinson Hyperlegible Mono"}
 STYLE_KEYS = {"Regular": (400, "normal"), "Italic": (400, "italic")}
 for _w, _n in zip(("ExtraLight", "Light", "Medium", "SemiBold", "Bold", "ExtraBold"), (200, 300, 500, 600, 700, 800)):
     STYLE_KEYS[_w], STYLE_KEYS[_w + "Italic"] = (_n, "normal"), (_n, "italic")
@@ -206,6 +249,10 @@ def tokens(out):
                     "mean character": {k: q(v) for k, v in m["mean character (em)"].items()}},
         "fit": {"word": u["widest word"], "em": q(u["widest word (em)"], 2), "gutter": GUTTER, "narrowest": NARROWEST},
         "tools": {k: {"geometry": g, "factor": f, "grain": gr, "unit": un} for k, (g, f, gr, un) in TOOLS.items()},
+        "originals": ORIGINALS,
+        "fallbacks": {role: {name: {"size adjust": size, "faces": faces} for name, (size, faces) in group.items()}
+                      for role, group in FALLBACKS.items()},
+        "systems": [{"system": s, "text": a, "literal": b, "cell": c} for s, a, b, c in SYSTEMS],
     }
 
 
