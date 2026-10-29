@@ -1,22 +1,22 @@
 name: CSS
 
-# One light job, only when the CSS reset or what it is built from changes: Chromium (the runner's own
+# One light job, only when Remix or what it is built from changes: Chromium (the runner's own
 # Chrome, nothing to download), one Tailwind CSS build per component library.
 on:
   pull_request:
     branches: [main]
     paths:
-      - "css/**"
+      - "remix/**"
       - "typography/**"
-      - "tests/css/**"
-      - ".github/workflows/css.yml"
+      - "tests/remix/**"
+      - ".github/workflows/remix.yml"
   push:
     branches: [main]
     paths:
-      - "css/**"
+      - "remix/**"
       - "typography/**"
-      - "tests/css/**"
-      - ".github/workflows/css.yml"
+      - "tests/remix/**"
+      - ".github/workflows/remix.yml"
 
 permissions:
   contents: read
@@ -34,12 +34,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
       - name: CSS matches the tokens
-        run: python3 css/build.py --check
+        run: python3 remix/build.py --check
 
       - name: Dependencies
-        working-directory: tests/css
+        working-directory: tests/remix
         run: npm ci --no-audit --no-fund
 
       - name: Chromium
-        working-directory: tests/css
+        working-directory: tests/remix
         run: npm test

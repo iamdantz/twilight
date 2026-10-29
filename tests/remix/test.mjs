@@ -1,20 +1,21 @@
-// Checks the CSS reset of Twilight Theme (css/) in Chromium. Three checks:
+// Checks Remix, Twilight Theme's CSS reset (remix/), in Chromium. Three checks:
 //
-// 1. Parity. pages/prose.html styled by css/twilight.css and by Tailwind CSS 4 with
-//    css/twilight-tailwind.css has the same computed style on every element: on a desktop screen,
-//    on a narrow desktop window, on a handheld screen (coarse pointer) and in print.
-// 2. Rules. In the same page, the computed sizes, weights, line heights and spacing are the values
-//    of typography/twilight.json for each geometry.
+// 1. Parity. pages/elements.html, with every element Remix styles, has the same computed style with
+//    remix/remix.css, with remix/remix.min.css, and with Tailwind CSS 4 and remix/remix-tailwind.css: on a
+//    desktop screen, a 320 px window, a handheld screen (coarse pointer) and in print.
+// 2. Rules. In the same page, sizes, weights and leading are the values of typography/twilight.json for
+//    each geometry; no element has outer spacing; placeholders are readable.
 // 3. Components. pages/components.html, with daisyUI, Flowbite and utility-class components (the way
-//    shadcn/ui and Nuxt UI write them), keeps every style its classes set when Twilight's file is
-//    added: spacing, borders, display, colors, decoration, and the size, weight and line height of
-//    any element whose own classes set them.
+//    shadcn/ui and Nuxt UI write them), keeps every style its classes set when Remix is added: spacing,
+//    borders, display, colors, decoration, and the size, weight and line height of any element whose
+//    own classes set them.
 //
 //   npm ci && npm test          CHROMIUM_PATH=/path/to/chrome uses that browser; in CI, the runner's Chrome.
 import { execFileSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import { inflateSync } from "node:zlib";
 import { chromium } from "playwright-core";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -26,7 +27,7 @@ const fail = (msg) => failures.push(msg);
 mkdirSync(BUILD, { recursive: true });
 
 // Stylesheets ----------------------------------------------------------------------------------
-const twilight = relative(BUILD, join(ROOT, "css", "twilight-tailwind.css"));
+const remix = relative(BUILD, join(ROOT, "remix", "remix-tailwind.css"));
 const LIBRARIES = {
   tailwind: [],
   daisyui: ['@plugin "daisyui";'],
@@ -43,7 +44,7 @@ for (const [lib, extra] of Object.entries(LIBRARIES)) {
   const head = ['@import "tailwindcss";'];
   const imports = extra.filter((l) => l.startsWith("@import")), plugins = extra.filter((l) => !l.startsWith("@import"));
   compile(lib, [...head, ...imports, ...plugins]);
-  compile(`${lib}-twilight`, [...head, ...imports, `@import "${twilight}";`, ...plugins]);
+  compile(`${lib}-remix`, [...head, ...imports, `@import "${remix}";`, ...plugins]);
 }
 
 function page(name, body, sheets) {
@@ -53,11 +54,37 @@ function page(name, body, sheets) {
     `<meta name="viewport" content="width=device-width, initial-scale=1">${links}</head><body>${body}</body></html>`);
   return "file://" + file;
 }
-const doc = readFileSync(join(HERE, "pages", "prose.html"), "utf8");
+const doc = readFileSync(join(HERE, "pages", "elements.html"), "utf8");
 const components = readFileSync(join(HERE, "pages", "components.html"), "utf8");
-const vanillaDoc = page("prose-vanilla", doc, [relative(BUILD, join(ROOT, "css", "twilight.css"))]);
-const minDoc = page("prose-min", doc, [relative(BUILD, join(ROOT, "css", "twilight.min.css"))]);
-const tailwindDoc = page("prose-tailwind", doc, ["tailwind-twilight.css"]);
+const vanillaDoc = page("elements-vanilla", doc, [relative(BUILD, join(ROOT, "remix", "remix.css"))]);
+const minDoc = page("elements-min", doc, [relative(BUILD, join(ROOT, "remix", "remix.min.css"))]);
+const tailwindDoc = page("elements-tailwind", doc, ["tailwind-remix.css"]);
+
+// PNG: the darkest gray value of an 8-bit RGB or RGBA screenshot -------------------------------
+function darkest(png) {
+  let pos = 8, width = 0, height = 0, channels = 4;
+  const idat = [];
+  while (pos < png.length) {
+    const len = png.readUInt32BE(pos), type = png.toString("ascii", pos + 4, pos + 8), data = png.subarray(pos + 8, pos + 8 + len);
+    if (type === "IHDR") { width = data.readUInt32BE(0); height = data.readUInt32BE(4); channels = data[9] === 6 ? 4 : 3; }
+    if (type === "IDAT") idat.push(data);
+    pos += 12 + len;
+  }
+  const raw = inflateSync(Buffer.concat(idat)), stride = width * channels, prev = Buffer.alloc(stride), row = Buffer.alloc(stride);
+  let min = 255;
+  for (let y = 0; y < height; y++) {
+    const f = raw[y * (stride + 1)], line = raw.subarray(y * (stride + 1) + 1, (y + 1) * (stride + 1));
+    for (let x = 0; x < stride; x++) {
+      const a = x >= channels ? row[x - channels] : 0, b = prev[x], c = x >= channels ? prev[x - channels] : 0;
+      const p = a + b - c, pa = Math.abs(p - a), pb = Math.abs(p - b), pc = Math.abs(p - c);
+      const pred = [0, a, b, (a + b) >> 1, pa <= pb && pa <= pc ? a : pb <= pc ? b : c][f];
+      row[x] = (line[x] + pred) & 255;
+    }
+    for (let x = 0; x < width; x++) min = Math.min(min, row[x * channels], row[x * channels + 1], row[x * channels + 2]);
+    row.copy(prev);
+  }
+  return min;
+}
 
 // Browser --------------------------------------------------------------------------------------
 const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH }
@@ -75,7 +102,8 @@ const PROPS = ["display", "position", "font-family", "font-size", "font-weight",
   "margin-bottom", "margin-left", "padding-top", "padding-right", "padding-bottom", "padding-left", "border-top-width",
   "border-right-width", "border-bottom-width", "border-left-width", "border-top-style", "border-left-style",
   "border-bottom-style", "border-top-left-radius", "gap", "color", "background-color", "opacity", "box-sizing",
-  "vertical-align"];
+  "vertical-align", "overflow-x", "resize", "appearance", "min-width", "tab-size", "text-indent", "border-collapse",
+  "text-decoration-style", "outline-offset", "max-width", "height"];
 
 async function styles(url, mode) {
   const ctx = await browser.newContext(MODES[mode].context);
@@ -88,14 +116,19 @@ async function styles(url, mode) {
     return { path, classed: e.hasAttribute("class"), style: Object.fromEntries(props.map((k) => [k, s.getPropertyValue(k)])),
       parent: Object.fromEntries(props.map((k) => [k, parent.getPropertyValue(k)])), tag: e.tagName.toLowerCase(),
       parentTag: e.parentElement.tagName.toLowerCase(), firstChild: e.parentElement.firstElementChild === e,
-      inProse: !!e.closest(".twl-prose"), directInProse: e.parentElement.classList.contains("twl-prose"),
-      prevTag: e.previousElementSibling ? e.previousElementSibling.tagName.toLowerCase() : null,
-      firstP: e.parentElement.classList.contains("twl-prose") && e.tagName === "P" && e === e.parentElement.querySelector(":scope > p") };
+      type: e.getAttribute("type") };
   }), PROPS);
+  // Placeholders have no computed style to read, so their ink is measured: the darkest pixel of each
+  // placeholder, drawn in black on white.
+  const placeholders = [];
+  for (const el of await p.$$("input[placeholder], textarea[placeholder]")) {
+    await el.evaluate((e) => { e.value = ""; e.style.color = "#000"; e.style.backgroundColor = "#fff"; e.style.resize = "none"; });
+    placeholders.push(darkest(await el.screenshot()));
+  }
   const rootSize = await p.evaluate(() => parseFloat(getComputedStyle(document.documentElement).fontSize));
   const width = await p.evaluate(() => document.documentElement.clientWidth);
   await ctx.close();
-  return { els: out, rootSize, width };
+  return { els: out, rootSize, width, placeholders };
 }
 
 // 1. Parity -------------------------------------------------------------------------------------
@@ -103,11 +136,14 @@ const rendered = {};
 for (const mode of Object.keys(MODES)) {
   const [v, m, t] = [await styles(vanillaDoc, mode), await styles(minDoc, mode), await styles(tailwindDoc, mode)];
   rendered[mode] = v;
-  for (const [label, other] of [["twilight.min.css", m], ["Tailwind CSS with twilight-tailwind.css", t]]) {
+  for (const [label, other] of [["remix.min.css", m], ["Tailwind CSS with remix-tailwind.css", t]]) {
     v.els.forEach((e, i) => {
       for (const k of PROPS) {
-        if (e.style[k] !== other.els[i].style[k]) fail(`parity, ${mode}: ${e.path} ${k} is ${e.style[k]} with twilight.css, ${other.els[i].style[k]} with ${label}`);
+        if (e.style[k] !== other.els[i].style[k]) fail(`parity, ${mode}: ${e.path} ${k} is ${e.style[k]} with remix.css, ${other.els[i].style[k]} with ${label}`);
       }
+    });
+    v.placeholders.forEach((d, i) => {
+      if (Math.abs(d - other.placeholders[i]) > 2) fail(`parity, ${mode}: placeholder ${i} ink is ${d} with remix.css, ${other.placeholders[i]} with ${label}`);
     });
   }
 }
@@ -135,7 +171,7 @@ for (const [mode, { els, rootSize, width }] of Object.entries(rendered)) {
       check(close(px(h.style["line-height"]), px(h.style["font-size"]) * leading[L.leading]), `${h.path} line height ${h.style["line-height"]}`);
     }
   }
-  for (const e of els.filter((e) => e.tag === "p" && !e.firstP)) {
+  for (const e of els.filter((e) => e.tag === "p")) {
     check(close(px(e.style["line-height"]), px(e.style["font-size"]) * leading.default), `${e.path} line height ${e.style["line-height"]}`);
   }
   for (const e of els.filter((e) => ["code", "kbd"].includes(e.tag) && e.parentTag !== "pre")) {
@@ -144,48 +180,52 @@ for (const [mode, { els, rootSize, width }] of Object.entries(rendered)) {
   }
   for (const e of els.filter((e) => e.tag === "small")) check(close(px(e.style["font-size"]), step(T.levels["body-sm"].size)), `${e.path} is ${e.style["font-size"]}`);
   for (const e of els.filter((e) => e.tag === "table")) check(e.style["font-variant-numeric"] === "tabular-nums", `${e.path} figures`);
-  const space = step("base") * leading.default;
-  const prose = els.find((e) => e.classed && e.path.startsWith("article.twl-prose"));
-  check(close(px(prose.style["max-width"]), T.container.prose.em * step("base")), `prose container is ${prose.style["max-width"]}`);
-  for (const e of els.filter((e) => e.directInProse && !e.firstChild)) {
-    const heading = /^h[1-6]$/.test(e.tag), afterHeading = /^h[1-6]$/.test(e.prevTag || "");
-    const want = space * (afterHeading ? T.spacing["after-heading"] : heading ? T.spacing["before-heading"] : T.spacing.block);
-    check(close(px(e.style["margin-top"]), want), `${e.path} margin ${e.style["margin-top"]}, want ${want}px`);
+  for (const e of els) {
+    check(["top", "right", "bottom", "left"].every((s) => e.style[`margin-${s}`] === "0px"), `${e.path} has a margin`);
   }
-  const lead = els.find((e) => e.firstP);
-  check(close(px(lead.style["font-size"]), step(T.levels["body-lg"].size)), `body-lg is ${lead.style["font-size"]}`);
-  for (const e of els.filter((e) => !e.inProse && ["p", "ul", "h2"].includes(e.tag))) {
-    check(e.style["margin-top"] === "0px" && e.style["margin-bottom"] === "0px", `${e.path} outside .twl-prose has a margin`);
+  for (const e of els.filter((e) => ["ul", "ol", "menu"].includes(e.tag))) check(e.style["list-style-type"] === "none", `${e.path} has markers`);
+  for (const e of els.filter((e) => e.tag === "pre")) {
+    check(close(px(e.style["line-height"]), px(e.style["font-size"]) * leading[T.levels.code.leading]), `${e.path} line height ${e.style["line-height"]}`);
+    check(e.style["overflow-x"] === "auto", `${e.path} overflow ${e.style["overflow-x"]}`);
   }
+  // Chromium draws a closed select at its own line height, so selects are left out here.
+  const oneLine = (e) => e.tag === "button" || e.tag === "input" && !["checkbox", "radio"].includes(e.type);
+  for (const e of els.filter(oneLine)) {
+    check(close(px(e.style["line-height"]), px(e.style["font-size"]) * leading[T.levels.ui.leading]), `${e.path} line height ${e.style["line-height"]}`);
+  }
+  // Black at the placeholder opacity over white: 255 × (1 − opacity), the gray that gives 4.5:1.
+  const want = Math.round(255 * (1 - 0.54));
+  rendered[mode].placeholders.forEach((d, i) => check(Math.abs(d - want) <= 6, `placeholder ${i} ink is ${d}, want ${want}`));
+  for (const e of els.filter((e) => e.tag === "input" && e.type === "search")) check(e.style.appearance === "textfield", `${e.path} appearance`);
 }
 
 // 3. Components ---------------------------------------------------------------------------------
 const STRICT = PROPS.filter((k) => !["font-family", "font-size", "font-weight", "line-height", "font-variant-ligatures",
-  "text-wrap-style", "font-variant-numeric", "max-width"].includes(k));
+  "text-wrap-style", "font-variant-numeric", "max-width", "height"].includes(k));
 for (const lib of Object.keys(LIBRARIES)) {
   const base = await styles(page(`components-${lib}`, components, [`${lib}.css`]), "desktop");
-  const withT = await styles(page(`components-${lib}-twilight`, components, [`${lib}-twilight.css`]), "desktop");
+  const withT = await styles(page(`components-${lib}-remix`, components, [`${lib}-remix.css`]), "desktop");
   base.els.forEach((e, i) => {
     const o = withT.els[i];
     for (const k of STRICT) {
-      if (e.style[k] !== o.style[k]) fail(`components, ${lib}: ${e.path} ${k} is ${e.style[k]}, ${o.style[k]} with Twilight`);
+      if (e.style[k] !== o.style[k]) fail(`components, ${lib}: ${e.path} ${k} is ${e.style[k]}, ${o.style[k]} with Remix`);
     }
     // Size, weight and line height are kept wherever the element's own styles set them. Line height is
-    // compared as a ratio to the size, since a size inherited from Twilight scales it.
+    // compared as a ratio to the size, since a size inherited from Remix scales it.
     const ratio = (s) => s["line-height"] === "normal" ? "normal" : (px(s["line-height"]) / px(s["font-size"])).toFixed(3);
     for (const k of ["font-size", "font-weight"]) {
       if (e.classed && e.style[k] !== e.parent[k] && e.style[k] !== o.style[k]) {
-        fail(`components, ${lib}: ${e.path} ${k} is ${e.style[k]}, ${o.style[k]} with Twilight`);
+        fail(`components, ${lib}: ${e.path} ${k} is ${e.style[k]}, ${o.style[k]} with Remix`);
       }
     }
     if (e.classed && ratio(e.style) !== ratio(e.parent) && ratio(e.style) !== ratio(o.style)) {
-      fail(`components, ${lib}: ${e.path} line height is ${ratio(e.style)} × size, ${ratio(o.style)} with Twilight`);
+      fail(`components, ${lib}: ${e.path} line height is ${ratio(e.style)} × size, ${ratio(o.style)} with Remix`);
     }
   });
 }
 
 await browser.close();
 const unique = [...new Set(failures)];
-console.log(unique.length ? unique.join("\n") : "CSS reset: parity, rules and components pass");
-console.log(`${Object.keys(MODES).length} modes, ${rendered.desktop.els.length} prose page elements, ${Object.keys(LIBRARIES).length} component sets`);
+console.log(unique.length ? unique.join("\n") : "Remix: parity, rules and components pass");
+console.log(`${Object.keys(MODES).length} modes, ${rendered.desktop.els.length} elements, ${Object.keys(LIBRARIES).length} component sets`);
 process.exit(unique.length ? 1 : 0);

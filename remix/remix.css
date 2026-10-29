@@ -1,0 +1,647 @@
+/*! Remix 1.25.0, Twilight Theme's CSS reset | MIT License | https://github.com/iamdantz/twilight-theme
+    Generated from typography/twilight.json by remix/build.py; do not edit. */
+
+/* Fallback fonts: the system fonts closest to Twilight Crystal, sized to its x-height. */
+
+@font-face {
+  font-family: "Twilight Tahoma";
+  src: local("Tahoma");
+  font-weight: 400;
+  font-style: normal;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Tahoma";
+  src: local("Tahoma Bold"), local("Tahoma-Bold");
+  font-weight: 700;
+  font-style: normal;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Verdana";
+  src: local("Verdana");
+  font-weight: 400;
+  font-style: normal;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Verdana";
+  src: local("Verdana Bold"), local("Verdana-Bold");
+  font-weight: 700;
+  font-style: normal;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Verdana";
+  src: local("Verdana Italic"), local("Verdana-Italic");
+  font-weight: 400;
+  font-style: italic;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Verdana";
+  src: local("Verdana Bold Italic"), local("Verdana-BoldItalic");
+  font-weight: 700;
+  font-style: italic;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Adwaita Sans";
+  src: local("Adwaita Sans Regular"), local("AdwaitaSans-Regular");
+  font-weight: 400;
+  font-style: normal;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Adwaita Sans";
+  src: local("Adwaita Sans Bold"), local("AdwaitaSans-Bold");
+  font-weight: 700;
+  font-style: normal;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Adwaita Sans";
+  src: local("Adwaita Sans Italic"), local("AdwaitaSans-Italic");
+  font-weight: 400;
+  font-style: italic;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Adwaita Sans";
+  src: local("Adwaita Sans Bold Italic"), local("AdwaitaSans-BoldItalic");
+  font-weight: 700;
+  font-style: italic;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Noto Sans";
+  src: local("Noto Sans Regular"), local("NotoSans-Regular");
+  font-weight: 400;
+  font-style: normal;
+  size-adjust: 93%;
+}
+
+@font-face {
+  font-family: "Twilight Noto Sans";
+  src: local("Noto Sans Bold"), local("NotoSans-Bold");
+  font-weight: 700;
+  font-style: normal;
+  size-adjust: 93%;
+}
+
+@font-face {
+  font-family: "Twilight Noto Sans";
+  src: local("Noto Sans Italic"), local("NotoSans-Italic");
+  font-weight: 400;
+  font-style: italic;
+  size-adjust: 93%;
+}
+
+@font-face {
+  font-family: "Twilight Noto Sans";
+  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic");
+  font-weight: 700;
+  font-style: italic;
+  size-adjust: 93%;
+}
+
+@font-face {
+  font-family: "Twilight Cascadia Mono";
+  src: local("Cascadia Mono Regular"), local("CascadiaMono-Regular");
+  font-weight: 400;
+  font-style: normal;
+  size-adjust: 92%;
+}
+
+@font-face {
+  font-family: "Twilight Cascadia Mono";
+  src: local("Cascadia Mono Bold"), local("CascadiaMono-Bold");
+  font-weight: 700;
+  font-style: normal;
+  size-adjust: 92%;
+}
+
+@font-face {
+  font-family: "Twilight Cascadia Mono";
+  src: local("Cascadia Mono Italic"), local("CascadiaMono-Italic");
+  font-weight: 400;
+  font-style: italic;
+  size-adjust: 92%;
+}
+
+@font-face {
+  font-family: "Twilight Cascadia Mono";
+  src: local("Cascadia Mono Bold Italic"), local("CascadiaMono-BoldItalic");
+  font-weight: 700;
+  font-style: italic;
+  size-adjust: 92%;
+}
+
+@font-face {
+  font-family: "Twilight Menlo";
+  src: local("Menlo Regular"), local("Menlo-Regular");
+  font-weight: 400;
+  font-style: normal;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Menlo";
+  src: local("Menlo Bold"), local("Menlo-Bold");
+  font-weight: 700;
+  font-style: normal;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Menlo";
+  src: local("Menlo Italic"), local("Menlo-Italic");
+  font-weight: 400;
+  font-style: italic;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Menlo";
+  src: local("Menlo Bold Italic"), local("Menlo-BoldItalic");
+  font-weight: 700;
+  font-style: italic;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Hack";
+  src: local("Hack Regular"), local("Hack-Regular");
+  font-weight: 400;
+  font-style: normal;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Hack";
+  src: local("Hack Bold"), local("Hack-Bold");
+  font-weight: 700;
+  font-style: normal;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Hack";
+  src: local("Hack Italic"), local("Hack-Italic");
+  font-weight: 400;
+  font-style: italic;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Hack";
+  src: local("Hack Bold Italic"), local("Hack-BoldItalic");
+  font-weight: 700;
+  font-style: italic;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight Adwaita Mono";
+  src: local("Adwaita Mono Regular"), local("AdwaitaMono-Regular");
+  font-weight: 400;
+  font-style: normal;
+  size-adjust: 95%;
+}
+
+@font-face {
+  font-family: "Twilight Adwaita Mono";
+  src: local("Adwaita Mono Bold"), local("AdwaitaMono-Bold");
+  font-weight: 700;
+  font-style: normal;
+  size-adjust: 95%;
+}
+
+@font-face {
+  font-family: "Twilight Adwaita Mono";
+  src: local("Adwaita Mono Italic"), local("AdwaitaMono-Italic");
+  font-weight: 400;
+  font-style: italic;
+  size-adjust: 95%;
+}
+
+@font-face {
+  font-family: "Twilight Adwaita Mono";
+  src: local("Adwaita Mono Bold Italic"), local("AdwaitaMono-BoldItalic");
+  font-weight: 700;
+  font-style: italic;
+  size-adjust: 95%;
+}
+
+@font-face {
+  font-family: "Twilight DejaVu Sans Mono";
+  src: local("DejaVu Sans Mono"), local("DejaVuSansMono");
+  font-weight: 400;
+  font-style: normal;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight DejaVu Sans Mono";
+  src: local("DejaVu Sans Mono Bold"), local("DejaVuSansMono-Bold");
+  font-weight: 700;
+  font-style: normal;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight DejaVu Sans Mono";
+  src: local("DejaVu Sans Mono Oblique"), local("DejaVuSansMono-Oblique");
+  font-weight: 400;
+  font-style: italic;
+  size-adjust: 91%;
+}
+
+@font-face {
+  font-family: "Twilight DejaVu Sans Mono";
+  src: local("DejaVu Sans Mono Bold Oblique"), local("DejaVuSansMono-BoldOblique");
+  font-weight: 700;
+  font-style: italic;
+  size-adjust: 91%;
+}
+
+/* Tokens: fonts, the scale of the current geometry, levels, leading, spacing, the prose container. */
+
+:root {
+  --twl-font-sans: "Twilight Crystal", "Atkinson Hyperlegible Next", "Twilight Tahoma", "Twilight Verdana", "Twilight Adwaita Sans", "Twilight Noto Sans", sans-serif;
+  --twl-font-mono: "Twilight Crystal Mono", "Atkinson Hyperlegible Mono", "Twilight Cascadia Mono", "Twilight Menlo", "Twilight Hack", "Twilight Adwaita Mono", "Twilight DejaVu Sans Mono", monospace;
+  --twl-text-xs: 0.75rem;
+  --twl-text-sm: 0.9437rem;
+  --twl-text-base: 1.1875rem;
+  --twl-text-lg: 1.4942rem;
+  --twl-text-xl: 1.8802rem;
+  --twl-text-2xl: 2.3659rem;
+  --twl-text-3xl: 2.977rem;
+  --twl-text-4xl: 3.746rem;
+  --twl-text-5xl: 4.7136rem;
+  --twl-text-6xl: 5.9311rem;
+  --twl-text-fit: calc((100vw - 2rem) / 7.94);
+  --twl-text-display-1: min(var(--twl-text-6xl), var(--twl-text-fit));
+  --twl-text-display-2: min(var(--twl-text-5xl), var(--twl-text-fit));
+  --twl-text-h1: min(var(--twl-text-4xl), var(--twl-text-fit));
+  --twl-text-h2: min(var(--twl-text-3xl), var(--twl-text-fit));
+  --twl-text-h3: min(var(--twl-text-2xl), var(--twl-text-fit));
+  --twl-text-h4: var(--twl-text-xl);
+  --twl-text-h5: var(--twl-text-lg);
+  --twl-text-h6: var(--twl-text-base);
+  --twl-text-body-lg: var(--twl-text-lg);
+  --twl-text-body: var(--twl-text-base);
+  --twl-text-ui: var(--twl-text-base);
+  --twl-text-body-sm: var(--twl-text-sm);
+  --twl-text-body-xs: var(--twl-text-xs);
+  --twl-text-code: var(--twl-text-base);
+  --twl-leading: 1.5;
+  --twl-leading-tight: 1.3;
+  --twl-spacing: calc(var(--twl-text-base) * var(--twl-leading));
+  --twl-container-prose: 34.6em;
+}
+
+/* Handheld screens: a coarse primary pointer. */
+@media (pointer: coarse) {
+  :root {
+    --twl-text-xs: 0.75rem;
+    --twl-text-sm: 0.866rem;
+    --twl-text-base: 1rem;
+    --twl-text-lg: 1.1547rem;
+    --twl-text-xl: 1.3333rem;
+    --twl-text-2xl: 1.5396rem;
+    --twl-text-3xl: 1.7778rem;
+    --twl-text-4xl: 2.0528rem;
+    --twl-text-5xl: 2.3704rem;
+    --twl-text-6xl: 2.7371rem;
+  }
+}
+
+/* Pages: printed. */
+@media print {
+  :root {
+    --twl-text-xs: 9pt;
+    --twl-text-sm: 10.3923pt;
+    --twl-text-base: 12pt;
+    --twl-text-lg: 13.8564pt;
+    --twl-text-xl: 16pt;
+    --twl-text-2xl: 18.4752pt;
+    --twl-text-3xl: 21.3333pt;
+    --twl-text-4xl: 24.6336pt;
+    --twl-text-5xl: 28.4444pt;
+    --twl-text-6xl: 32.8448pt;
+  }
+}
+
+/* Every element: sizes include padding and border, no outer spacing, borders ready to draw. */
+
+*,
+::before,
+::after,
+::backdrop,
+::file-selector-button {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
+}
+
+/* Document: the same text size after rotation on iOS, tabs of four, no tap flash. */
+
+html,
+:host {
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Document: Twilight's font, leading and tracking; body text at the level body. */
+
+html,
+:host {
+  font-family: var(--twl-font-sans);
+  line-height: var(--twl-leading);
+  letter-spacing: 0;
+}
+
+body {
+  font-size: var(--twl-text-body);
+}
+
+/* Headings and text levels. */
+
+h1 {
+  font-size: var(--twl-text-h1);
+}
+
+h2 {
+  font-size: var(--twl-text-h2);
+}
+
+h3 {
+  font-size: var(--twl-text-h3);
+}
+
+h4 {
+  font-size: var(--twl-text-h4);
+}
+
+h5 {
+  font-size: var(--twl-text-h5);
+}
+
+h6 {
+  font-size: var(--twl-text-h6);
+}
+
+small,
+figcaption,
+caption {
+  font-size: var(--twl-text-body-sm);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  line-height: var(--twl-leading-tight);
+}
+
+b,
+strong {
+  font-weight: 700;
+}
+
+/* Grouping: a rule one pixel thick in the text color; lists without markers. */
+
+hr {
+  height: 0;
+  color: inherit;
+  border-block-start-width: 1px;
+}
+
+ol,
+ul,
+menu {
+  list-style: none;
+}
+
+/* Text: links take the text around them; abbreviations are marked; sub and sup keep the line. */
+
+a {
+  color: inherit;
+  -webkit-text-decoration: inherit;
+  text-decoration: inherit;
+}
+
+abbr:where([title]) {
+  -webkit-text-decoration: underline dotted;
+  text-decoration: underline dotted;
+}
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/* Literal text: Twilight Crystal Mono at the size of the text around it, without ligatures. */
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--twl-font-mono);
+  font-size: 1em;
+  font-variant-ligatures: none;
+}
+
+pre {
+  line-height: var(--twl-leading-tight);
+  overflow: auto;
+}
+
+/* Embedded content: block boxes that never overflow their container. */
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
+  vertical-align: middle;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Tables: collapsed borders that take the table's color, no inherited indent. */
+
+table {
+  text-indent: 0;
+  border-color: inherit;
+  border-collapse: collapse;
+}
+
+/* Figures: tabular in tables, times and outputs. */
+
+table,
+time,
+output {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Forms: controls take the text around them and start without a surface. */
+
+button,
+input,
+select,
+optgroup,
+textarea,
+::file-selector-button {
+  font: inherit;
+  font-feature-settings: inherit;
+  font-variation-settings: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  border-radius: 0;
+  background-color: transparent;
+  opacity: 1;
+}
+
+:where(select:is([multiple], [size])) optgroup {
+  font-weight: bolder;
+}
+
+:where(select:is([multiple], [size])) optgroup option {
+  padding-inline-start: 20px;
+}
+
+::file-selector-button {
+  margin-inline-end: 4px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button,
+input:where([type='button'], [type='reset'], [type='submit']),
+::file-selector-button {
+  appearance: button;
+}
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+  height: auto;
+}
+
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+::-webkit-date-and-time-value {
+  min-height: 1lh;
+  text-align: inherit;
+}
+
+::-webkit-datetime-edit {
+  display: inline-flex;
+}
+
+::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
+}
+
+::-webkit-datetime-edit,
+::-webkit-datetime-edit-year-field,
+::-webkit-datetime-edit-month-field,
+::-webkit-datetime-edit-day-field,
+::-webkit-datetime-edit-hour-field,
+::-webkit-datetime-edit-minute-field,
+::-webkit-datetime-edit-second-field,
+::-webkit-datetime-edit-millisecond-field,
+::-webkit-datetime-edit-meridiem-field {
+  padding-block: 0;
+}
+
+::-webkit-calendar-picker-indicator {
+  line-height: 1;
+}
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/* Forms: one-line controls at the leading of UI text; readable placeholders; plain search fields; fieldsets that shrink. */
+
+button,
+input,
+select,
+::file-selector-button {
+  line-height: var(--twl-leading-tight);
+}
+
+::placeholder {
+  color: inherit;
+  opacity: 0.54;
+}
+
+[type='search'] {
+  -webkit-appearance: textfield;
+  appearance: textfield;
+  outline-offset: -2px;
+}
+
+fieldset {
+  min-width: 0;
+}
+
+/* Interactive: the disclosure marker everywhere; focus rings in Firefox as in other browsers. */
+
+summary {
+  display: list-item;
+}
+
+progress {
+  vertical-align: baseline;
+}
+
+:-moz-focusring:where(:not(iframe)) {
+  outline: auto;
+}
+
+/* Hidden: the hidden attribute hides, whatever the element's display. */
+
+[hidden]:where(:not([hidden='until-found'])) {
+  display: none !important;
+}

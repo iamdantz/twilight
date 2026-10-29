@@ -1,7 +1,7 @@
 {
-  "name": "twilight-css-tests",
+  "name": "twilight-remix-tests",
   "private": true,
-  "description": "Checks the CSS reset of Twilight Theme in Chromium: plain HTML equals Tailwind CSS 4, and component libraries keep their styles.",
+  "description": "Checks Remix, Twilight Theme's CSS reset, in Chromium: plain HTML equals Tailwind CSS 4, and component libraries keep their styles.",
   "license": "MIT",
   "type": "module",
   "scripts": {
