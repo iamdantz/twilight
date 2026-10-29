@@ -625,9 +625,13 @@ def run(snap, json_path="palette/twilight.json", do_rebuild=True):
 def generated_checks(snap, P):
     """Tables, measured figures in prose and the palette images must equal what scripts/docs.py renders."""
     import docs
+    import typeset
     errs = docs.document_errors(snap.read, P)
     if not snap.ref:                                  # images are read from the working tree
         errs += docs.image_errors(P)
+    if typeset.TOKENS in snap.files:                  # a snapshot may predate the typography tokens
+        T = typeset.load(snap.read)
+        errs += typeset.token_errors(T, snap.read("CHANGELOG.md")) + typeset.document_errors(snap.read, T)
     return errs
 
 

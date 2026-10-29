@@ -7,6 +7,8 @@ data repository, pinned by SHA-256 and downloaded on first use.
 
     python fonts/scripts/typography.py            print the report
     python fonts/scripts/typography.py --json     the same numbers as JSON
+    python fonts/scripts/typography.py --write    write typography/twilight.json
+    python fonts/scripts/typography.py --check    fail if typography/twilight.json differs
 
 1. Font facts. x-height, cap height and the natural line (ascender to descender) of both
    families; the tallest and deepest letters, whose distance is the line height at which two
@@ -32,9 +34,13 @@ data repository, pinned by SHA-256 and downloaded on first use.
    which the widest word of the corpus, in Bold, fits a 320 px viewport.
 7. Measure. The mean advance of a character of running text, per language, and the width in em
    and in ch that holds 80 of them.
-8. Code. The size of code in editors and terminals: at least the x-height of the default editor
-   font and size on each system, then the size, up to desktop running text, whose x-height, cell
-   and line land closest to whole pixels.
+8. Code. The size of code in editors and terminals. Minimum: the smallest size from the floor whose
+   x-height, cell and line all land within 2 % of whole pixels. Optimal: at least the x-height of
+   the default editor font and size on every system, then the size, up to desktop running text,
+   whose x-height, cell and line land closest to whole pixels.
+
+With --write, the measurements and the rules below become typography/twilight.json, the
+typography tokens; --check reports whether that file matches the fonts and rules.
 """
 import argparse
 import hashlib
@@ -75,6 +81,7 @@ PX_PER_PT = 4 / 3              # a document at 100 % zoom
 # measured on the font as the system installs it (the files are not distributed).
 EDITOR_DEFAULTS = {"Windows": ("Consolas", 14, 0.4902), "macOS": ("Menlo", 12, 0.5469),
                    "Linux": ("Droid Sans Mono", 14, 0.5361)}
+GRID_TOLERANCE = 0.02          # code: x-height, cell and line within 2 % of whole pixels
 DEFAULT_SIZE = 16              # px; the browsers' default font size, 1rem
 HANDHELD_DPR = 2               # device pixels per CSS pixel, at least, on handheld screens
 NARROWEST = 320                # CSS px; WCAG 1.4.10 Reflow
@@ -113,6 +120,93 @@ CACHE = Path.home() / ".cache" / "twilight" / "udhr.zip"
 RASTER = 2000                  # ppem for outline measurements
 COUNTERS_V = "easBg8"          # white measured on the vertical center line
 COUNTERS_H = "mnH"             # white measured on a row at a quarter of the em
+
+
+# Rules (docs/design-system/typography.md) -------------------------------------------------------
+TOKENS = ROOT / "typography" / "twilight.json"
+RUNNING_LINE = 1.5             # WCAG 1.4.8
+FAMILY_OF = {"text": "Twilight Crystal", "literal": "Twilight Crystal Mono"}
+# id: (name, use, step, weight, line height, family); Display takes any weight at or above its lowest step
+LEVELS = {
+    "display-1": ("Display 1", "The one title of a page, a cover or a slide", 7, 400, 1.3, "text"),
+    "display-2": ("Display 2", "The same, one step down", 6, 400, 1.3, "text"),
+    "heading-1": ("Heading 1", "Headings, by structure", 5, 700, 1.3, "text"),
+    "heading-2": ("Heading 2", "", 4, 700, 1.3, "text"),
+    "heading-3": ("Heading 3", "", 3, 700, 1.3, "text"),
+    "heading-4": ("Heading 4", "", 2, 700, 1.3, "text"),
+    "heading-5": ("Heading 5", "", 1, 700, 1.3, "text"),
+    "heading-6": ("Heading 6", "", 0, 700, 1.3, "text"),
+    "lead": ("Lead", "The opening paragraph of a document", 1, 400, 1.5, "text"),
+    "running-text": ("Running text", "Paragraphs, lists, quotes", 0, 400, 1.5, "text"),
+    "interface-text": ("Interface text", "Controls, labels, menus, tabs, table cells, messages; 1.5 when it wraps",
+                       0, 400, 1.3, "text"),
+    "small": ("Small", "Captions, help text, metadata, secondary labels", -1, 400, 1.5, "text"),
+    "fine": ("Fine", "Timestamps, counts, badges, notes", -2, 400, 1.5, "text"),
+    "code-block": ("Code blocks", "Code in documents, pages and slides", 0, 400, 1.3, "literal"),
+}
+DISPLAY_LEVELS = ("display-1", "display-2")
+SPACING = {"paragraph": 1, "list-item": 0, "list-item-with-paragraphs": 0.5, "before-heading": 2,
+           "after-heading": 0.5}    # in lines of running text
+# Tools that take the steps in their own unit: geometry, factor to the tool's unit, grain
+TOOLS = {"Word, Google Docs, Pages, PDFs": ("documents", 1, 0.5, "pt"),
+         "PowerPoint, 16:9 (7.5 in high)": ("slides", 5.4, 0.5, "pt"),
+         "Google Slides, 16:9 (5.625 in high)": ("slides", 4.05, 0.5, "pt"),
+         "Keynote, 1920 × 1080": ("slides", 10.8, 1, "pt")}
+STYLE_KEYS = {"Regular": (400, "normal"), "Italic": (400, "italic")}
+for _w, _n in zip(("ExtraLight", "Light", "Medium", "SemiBold", "Bold", "ExtraBold"), (200, 300, 500, 600, 700, 800)):
+    STYLE_KEYS[_w], STYLE_KEYS[_w + "Italic"] = (_n, "normal"), (_n, "italic")
+
+
+def version():
+    for line in (ROOT / "CHANGELOG.md").read_text(encoding="utf-8").splitlines():
+        if (m := re.match(r"## (\d+\.\d+\.\d+)", line)):
+            return m.group(1)
+
+
+def tokens(out):
+    q = lambda v, n=4: round(float(v), n)  # noqa: E731
+    G = out["geometries"]
+    geometries = {}
+    for name, g in G.items():
+        geometries[name] = {"unit": g["unit"], "step0": q(g["running text"]), "floor": q(g["floor"]),
+                            "ratio": q(g["ratio"], 6), "line": q(g["running text"] * RUNNING_LINE),
+                            "steps": {str(k): q(v) for k, v in g["steps"].items()}}
+    d = out["distance"]
+    geometries["distance"] = {"unit": "% of the farthest reading distance", "step0": q(d["step0"]),
+                              "floor": q(d["floor"]), "ratio": q(d["ratio"], 6),
+                              "steps": {str(k): q(d["step0"] * d["ratio"] ** k) for k in STEPS}}
+    fonts = {}
+    for name, f in out["facts"].items():
+        fonts[name] = {"x-height": f["x-height"], "cap height": f["cap height"], "natural line": f["natural line"],
+                       "touching line": q(f["touching line height"], 3), "tabular figure": f["figures"]["tabular"][0],
+                       "zero": f["zero"],
+                       "styles": {s: {"weight": STYLE_KEYS[s][0], "style": STYLE_KEYS[s][1], "stem": q(v["stem"], 3),
+                                      "counter": q(v["counter"], 3), "counter glyph": v["counter glyph"],
+                                      "floor": v["floor"], "lowest step": v["lowest step"]}
+                                  for s, v in out["floors"][name].items()}}
+    c, m, u = out["code"], out["measure"], out["upper bounds"]
+    return {
+        "version": version(),
+        "_": "Generated by fonts/scripts/typography.py --write from the built fonts and the rules of "
+             "docs/design-system/typography.md; derivations in docs/construction/typography.md. Do not edit by hand.",
+        "families": FAMILY_OF,
+        "fonts": fonts,
+        "geometries": geometries,
+        "levels": {k: {"name": n, "use": use, "step": s, "weight": w, "line height": lh, "family": fam,
+                       **({"weights": "any at or above its lowest step"} if k in DISPLAY_LEVELS else {})}
+                   for k, (n, use, s, w, lh, fam) in LEVELS.items()},
+        "code": {"minimum": c["minimum (px)"], "optimal": c["optimal (px)"], "line height": 1.3, "family": "literal",
+                 "grid rounding": {str(k): q(v) for k, v in c["worst rounding to whole pixels"].items()},
+                 "editor defaults": {k: {"font": v["font"], "size": v["size (px)"], "x-height": q(v["x-height (px)"], 2)}
+                                     for k, v in c["editor defaults"].items()}},
+        "line height": {"running": RUNNING_LINE, "compact": out["facts"]["Twilight Crystal"]["natural line"]},
+        "spacing": SPACING,
+        "letter spacing": 0,
+        "measure": {"characters": MEASURE_CHARACTERS, "em": q(m[f"{MEASURE_CHARACTERS} characters (em)"], 1),
+                    "mean character": {k: q(v) for k, v in m["mean character (em)"].items()}},
+        "fit": {"word": u["widest word"], "em": q(u["widest word (em)"], 2), "gutter": GUTTER, "narrowest": NARROWEST},
+        "tools": {k: {"geometry": g, "factor": f, "grain": gr, "unit": un} for k, (g, f, gr, un) in TOOLS.items()},
+    }
 
 
 def static(family, weight):
@@ -261,6 +355,9 @@ def measure():
             entry["least x-height step (device px)"] = min((sizes[k + 1] - sizes[k]) * xh * g["dpr"] for k in list(STEPS)[:-1])
         geometries[geometry] = entry
     out["geometries"] = geometries
+    dist = lambda angle_: math.tan(math.radians(angle_)) / xh * 100  # noqa: E731  (% of the distance)
+    out["distance"] = {"step0": dist(CRITICAL_PRINT_SIZE), "floor": dist(floor_angle),
+                       "ratio": math.sqrt(dist(CRITICAL_PRINT_SIZE) / dist(floor_angle))}
     docs = geometries["documents"]
     docs["x-height angle on a desktop screen at 100 % (deg)"] = angle(
         docs["running text"] * PX_PER_PT * xh * math.tan(math.radians(REFERENCE_PIXEL)))
@@ -276,11 +373,12 @@ def measure():
     for size in range(pixel_floor, int(geometries["desktop"]["running text"]) + 1):
         worst = max(abs(round(v) - v) / v for v in (size * mono["x-height"], size * cell, size * mono["natural line"]))
         grid[size] = worst
-    code = min((s for s in grid if s >= comfort), key=lambda s: (grid[s], s))
+    optimal = min((s for s in grid if s >= comfort), key=lambda s: (grid[s], s))
+    minimum = min(s for s in grid if grid[s] < GRID_TOLERANCE)
     out["code"] = {"editor defaults": {k: {"font": f, "size (px)": s, "x-height (px)": s * x}
                                        for k, (f, s, x) in EDITOR_DEFAULTS.items()},
-                   "comfort bound (px)": comfort, "worst rounding to whole pixels": grid, "size (px)": code,
-                   "size (pt)": code / PX_PER_PT}
+                   "comfort bound (px)": comfort, "worst rounding to whole pixels": grid,
+                   "minimum (px)": minimum, "optimal (px)": optimal}
 
     # The lowest step each style may take in every geometry: on screens its pixel floor, elsewhere
     # the geometry's floor scaled by the style's pixel floor over Regular's.
@@ -315,8 +413,21 @@ def measure():
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--json", action="store_true")
+    parser.add_argument("--write", action="store_true")
+    parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     out = measure()
+    if args.write or args.check:
+        text = json.dumps(tokens(out), indent=2, ensure_ascii=False) + "\n"
+        if args.write:
+            TOKENS.parent.mkdir(exist_ok=True)
+            TOKENS.write_text(text, encoding="utf-8")
+            print(f"wrote {TOKENS.relative_to(ROOT)}")
+        elif not TOKENS.exists() or TOKENS.read_text(encoding="utf-8") != text:
+            sys.exit(f"{TOKENS.relative_to(ROOT)} does not match the fonts and rules: run typography.py --write")
+        else:
+            print(f"{TOKENS.relative_to(ROOT)} matches the fonts and rules")
+        return
     if args.json:
         print(json.dumps(out, indent=2, ensure_ascii=False, default=float))
         return
@@ -345,7 +456,7 @@ def main():
     c = out["code"]
     print(f"\nCode: comfort bound {r(c['comfort bound (px)'], 2)} px; worst rounding "
           + ", ".join(f"{k}: {r(v * 100, 1)} %" for k, v in c["worst rounding to whole pixels"].items())
-          + f"; size {c['size (px)']} px ({r(c['size (pt)'], 2)} pt)")
+          + f"; minimum {c['minimum (px)']} px, optimal {c['optimal (px)']} px")
     print("\nUpper bounds:", {k: (r(v, 2) if isinstance(v, float) else v) for k, v in out["upper bounds"].items()})
     m = out["measure"]
     print("\nMeasure:", {k: (r(v) if isinstance(v, float) else {a: r(b, 2) for a, b in v.items()}) for k, v in m.items()})

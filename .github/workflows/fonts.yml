@@ -5,12 +5,14 @@ on:
     branches: [main]
     paths:
       - "fonts/**"
+      - "typography/**"
       - "tools/ligaturizer/**"
       - ".github/workflows/fonts.yml"
   push:
     branches: [main]
     paths:
       - "fonts/**"
+      - "typography/**"
       - "tools/ligaturizer/**"
       - ".github/workflows/fonts.yml"
 
@@ -81,10 +83,11 @@ jobs:
           set -o pipefail
           .venv-build/bin/python "$SCRIPTS/hintcheck.py" "$RUNNER_TEMP/reference" | tee hintcheck.txt
 
-      - name: Typography measurements
+      - name: Typography measurements and tokens
         run: |
           set -o pipefail
           .venv-build/bin/python "$SCRIPTS/typography.py" | tee typography.txt
+          .venv-build/bin/python "$SCRIPTS/typography.py" --check
 
       - name: Font Bakery against upstream
         run: |
