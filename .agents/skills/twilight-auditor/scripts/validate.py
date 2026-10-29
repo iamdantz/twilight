@@ -629,7 +629,8 @@ def generated_checks(snap, P):
     errs = docs.document_errors(snap.read, P)
     if not snap.ref:                                  # images are read from the working tree
         errs += docs.image_errors(P)
-    if typeset.TOKENS in snap.files:                  # a snapshot may predate the typography tokens
+    # The base of --compare is read for regressions only; its tokens may follow an older schema.
+    if not snap.ref and typeset.TOKENS in snap.files:
         T = typeset.load(snap.read)
         errs += typeset.token_errors(T, snap.read("CHANGELOG.md")) + typeset.document_errors(snap.read, T)
     if not snap.ref and (ROOT / "css" / "build.py").exists():   # the CSS reset, written from the tokens

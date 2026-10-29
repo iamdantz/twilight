@@ -14,12 +14,13 @@ TOKENS = "typography/twilight.json"
 DOCS = ("docs/design-system/typography.md", "docs/construction/typography.md")
 BLOCK = re.compile(r"(<!-- generated:([\w-]+) -->\n)(.*?)(<!-- /generated -->)", re.S)
 FACT = re.compile(r"<!-- fact:(t\.[\w.-]+) -->(.*?)<!-- /fact -->")
-STEPS = [str(k) for k in range(-2, 8)]
+SCALE = ["xs", "sm", "base", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl"]   # steps −2 to 7
+INDEX = {name: i - 2 for i, name in enumerate(SCALE)}
 WEIGHTS = ("ExtraLight", "Light", "Regular", "Medium", "SemiBold", "Bold", "ExtraBold")
 WEIGHT_NAMES = {200: "ExtraLight", 300: "Light", 400: "Regular", 500: "Medium", 600: "SemiBold", 700: "Bold",
                 800: "ExtraBold"}
-GEOMETRY_NAMES = {"desktop": "Desktop", "handheld": "Handheld", "documents": "Documents", "slides": "Slides"}
-UNITS = {"desktop": "px", "handheld": "px", "documents": "pt", "slides": "% of height"}
+GEOMETRIES = {"desktop": ("Desktop", "px"), "handheld": ("Handheld", "px"), "page": ("Page", "pt"),
+              "slide": ("Slide", "% of height")}
 PX_PER_PT = 4 / 3
 TOL = 1e-3
 
@@ -33,16 +34,16 @@ def rem(px):
     return f"{px / 16:.4f}".rstrip("0").rstrip(".")
 
 
-def minus(s):
-    return str(s).replace("-", "−")
-
-
 def up(v, grain):
     return math.ceil(v / grain - 1e-9) * grain
 
 
 def italic(w):
     return "Italic" if w == "Regular" else w + "Italic"
+
+
+def code(s):
+    return f"`{s}`"
 
 
 def row(cells):
@@ -53,130 +54,131 @@ def table(header, rows):
     return "\n".join([row(header), row(["---"] * len(header))] + [row(r) for r in rows])
 
 
+def spacing(T, g):
+    return T["geometries"][g]["scale"]["base"] * T["leading"]["default"]
+
+
 # Blocks ------------------------------------------------------------------------------------------
 def scale(T):
     G = T["geometries"]
     rows = []
-    for k in reversed(STEPS):
-        cells = [minus(k), num(G["desktop"]["steps"][k]), rem(G["desktop"]["steps"][k]), num(G["handheld"]["steps"][k]),
-                 rem(G["handheld"]["steps"][k]), num(G["documents"]["steps"][k]), num(G["slides"]["steps"][k])]
-        rows.append([f"**{c}**" for c in cells] if k == "0" else cells)
+    for k in reversed(SCALE):
+        cells = [code(k), num(G["desktop"]["scale"][k]), rem(G["desktop"]["scale"][k]), num(G["handheld"]["scale"][k]),
+                 rem(G["handheld"]["scale"][k]), num(G["page"]["scale"][k]), num(G["slide"]["scale"][k])]
+        rows.append([f"**{c}**" for c in cells] if k == "base" else cells)
     rows.append(["Ratio", f"{G['desktop']['ratio']:.4f}", "", f"{G['handheld']['ratio']:.4f}", "",
-                 f"{G['documents']['ratio']:.4f}", f"{G['slides']['ratio']:.4f}"])
-    return table(["Step", "Desktop (px)", "Desktop (rem)", "Handheld (px)", "Handheld (rem)", "Documents (pt)",
-                  "Slides (% of height)"], rows)
+                 f"{G['page']['ratio']:.4f}", f"{G['slide']['ratio']:.4f}"])
+    return table(["Step", "Desktop (px)", "Desktop (rem)", "Handheld (px)", "Handheld (rem)", "Page (pt)",
+                  "Slide (% of height)"], rows)
 
 
 def scale_by_geometry(T):
     rows = []
-    for g, label in GEOMETRY_NAMES.items():
+    for g, (label, unit) in GEOMETRIES.items():
         G = T["geometries"][g]
-        rows.append([f"{label}, ratio {G['ratio']:.4f} ({UNITS[g]})"] + [num(G["steps"][k]) for k in STEPS])
-    return table(["Step"] + [minus(k) for k in STEPS], rows)
+        rows.append([f"{label}, ratio {G['ratio']:.4f} ({unit})"] + [num(G["scale"][k]) for k in SCALE])
+    return table(["Step"] + [f"{code(k)} ({INDEX[k]:+d})".replace("+0", "0").replace("-", "−") for k in SCALE], rows)
 
 
 def levels(T):
-    fam = {"text": "Crystal", "literal": "Mono"}
     rows = []
-    for L in T["levels"].values():
-        weight = "Regular, or any weight (§7)" if "weights" in L else WEIGHT_NAMES[L["weight"]]
-        rows.append([L["name"], L["use"], minus(L["step"]), weight, num(L["line height"], 1), fam[L["family"]]])
-    C = T["code"]
-    rows.append(["Code in editors and terminals", "Read for hours; outside the scale",
-                 f"{C['minimum']} px minimum, {C['optimal']} px optimal", "Regular", num(C["line height"], 1), "Mono"])
-    rows.append(["Literal text in a sentence", "Code, commands, paths, keys and values inside running or interface text",
-                 "the sentence's", "the sentence's", "the sentence's", "Mono"])
-    return table(["Level", "Use", "Step", "Weight", "Line height", "Family"], rows)
+    for key, L in T["levels"].items():
+        weight = "Regular, or any weight (§8)" if "weights" in L else WEIGHT_NAMES[L["weight"]]
+        rows.append([code(key), L["use"], code(L["size"]), weight,
+                     f"{code(L['leading'])} ({num(T['leading'][L['leading']], 1)})", code(L["font"])])
+    E = T["editor"]
+    rows.append([code("editor"), "Code in editors and terminals; outside the scale",
+                 f"{E['text']} px, {E['text-lg']} px for {code('editor-lg')}", "Regular",
+                 f"{code(E['leading'])} ({num(T['leading'][E['leading']], 1)})", code(E["font"])])
+    return table(["Level", "Use", "Step", "Weight", "Leading", "Font"], rows)
 
 
 def lowest_steps(T):
-    F = T["fonts"]
-    c, m = F["Twilight Crystal"]["styles"], F["Twilight Crystal Mono"]["styles"]
-    rows = [[w, minus(c[w]["lowest step"]), minus(c[italic(w)]["lowest step"]), minus(m[w]["lowest step"]),
-             minus(m[italic(w)]["lowest step"])] for w in WEIGHTS]
-    return table(["Weight", "Twilight Crystal", "Italic", "Twilight Crystal Mono", "Mono italic"], rows)
+    s, m = T["fonts"]["sans"]["styles"], T["fonts"]["mono"]["styles"]
+    rows = [[w, code(s[w]["lowest-step"]), code(s[italic(w)]["lowest-step"]), code(m[w]["lowest-step"]),
+             code(m[italic(w)]["lowest-step"])] for w in WEIGHTS]
+    return table(["Weight", "Sans", "Sans italic", "Mono", "Mono italic"], rows)
 
 
 def floors(T):
-    F = T["fonts"]
-    c, m = F["Twilight Crystal"]["styles"], F["Twilight Crystal Mono"]["styles"]
+    s, m = T["fonts"]["sans"]["styles"], T["fonts"]["mono"]["styles"]
     rows = []
     for w in WEIGHTS:
-        s = c[w]
-        floor = f"**{s['floor']} px**" if w == "Regular" else f"{s['floor']} px"
-        rows.append([f"{w} ({s['weight']})", f"{s['stem']:.3f} em", f"{s['counter']:.3f} em ({s['counter glyph']})", floor,
-                     f"{c[italic(w)]['floor']} px", f"{m[w]['floor']} px", f"{m[italic(w)]['floor']} px"])
-    return table(["Weight", "Stem", "Narrowest counter", "Floor, upright", "Floor, italic", "Mono, upright",
-                  "Mono, italic"], rows)
+        x = s[w]
+        floor = f"**{x['floor']} px**" if w == "Regular" else f"{x['floor']} px"
+        rows.append([f"{w} ({x['weight']})", f"{x['stem']:.3f} em", f"{x['counter']:.3f} em ({x['counter-glyph']})", floor,
+                     f"{s[italic(w)]['floor']} px", f"{m[w]['floor']} px", f"{m[italic(w)]['floor']} px"])
+    return table(["Weight", "Stem", "Narrowest counter", "Sans", "Sans italic", "Mono", "Mono italic"], rows)
 
 
 def tool_values(T):
     rows = []
     for name, t in T["tools"].items():
-        steps = T["geometries"][t["geometry"]]["steps"]
-        rows.append([name] + [num(up(steps[k] * t["factor"], t["grain"]), 1) for k in STEPS] + [t["unit"]])
-    return table(["Tool"] + [minus(k) for k in STEPS] + ["Unit"], rows)
+        sc = T["geometries"][t["geometry"]]["scale"]
+        rows.append([name] + [num(up(sc[k] * t["factor"], t["grain"]), 1) for k in SCALE] + [t["unit"]])
+    return table(["Tool"] + [code(k) for k in SCALE] + ["Unit"], rows)
 
 
 def editor_defaults(T):
     rows = [[system, f"{d['font']}, {d['size']} px", f"{d['x-height'] / d['size']:.3f} em", f"{d['x-height']:.2f} px"]
-            for system, d in T["code"]["editor defaults"].items()]
+            for system, d in T["editor"]["defaults"].items()]
     return table(["System", "Default", "x-height of the font", "x-height"], rows)
 
 
 def grid(T):
-    G, C = T["code"]["grid rounding"], T["code"]
-    mark = lambda size, text: f"**{text}**" if int(size) in (C["minimum"], C["optimal"]) else text  # noqa: E731
+    G, E = T["editor"]["grid-rounding"], T["editor"]
+    mark = lambda size, text: f"**{text}**" if int(size) in (E["text"], E["text-lg"]) else text  # noqa: E731
     return table(["Size (px)"] + [mark(s, s) for s in G],
                  [["Largest rounding"] + [mark(s, f"{v * 100:.1f} %") for s, v in G.items()]])
 
 
 def measure(T):
-    M = T["measure"]
-    return table(["Language", "Mean character", f"{M['characters']} characters"],
-                 [[lang, f"{v:.3f} em", f"{M['characters'] * v:.1f} em"] for lang, v in M["mean character"].items()])
+    P = T["container"]["prose"]
+    return table(["Language", "Mean character", f"{P['characters']} characters"],
+                 [[lang, f"{v:.3f} em", f"{P['characters'] * v:.1f} em"] for lang, v in P["mean-character"].items()])
 
 
 def system_fonts(T):
-    size = lambda name: f"{round(T['fallbacks']['text' if name in T['fallbacks']['text'] else 'literal'][name]['size adjust'] * 100)} %"  # noqa: E731
-    rows = [[r["system"], r["text"], size(r["text"].replace(" if installed", "")), r["literal"], size(r["literal"]),
-             f"{r['cell']:.2f} em"] for r in T["systems"]]
+    F = T["fonts"]
+    size = lambda font, name: f"{round(F[font]['fallbacks'][name.replace(' if installed', '')]['size-adjust'] * 100)} %"  # noqa: E731
+    rows = [[r["system"], r["sans"], size("sans", r["sans"]), r["mono"], size("mono", r["mono"]), f"{r['cell']:.2f} em"]
+            for r in T["systems"]]
     return table(["System", "Sans-serif", "Size", "Monospaced", "Size", "Cell after sizing"], rows)
 
 
-BLOCKS = { "system-fonts": system_fonts,"scale": scale, "scale-by-geometry": scale_by_geometry, "levels": levels, "lowest-steps": lowest_steps,
+BLOCKS = {"scale": scale, "scale-by-geometry": scale_by_geometry, "levels": levels, "lowest-steps": lowest_steps,
           "floors": floors, "tool-values": tool_values, "editor-defaults": editor_defaults, "code-grid": grid,
-          "measure": measure}
+          "measure": measure, "system-fonts": system_fonts}
 
 
 # Figures in prose ------------------------------------------------------------------------------
 def facts(T):
-    G, C, M, Fit = T["geometries"], T["code"], T["measure"], T["fit"]
+    G, E, P, Fit = T["geometries"], T["editor"], T["container"]["prose"], T["fit"]
     out = {}
-    for g in ("desktop", "handheld", "documents"):
-        unit = "pt" if g == "documents" else "px"
-        out[f"t.{g}.step0"] = f"{num(G[g]['step0'])} {unit}"
-        out[f"t.{g}.line"] = f"{num(G[g]['line'], 1)} {unit}"
-        out[f"t.{g}.measure"] = f"{round(M['em'] * G[g]['step0'])} {unit}"
-    out["t.slides.step0"] = f"{G['slides']['step0']:.2f} %"
-    out["t.slides.line"] = f"{G['slides']['line']:.2f} %"
-    out["t.slides.desktop"] = f"{math.ceil(G['desktop']['step0'] / G['slides']['step0'] * 100)} px"
-    out["t.documents.zoom"] = f"{math.ceil(G['desktop']['step0'] / (G['documents']['step0'] * PX_PER_PT) * 100)} %"
-    out["t.documents.measure-cm"] = f"{M['em'] * G['documents']['step0'] / 72 * 2.54:.1f} cm"
-    out["t.distance.step0"] = f"{G['distance']['step0']:.3f} %"
-    out["t.distance.floor"] = f"{G['distance']['floor']:.3f} %"
+    for g in ("desktop", "handheld", "page"):
+        unit = "pt" if g == "page" else "px"
+        out[f"t.{g}.base"] = f"{num(G[g]['scale']['base'])} {unit}"
+        out[f"t.{g}.spacing"] = f"{num(spacing(T, g), 1)} {unit}"
+        out[f"t.{g}.prose"] = f"{round(P['em'] * G[g]['scale']['base'])} {unit}"
+    out["t.slide.base"] = f"{G['slide']['scale']['base']:.2f} %"
+    out["t.slide.spacing"] = f"{spacing(T, 'slide'):.2f} %"
+    out["t.slide.desktop"] = f"{math.ceil(G['desktop']['scale']['base'] / G['slide']['scale']['base'] * 100)} px"
+    out["t.page.zoom"] = f"{math.ceil(G['desktop']['scale']['base'] / (G['page']['scale']['base'] * PX_PER_PT) * 100)} %"
+    out["t.page.prose-cm"] = f"{P['em'] * G['page']['scale']['base'] / 72 * 2.54:.1f} cm"
+    out["t.distance.base"] = f"{G['distance']['scale']['base']:.3f} %"
+    out["t.distance.floor"] = f"{G['distance']['scale']['xs']:.3f} %"
     out["t.distance.ratio"] = f"{G['distance']['ratio']:.4f}"
-    mm = G["distance"]["step0"] / 100 * 2000
+    mm = G["distance"]["scale"]["base"] / 100 * 2000
     out["t.distance.2m"] = f"{mm:.1f} mm, {round(mm / 25.4 * 72)} pt"
-    out["t.measure.em"] = f"{num(M['em'], 1)} em"
-    out["t.measure.characters"] = str(M["characters"])
+    out["t.prose.em"] = f"{num(P['em'], 1)} em"
+    out["t.prose.characters"] = str(P["characters"])
     out["t.fit.em"] = f"{Fit['em']:.2f}"
     out["t.fit.narrowest"] = f"{(Fit['narrowest'] - 2 * Fit['gutter']) / Fit['em']:.2f} px"
-    out["t.code.minimum"] = f"{C['minimum']} px"
-    out["t.code.optimal"] = f"{C['optimal']} px"
-    out["t.code.optimal-pt"] = f"{num(C['optimal'] / PX_PER_PT)} pt"
-    out["t.code.minimum-pt"] = f"{num(C['minimum'] / PX_PER_PT, 1)} pt"
-    out["t.touching"] = f"{T['fonts']['Twilight Crystal']['touching line']:.3f}"
+    out["t.editor.text"] = f"{E['text']} px"
+    out["t.editor.text-lg"] = f"{E['text-lg']} px"
+    out["t.editor.text-pt"] = f"{num(E['text'] / PX_PER_PT, 1)} pt"
+    out["t.editor.text-lg-pt"] = f"{num(E['text-lg'] / PX_PER_PT)} pt"
+    out["t.touching"] = f"{T['fonts']['sans']['touching-line']:.3f}"
     return out
 
 
@@ -210,46 +212,40 @@ def token_errors(T, changelog):
     if T.get("version") != latest:
         errs.append(f"{TOKENS} version {T.get('version')} != latest CHANGELOG.md {latest}")
     for g, G in T["geometries"].items():
-        steps = {int(k): v for k, v in G["steps"].items()}
-        if sorted(steps) != list(range(-2, 8)):
-            errs.append(f"{TOKENS}: {g} does not have steps −2 to 7")
+        sc = G["scale"]
+        if list(sc) != SCALE:
+            errs.append(f"{TOKENS}: {g} scale is not {', '.join(SCALE)}")
             continue
-        if abs(steps[0] - G["step0"]) > TOL or abs(steps[-2] - G["floor"]) > TOL:
-            errs.append(f"{TOKENS}: {g} step 0 or −2 is not its running text or floor")
-        if abs(G["ratio"] - math.sqrt(G["step0"] / G["floor"])) > 2e-4:
-            errs.append(f"{TOKENS}: {g} ratio is not √(step 0 / floor)")
-        errs += [f"{TOKENS}: {g} step {k} is not step 0 × ratio^{k}" for k, v in steps.items()
-                 if abs(v - G["step0"] * G["ratio"] ** k) > max(TOL, 1e-4 * v)]
-        if "line" in G and abs(G["line"] - G["step0"] * T["line height"]["running"]) > TOL:
-            errs.append(f"{TOKENS}: {g} line is not step 0 × the running line height")
+        if abs(G["ratio"] - math.sqrt(sc["base"] / sc["xs"])) > 2e-4:
+            errs.append(f"{TOKENS}: {g} ratio is not √(base / xs)")
+        errs += [f"{TOKENS}: {g} step {k} is not base × ratio^{INDEX[k]}" for k, v in sc.items()
+                 if abs(v - sc["base"] * G["ratio"] ** INDEX[k]) > max(TOL, 1e-4 * v)]
     for g in ("desktop", "handheld"):
-        if T["geometries"][g]["step0"] < 16:
-            errs.append(f"{TOKENS}: {g} running text below the default size of 16 px")
-    families = {T["families"]["text"]: "text", T["families"]["literal"]: "literal"}
+        if T["geometries"][g]["scale"]["base"] < 16:
+            errs.append(f"{TOKENS}: {g} base below the default size of 16 px")
     for k, L in T["levels"].items():
-        name = next(n for n, f in families.items() if f == L["family"])
-        style = T["fonts"][name]["styles"][WEIGHT_NAMES[L["weight"]]]
-        if L["step"] < style["lowest step"]:
-            errs.append(f"{TOKENS}: level {k} at step {L['step']} is below the lowest step of its weight")
-        if L["line height"] < T["fonts"][name]["natural line"] - 1e-9:
-            errs.append(f"{TOKENS}: level {k} has a line height below the fonts' natural line")
-        if L["line height"] == T["line height"]["running"] and L["step"] < 0 and k not in ("small", "fine"):
-            errs.append(f"{TOKENS}: level {k} is running text below step 0")
-    if T["levels"]["running-text"]["step"] != 0 or T["levels"]["running-text"]["line height"] < 1.5:
-        errs.append(f"{TOKENS}: running text must be step 0 at a line height of at least 1.5 (WCAG 1.4.8)")
-    C, mono = T["code"], T["fonts"][T["families"]["literal"]]
-    regular_floor = mono["styles"]["Regular"]["floor"]
-    if not regular_floor <= C["minimum"] <= C["optimal"] <= T["geometries"]["desktop"]["step0"]:
-        errs.append(f"{TOKENS}: code sizes must lie between the Mono floor and desktop running text")
-    if any(C["optimal"] * mono["x-height"] < d["x-height"] - 0.01 for d in C["editor defaults"].values()):
-        errs.append(f"{TOKENS}: optimal code size is below the x-height of an editor default")
-    if abs(C["line height"] - mono["natural line"]) > 1e-9:
-        errs.append(f"{TOKENS}: code line height is not the Mono natural line")
-    narrow = min(T["measure"]["mean character"].values())
-    if T["measure"]["em"] * 1 > T["measure"]["characters"] * narrow + 0.05:
-        errs.append(f"{TOKENS}: the measure holds more than {T['measure']['characters']} characters")
-    if T["letter spacing"] != 0:
-        errs.append(f"{TOKENS}: letter spacing must be 0")
+        F = T["fonts"][L["font"]]
+        style = F["styles"][WEIGHT_NAMES[L["weight"]]]
+        if INDEX[L["size"]] < INDEX[style["lowest-step"]]:
+            errs.append(f"{TOKENS}: level {k} at {L['size']} is below the lowest step of its weight")
+        if T["leading"][L["leading"]] < F["natural-line"] - 1e-9:
+            errs.append(f"{TOKENS}: level {k} has a leading below the font's natural line")
+        if k.startswith("body") and (L["leading"] != "default" or INDEX[L["size"]] < 0) and k not in ("body-sm", "body-xs"):
+            errs.append(f"{TOKENS}: level {k} is body text below base or below the default leading")
+    if T["levels"]["body"]["size"] != "base" or T["leading"]["default"] < 1.5:
+        errs.append(f"{TOKENS}: body must be base at a leading of at least 1.5 (WCAG 1.4.8)")
+    E, mono = T["editor"], T["fonts"]["mono"]
+    if not mono["styles"]["Regular"]["floor"] <= E["text"] <= E["text-lg"] <= T["geometries"]["desktop"]["scale"]["base"]:
+        errs.append(f"{TOKENS}: editor sizes must lie between the Mono floor and desktop base")
+    if any(E["text-lg"] * mono["x-height"] < d["x-height"] - 0.01 for d in E["defaults"].values()):
+        errs.append(f"{TOKENS}: editor-lg is below the x-height of an editor default")
+    if abs(T["leading"][E["leading"]] - mono["natural-line"]) > 1e-9:
+        errs.append(f"{TOKENS}: editor leading is not the Mono natural line")
+    P = T["container"]["prose"]
+    if P["em"] > P["characters"] * min(P["mean-character"].values()) + 0.05:
+        errs.append(f"{TOKENS}: the prose container holds more than {P['characters']} characters")
+    if T["tracking"] != 0:
+        errs.append(f"{TOKENS}: tracking must be 0")
     return errs
 
 
