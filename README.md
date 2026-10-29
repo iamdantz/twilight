@@ -169,6 +169,7 @@ Twilight Theme recommends its typefaces, [Twilight Crystal and Twilight Crystal 
 ├── docs/
 │   ├── design-system/       the rules: index, color, typography
 │   └── construction/        how the values were derived: color, typography
+├── css/                     CSS reset with Twilight Theme's typography, for Tailwind CSS 4 or any project
 ├── fonts/
 │   ├── README.md            Twilight Crystal and Twilight Crystal Mono
 │   ├── upstream/            pinned upstream sources and licenses, unmodified
@@ -195,7 +196,8 @@ Each part of the repository has its own license:
 
 | Part | License | Holder |
 | --- | --- | --- |
-| Palette, documents, images, workflows, build scripts (`palette/`, `docs/`, `assets/`, `fonts/scripts/`, the JSON files in `fonts/`) and future ports | [MIT](LICENSE) | José D. Gutiérrez |
+| Palette, typography tokens, CSS reset, documents, images, workflows, build scripts (`palette/`, `typography/`, `css/`, `docs/`, `assets/`, `fonts/scripts/`, the JSON files in `fonts/`) and future ports | [MIT](LICENSE) | José D. Gutiérrez |
+| Tailwind CSS Preflight, included in `css/twilight.css` and kept unmodified in `css/upstream/tailwindcss/` | [MIT](css/upstream/tailwindcss/LICENSE) | Tailwind Labs, Inc. |
 | Twilight Crystal and Twilight Crystal Mono: the fonts in every release, [fonts/OFL.txt](fonts/OFL.txt), [fonts/FONTLOG.txt](fonts/FONTLOG.txt) | [SIL Open Font License 1.1](fonts/OFL.txt) | The Atkinson Hyperlegible Next and Mono Project Authors, the Fira Code Project Authors (Twilight Crystal Mono) and José D. Gutiérrez |
 | Upstream fonts kept unmodified in `fonts/upstream/` | Each one's own `OFL.txt` | Their authors |
 | [tools/ligaturizer](tools/ligaturizer), a fork of [Ligaturizer](https://github.com/ToxicFrog/Ligaturizer) | [GNU General Public License 3](tools/ligaturizer/LICENSE) | The Ligaturizer contributors and José D. Gutiérrez |

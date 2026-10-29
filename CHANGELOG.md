@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.23.0
+
+CSS reset. No palette, font or rule changes.
+
+### Added
+- `css/`: a reset that sets any page in Twilight Theme's typography, written by `css/build.py` from the typography tokens.
+  - `twilight-tailwind.css`, for Tailwind CSS 4, in `@layer base` after Preflight.
+  - `twilight.css` and `twilight.min.css`, for any other project: Tailwind CSS Preflight 4.3.3 (MIT, pinned in `css/upstream.json`) and the same typography, in no layer.
+  - Font stacks with the closest system fonts resized by `size-adjust`; the scale by geometry (coarse pointer for handhelds, print for documents); levels on `body`, headings, `small`, captions and literal text; tabular figures; document flow inside `.document` only, never above the specificity of one element; every value as a `--twilight-*` property.
+- The validator checks that the CSS matches the tokens.
+- `typography/twilight.json`: the system fonts, their `size-adjust` and installed names; the table of design-system/typography.md §2 is generated from them.
+
 ## 1.22.0
 
 Typography tokens. No palette or font changes.

@@ -36,6 +36,7 @@ Twilight Theme encourages Twilight Crystal, and names the alternatives in order.
 
 When neither Twilight Crystal nor Atkinson Hyperlegible can be installed, these are the closest faces each system ships by default. They were chosen by measurement among the fonts installed with each system: how close their shapes are to Atkinson Hyperlegible, how well they tell apart I, l, 1 and | (and O and 0 in monospaced faces) at small sizes, and whether they have an italic and a bold. A face whose I and l are the same single stroke was not considered.
 
+<!-- generated:system-fonts -->
 | System | Sans-serif | Size | Monospaced | Size | Cell after sizing |
 | --- | --- | --- | --- | --- | --- |
 | Windows | Tahoma | 91 % | Cascadia Mono | 92 % | 0.54 em |
@@ -43,8 +44,9 @@ When neither Twilight Crystal nor Atkinson Hyperlegible can be installed, these 
 | Linux, KDE | Noto Sans | 93 % | Hack | 91 % | 0.55 em |
 | Linux, GNOME | Adwaita Sans | 91 % | Adwaita Mono | 95 % | 0.57 em |
 | Linux, other | Noto Sans if installed | 93 % | DejaVu Sans Mono | 91 % | 0.55 em |
+<!-- /generated -->
 
-**Size** is the size that gives the face Twilight Crystal's x-height, the height of lowercase letters that sets how large text reads. All of these faces have taller lowercase than Atkinson Hyperlegible, so at the same nominal size they look larger; set at the listed fraction (in CSS, the `size-adjust` descriptor of `@font-face`; in an editor, a smaller font size), their lowercase matches Twilight Crystal's, and their capitals land within 1 % of its cap height (within 5 % for Cascadia Mono and Adwaita Mono). **Cell** is the monospaced advance after that sizing; Twilight Crystal Mono's is 0.632 em, so the same window holds 10 to 17 % more columns.
+**Size** is the size that gives the face Twilight Crystal's x-height, the height of lowercase letters that sets how large text reads. All of these faces have taller lowercase than Atkinson Hyperlegible, so at the same nominal size they look larger; set at the listed fraction (in CSS, the `size-adjust` descriptor of `@font-face`; in an editor, a smaller font size), their lowercase matches Twilight Crystal's, and their capitals land within 1 % of its cap height (within 5 % for Cascadia Mono and Adwaita Mono). In CSS, a single stack tries them in the order Tahoma, Verdana, Adwaita Sans and Noto Sans, then Cascadia Mono, Menlo, Hack, Adwaita Mono and DejaVu Sans Mono, and uses the first one installed. **Cell** is the monospaced advance after that sizing; Twilight Crystal Mono's is 0.632 em, so the same window holds 10 to 17 % more columns.
 
 None of these faces has the [optional ligatures](../../fonts/README.md#optional-ligatures), and only some draw box drawing; Atkinson Hyperlegible Mono has neither.
 
@@ -220,7 +222,7 @@ Where a tool does not take the exact value, round up to the nearest value it tak
 
 | Tool | Unit and values |
 |---|---|
-| Web | Sizes in rem from §5; desktop values unless the primary pointer is coarse (`@media (pointer: coarse)`), documents values in `@media print` |
+| Web | Sizes in rem from §5; desktop values unless the primary pointer is coarse (`@media (pointer: coarse)`), documents values in `@media print`. The [CSS reset](../../css/README.md) applies all of it |
 | iOS, Android | Handheld values: pt on iOS, sp on Android, equal to the px of §5 |
 | Figma, Photoshop, Illustrator | px of the geometry where the design will be shown; in a 72 ppi document, 1 pt = 1 px |
 | Editors and terminals | <!-- fact:t.code.minimum -->14 px<!-- /fact --> or <!-- fact:t.code.optimal -->16 px<!-- /fact --> (<!-- fact:t.code.minimum-pt -->10.5 pt<!-- /fact --> or <!-- fact:t.code.optimal-pt -->12 pt<!-- /fact --> in tools sized in points); line height 1.3 |
